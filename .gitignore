@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Additional: user defined
+hp_init/
+hp_ss_design/
+hp_ds_design/
