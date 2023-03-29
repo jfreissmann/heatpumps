@@ -5,24 +5,24 @@ Generic heat pump model.
 @author: Jonas Freißmann and Malte Fritz
 """
 
-import os
 import json
+import os
+
+import CoolProp.CoolProp as CP
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import SWSHplotting as shplt
-import CoolProp.CoolProp as CP
+from fluprodia import FluidPropertyDiagram
 from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
-from tespy.components import (
-    CycleCloser, Source, Sink, Pump, HeatExchanger, Condenser,
-    HeatExchangerSimple, Compressor, Valve
-    )
-from tespy.connections import Connection, Bus, Ref
+from tespy.components import (Compressor, Condenser, CycleCloser,
+                              HeatExchanger, HeatExchangerSimple, Pump, Sink,
+                              Source, Valve)
+from tespy.connections import Bus, Connection, Ref
 from tespy.networks import Network
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
-from fluprodia import FluidPropertyDiagram
 
 
 class Heatpump():
@@ -1353,7 +1353,10 @@ class HeatpumpSingleStage(Heatpump):
                 )
 
         # Generate isolines
-        with open('state_diagram_config.json', 'r') as file:
+        path = os.path.join(
+            os.path.abspath(__file__), '..', 'src', 'state_diagram_config.json'
+            )
+        with open(path, 'r') as file:
             config = json.load(file)
 
         if self.param['design']['refrigerant'] in config:
@@ -1779,7 +1782,10 @@ class HeatpumpSingleStageTranscritical(Heatpump):
                 )
 
         # Generate isolines
-        with open('state_diagram_config.json', 'r') as file:
+        path = os.path.join(
+            os.path.abspath(__file__), '..',  'src', 'state_diagram_config.json'
+            )
+        with open(path, 'r') as file:
             config = json.load(file)
 
         if self.param['design']['refrigerant'] in config:
@@ -2528,32 +2534,3 @@ class HeatpumpDualStage(Heatpump):
         if return_diagram:
             return diagram
 
-
-# %% Executable
-if __name__ == '__main__':
-    # hp = Heatpump(
-    #     ['water', 'NH3'], nr_cycles=2, int_heatex={2: [1, 2]},
-    #     intercooler={1: {'amount': 2, 'type': 'HeatExchanger'}}
-    #     )
-    # hp = Heatpump(
-    #     ['water', 'NH3'], nr_cycles=2,
-    #     heatex_type={1: 'HeatExchanger', 2: 'Condenser'}
-    #     )
-
-    import json
-    with open('parameter.json', 'r') as file:
-        param = json.load(file)
-
-    hp = HeatpumpSingleStage(param)
-    hp.init_simulation()
-    hp.design_simulation()
-    # hp.generate_logph()
-
-    # with open('parameter_dual.json', 'r') as file:
-    #     param = json.load(file)
-
-    # hp = HeatpumpDualStage(param)
-    # hp.init_simulation()
-    # hp.design_simulation()
-    # # hp.generate_logph(cycle=1)
-    # hp.generate_logph(cycle=2)

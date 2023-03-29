@@ -5,10 +5,12 @@ Created on Thu Jun  2 09:54:24 2022
 @author: Jonas Freißmann
 """
 
-import streamlit as st
 import json
+import os
+
 import numpy as np
 import pandas as pd
+import streamlit as st
 from simulation import run_design, run_partload
 
 
@@ -37,17 +39,19 @@ def info_df(label, refrigs):
 
     return df_refrig
 
+root_path = os.path.abspath(__file__)
+src_path = os.path.join(root_path, '..', 'src')
 
 st_color_hex = '#ff4b4b'
 
 # %% Initialisation
-with open('src\\refrigerants.json', 'r') as file:
+with open(os.path.join(src_path, 'refrigerants.json'), 'r') as file:
     refrigerants = json.load(file)
 
 st.set_page_config(
     layout='wide',
     page_title='Wärmepumpen Dashboard',
-    page_icon='src\\img\\page_icon_ZNES.png'
+    page_icon=os.path.join(src_path, 'img', 'page_icon_ZNES.png')
     )
 
 param = {'design': dict(), 'offdesign': dict()}
@@ -57,7 +61,7 @@ param['design']['heatex_type_sink'] = 'Condenser'
 
 # %% Sidebar
 with st.sidebar:
-    st.image('src\\img\\Logo_ZNES.png')
+    st.image(os.path.join(src_path, 'img', 'Logo_ZNES.png'))
 
     mode = st.selectbox('', ['Auslegung', 'Teillast'], key='select')
 
@@ -435,7 +439,7 @@ if mode == 'Auslegung':
         # %% Results
         with st.spinner('Ergebnisse werden visualisiert...'):
 
-            with open('state_diagram_config.json', 'r') as file:
+            with open(os.path.join(src_path, 'state_diagram_config.json'), 'r') as file:
                 config = json.load(file)
             if st.session_state.hp.param['design']['refrigerant'] in config:
                 state_props = config[
@@ -655,16 +659,16 @@ if mode == 'Auslegung':
 
                     # Todo: Andere Topologie einfügen, wenn sie verwendet
                     # werden können
-                    top_file = 'src\\img\\topologie\\hp'
+                    top_file = os.path.join(src_path, 'img', 'topologies', 'hp')
                     if nr_cycles == 1:
                         if param['design']['int_heatex']:
-                            top_file += '_ih.png'
+                            top_file = os.path.join(top_file, '_ih.png')
                         # elif param['design']['intercooler']:
-                        #     top_file += '_ic.png'
+                        #     top_file = os.path.join(top_file, '_ic.png')
                         else:
-                            top_file += '.png'
+                            top_file = os.path.join(top_file, '.png')
                     elif nr_cycles == 2:
-                        top_file += '_2_ih.png'
+                        top_file = os.path.join(top_file, '_2_ih.png')
 
                     st.image(top_file)
 
