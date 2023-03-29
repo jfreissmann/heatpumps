@@ -1,0 +1,28 @@
+{
+    "design": {
+        "setup": 3,
+        "Q_N": -10e6,
+        "refrigerant": "R717",
+        "T_heatsource_bf": 10,
+        "T_heatsource_ff": 20,
+        "p_heatsource_ff": 1,
+        "T_consumer_bf": 50,
+        "T_consumer_ff": 90,
+        "p_consumer_ff": 10,
+        "int_heatex": false,
+        "deltaT_int_heatex": 5,
+        "heatex_type_sink": ""
+    },
+    "offdesign": {
+        "T_hs_ff_start": 15,
+        "T_hs_ff_end": 25,
+        "T_hs_ff_steps": 4,
+        "T_cons_ff_start": 70,
+        "T_cons_ff_end": 110,
+        "T_cons_ff_steps": 8,
+        "partload_min": 0.3,
+        "partload_max": 1.0,
+        "partload_steps": 6,
+        "save_results": true
+    }
+}
