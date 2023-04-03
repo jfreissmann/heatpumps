@@ -1,0 +1,10 @@
+tespy >= 0.6.0
+streamlit >= 1.2.0
+numpy >= 1.17.5
+pandas >= 1.3.3
+scipy >= 1.10.0
+scikit-learn >= 1.2.1
+matplotlib >= 3.6.3
+fluprodia >= 1.6
+coolprop >= 6.4.1
+swshplotting >= 0.0.1
