@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from simulation import run_design, run_partload
+from variables import hp_topologies
 
 
 def switch2design():
@@ -70,6 +71,33 @@ with st.sidebar:
     # %% Design
     if mode == 'Auslegung':
         st.header('Auslegung der Wärmepumpe')
+
+        with st.expander('Grundtopologie'):
+            hp_topology = st.selectbox(
+                '', list(hp_topologies.keys()), index=0, key='hp_topology'
+            )
+
+        if hp_topology == 'Economizer':
+            with st.expander('Economizertyp'):
+                econ_type = st.selectbox(
+                    '', ['offen', 'geschlossen'], index=0,
+                    key='econ_type'
+                )
+
+            with st.expander('Kompressorschaltung'):
+                comp_var = st.selectbox(
+                    '', ['Reihenschaltung', 'Parallelschaltung'], index=0,
+                    key='comp_var'
+                )
+
+        if (hp_topology != 'Flashtank') and (hp_topology != 'Zwischenkühlung'):
+            with st.expander('Interner Wärmeübertrager'):
+                param['design']['int_heatex'] = st.checkbox('verwenden')
+                if param['design']['int_heatex']:
+                    param['design']['deltaT_int_heatex'] = st.slider(
+                        'Überhitzung/Unterkühlung', value=5, min_value=0,
+                        max_value=25, format='%d°C', key='deltaT_int_heatex'
+                        )
 
         with st.expander('Thermische Nennleistung'):
             param['design']['Q_N'] = st.number_input(
@@ -178,14 +206,6 @@ with st.sidebar:
                 'Druck', min_value=1.0, max_value=20.0, value=10.0,
                 step=0.1, format='%f bar', key='p_consumer_ff'
                 )
-
-        with st.expander('Interner Wärmeübertrager'):
-            param['design']['int_heatex'] = st.checkbox('verwenden')
-            if param['design']['int_heatex']:
-                param['design']['deltaT_int_heatex'] = st.slider(
-                    'Überhitzung/Unterkühlung', value=5, min_value=0,
-                    max_value=25, format='%d°C', key='deltaT_int_heatex'
-                    )
 
         st.session_state.hp_param = param
 
