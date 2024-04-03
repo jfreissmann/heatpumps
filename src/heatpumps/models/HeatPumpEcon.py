@@ -186,8 +186,8 @@ class HeatPumpEcon(HeatPumpBase):
             pr1=self.params['cond']['pr1'], pr2=self.params['cond']['pr2']
             )
         self.comps['cons'].set_attr(
-            pr=self.params['cons']['pr'], Q=self.params['cons']['Q']
-            , dissipative=False
+            pr=self.params['cons']['pr'], Q=self.params['cons']['Q'],
+            dissipative=False
             )
         if self.econ_type.lower() == 'closed':
             self.comps['econ'].set_attr(
@@ -242,7 +242,7 @@ class HeatPumpEcon(HeatPumpBase):
 
         self._solve_model(**kwargs)
 
-        self.m_design = self.conns['A8'].m.val
+        self.m_design = self.conns['A0'].m.val
 
         self.cop = (
             abs(self.busses['heat output'].P.val)

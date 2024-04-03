@@ -186,8 +186,8 @@ class HeatPumpPC(HeatPumpBase):
             pr1=self.params['cond']['pr1'], pr2=self.params['cond']['pr2']
             )
         self.comps['cons'].set_attr(
-            pr=self.params['cons']['pr'], Q=self.params['cons']['Q']
-            , dissipative=False
+            pr=self.params['cons']['pr'], Q=self.params['cons']['Q'],
+            dissipative=False
             )
         if self.econ_type.lower() == 'closed':
             self.comps['econ'].set_attr(
