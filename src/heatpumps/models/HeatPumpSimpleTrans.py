@@ -5,13 +5,9 @@ from time import time
 import numpy as np
 import pandas as pd
 from CoolProp.CoolProp import PropsSI as PSI
-from scipy.interpolate import interpn
-from sklearn.linear_model import LinearRegression
-from tespy.components import (Compressor, Condenser, CycleCloser,
-                              HeatExchanger, HeatExchangerSimple, Pump, Sink,
-                              Source, Valve)
+from tespy.components import (Compressor, CycleCloser, HeatExchanger,
+                              HeatExchangerSimple, Pump, Sink, Source, Valve)
 from tespy.connections import Bus, Connection
-from tespy.tools import ExergyAnalysis
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
 
