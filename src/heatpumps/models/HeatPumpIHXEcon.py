@@ -197,8 +197,8 @@ class HeatPumpIHXEcon(HeatPumpBase):
             pr1=self.params['ihx']['pr1'], pr2=self.params['ihx']['pr1']
             )
         self.comps['cons'].set_attr(
-            pr=self.params['cons']['pr'], Q=self.params['cons']['Q']
-            , dissipative=False
+            pr=self.params['cons']['pr'], Q=self.params['cons']['Q'],
+            dissipative=False
             )
         if self.econ_type.lower() == 'closed':
             self.comps['econ'].set_attr(
