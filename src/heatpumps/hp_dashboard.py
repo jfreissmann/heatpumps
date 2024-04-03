@@ -11,8 +11,8 @@ import os
 import numpy as np
 import pandas as pd
 import streamlit as st
+import variables as var
 from simulation import run_design, run_partload
-from variables import hp_topologies
 
 
 def switch2design():
@@ -43,8 +43,6 @@ def info_df(label, refrigs):
 root_path = os.path.abspath(__file__)
 src_path = os.path.join(root_path, '..', 'src')
 
-st_color_hex = '#ff4b4b'
-
 # %% Initialisation
 with open(os.path.join(src_path, 'refrigerants.json'), 'r') as file:
     refrigerants = json.load(file)
@@ -54,11 +52,6 @@ st.set_page_config(
     page_title='Wärmepumpen Dashboard',
     page_icon=os.path.join(src_path, 'img', 'page_icon_ZNES.png')
     )
-
-param = {'design': dict(), 'offdesign': dict()}
-
-# TODO
-param['design']['heatex_type_sink'] = 'Condenser'
 
 # %% Sidebar
 with st.sidebar:
@@ -72,49 +65,44 @@ with st.sidebar:
     if mode == 'Auslegung':
         st.header('Auslegung der Wärmepumpe')
 
-        with st.expander('Grundtopologie'):
-            hp_topology = st.selectbox(
-                '', list(hp_topologies.keys()), index=0, key='hp_topology'
+        with st.expander('Setup'):
+            base_topology = st.selectbox(
+                'Grundtopologie',
+                var.base_topologies,
+                index=0, key='base_topology'
             )
 
-        if hp_topology == 'Economizer':
-            with st.expander('Economizertyp'):
-                econ_type = st.selectbox(
-                    '', ['offen', 'geschlossen'], index=0,
-                    key='econ_type'
-                )
+            models = []
+            for model in var.hp_models.keys():
+                if var.hp_models[model]['base_topology'] == base_topology:
+                    models.append(var.hp_models[model]['display_name'])
 
-            with st.expander('Kompressorschaltung'):
-                comp_var = st.selectbox(
-                    '', ['Reihenschaltung', 'Parallelschaltung'], index=0,
-                    key='comp_var'
-                )
+            model_name = st.selectbox(
+                'Wärmepumpenmodell', models, index=0, key='model'
+            )
+            for model in var.hp_models.keys():
+                if var.hp_models[model]['display_name'] == model_name:
+                    hp_model = var.hp_models[model]
+                    hp_model_name = model
 
-        if (hp_topology != 'Flashtank') and (hp_topology != 'Zwischenkühlung'):
-            with st.expander('Interner Wärmeübertrager'):
-                param['design']['int_heatex'] = st.checkbox('verwenden')
-                if param['design']['int_heatex']:
-                    param['design']['deltaT_int_heatex'] = st.slider(
-                        'Überhitzung/Unterkühlung', value=5, min_value=0,
-                        max_value=25, format='%d°C', key='deltaT_int_heatex'
+            parampath = os.path.join(
+                __file__, '..', 'models', 'input',
+                f'params_hp_{hp_model_name}.json'
+            )
+            with open(parampath, 'r', encoding='utf-8') as file:
+                param = json.load(file)
+
+        if hp_model['nr_ihx'] > 0:
+            with st.expander('Interne Wärmerübertragung'):
+                dT_ihx = {}
+                for i in range(1, hp_model['nr_ihx']+1):
+                     dT_ihx[i] = st.slider(
+                        f'Nr. {i}: Überhitzung/Unterkühlung', value=5, min_value=0,
+                        max_value=25, format='%d°C', key=f'dT_ihx{i}'
                         )
 
-        with st.expander('Thermische Nennleistung'):
-            param['design']['Q_N'] = st.number_input(
-                'Wert in MW', value=5.0, step=0.1, key='Q_N'
-                )
-            param['design']['Q_N'] *= -1e6
-
-        with st.expander('Anzahl Kreisläufe'):
-            nr_cycles = st.selectbox(
-                '', [1, 2], key='nr_cycles'
-                )
-            if nr_cycles == 2:
-                param['design']['int_heatex1'] = False
-                param['design']['int_heatex2'] = False
-
         with st.expander('Kältemittel'):
-            if nr_cycles == 1:
+            if hp_model['nr_cycles'] == 1:
                 refrig_label = st.selectbox(
                     '', refrigerants.keys(), index=len(refrigerants.keys())-1,
                     key='refrigerant'
@@ -122,7 +110,7 @@ with st.sidebar:
                 param['design']['refrigerant'] = refrigerants[
                     refrig_label]['CP']
                 df_refrig = info_df(refrig_label, refrigerants)
-            elif nr_cycles == 2:
+            elif hp_model['nr_cycles'] == 2:
                 refrig_label1 = st.selectbox(
                     '1. Kältemittel', refrigerants.keys(),
                     index=len(refrigerants.keys())-1,
@@ -138,12 +126,18 @@ with st.sidebar:
                 param['design']['refrigerant2'] = refrigerants[
                     refrig_label2]['CP']
 
-        if nr_cycles == 1:
+        if hp_model['nr_cycles'] == 1:
             T_crit = int(np.floor(refrigerants[refrig_label]['T_crit']))
-        elif nr_cycles == 2:
+        elif hp_model['nr_cycles'] == 2:
             T_crit = int(np.floor(refrigerants[refrig_label2]['T_crit']))
 
         st.session_state.T_crit = T_crit
+
+        with st.expander('Thermische Nennleistung'):
+            param['design']['Q_N'] = st.number_input(
+                'Wert in MW', value=5.0, step=0.1, key='Q_N'
+                )
+            param['design']['Q_N'] *= -1e6
 
         with st.expander('Wärmequelle'):
             param['design']['T_heatsource_ff'] = st.slider(
@@ -168,7 +162,7 @@ with st.sidebar:
                 step=0.1, format='%f bar', key='p_heatsource_ff'
                 )
 
-        if nr_cycles == 2:
+        if hp_model['nr_cycles'] == 2:
             with st.expander('Zwischenwärmeübertrager'):
                 param['design']['T_mid'] = st.slider(
                     'Mittlere Temperatur', min_value=0, max_value=T_crit,
@@ -250,7 +244,7 @@ with st.sidebar:
                 param['offdesign']['T_hs_ff_steps'] = 1
 
                 text = (
-                    f'Temperatur <p style="color:{st_color_hex}">'
+                    f'Temperatur <p style="color:{var.st_color_hex}">'
                     + f'{param["offdesign"]["T_hs_ff_start"]} °C'
                     + r'</p>'
                     )
@@ -296,7 +290,7 @@ with st.sidebar:
                 param['offdesign']['T_cons_ff_steps'] = 1
 
                 text = (
-                    f'Temperatur <p style="color:{st_color_hex}">'
+                    f'Temperatur <p style="color:{var.st_color_hex}">'
                     + f'{param["offdesign"]["T_cons_ff_start"]} °C'
                     + r'</p>'
                     )
@@ -498,7 +492,7 @@ if mode == 'Auslegung':
                     diagram_placeholder = st.empty()
 
                 with slider_left:
-                    if nr_cycles == 1:
+                    if hp_model['nr_cycles'] == 1:
                         xmin, xmax = st.slider(
                             'X-Achsen Begrenzung',
                             min_value=0, max_value=3000, step=100,
@@ -515,7 +509,7 @@ if mode == 'Auslegung':
                             value=(0, 2), format='10^%d bar', key='ph_yslider'
                             )
                         ymin, ymax = 10**ymin, 10**ymax
-                    elif nr_cycles == 2:
+                    elif hp_model['nr_cycles'] == 2:
                         xmin1, xmax1 = st.slider(
                             'X-Achsen Begrenzung (Kreislauf 1)',
                             min_value=0, max_value=3000, step=100,
@@ -540,7 +534,7 @@ if mode == 'Auslegung':
                         ymin2, ymax2 = 10**ymin2, 10**ymax2
 
                 with col_left:
-                    if nr_cycles == 1:
+                    if hp_model['nr_cycles'] == 1:
                         diagram = st.session_state.hp.generate_state_diagram(
                             diagram_type='logph',
                             xlims=(xmin, xmax), ylims=(ymin, ymax),
@@ -548,7 +542,7 @@ if mode == 'Auslegung':
                             save_file=False
                             )
                         diagram_placeholder.pyplot(diagram.fig)
-                    elif nr_cycles == 2:
+                    elif hp_model['nr_cycles'] == 2:
                         diagram1 = st.session_state.hp.generate_logph(
                             1, xlims=(xmin1, xmax1), ylims=(ymin1, ymax1),
                             return_diagram=True, display_info=False,
@@ -568,7 +562,7 @@ if mode == 'Auslegung':
                     diagram_placeholder = st.empty()
 
                 with slider_right:
-                    if nr_cycles == 1:
+                    if hp_model['nr_cycles'] == 1:
                         xmin, xmax = st.slider(
                             'X-Achsen Begrenzung',
                             min_value=0, max_value=10000, step=100,
@@ -588,7 +582,7 @@ if mode == 'Auslegung':
                                 ),
                             format='%d °C', key='ts_yslider'
                             )
-                    elif nr_cycles == 2:
+                    elif hp_model['nr_cycles'] == 2:
                         xmin1, xmax1 = st.slider(
                             'X-Achsen Begrenzung (Kreislauf 1)',
                             min_value=0, max_value=3000, step=100,
@@ -613,7 +607,7 @@ if mode == 'Auslegung':
                         ymin2, ymax2 = 10**ymin2, 10**ymax2
 
                 with col_right:
-                    if nr_cycles == 1:
+                    if hp_model['nr_cycles'] == 1:
                         diagram = st.session_state.hp.generate_state_diagram(
                             diagram_type='Ts',
                             xlims=(xmin, xmax), ylims=(ymin, ymax),
@@ -621,7 +615,7 @@ if mode == 'Auslegung':
                             save_file=False
                             )
                         diagram_placeholder.pyplot(diagram.fig)
-                    elif nr_cycles == 2:
+                    elif hp_model['nr_cycles'] == 2:
                         diagram1 = st.session_state.hp.generate_logph(
                             1, xlims=(xmin1, xmax1), ylims=(ymin1, ymax1),
                             return_diagram=True, display_info=False,
@@ -680,14 +674,14 @@ if mode == 'Auslegung':
                     # Todo: Andere Topologie einfügen, wenn sie verwendet
                     # werden können
                     top_file = os.path.join(src_path, 'img', 'topologies', 'hp')
-                    if nr_cycles == 1:
+                    if hp_model['nr_cycles'] == 1:
                         if param['design']['int_heatex']:
                             top_file = os.path.join(top_file, '_ih.png')
                         # elif param['design']['intercooler']:
                         #     top_file = os.path.join(top_file, '_ic.png')
                         else:
                             top_file = os.path.join(top_file, '.png')
-                    elif nr_cycles == 2:
+                    elif hp_model['nr_cycles'] == 2:
                         top_file = os.path.join(top_file, '_2_ih.png')
 
                     st.image(top_file)
