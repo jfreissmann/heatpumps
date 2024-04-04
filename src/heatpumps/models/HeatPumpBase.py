@@ -1,0 +1,689 @@
+import json
+import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from CoolProp.CoolProp import PropsSI as PSI
+from fluprodia import FluidPropertyDiagram
+from scipy.interpolate import interpn
+from sklearn.linear_model import LinearRegression
+from tespy.networks import Network
+from tespy.tools import ExergyAnalysis
+
+
+class HeatPumpBase:
+    """Super class of all concrete heat pump models."""
+
+    def __init__(self, params):
+        """Initialize model and set necessary attributes."""
+        self.params = params
+        self.wf = self.params['fluids']['wf']
+        self.si = self.params['fluids']['si']
+        self.so = self.params['fluids']['so']
+
+        if self.si == self.so:
+            self.fluid_vec_wf = {self.wf: 1, self.si:0}
+            self.fluid_vec_si = {self.wf: 0, self.si: 1}
+            self.fluid_vec_so = {self.wf: 0, self.si: 1}
+        else:
+            self.fluid_vec_wf = {self.wf: 1, self.si: 0, self.so: 0}
+            self.fluid_vec_si = {self.wf: 0, self.si: 1, self.so: 0}
+            self.fluid_vec_so = {self.wf: 0, self.si: 0, self.so: 1}
+
+        self.comps = dict()
+        self.conns = dict()
+        self.buses = dict()
+
+        self.nw = Network(
+            fluids=[fluid for fluid in self.fluid_vec_wf],
+            T_unit='C', p_unit='bar', h_unit='kJ / kg',
+            m_unit='kg / s'
+            )
+
+        self.cop = np.nan
+        self.epsilon = np.nan
+
+        self.solved_design = False
+        self.subdirname = (
+            f"{self.params['setup']['type']}_"
+            + f"{self.params['setup']['refrig']}"
+            )
+        self.design_path = os.path.join(
+            __file__, '..', 'stable', f'{self.subdirname}_design'
+            )
+        self.validate_dir()
+
+    def generate_components(self):
+        """Initialize components of heat pump."""
+
+    def generate_connections(self):
+        """Initialize and add connections and buses to network."""
+
+    def init_simulation(self, **kwargs):
+        """Perform initial parametrization with starting values."""
+
+    def design_simulation(self, **kwargs):
+        """Perform final parametrization and design simulation."""
+
+    def _solve_model(self, **kwargs):
+        """Solve the model in design mode."""
+        if 'iterinfo' in kwargs:
+            self.nw.set_attr(iterinfo=kwargs['iterinfo'])
+        self.nw.solve('design')
+        self.cop = (
+            abs(self.buses['heat output'].P.val)
+            / self.buses['power input'].P.val
+            )
+
+        if 'print_results' in kwargs:
+            if kwargs['print_results']:
+                self.nw.print_results()
+        if self.nw.res[-1] < 1e-3:
+            self.solved_design = True
+            self.nw.save(self.design_path)
+
+    def run_model(self, print_cop=False, **kwargs):
+        """Run the initialization and design simulation routine."""
+        self.generate_components()
+        self.generate_connections()
+        self.init_simulation(**kwargs)
+        self.design_simulation(**kwargs)
+        if print_cop:
+            print(f'COP = {self.cop:.3f}')
+
+    def create_ranges(self):
+        """Create stable and base ranges for T_hs_ff, T_cons_ff and pl."""
+        self.T_hs_ff_range = np.linspace(
+            self.params['offdesign']['T_hs_ff_start'],
+            self.params['offdesign']['T_hs_ff_end'],
+            self.params['offdesign']['T_hs_ff_steps'],
+            endpoint=True
+            ).round(decimals=3)
+        half_len_hs = int(len(self.T_hs_ff_range)/2) - 1
+        self.T_hs_ff_stablerange = np.concatenate([
+            self.T_hs_ff_range[half_len_hs::-1],
+            self.T_hs_ff_range,
+            self.T_hs_ff_range[:half_len_hs:-1]
+            ])
+
+        self.T_cons_ff_range = np.linspace(
+            self.params['offdesign']['T_cons_ff_start'],
+            self.params['offdesign']['T_cons_ff_end'],
+            self.params['offdesign']['T_cons_ff_steps'],
+            endpoint=True
+            ).round(decimals=3)
+        half_len_cons = int(len(self.T_cons_ff_range)/2) - 1
+        self.T_cons_ff_stablerange = np.concatenate([
+            self.T_cons_ff_range[half_len_cons::-1],
+            self.T_cons_ff_range,
+            self.T_cons_ff_range[:half_len_cons:-1]
+            ])
+
+        self.pl_range = np.linspace(
+            self.params['offdesign']['partload_min'],
+            self.params['offdesign']['partload_max'],
+            self.params['offdesign']['partload_steps'],
+            endpoint=True
+            ).round(decimals=3)
+        self.pl_stablerange = np.concatenate(
+            [self.pl_range[::-1], self.pl_range]
+            )
+
+    def df_to_array(self, results_offdesign):
+        """Create 3D arrays of heat output and power input from DataFrame."""
+        self.Q_array = []
+        self.P_array = []
+        for i, T_hs_ff in enumerate(self.T_hs_ff_range):
+            self.Q_array.append([])
+            self.P_array.append([])
+            for T_cons_ff in self.T_cons_ff_range:
+                self.Q_array[i].append(
+                    results_offdesign.loc[(T_hs_ff, T_cons_ff), 'Q'].tolist()
+                    )
+                self.P_array[i].append(
+                    results_offdesign.loc[(T_hs_ff, T_cons_ff), 'P'].tolist()
+                    )
+
+    def get_pressure_levels(self, T_evap, T_cond, wf=None):
+        """Calculate evaporation, condensation and middle pressure in bar."""
+        if not wf:
+            wf = self.wf
+        p_evap = PSI(
+            'P', 'Q', 1,
+            'T', T_evap - self.params['evap']['ttd_l'] + 273.15,
+            wf
+            ) * 1e-5
+        p_cond = PSI(
+            'P', 'Q', 0,
+            'T', T_cond + self.params['cond']['ttd_u'] + 273.15,
+            wf
+            ) * 1e-5
+        p_mid = np.sqrt(p_evap * p_cond)
+
+        return p_evap, p_cond, p_mid
+
+    def calc_cost(self, ref_year, current_year):
+        """
+        Calculate CAPEX based on cost relevant components.
+        
+        Method as defined by Kosmadakis & Arpagaus et al. in:
+        "Techno-economic analysis of high-temperature heat pumps with low-global
+        warming potential refrigerants for upgrading waste heat up to 150 ◦C"
+
+        DOI: https://doi.org/10.1016/j.enconman.2020.113488
+        """
+        cepcipath = os.path.join(__file__, '..', 'input', 'CEPCI.json')
+        with open(cepcipath, 'r', encoding='utf-8') as file:
+            cepci = json.load(file)
+        if isinstance(ref_year, int):
+            ref_year = str(ref_year)
+        if isinstance(current_year, int):
+            current_year = str(current_year)
+        cepci_factor = cepci[current_year] / cepci[ref_year]
+
+        self.cost = {}
+        self.design_params = {}
+        compcost_total = 0
+        for complabel in self.nw.comps.index:
+            comp = self.nw.comps.loc[complabel, 'object']
+            comptype = self.nw.comps.loc[complabel, 'comp_type']
+
+            if comptype == 'Compressor':
+                val = comp.inl[0].v.val_SI * 3600
+                self.cost[complabel] = self.eval_costfunc(
+                    val, 279.8, 19850, 0.73
+                    ) * cepci_factor
+                self.design_params[complabel] = val
+
+            elif comptype == 'HeatExchanger':
+                if 'Evaporator' in complabel or 'Economizer' in complabel:
+                    val = comp.kA.val / 1500
+                elif 'Transcritical' in complabel:
+                    val = comp.kA.val / 60
+                else:
+                    val = comp.kA.val / 50
+                self.cost[complabel] = self.eval_costfunc(
+                    val, 42, 15526, 0.80
+                    ) * cepci_factor
+                self.design_params[complabel] = val
+
+            elif comptype == 'Condenser':
+                val = comp.kA.val / 3500
+                self.cost[complabel] = self.eval_costfunc(
+                    val, 42, 15526, 0.80
+                    ) * cepci_factor
+                self.design_params[complabel] = val
+
+            elif comptype == 'DropletSeparator' or comptype == 'Drum':
+                residence_time = 10
+                conn_liquid = (
+                    self.nw.conns[
+                        (self.nw.conns['source'].apply(lambda x: x.label) == complabel)
+                        & (self.nw.conns['source_id'] == 'out1')].index
+                )[0]
+                conn_vapor = (
+                    self.nw.conns[
+                        (self.nw.conns['source'].apply(lambda x: x.label) == complabel)
+                        & (self.nw.conns['source_id'] == 'out2')].index
+                )[0]
+                p_flash = self.nw.get_conn(conn_vapor).p.val
+                dens_liquid = PSI('D', 'Q', 0, 'P', p_flash*1e5, self.wf)
+                dens_vapor = PSI('D', 'Q', 1, 'P', p_flash*1e5, self.wf)
+                V_flash = (
+                    (self.nw.get_conn(conn_liquid).m.val  / dens_liquid
+                     + self.nw.get_conn(conn_vapor).m.val / dens_vapor)
+                    * residence_time
+                    )
+                self.cost[complabel] = self.eval_costfunc(
+                    V_flash, 0.089, 1444, 0.63
+                    ) * cepci_factor
+                self.design_params[complabel] = V_flash
+
+            else:
+                continue
+
+            compcost_total += self.cost[complabel]
+
+        self.cost['Piping & Tanks'] = 0.1 * compcost_total
+        self.cost['Electrical Equipment'] = 0.1 * compcost_total
+        # "the contribution of [refrigerant] cost to the total one is less than 4%."
+        self.cost['Refrigerant'] = (1.2 * compcost_total) * (1/0.96 - 1)
+
+        self.cost_equipment = sum(c for c in self.cost.values())
+        self.cost_total = 6.32 * self.cost_equipment
+
+    def eval_costfunc(self, val, val_ref, cost_ref, alpha):
+        r"""
+        Evaluate cost function for given variable value.
+    
+        cost function of type:
+        $C = C_{ref} \cdot \left(\frac{X}{X_{ref}}\right)^\alpha$
+        """
+        return cost_ref * (val/val_ref)**alpha
+
+    def perform_exergy_analysis(self, print_results=False, **kwargs):
+        """Perform exergy analysis."""
+        self.ean = ExergyAnalysis(
+            self.nw,
+            E_F=[self.buses['power input'], self.buses['heat input']],
+            E_P=[self.buses['heat output']]
+            )
+        self.ean.analyse(
+            pamb=self.params['ambient']['p'], Tamb=self.params['ambient']['T']
+            )
+        if print_results:
+            self.ean.print_results(**kwargs)
+
+        self.epsilon = self.ean.network_data['epsilon']
+
+    def get_plotting_states(self):
+        """Generate data of states to plot in state diagram."""
+        return {}
+
+    def generate_state_diagram(self, refrig='', diagram_type='logph',
+                               figsize=(16, 10), legend=True,
+                               return_diagram=False, savefig=True,
+                               open_file=True, **kwargs):
+        """Generate log(p)-h-diagram of heat pump process."""
+        if not refrig:
+            refrig = self.params['setup']['refrig']
+        # Define axis and isoline state variables
+        if diagram_type == 'logph':
+            var = {'x': 'h', 'y': 'p', 'isolines': ['T', 's']}
+        elif diagram_type == 'Ts':
+            var = {'x': 's', 'y': 'T', 'isolines': ['h', 'p']}
+        else:
+            print(
+                'Parameter "diagram_type" has to be set correctly. Valid '
+                + 'diagram types are "logph" and "Ts".'
+                )
+            return
+
+        # Get plotting state data
+        result_dict = self.get_plotting_states(**kwargs)
+        if len(result_dict) == 0:
+            print(
+                "'get_plotting_states'-method of heat pump "
+                + f"'{self.params['setup']['type']}' seems to not be implemented."
+                )
+            return
+
+        # Initialize fluid property diagram
+        fig, ax = plt.subplots(figsize=figsize)
+        diagram = FluidPropertyDiagram(refrig)
+        diagram.fig = fig
+        diagram.ax = ax
+        diagram.set_unit_system(T='°C', p='bar', h='kJ/kg')
+
+        # Calculate components process data
+        for compdata in result_dict.values():
+            compdata['datapoints'] = (
+                diagram.calc_individual_isoline(**compdata)
+                )
+
+        # Generate isolines
+        path = os.path.join(
+            __file__, '..', 'input', 'state_diagram_config.json'
+            )
+        with open(path, 'r', encoding='utf-8') as file:
+            config = json.load(file)
+
+        if refrig in config:
+            state_props = config[refrig]
+        else:
+            state_props = config['MISC']
+
+        iso1 = np.arange(
+            state_props[var['isolines'][0]]['isorange_low'],
+            state_props[var['isolines'][0]]['isorange_high'],
+            state_props[var['isolines'][0]]['isorange_step']
+            )
+        iso2 = np.arange(
+            state_props[var['isolines'][1]]['isorange_low'],
+            state_props[var['isolines'][1]]['isorange_high'],
+            state_props[var['isolines'][1]]['isorange_step']
+            )
+
+        diagram.set_isolines(**{
+            var['isolines'][0]: iso1,
+            var['isolines'][1]: iso2
+            })
+        diagram.calc_isolines()
+
+        # Set axes limits
+        if 'xlims' in kwargs:
+            xlims = kwargs['xlims']
+        else:
+            xlims = (
+                state_props[var['x']]['min'], state_props[var['x']]['max']
+                )
+        if 'ylims' in kwargs:
+            ylims = kwargs['ylims']
+        else:
+            ylims = (
+                state_props[var['y']]['min'], state_props[var['y']]['max']
+                )
+        diagram.draw_isolines(
+            diagram_type=diagram_type, fig=fig, ax=ax,
+            x_min=xlims[0], x_max=xlims[1], y_min=ylims[0], y_max=ylims[1]
+            )
+
+        # Draw heat pump process over fluid property diagram
+        for i, key in enumerate(result_dict.keys()):
+            datapoints = result_dict[key]['datapoints']
+            ax.plot(
+                datapoints[var['x']][:], datapoints[var['y']][:],
+                color='#EC6707'
+                )
+            ax.scatter(
+                datapoints[var['x']][0], datapoints[var['y']][0],
+                color='#B54036',
+                label=f'$\\bf{i+1:.0f}$: {key}', s=100, alpha=0.5
+                )
+            ax.annotate(
+                f'{i+1:.0f}',
+                (datapoints[var['x']][0], datapoints[var['y']][0]),
+                ha='center', va='center', color='w'
+                )
+
+        # Additional plotting parameters
+        if diagram_type == 'logph':
+            ax.set_xlabel('Spezifische Enthalpie in $kJ/kg$')
+            ax.set_ylabel('Druck in $bar$')
+        elif diagram_type == 'Ts':
+            ax.set_xlabel('Spezifische Entropie in $kJ/(kg \\cdot K)$')
+            ax.set_ylabel('Temperatur in $°C$')
+
+        if legend:
+            ax.legend()
+
+        if savefig:
+            filename = (
+                f'logph_{self.params["setup"]["type"]}_{refrig}.pdf'
+                )
+            filepath = os.path.join(
+                __file__, '..', 'output', diagram_type, filename
+                )
+            plt.tight_layout()
+            plt.savefig(filepath, dpi=300)
+
+            if open_file:
+                os.startfile(filepath)
+
+        if return_diagram:
+            return diagram
+
+    def calc_partload_char(self, **kwargs):
+        """
+        Interpolate data points of heat output and power input.
+
+        Return functions to interpolate values heat output and
+        power input based on the partload and the feed flow
+        temperatures of the heat source and sink. If there is
+        no data given through keyword arguments, the instances
+        attributes will be searched for the necessary data.
+
+        Parameters
+        ----------
+        kwargs : dict
+            Necessary data is:
+                Q_array : 3d array
+                P_array : 3d array
+                pl_range : 1d array
+                T_hs_ff_range : 1d array
+                T_cons_ff_range : 1d array
+        """
+        necessary_params = [
+            'Q_array', 'P_array', 'pl_range', 'T_hs_ff_range',
+            'T_cons_ff_range'
+            ]
+        if len(kwargs):
+            for nec_param in necessary_params:
+                if nec_param not in kwargs:
+                    raise KeyError(
+                        f'Necessary parameter {nec_param} not '
+                        + 'in kwargs. The necessary parameters'
+                        + f' are: {necessary_params}'
+                        )
+            Q_array = np.asarray(kwargs['Q_array'])
+            P_array = np.asarray(kwargs['P_array'])
+            pl_range = kwargs['pl_range']
+            T_hs_ff_range = kwargs['T_hs_ff_range']
+            T_cons_ff_range = kwargs['T_cons_ff_range']
+        else:
+            for nec_param in necessary_params:
+                if nec_param not in self.__dict__:
+                    raise AttributeError(
+                        f'Necessary parameter {nec_param} can '
+                        + 'not be found in the instances '
+                        + 'attributes. Please make sure to '
+                        + 'perform the offdesign_simulation '
+                        + 'method or provide the necessary '
+                        + 'parameters as kwargs. These are: '
+                        + f'{necessary_params}'
+                        )
+            Q_array = np.asarray(self.Q_array)
+            P_array = np.asarray(self.P_array)
+            pl_range = self.pl_range
+            T_hs_ff_range = self.T_hs_ff_range
+            T_cons_ff_range = self.T_cons_ff_range
+
+        pl_step = 0.01
+        T_hs_ff_step = 1
+        T_cons_ff_step = 1
+
+        pl_fullrange = np.arange(
+            pl_range[0],
+            pl_range[-1]+pl_step,
+            pl_step
+            )
+        T_hs_ff_fullrange = np.arange(
+            T_hs_ff_range[0], T_hs_ff_range[-1]+T_hs_ff_step, T_hs_ff_step
+            )
+        T_cons_ff_fullrange = np.arange(
+            T_cons_ff_range[0], T_cons_ff_range[-1]+T_cons_ff_step,
+            T_cons_ff_step
+            )
+
+        multiindex = pd.MultiIndex.from_product(
+                        [T_hs_ff_fullrange, T_cons_ff_fullrange, pl_fullrange],
+                        names=['T_hs_ff', 'T_cons_ff', 'pl']
+                        )
+
+        partload_char = pd.DataFrame(
+            index=multiindex, columns=['Q', 'P', 'COP']
+            )
+
+        for T_hs_ff in T_hs_ff_fullrange:
+            for T_cons_ff in T_cons_ff_fullrange:
+                for pl in pl_fullrange:
+                    partload_char.loc[(T_hs_ff, T_cons_ff, pl), 'Q'] = abs(
+                        interpn(
+                            (T_hs_ff_range, T_cons_ff_range, pl_range),
+                            Q_array,
+                            (round(T_hs_ff, 3), round(T_cons_ff, 3),
+                             round(pl, 3)),
+                            bounds_error=False
+                            )[0]
+                        )
+                    partload_char.loc[(T_hs_ff, T_cons_ff, pl), 'P'] = interpn(
+                        (T_hs_ff_range, T_cons_ff_range, pl_range),
+                        P_array,
+                        (round(T_hs_ff, 3), round(T_cons_ff, 3), round(pl, 3)),
+                        bounds_error=False
+                        )[0]
+                    partload_char.loc[(T_hs_ff, T_cons_ff, pl), 'COP'] = (
+                        partload_char.loc[(T_hs_ff, T_cons_ff, pl), 'Q']
+                        / partload_char.loc[(T_hs_ff, T_cons_ff, pl), 'P']
+                        )
+
+        return partload_char
+
+    def linearize_partload_char(self, partload_char, variable='P',
+                                line_type='offset', regression_type='OLS',
+                                normalize=None):
+        """
+        Linearize partload characteristic for usage in MILP problems.
+
+        Parameters
+        ----------
+        partload_char : pd.DataFrame
+            DataFrame of the full partload characteristic containing 'Q', 'P'
+            and 'COP' with a MultiIndex of the three variables 'T_hs_ff',
+            'T_cons_ff' and 'pl'.
+
+        variable : str
+            The variable 'x' in the equation 'y = m * x + b'. Either 'P' or 'Q'.
+            Defaults to 'P' if it is not set.
+
+        line_type : str
+            Type of linear model to generate. Options are 'origin' for a line
+            through the origin or 'offset' for mixed integer offset model.
+            Defaults to 'offset' if it is not set.
+
+        regression_type : str
+            Type of regression method to use for linearization of the partload
+            characteristic. Options are 'OLS' for the method of ordinary least
+            squares or 'MinMax' for a line from the minimum to the maximum
+            value.
+            Defaults to 'OLS' if it is not set.
+
+        normalize : dict
+            Dictionairy containing the keys 'T_hs_ff' and 'T_cons_ff'. These
+            values are interpreted as the nominal operating temperatures. All
+            linear parameters are normalized to the chosen variable at this
+            operating point.
+            Defaults to None and therefore no normalization if it is not set.
+        """
+        cols = [f'{variable}_max', f'{variable}_min']
+        if line_type == 'origin':
+            cols += ['COP']
+        elif line_type == 'offset':
+            cols += ['c_1', 'c_0']
+
+        T_hs_ff_range = set(
+            partload_char.index.get_level_values('T_hs_ff')
+            )
+        T_cons_ff_range = set(
+            partload_char.index.get_level_values('T_cons_ff')
+            )
+
+        multiindex = pd.MultiIndex.from_product(
+            [T_hs_ff_range, T_cons_ff_range],
+            names=['T_hs_ff', 'T_cons_ff']
+            )
+        linear_model = pd.DataFrame(index=multiindex, columns=cols)
+
+        if variable == 'P':
+            resp_variable = 'Q'
+        elif variable == 'Q':
+            resp_variable = 'P'
+        else:
+            raise ValueError(
+                f"Argument {variable} for parameter 'variable' is not valid."
+                + "Choose either 'P' or 'Q'."
+                )
+
+        for T_hs_ff in T_hs_ff_range:
+            for T_cons_ff in T_cons_ff_range:
+                idx = (T_hs_ff, T_cons_ff)
+                linear_model.loc[idx, f'{variable}_max'] = (
+                    partload_char.loc[idx, variable].max()
+                    )
+                linear_model.loc[idx, f'{variable}_min'] = (
+                    partload_char.loc[idx, variable].min()
+                    )
+                if regression_type == 'MinMax':
+                    if line_type == 'origin':
+                        linear_model.loc[idx, 'COP'] = (
+                            partload_char.loc[idx, 'Q'].max()
+                            / partload_char.loc[idx, 'P'].max()
+                            )
+                    elif line_type == 'offset':
+                        linear_model.loc[idx, 'c_1'] = (
+                            (partload_char.loc[idx, 'Q'].max()
+                             - partload_char.loc[idx, 'Q'].min())
+                            / (partload_char.loc[idx, 'P'].max()
+                               - partload_char.loc[idx, 'P'].min())
+                            )
+                        linear_model.loc[idx, 'c_0'] = (
+                            partload_char.loc[idx, 'Q'].max()
+                            - partload_char.loc[idx, 'P'].max()
+                            * linear_model.loc[idx, 'c_1']
+                            )
+                elif regression_type == 'OLS':
+                    regressor = partload_char.loc[idx, variable].to_numpy()
+                    regressor = regressor.reshape(-1, 1)
+                    response = partload_char.loc[idx, resp_variable].to_numpy()
+                    if line_type == 'origin':
+                        LinReg = LinearRegression(fit_intercept=False).fit(
+                            regressor, response
+                            )
+                        linear_model.loc[idx, 'COP'] = LinReg.coef_[0]
+                    elif line_type == 'offset':
+                        LinReg = LinearRegression().fit(regressor, response)
+                        linear_model.loc[idx, 'c_1'] = LinReg.coef_[0]
+                        linear_model.loc[idx, 'c_0'] = LinReg.intercept_
+
+        if normalize:
+            variable_nom = partload_char.loc[
+                (np.round(normalize['T_hs_ff'], 3),
+                 np.round(normalize['T_cons_ff'], 3)),
+                variable
+                ].max()
+
+            linear_model[f'{variable}_max'] /= variable_nom
+            linear_model[f'{variable}_min'] /= variable_nom
+            if line_type == 'offset':
+                linear_model['c_0'] /= variable_nom
+                linear_model['c_1'] /= variable_nom
+
+        return linear_model
+
+    def arrange_char_timeseries(self, linear_model, temp_ts):
+        """
+        Arrange a timeseries of the characteristics based on temperature data.
+
+        If T_cons_ff in temperature timeseries is out of bounds, the closest
+        characteristic (min. or max. temperature).
+
+        Parameters
+        ----------
+        linear_model : pd.DataFrame
+            DataFrame of the linearized partload characteristic with a
+            MultiIndex of the three variables 'T_hs_ff' and 'T_cons_ff'.
+
+        temp_ts : pd.DataFrame
+            Timeseries of 'T_hs_ff' and 'T_cons_ff' as they occur in the period
+            observed.
+        """
+        char_ts = pd.DataFrame(
+            index=temp_ts.index, columns=linear_model.columns
+            )
+        for i in temp_ts.index:
+            try:
+                char_ts.loc[i, :] = linear_model.loc[
+                    (temp_ts.loc[i, 'T_hs_ff'], temp_ts.loc[i, 'T_cons_ff']), :
+                    ]
+            except KeyError:
+                print(temp_ts.loc[i, 'T_cons_ff'], 'not in linear_model.')
+                T_cons_ff_range = linear_model.index.get_level_values('T_cons_ff')
+                if temp_ts.loc[i, 'T_cons_ff'] < min(T_cons_ff_range):
+                    multi_idx = (
+                        temp_ts.loc[i, 'T_hs_ff'], min(T_cons_ff_range)
+                        )
+                elif temp_ts.loc[i, 'T_cons_ff'] > max(T_cons_ff_range):
+                    multi_idx = (
+                        temp_ts.loc[i, 'T_hs_ff'], max(T_cons_ff_range)
+                        )
+                char_ts.loc[i, :] = linear_model.loc[multi_idx, :]
+
+        return char_ts
+
+    def validate_dir(self):
+        """Check for a 'stable' directory and create it if necessary."""
+        if not os.path.exists(os.path.join(__file__, '..', 'stable')):
+            os.mkdir(os.path.join(__file__, '..', 'stable'))
+        if not os.path.exists(os.path.join(__file__, '..', 'output')):
+            os.mkdir(os.path.join(__file__, '..', 'output'))

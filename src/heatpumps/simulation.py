@@ -4,31 +4,26 @@ Created on Thu Jun  2 12:49:42 2022
 
 @author: Jonas Freißmann
 """
+import variables as var
 
-from heatpump import HeatpumpSingleStage, HeatpumpDualStage
 
-
-def run_design(param, nr_cycles):
+def run_design(hp_model_name, params):
     """Run TESPy design simulation of heat pump."""
-    if nr_cycles == 1:
-        hp = HeatpumpSingleStage(param)
-    elif nr_cycles == 2:
-        hp = HeatpumpDualStage(param)
+    if 'econ' in hp_model_name:
+        hp = var.hp_model_classes[hp_model_name](
+            params, econ_type=var.hp_models[hp_model_name]['econ_type']
+            )
+    else:
+        hp = var.hp_model_classes[hp_model_name](params)
 
-    hp.init_simulation()
-    hp.design_simulation()
+    hp.run_model()
 
     return hp
 
 
-def run_partload(hp, param, save_results=False):
+def run_partload(hp):
     """Run TESPy offdesign simulation of heat pump."""
-    param['offdesign']['save_results'] = save_results
-    hp.param = param
     hp.offdesign_simulation()
     partload_char = hp.calc_partload_char()
-
-    if save_results:
-        partload_char.to_csv('partload_char.csv', sep=';')
 
     return hp, partload_char
