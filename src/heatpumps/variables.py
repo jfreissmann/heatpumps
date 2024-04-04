@@ -1,3 +1,8 @@
+from models import (HeatPumpCascade, HeatPumpCascade2IHX, HeatPumpEcon,
+                    HeatPumpEconIHX, HeatPumpFlash, HeatPumpIC, HeatPumpIHX,
+                    HeatPumpIHXEcon, HeatPumpPC, HeatPumpPC2IHX, HeatPumpPCIHX,
+                    HeatPumpSimple)
+
 # %% Important variables for the heat pump dashboard
 
 # %% Model parameters
@@ -172,6 +177,27 @@ hp_models = {
         'nr_cycles': 2,
         'process_type': 'subcritical'
         }
+    }
+
+hp_model_classes = {
+    'simple': HeatPumpSimple.HeatPumpSimple,
+    'ihx': HeatPumpIHX.HeatPumpIHX,
+    'ic': HeatPumpIC.HeatPumpIC,
+    'econ_closed': HeatPumpEcon.HeatPumpEcon,
+    'econ_closed_ihx': HeatPumpEconIHX.HeatPumpEconIHX,
+    'ihx_econ_closed': HeatPumpIHXEcon.HeatPumpIHXEcon,
+    'econ_open': HeatPumpEcon.HeatPumpEcon,
+    'econ_open_ihx': HeatPumpEconIHX.HeatPumpEconIHX,
+    'ihx_econ_open': HeatPumpIHXEcon.HeatPumpIHXEcon,
+    'pc_econ_closed': HeatPumpPC.HeatPumpPC,
+    'pc_econ_closed_ihx': HeatPumpPCIHX.HeatPumpPCIHX,
+    'pc_econ_closed_2ihx': HeatPumpPC2IHX.HeatPumpPC2IHX,
+    'pc_econ_open': HeatPumpPC.HeatPumpPC,
+    'pc_econ_open_ihx': HeatPumpPCIHX.HeatPumpPCIHX,
+    'pc_econ_open_2ihx': HeatPumpPC2IHX.HeatPumpPC2IHX,
+    'flash': HeatPumpFlash.HeatPumpFlash,
+    'cascade': HeatPumpCascade.HeatPumpCascade,
+    'cascade_2ihx': HeatPumpCascade2IHX
     }
 
 # %% Misc

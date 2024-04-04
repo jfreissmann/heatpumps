@@ -4,19 +4,19 @@ Created on Thu Jun  2 12:49:42 2022
 
 @author: Jonas Freißmann
 """
+import variables as var
 
-from heatpump import HeatpumpSingleStage, HeatpumpDualStage
 
-
-def run_design(param, nr_cycles):
+def run_design(hp_model_name, param):
     """Run TESPy design simulation of heat pump."""
-    if nr_cycles == 1:
-        hp = HeatpumpSingleStage(param)
-    elif nr_cycles == 2:
-        hp = HeatpumpDualStage(param)
+    if 'econ' in hp_model_name:
+        hp = var.hp_model_classes[hp_model_name](
+            param, econ_type=var.hp_models[hp_model_name]['econ_type']
+            )
+    else:
+        hp = var.hp_model_classes[hp_model_name](param)
 
-    hp.init_simulation()
-    hp.design_simulation()
+    hp.run_model()
 
     return hp
 

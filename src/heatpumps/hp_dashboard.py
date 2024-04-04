@@ -44,7 +44,8 @@ root_path = os.path.abspath(__file__)
 src_path = os.path.join(root_path, '..', 'src')
 
 # %% Initialisation
-with open(os.path.join(src_path, 'refrigerants.json'), 'r') as file:
+refrigpath = os.path.join(src_path, 'refrigerants.json')
+with open(refrigpath, 'r', encoding='utf-8') as file:
     refrigerants = json.load(file)
 
 st.set_page_config(
@@ -80,10 +81,14 @@ with st.sidebar:
             model_name = st.selectbox(
                 'Wärmepumpenmodell', models, index=0, key='model'
             )
+
             for model, mdata in var.hp_models.items():
-                if mdata['display_name'] == model_name:
+                correct_base = mdata['base_topology'] == base_topology
+                correct_model_name = mdata['display_name'] == model_name
+                if correct_base and correct_model_name:
                     hp_model = mdata
                     hp_model_name = model
+                    break
 
             parampath = os.path.join(
                 __file__, '..', 'models', 'input',
@@ -471,7 +476,7 @@ if mode == 'Auslegung':
     if run_sim:
         # %% Run Design Simulation
         with st.spinner('Simulation wird durchgeführt...'):
-            st.session_state.hp = run_design(param, nr_cycles)
+            st.session_state.hp = run_design(hp_model_name, param)
 
             st.success(
                 'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
