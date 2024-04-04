@@ -5,7 +5,7 @@ Steady-state simulation of design and partload operation of a wide collection of
 ## Key Features
 
   - Steady-state simulation of design and partload operation based on [TESPy](https://github.com/oemof/tespy)
-  - Parametrisation and result visualisation through a [StreamLit](https://github.com/streamlit/streamlit) dashboard
+  - Parametrization and result visualisation through a [Streamlit](https://github.com/streamlit/streamlit) dashboard
   - Industry standard, as well as topologies still in research and developement, supported
   - Sub- and transcritical processes
   - Wide variety of refrigerants due to the integration of [CoolProp](https://github.com/CoolProp/CoolProp)
