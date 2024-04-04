@@ -7,7 +7,7 @@ import pandas as pd
 from tespy.components import (Compressor, Condenser, CycleCloser, Drum,
                               HeatExchanger, HeatExchangerSimple, Pump, Sink,
                               Source, Valve)
-from tespy.connections import Bus, Connection+
+from tespy.connections import Bus, Connection
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
 
