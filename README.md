@@ -1,6 +1,6 @@
 # heatpumps
 
-Steady-state simulation of design and partload operation of generically configurable heat pump topologies.
+Steady-state simulation of design and partload operation of a wide collection of heat pump topologies.
 
 ## Key Features
 
