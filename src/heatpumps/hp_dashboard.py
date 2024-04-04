@@ -810,34 +810,39 @@ if mode == 'Teillast':
             with st.expander('Diagramme', expanded=True):
                 col_left, col_right = st.columns(2)
 
-                with col_left:
-                    figs, axes = st.session_state.hp.plot_partload_char(
-                        st.session_state.partload_char, cmap_type='COP',
-                        return_fig_ax=True
-                        )
-                    pl_cop_placeholder = st.empty()
-                    T_select_cop = st.select_slider(
-                        'Quellentemperatur',
-                        options=[k for k in figs.keys()],
-                        value=float(np.median(
-                            [k for k in figs.keys()]
-                            )),
-                        key='pl_cop_slider'
-                        )
-                    pl_cop_placeholder.pyplot(figs[T_select_cop])
+                try:
+                    with col_left:
+                        figs, axes = st.session_state.hp.plot_partload_char(
+                            st.session_state.partload_char, cmap_type='COP',
+                            return_fig_ax=True
+                            )
+                        pl_cop_placeholder = st.empty()
+                        T_select_cop = st.select_slider(
+                            'Quellentemperatur',
+                            options=[k for k in figs.keys()],
+                            value=float(np.median(
+                                [k for k in figs.keys()]
+                                )),
+                            key='pl_cop_slider'
+                            )
+                        pl_cop_placeholder.pyplot(figs[T_select_cop])
 
-                with col_right:
-                    figs, axes = st.session_state.hp.plot_partload_char(
-                        st.session_state.partload_char, cmap_type='T_cons_ff',
-                        return_fig_ax=True
-                        )
-                    pl_T_cons_ff_placeholder = st.empty()
-                    T_select_T_cons_ff = st.select_slider(
-                        'Quellentemperatur',
-                        options=[k for k in figs.keys()],
-                        value=float(np.median(
-                            [k for k in figs.keys()]
-                            )),
-                        key='pl_T_cons_ff_slider'
-                         )
-                    pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
+                    with col_right:
+                        figs, axes = st.session_state.hp.plot_partload_char(
+                            st.session_state.partload_char, cmap_type='T_cons_ff',
+                            return_fig_ax=True
+                            )
+                        pl_T_cons_ff_placeholder = st.empty()
+                        T_select_T_cons_ff = st.select_slider(
+                            'Quellentemperatur',
+                            options=[k for k in figs.keys()],
+                            value=float(np.median(
+                                [k for k in figs.keys()]
+                                )),
+                            key='pl_T_cons_ff_slider'
+                            )
+                        pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
+                except AttributeError:
+                    # TODO: `plot_partload_char` Methode aus generischer Klasse
+                    #       aufräumen und in HeatPumpBase implementieren.
+                    st.warning('Teillastdiagramme aktuell nicht implementiert.')
