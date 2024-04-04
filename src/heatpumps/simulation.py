@@ -7,14 +7,14 @@ Created on Thu Jun  2 12:49:42 2022
 import variables as var
 
 
-def run_design(hp_model_name, param):
+def run_design(hp_model_name, params):
     """Run TESPy design simulation of heat pump."""
     if 'econ' in hp_model_name:
         hp = var.hp_model_classes[hp_model_name](
-            param, econ_type=var.hp_models[hp_model_name]['econ_type']
+            params, econ_type=var.hp_models[hp_model_name]['econ_type']
             )
     else:
-        hp = var.hp_model_classes[hp_model_name](param)
+        hp = var.hp_model_classes[hp_model_name](params)
 
     hp.run_model()
 

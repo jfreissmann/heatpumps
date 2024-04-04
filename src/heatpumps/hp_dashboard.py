@@ -95,7 +95,7 @@ with st.sidebar:
                 f'params_hp_{hp_model_name}.json'
             )
             with open(parampath, 'r', encoding='utf-8') as file:
-                param = json.load(file)
+                params = json.load(file)
 
         if hp_model['nr_ihx'] > 0:
             with st.expander('Interne Wärmerübertragung'):
@@ -110,10 +110,10 @@ with st.sidebar:
             if hp_model['nr_cycles'] == 1:
                 refrig_index = None
                 for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
-                    if rlabel == param['setup']['refrig']:
+                    if rlabel == params['setup']['refrig']:
                         refrig_index = ridx
                         break
-                    elif rdata['CP'] == param['setup']['refrig']:
+                    elif rdata['CP'] == params['setup']['refrig']:
                         refrig_index = ridx
                         break
 
@@ -121,17 +121,17 @@ with st.sidebar:
                     '', refrigerants.keys(), index=refrig_index,
                     key='refrigerant'
                     )
-                param['setup']['refrig'] = refrigerants[refrig_label]['CP']
-                param['fluids']['wf'] = refrigerants[refrig_label]['CP']
+                params['setup']['refrig'] = refrigerants[refrig_label]['CP']
+                params['fluids']['wf'] = refrigerants[refrig_label]['CP']
                 df_refrig = info_df(refrig_label, refrigerants)
 
             elif hp_model['nr_cycles'] == 2:
                 refrig1_index = None
                 for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
-                    if rlabel == param['setup']['refrig1']:
+                    if rlabel == params['setup']['refrig1']:
                         refrig1_index = ridx
                         break
-                    elif rdata['CP'] == param['setup']['refrig1']:
+                    elif rdata['CP'] == params['setup']['refrig1']:
                         refrig1_index = ridx
                         break
 
@@ -139,15 +139,15 @@ with st.sidebar:
                     '1. Kältemittel', refrigerants.keys(),
                     index=refrig1_index, key='refrigerant1'
                     )
-                param['setup']['refrig1'] = refrigerants[refrig1_label]['CP']
-                param['fluids']['wf1'] = refrigerants[refrig1_label]['CP']
+                params['setup']['refrig1'] = refrigerants[refrig1_label]['CP']
+                params['fluids']['wf1'] = refrigerants[refrig1_label]['CP']
 
                 refrig2_index = None
                 for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
-                    if rlabel == param['setup']['refrig2']:
+                    if rlabel == params['setup']['refrig2']:
                         refrig2_index = ridx
                         break
-                    elif rdata['CP'] == param['setup']['refrig2']:
+                    elif rdata['CP'] == params['setup']['refrig2']:
                         refrig2_index = ridx
                         break
 
@@ -156,8 +156,8 @@ with st.sidebar:
                     '2. Kältemittel', refrigerants.keys(),
                     index=refrig2_index, key='refrigerant2'
                     )
-                param['setup']['refrig2'] = refrigerants[refrig2_label]['CP']
-                param['fluids']['wf2'] = refrigerants[refrig2_label]['CP']
+                params['setup']['refrig2'] = refrigerants[refrig2_label]['CP']
+                params['fluids']['wf2'] = refrigerants[refrig2_label]['CP']
 
         if hp_model['nr_cycles'] == 1:
             T_crit = int(np.floor(refrigerants[refrig_label]['T_crit']))
@@ -167,31 +167,31 @@ with st.sidebar:
         st.session_state.T_crit = T_crit
 
         with st.expander('Thermische Nennleistung'):
-            param['cons']['Q'] = st.number_input(
-                'Wert in MW', value=abs(param['cons']['Q']/1e6),
+            params['cons']['Q'] = st.number_input(
+                'Wert in MW', value=abs(params['cons']['Q']/1e6),
                 step=0.1, key='Q_N'
                 )
-            param['cons']['Q'] *= -1e6
+            params['cons']['Q'] *= -1e6
 
         with st.expander('Wärmequelle'):
-            param['B1']['T'] = st.slider(
+            params['B1']['T'] = st.slider(
                 'Temperatur Vorlauf', min_value=0, max_value=T_crit,
-                value=param['B1']['T'], format='%d°C', key='T_heatsource_ff'
+                value=params['B1']['T'], format='%d°C', key='T_heatsource_ff'
                 )
-            param['B2']['T'] = st.slider(
+            params['B2']['T'] = st.slider(
                 'Temperatur Rücklauf', min_value=0, max_value=T_crit,
-                value=param['B2']['T'], format='%d°C', key='T_heatsource_bf'
+                value=params['B2']['T'], format='%d°C', key='T_heatsource_bf'
                 )
 
-            invalid_temp_diff = param['B2']['T'] >= param['B1']['T']
+            invalid_temp_diff = params['B2']['T'] >= params['B1']['T']
             if invalid_temp_diff:
                 st.error(
                     'Die Rücklauftemperatur muss niedriger sein, als die '
                     + 'Vorlauftemperatur.'
                     )
-            param['B1']['p'] = st.slider(
+            params['B1']['p'] = st.slider(
                 'Druck', min_value=1.0, max_value=20.0,
-                value=float(param['B1']['p']), step=0.1, format='%f bar',
+                value=float(params['B1']['p']), step=0.1, format='%f bar',
                 key='p_heatsource_ff'
                 )
 
@@ -207,34 +207,34 @@ with st.sidebar:
         #             )
 
         with st.expander('Wärmesenke'):
-            param['C3']['T'] = st.slider(
+            params['C3']['T'] = st.slider(
                 'Temperatur Vorlauf', min_value=0, max_value=T_crit,
-                value=param['C3']['T'], format='%d°C', key='T_consumer_ff'
+                value=params['C3']['T'], format='%d°C', key='T_consumer_ff'
                 )
-            param['C0']['T'] = st.slider(
+            params['C0']['T'] = st.slider(
                 'Temperatur Rücklauf', min_value=0, max_value=T_crit,
-                value=param['C0']['T'], format='%d°C', key='T_consumer_bf'
+                value=params['C0']['T'], format='%d°C', key='T_consumer_bf'
                 )
 
-            invalid_temp_diff = param['C0']['T'] >= param['C3']['T']
+            invalid_temp_diff = params['C0']['T'] >= params['C3']['T']
             if invalid_temp_diff:
                 st.error(
                     'Die Rücklauftemperatur muss niedriger sein, als die '
                     + 'Vorlauftemperatur.'
                     )
-            invalid_temp_diff = param['C0']['T'] <= param['B1']['T']
+            invalid_temp_diff = params['C0']['T'] <= params['B1']['T']
             if invalid_temp_diff:
                 st.error(
                     'Die Temperatur der Wärmesenke muss höher sein, als die '
                     + 'der Wärmequelle.'
                     )
-            param['C3']['p'] = st.slider(
+            params['C3']['p'] = st.slider(
                 'Druck', min_value=1.0, max_value=20.0,
-                value=float(param['C3']['p']), step=0.1, format='%f bar',
+                value=float(params['C3']['p']), step=0.1, format='%f bar',
                 key='p_consumer_ff'
                 )
 
-        st.session_state.hp_param = param
+        st.session_state.hp_params = params
 
         run_sim = st.button('🧮 Auslegung ausführen')
         # run_sim = True
@@ -242,23 +242,23 @@ with st.sidebar:
 
     # %% Offdesign
     if mode == 'Teillast':
-        param = st.session_state.hp_param
+        params = st.session_state.hp_params
         st.header('Teillastsimulation der Wärmepumpe')
 
         with st.expander('Teillast'):
-            (param['offdesign']['partload_min'],
-             param['offdesign']['partload_max']) = st.slider(
+            (params['offdesign']['partload_min'],
+             params['offdesign']['partload_max']) = st.slider(
                 'Bezogen auf Nennmassenstrom',
                 min_value=0, max_value=120, step=5,
                 value=(30, 100), format='%d%%', key='pl_slider'
                 )
 
-            param['offdesign']['partload_min'] /= 100
-            param['offdesign']['partload_max'] /= 100
+            params['offdesign']['partload_min'] /= 100
+            params['offdesign']['partload_max'] /= 100
 
-            param['offdesign']['partload_steps'] = int(np.ceil(
-                    (param['offdesign']['partload_max']
-                     - param['offdesign']['partload_min'])
+            params['offdesign']['partload_steps'] = int(np.ceil(
+                    (params['offdesign']['partload_max']
+                     - params['offdesign']['partload_min'])
                     / 0.1
                     ) + 1)
 
@@ -268,43 +268,43 @@ with st.sidebar:
                 key='temp_hs'
                 )
             if type_hs == 'Konstant':
-                param['offdesign']['T_hs_ff_start'] = (
-                    st.session_state.hp.param['design']['T_heatsource_ff']
+                params['offdesign']['T_hs_ff_start'] = (
+                    st.session_state.hp.params['design']['T_heatsource_ff']
                     )
-                param['offdesign']['T_hs_ff_end'] = (
-                    param['offdesign']['T_hs_ff_start'] + 1
+                params['offdesign']['T_hs_ff_end'] = (
+                    params['offdesign']['T_hs_ff_start'] + 1
                     )
-                param['offdesign']['T_hs_ff_steps'] = 1
+                params['offdesign']['T_hs_ff_steps'] = 1
 
                 text = (
                     f'Temperatur <p style="color:{var.st_color_hex}">'
-                    + f'{param["offdesign"]["T_hs_ff_start"]} °C'
+                    + f'{params["offdesign"]["T_hs_ff_start"]} °C'
                     + r'</p>'
                     )
                 st.markdown(text, unsafe_allow_html=True)
 
             elif type_hs == 'Variabel':
-                param['offdesign']['T_hs_ff_start'] = st.slider(
+                params['offdesign']['T_hs_ff_start'] = st.slider(
                     'Starttemperatur',
                     min_value=0, max_value=st.session_state.T_crit, step=1,
                     value=int(
-                        st.session_state.hp.param['design']['T_heatsource_ff']
+                        st.session_state.hp.params['design']['T_heatsource_ff']
                         - 5
                         ),
                     format='%d°C', key='T_hs_ff_start_slider'
                     )
-                param['offdesign']['T_hs_ff_end'] = st.slider(
+                params['offdesign']['T_hs_ff_end'] = st.slider(
                     'Endtemperatur',
                     min_value=0, max_value=st.session_state.T_crit, step=1,
                     value=int(
-                        st.session_state.hp.param['design']['T_heatsource_ff']
+                        st.session_state.hp.params['design']['T_heatsource_ff']
                         + 5
                         ),
                     format='%d°C', key='T_hs_ff_end_slider'
                     )
-                param['offdesign']['T_hs_ff_steps'] = int(np.ceil(
-                    (param['offdesign']['T_hs_ff_end']
-                     - param['offdesign']['T_hs_ff_start'])
+                params['offdesign']['T_hs_ff_steps'] = int(np.ceil(
+                    (params['offdesign']['T_hs_ff_end']
+                     - params['offdesign']['T_hs_ff_start'])
                     / 3
                     ) + 1)
 
@@ -314,47 +314,47 @@ with st.sidebar:
                 key='temp_cons'
                 )
             if type_cons == 'Konstant':
-                param['offdesign']['T_cons_ff_start'] = (
-                    st.session_state.hp.param['design']['T_consumer_ff']
+                params['offdesign']['T_cons_ff_start'] = (
+                    st.session_state.hp.params['design']['T_consumer_ff']
                     )
-                param['offdesign']['T_cons_ff_end'] = (
-                    param['offdesign']['T_cons_ff_start'] + 1
+                params['offdesign']['T_cons_ff_end'] = (
+                    params['offdesign']['T_cons_ff_start'] + 1
                     )
-                param['offdesign']['T_cons_ff_steps'] = 1
+                params['offdesign']['T_cons_ff_steps'] = 1
 
                 text = (
                     f'Temperatur <p style="color:{var.st_color_hex}">'
-                    + f'{param["offdesign"]["T_cons_ff_start"]} °C'
+                    + f'{params["offdesign"]["T_cons_ff_start"]} °C'
                     + r'</p>'
                     )
                 st.markdown(text, unsafe_allow_html=True)
 
             elif type_cons == 'Variabel':
-                param['offdesign']['T_cons_ff_start'] = st.slider(
+                params['offdesign']['T_cons_ff_start'] = st.slider(
                     'Starttemperatur',
                     min_value=0, max_value=st.session_state.T_crit, step=1,
                     value=int(
-                        st.session_state.hp.param['design']['T_consumer_ff']
+                        st.session_state.hp.params['design']['T_consumer_ff']
                         - 10
                         ),
                     format='%d°C', key='T_cons_ff_start_slider'
                     )
-                param['offdesign']['T_cons_ff_end'] = st.slider(
+                params['offdesign']['T_cons_ff_end'] = st.slider(
                     'Endtemperatur',
                     min_value=0, max_value=st.session_state.T_crit, step=1,
                     value=int(
-                        st.session_state.hp.param['design']['T_consumer_ff']
+                        st.session_state.hp.params['design']['T_consumer_ff']
                         + 10
                         ),
                     format='%d°C', key='T_cons_ff_end_slider'
                     )
-                param['offdesign']['T_cons_ff_steps'] = int(np.ceil(
-                    (param['offdesign']['T_cons_ff_end']
-                     - param['offdesign']['T_cons_ff_start'])
+                params['offdesign']['T_cons_ff_steps'] = int(np.ceil(
+                    (params['offdesign']['T_cons_ff_end']
+                     - params['offdesign']['T_cons_ff_start'])
                     / 3
                     ) + 1)
 
-        st.session_state.hp_param = param
+        st.session_state.hp_params = params
         run_pl_sim = st.button('🧮 Teillast simulieren')
 
 # %% Main Content
@@ -476,7 +476,7 @@ if mode == 'Auslegung':
     if run_sim:
         # %% Run Design Simulation
         with st.spinner('Simulation wird durchgeführt...'):
-            st.session_state.hp = run_design(hp_model_name, param)
+            st.session_state.hp = run_design(hp_model_name, params)
 
             st.success(
                 'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
@@ -486,11 +486,12 @@ if mode == 'Auslegung':
         # %% Results
         with st.spinner('Ergebnisse werden visualisiert...'):
 
-            with open(os.path.join(src_path, 'state_diagram_config.json'), 'r') as file:
+            stateconfigpath = os.path.join(src_path, 'state_diagram_config.json')
+            with open(stateconfigpath, 'r', encoding='utf-8') as file:
                 config = json.load(file)
-            if st.session_state.hp.param['design']['refrigerant'] in config:
+            if st.session_state.hp.params['setup']['refrig'] in config:
                 state_props = config[
-                    st.session_state.hp.param['design']['refrigerant']
+                    st.session_state.hp.params['setup']['refrig']
                     ]
             else:
                 state_props = config['MISC']
@@ -501,11 +502,11 @@ if mode == 'Auslegung':
             col1.metric('COP', round(st.session_state.hp.cop, 2))
             col2.metric(
                 'Q_dot_ab',
-                f'{st.session_state.hp.busses["heat"].P.val*-1e-6:.2f} MW'
+                f'{st.session_state.hp.buses["heat"].P.val*-1e-6:.2f} MW'
                 )
             col3.metric(
                 'P_zu',
-                f'{st.session_state.hp.busses["power"].P.val/1e6:.2f} MW'
+                f'{st.session_state.hp.buses["power"].P.val/1e6:.2f} MW'
                 )
             Q_dot_zu = abs(
                 st.session_state.hp.components["Evaporator 1"].Q.val/1e6
@@ -670,7 +671,7 @@ if mode == 'Auslegung':
                 state_quantities['water'] = state_quantities['water'].apply(
                     lambda x: bool(x)
                     )
-                refrig = st.session_state.hp.param['design']['refrigerant']
+                refrig = st.session_state.hp.params['design']['refrigerant']
                 state_quantities[refrig] = state_quantities[refrig].apply(
                     lambda x: bool(x)
                     )
@@ -708,7 +709,7 @@ if mode == 'Auslegung':
                     # werden können
                     top_file = os.path.join(src_path, 'img', 'topologies', 'hp')
                     if hp_model['nr_cycles'] == 1:
-                        if param['design']['int_heatex']:
+                        if params['design']['int_heatex']:
                             top_file = os.path.join(top_file, '_ih.png')
                         # elif param['design']['intercooler']:
                         #     top_file = os.path.join(top_file, '_ic.png')
@@ -765,7 +766,7 @@ if mode == 'Teillast':
                 + 'Weile dauern.'
                 ):
             st.session_state.hp, st.session_state.partload_char = (
-                run_partload(st.session_state.hp, param, save_results=True)
+                run_partload(st.session_state.hp, params, save_results=True)
                 )
             # st.session_state.partload_char = pd.read_csv(
             #     'partload_char.csv', index_col=[0, 1, 2], sep=';'

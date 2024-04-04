@@ -150,7 +150,7 @@ class HeatPumpPC2IHX(HeatPumpBase):
 
         self.nw.add_conns(*[conn for conn in self.conns.values()])
 
-        # Busses
+        # Buses
         mot_x = np.array([
             0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55,
             0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1, 1.15,
@@ -163,26 +163,26 @@ class HeatPumpPC2IHX(HeatPumpBase):
             0.9644
             ]) * 0.98)
         mot = CharLine(x=mot_x, y=mot_y)
-        self.busses['power input'] = Bus('power input')
-        self.busses['power input'].add_comps(
+        self.buses['power input'] = Bus('power input')
+        self.buses['power input'].add_comps(
             {'comp': self.comps['comp1'], 'char': mot, 'base': 'bus'},
             {'comp': self.comps['comp2'], 'char': mot, 'base': 'bus'},
             {'comp': self.comps['hs_pump'], 'char': mot, 'base': 'bus'},
             {'comp': self.comps['cons_pump'], 'char': mot, 'base': 'bus'}
             )
 
-        self.busses['heat input'] = Bus('heat input')
-        self.busses['heat input'].add_comps(
+        self.buses['heat input'] = Bus('heat input')
+        self.buses['heat input'].add_comps(
             {'comp': self.comps['hs_ff'], 'base': 'bus'},
             {'comp': self.comps['hs_bf'], 'base': 'component'}
             )
 
-        self.busses['heat output'] = Bus('heat output')
-        self.busses['heat output'].add_comps(
+        self.buses['heat output'] = Bus('heat output')
+        self.buses['heat output'].add_comps(
             {'comp': self.comps['cons'], 'base': 'component'}
             )
 
-        self.nw.add_busses(*[bus for bus in self.busses.values()])
+        self.nw.add_busses(*[bus for bus in self.buses.values()])
 
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
@@ -289,8 +289,8 @@ class HeatPumpPC2IHX(HeatPumpBase):
         self.m_design = self.conns['A0'].m.val
 
         self.cop = (
-            abs(self.busses['heat output'].P.val)
-            / self.busses['power input'].P.val
+            abs(self.buses['heat output'].P.val)
+            / self.buses['power input'].P.val
             )
 
     def offdesign_simulation(self, log_simulations=False):
@@ -471,10 +471,10 @@ class HeatPumpPC2IHX(HeatPumpBase):
                                 results_offdesign.loc[idx, 'P'] = np.nan
                             else:
                                 results_offdesign.loc[idx, 'Q'] = abs(
-                                    self.busses['heat output'].P.val * 1e-6
+                                    self.buses['heat output'].P.val * 1e-6
                                     )
                                 results_offdesign.loc[idx, 'P'] = (
-                                    self.busses['power input'].P.val * 1e-6
+                                    self.buses['power input'].P.val * 1e-6
                                     )
 
                             results_offdesign.loc[idx, 'COP'] = (

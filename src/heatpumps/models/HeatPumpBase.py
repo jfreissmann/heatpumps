@@ -30,7 +30,7 @@ class HeatPumpBase:
 
         self.comps = dict()
         self.conns = dict()
-        self.busses = dict()
+        self.buses = dict()
 
         self.nw = Network(
             fluids=[fluid for fluid in self.fluid_vec_wf],
@@ -55,7 +55,7 @@ class HeatPumpBase:
         """Initialize components of heat pump."""
 
     def generate_connections(self):
-        """Initialize and add connections and busses to network."""
+        """Initialize and add connections and buses to network."""
 
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
@@ -69,8 +69,8 @@ class HeatPumpBase:
             self.nw.set_attr(iterinfo=kwargs['iterinfo'])
         self.nw.solve('design')
         self.cop = (
-            abs(self.busses['heat output'].P.val)
-            / self.busses['power input'].P.val
+            abs(self.buses['heat output'].P.val)
+            / self.buses['power input'].P.val
             )
 
         if 'print_results' in kwargs:
@@ -263,8 +263,8 @@ class HeatPumpBase:
         """Perform exergy analysis."""
         self.ean = ExergyAnalysis(
             self.nw,
-            E_F=[self.busses['power input'], self.busses['heat input']],
-            E_P=[self.busses['heat output']]
+            E_F=[self.buses['power input'], self.buses['heat input']],
+            E_P=[self.buses['heat output']]
             )
         self.ean.analyse(
             pamb=self.params['ambient']['p'], Tamb=self.params['ambient']['T']
