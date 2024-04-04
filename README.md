@@ -8,11 +8,32 @@ Steady-state simulation of design and partload operation of a wide collection of
   - Parametrisation and result visualisation through a [StreamLit](https://github.com/streamlit/streamlit) dashboard
   - Industry standard, as well as topologies still in research and developement, supported
   - Sub- and transcritical processes
-  - Wide variety of refrigerant due to the integration of [CoolProp](https://github.com/CoolProp/CoolProp)
+  - Wide variety of refrigerants due to the integration of [CoolProp](https://github.com/CoolProp/CoolProp)
 
 ## Installation
 
-For now, only direct download from the [GitHub Repository](https://github.com/jfreissmann/heatpumps) is supported.
+For now, only direct download from the [GitHub Repository](https://github.com/jfreissmann/heatpumps) is supported, so just clone it locally or download a ZIP file of the code. To use the heat pump model classes or visualization dashboard, the necessary dependencies have to be installed from the `requirements.txt` file. In a clean environment from the root directory the installation from this file could look like this:
+
+```
+conda create -n my_new_env python=3.11
+```
+
+```
+conda activate my_new_env
+```
+
+```
+python -m pip install -r requirements.txt
+```
+
+## Run the dashboard
+
+Running the heat pump dashboard is as easy as running the following command from the root directory in your virtual environment with dependencies installed:
+
+```
+streamlit run src\heatpumps\hp_dashboard.py
+```
+
 
 ## License
 
