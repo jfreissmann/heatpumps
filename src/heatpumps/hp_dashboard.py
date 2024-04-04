@@ -73,16 +73,16 @@ with st.sidebar:
             )
 
             models = []
-            for model in var.hp_models.keys():
-                if var.hp_models[model]['base_topology'] == base_topology:
-                    models.append(var.hp_models[model]['display_name'])
+            for model, mdata in var.hp_models.items():
+                if mdata['base_topology'] == base_topology:
+                    models.append(mdata['display_name'])
 
             model_name = st.selectbox(
                 'Wärmepumpenmodell', models, index=0, key='model'
             )
-            for model in var.hp_models.keys():
-                if var.hp_models[model]['display_name'] == model_name:
-                    hp_model = var.hp_models[model]
+            for model, mdata in var.hp_models.items():
+                if mdata['display_name'] == model_name:
+                    hp_model = mdata
                     hp_model_name = model
 
             parampath = os.path.join(
@@ -103,102 +103,130 @@ with st.sidebar:
 
         with st.expander('Kältemittel'):
             if hp_model['nr_cycles'] == 1:
+                refrig_index = None
+                for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
+                    if rlabel == param['setup']['refrig']:
+                        refrig_index = ridx
+                        break
+                    elif rdata['CP'] == param['setup']['refrig']:
+                        refrig_index = ridx
+                        break
+
                 refrig_label = st.selectbox(
-                    '', refrigerants.keys(), index=len(refrigerants.keys())-1,
+                    '', refrigerants.keys(), index=refrig_index,
                     key='refrigerant'
                     )
-                param['design']['refrigerant'] = refrigerants[
-                    refrig_label]['CP']
+                param['setup']['refrig'] = refrigerants[refrig_label]['CP']
+                param['fluids']['wf'] = refrigerants[refrig_label]['CP']
                 df_refrig = info_df(refrig_label, refrigerants)
+
             elif hp_model['nr_cycles'] == 2:
-                refrig_label1 = st.selectbox(
+                refrig1_index = None
+                for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
+                    if rlabel == param['setup']['refrig1']:
+                        refrig1_index = ridx
+                        break
+                    elif rdata['CP'] == param['setup']['refrig1']:
+                        refrig1_index = ridx
+                        break
+
+                refrig1_label = st.selectbox(
                     '1. Kältemittel', refrigerants.keys(),
-                    index=len(refrigerants.keys())-1,
-                    key='refrigerant1'
+                    index=refrig1_index, key='refrigerant1'
                     )
-                param['design']['refrigerant1'] = refrigerants[
-                    refrig_label1]['CP']
-                refrig_label2 = st.selectbox(
+                param['setup']['refrig1'] = refrigerants[refrig1_label]['CP']
+                param['fluids']['wf1'] = refrigerants[refrig1_label]['CP']
+
+                refrig2_index = None
+                for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
+                    if rlabel == param['setup']['refrig2']:
+                        refrig2_index = ridx
+                        break
+                    elif rdata['CP'] == param['setup']['refrig2']:
+                        refrig2_index = ridx
+                        break
+
+
+                refrig2_label = st.selectbox(
                     '2. Kältemittel', refrigerants.keys(),
-                    index=len(refrigerants.keys())-2,
-                    key='refrigerant2'
+                    index=refrig2_index, key='refrigerant2'
                     )
-                param['design']['refrigerant2'] = refrigerants[
-                    refrig_label2]['CP']
+                param['setup']['refrig2'] = refrigerants[refrig2_label]['CP']
+                param['fluids']['wf2'] = refrigerants[refrig2_label]['CP']
 
         if hp_model['nr_cycles'] == 1:
             T_crit = int(np.floor(refrigerants[refrig_label]['T_crit']))
         elif hp_model['nr_cycles'] == 2:
-            T_crit = int(np.floor(refrigerants[refrig_label2]['T_crit']))
+            T_crit = int(np.floor(refrigerants[refrig2_label]['T_crit']))
 
         st.session_state.T_crit = T_crit
 
         with st.expander('Thermische Nennleistung'):
-            param['design']['Q_N'] = st.number_input(
-                'Wert in MW', value=5.0, step=0.1, key='Q_N'
+            param['cons']['Q'] = st.number_input(
+                'Wert in MW', value=abs(param['cons']['Q']/1e6),
+                step=0.1, key='Q_N'
                 )
-            param['design']['Q_N'] *= -1e6
+            param['cons']['Q'] *= -1e6
 
         with st.expander('Wärmequelle'):
-            param['design']['T_heatsource_ff'] = st.slider(
-                'Temperatur Vorlauf', min_value=0, max_value=T_crit, value=20,
-                format='%d°C', key='T_heatsource_ff'
+            param['B1']['T'] = st.slider(
+                'Temperatur Vorlauf', min_value=0, max_value=T_crit,
+                value=param['B1']['T'], format='%d°C', key='T_heatsource_ff'
                 )
-            param['design']['T_heatsource_bf'] = st.slider(
-                'Temperatur Rücklauf', min_value=0, max_value=T_crit, value=10,
-                format='%d°C', key='T_heatsource_bf'
+            param['B2']['T'] = st.slider(
+                'Temperatur Rücklauf', min_value=0, max_value=T_crit,
+                value=param['B2']['T'], format='%d°C', key='T_heatsource_bf'
                 )
-            invalid_temp_diff = (
-                param['design']['T_heatsource_bf']
-                >= param['design']['T_heatsource_ff']
-                )
+
+            invalid_temp_diff = param['B2']['T'] >= param['B1']['T']
             if invalid_temp_diff:
                 st.error(
                     'Die Rücklauftemperatur muss niedriger sein, als die '
                     + 'Vorlauftemperatur.'
                     )
-            param['design']['p_heatsource_ff'] = st.slider(
-                'Druck', min_value=1.0, max_value=20.0, value=1.0,
-                step=0.1, format='%f bar', key='p_heatsource_ff'
+            param['B1']['p'] = st.slider(
+                'Druck', min_value=1.0, max_value=20.0,
+                value=float(param['B1']['p']), step=0.1, format='%f bar',
+                key='p_heatsource_ff'
                 )
 
-        if hp_model['nr_cycles'] == 2:
-            with st.expander('Zwischenwärmeübertrager'):
-                param['design']['T_mid'] = st.slider(
-                    'Mittlere Temperatur', min_value=0, max_value=T_crit,
-                    value=40, format='%d°C', key='T_mid'
-                    )
+        # TODO: Aktuell wird T_mid im Modell als Mittelwert zwischen von Ver-
+        #       dampfungs- und Kondensationstemperatur gebildet. An sich wäre
+        #       es analytisch sicher interessant den Wert selbst festlegen zu
+        #       können.
+        # if hp_model['nr_cycles'] == 2:
+        #     with st.expander('Zwischenwärmeübertrager'):
+        #         param['design']['T_mid'] = st.slider(
+        #             'Mittlere Temperatur', min_value=0, max_value=T_crit,
+        #             value=40, format='%d°C', key='T_mid'
+        #             )
 
         with st.expander('Wärmesenke'):
-            param['design']['T_consumer_ff'] = st.slider(
-                'Temperatur Vorlauf', min_value=0, max_value=T_crit, value=70,
-                format='%d°C', key='T_consumer_ff'
+            param['C3']['T'] = st.slider(
+                'Temperatur Vorlauf', min_value=0, max_value=T_crit,
+                value=param['C3']['T'], format='%d°C', key='T_consumer_ff'
                 )
-            param['design']['T_consumer_bf'] = st.slider(
-                'Temperatur Rücklauf', min_value=0, max_value=T_crit, value=50,
-                format='%d°C', key='T_consumer_bf'
+            param['C0']['T'] = st.slider(
+                'Temperatur Rücklauf', min_value=0, max_value=T_crit,
+                value=param['C0']['T'], format='%d°C', key='T_consumer_bf'
                 )
-            invalid_temp_diff = (
-                param['design']['T_consumer_bf']
-                >= param['design']['T_consumer_ff']
-                )
+
+            invalid_temp_diff = param['C0']['T'] >= param['C3']['T']
             if invalid_temp_diff:
                 st.error(
                     'Die Rücklauftemperatur muss niedriger sein, als die '
                     + 'Vorlauftemperatur.'
                     )
-            invalid_temp_diff = (
-                param['design']['T_consumer_bf']
-                <= param['design']['T_heatsource_ff']
-                )
+            invalid_temp_diff = param['C0']['T'] <= param['B1']['T']
             if invalid_temp_diff:
                 st.error(
                     'Die Temperatur der Wärmesenke muss höher sein, als die '
                     + 'der Wärmequelle.'
                     )
-            param['design']['p_consumer_ff'] = st.slider(
-                'Druck', min_value=1.0, max_value=20.0, value=10.0,
-                step=0.1, format='%f bar', key='p_consumer_ff'
+            param['C3']['p'] = st.slider(
+                'Druck', min_value=1.0, max_value=20.0,
+                value=float(param['C3']['p']), step=0.1, format='%f bar',
+                key='p_consumer_ff'
                 )
 
         st.session_state.hp_param = param
