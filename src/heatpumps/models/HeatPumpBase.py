@@ -309,6 +309,8 @@ class HeatPumpBase:
         # Initialize fluid property diagram
         fig, ax = plt.subplots(figsize=figsize)
         diagram = FluidPropertyDiagram(refrig)
+        diagram.fig = fig
+        diagram.ax = ax
         diagram.set_unit_system(T='°C', p='bar', h='kJ/kg')
 
         # Calculate components process data

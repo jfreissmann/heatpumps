@@ -486,7 +486,9 @@ if mode == 'Auslegung':
         # %% Results
         with st.spinner('Ergebnisse werden visualisiert...'):
 
-            stateconfigpath = os.path.join(src_path, 'state_diagram_config.json')
+            stateconfigpath = os.path.join(
+                __file__, '..', 'models', 'input', 'state_diagram_config.json'
+                )
             with open(stateconfigpath, 'r', encoding='utf-8') as file:
                 config = json.load(file)
             if st.session_state.hp.params['setup']['refrig'] in config:
@@ -502,14 +504,14 @@ if mode == 'Auslegung':
             col1.metric('COP', round(st.session_state.hp.cop, 2))
             col2.metric(
                 'Q_dot_ab',
-                f'{st.session_state.hp.buses["heat"].P.val*-1e-6:.2f} MW'
+                f"{st.session_state.hp.buses['heat output'].P.val*-1e-6:.2f} MW"
                 )
             col3.metric(
                 'P_zu',
-                f'{st.session_state.hp.buses["power"].P.val/1e6:.2f} MW'
+                f"{st.session_state.hp.buses['power input'].P.val/1e6:.2f} MW"
                 )
             Q_dot_zu = abs(
-                st.session_state.hp.components["Evaporator 1"].Q.val/1e6
+                st.session_state.hp.comps['evap'].Q.val/1e6
                 )
             col4.metric('Q_dot_zu', f'{Q_dot_zu:.2f} MW')
 
@@ -573,7 +575,7 @@ if mode == 'Auslegung':
                             diagram_type='logph',
                             xlims=(xmin, xmax), ylims=(ymin, ymax),
                             return_diagram=True, display_info=False,
-                            save_file=False
+                            open_file=False, savefig=False
                             )
                         diagram_placeholder.pyplot(diagram.fig)
                     elif hp_model['nr_cycles'] == 2:
@@ -646,7 +648,7 @@ if mode == 'Auslegung':
                             diagram_type='Ts',
                             xlims=(xmin, xmax), ylims=(ymin, ymax),
                             return_diagram=True, display_info=False,
-                            save_file=False
+                            open_file=False, savefig=False
                             )
                         diagram_placeholder.pyplot(diagram.fig)
                     elif hp_model['nr_cycles'] == 2:
@@ -668,10 +670,15 @@ if mode == 'Auslegung':
                 state_quantities = (
                     st.session_state.hp.nw.results['Connection'].copy()
                     )
-                state_quantities['water'] = state_quantities['water'].apply(
-                    lambda x: bool(x)
-                    )
-                refrig = st.session_state.hp.params['design']['refrigerant']
+                try:
+                    state_quantities['water'] = state_quantities['water'].apply(
+                        lambda x: bool(x)
+                        )
+                except KeyError:
+                    state_quantities['H2O'] = state_quantities['H2O'].apply(
+                        lambda x: bool(x)
+                        )
+                refrig = st.session_state.hp.params['setup']['refrig']
                 state_quantities[refrig] = state_quantities[refrig].apply(
                     lambda x: bool(x)
                     )
@@ -705,20 +712,19 @@ if mode == 'Auslegung':
                 with col_left:
                     st.subheader('Topologie')
 
-                    # Todo: Andere Topologie einfügen, wenn sie verwendet
-                    # werden können
-                    top_file = os.path.join(src_path, 'img', 'topologies', 'hp')
-                    if hp_model['nr_cycles'] == 1:
-                        if params['design']['int_heatex']:
-                            top_file = os.path.join(top_file, '_ih.png')
-                        # elif param['design']['intercooler']:
-                        #     top_file = os.path.join(top_file, '_ic.png')
-                        else:
-                            top_file = os.path.join(top_file, '.png')
-                    elif hp_model['nr_cycles'] == 2:
-                        top_file = os.path.join(top_file, '_2_ih.png')
+                    # TODO: Topologien einfügen und darstellen
+                    # top_file = os.path.join(src_path, 'img', 'topologies', 'hp')
+                    # if hp_model['nr_cycles'] == 1:
+                    #     if params['design']['int_heatex']:
+                    #         top_file = os.path.join(top_file, '_ih.png')
+                    #     # elif param['design']['intercooler']:
+                    #     #     top_file = os.path.join(top_file, '_ic.png')
+                    #     else:
+                    #         top_file = os.path.join(top_file, '.png')
+                    # elif hp_model['nr_cycles'] == 2:
+                    #     top_file = os.path.join(top_file, '_2_ih.png')
 
-                    st.image(top_file)
+                    # st.image(top_file)
 
                 with col_right:
                     st.subheader('Kältemittel')
@@ -735,7 +741,9 @@ if mode == 'Auslegung':
 
             with st.expander('Ökonomische Bewertung'):
                 # %% Eco Results
-                st.write('Ökonom')
+                # TODO: Komponentenkosten berechnen und Ergebnisse darstellen.
+                # TODO: Man müsste auch die Annahmen dafür hier angeben.
+                st.write('Ökonomische Bewertung an dieser Stelle einfügen.')
 
             st.info(
                 'Um die Teillast zu berechnen, drücke auf "Teillast '
