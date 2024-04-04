@@ -3,8 +3,11 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from CoolProp.CoolProp import PropsSI as PSI
 from fluprodia import FluidPropertyDiagram
+from scipy.interpolate import interpn
+from sklearn.linear_model import LinearRegression
 from tespy.networks import Network
 from tespy.tools import ExergyAnalysis
 
@@ -349,19 +352,24 @@ class HeatPumpBase:
         diagram.calc_isolines()
 
         # Set axes limits
-        xlims = (
-            state_props[var['x']]['min'], state_props[var['x']]['max']
-            )
-        ylims = (
-            state_props[var['y']]['min'], state_props[var['y']]['max']
-            )
+        if 'xlims' in kwargs:
+            xlims = kwargs['xlims']
+        else:
+            xlims = (
+                state_props[var['x']]['min'], state_props[var['x']]['max']
+                )
+        if 'ylims' in kwargs:
+            ylims = kwargs['ylims']
+        else:
+            ylims = (
+                state_props[var['y']]['min'], state_props[var['y']]['max']
+                )
         diagram.draw_isolines(
             diagram_type=diagram_type, fig=fig, ax=ax,
             x_min=xlims[0], x_max=xlims[1], y_min=ylims[0], y_max=ylims[1]
             )
 
         # Draw heat pump process over fluid property diagram
-        # Note: 1st and last value is ommited, as they're sometimes error prone
         for i, key in enumerate(result_dict.keys()):
             datapoints = result_dict[key]['datapoints']
             ax.plot(

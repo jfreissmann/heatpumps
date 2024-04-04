@@ -21,14 +21,9 @@ def run_design(hp_model_name, params):
     return hp
 
 
-def run_partload(hp, param, save_results=False):
+def run_partload(hp):
     """Run TESPy offdesign simulation of heat pump."""
-    param['offdesign']['save_results'] = save_results
-    hp.param = param
     hp.offdesign_simulation()
     partload_char = hp.calc_partload_char()
-
-    if save_results:
-        partload_char.to_csv('partload_char.csv', sep=';')
 
     return hp, partload_char
