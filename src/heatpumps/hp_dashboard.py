@@ -102,8 +102,9 @@ with st.sidebar:
                 dT_ihx = {}
                 for i in range(1, hp_model['nr_ihx']+1):
                      dT_ihx[i] = st.slider(
-                        f'Nr. {i}: Überhitzung/Unterkühlung', value=5, min_value=0,
-                        max_value=25, format='%d°C', key=f'dT_ihx{i}'
+                        f'Nr. {i}: Überhitzung/Unterkühlung', value=5,
+                        min_value=0, max_value=25, format='%d°C',
+                        key=f'dT_ihx{i}'
                         )
 
         with st.expander('Kältemittel'):
@@ -500,6 +501,19 @@ if mode == 'Auslegung':
                         ]
                 else:
                     state_props = config['MISC']
+            if hp_model['nr_cycles'] == 2:
+                if st.session_state.hp.params['setup']['refrig1'] in config:
+                    state_props1 = config[
+                        st.session_state.hp.params['setup']['refrig1']
+                        ]
+                else:
+                    state_props1 = config['MISC']
+                if st.session_state.hp.params['setup']['refrig2'] in config:
+                    state_props2 = config[
+                        st.session_state.hp.params['setup']['refrig2']
+                        ]
+                else:
+                    state_props2 = config['MISC']
 
             st.header('Ergebnisse der Auslegung')
 
@@ -507,7 +521,7 @@ if mode == 'Auslegung':
             col1.metric('COP', round(st.session_state.hp.cop, 2))
             col2.metric(
                 'Q_dot_ab',
-                f"{st.session_state.hp.buses['heat output'].P.val*-1e-6:.2f} MW"
+                f"{abs(st.session_state.hp.buses['heat output'].P.val)/1e6:.2f} MW"
                 )
             col3.metric(
                 'P_zu',
@@ -528,7 +542,11 @@ if mode == 'Auslegung':
                 with col_left:
                     # %% Log(p)-h-Diagram
                     st.subheader('Log(p)-h-Diagramm')
-                    diagram_placeholder = st.empty()
+                    if hp_model['nr_cycles'] == 1:
+                        diagram_placeholder = st.empty()
+                    elif hp_model['nr_cycles'] == 2:
+                        diagram_placeholder1 = st.empty()
+                        diagram_placeholder2 = st.empty()
 
                 with slider_left:
                     if hp_model['nr_cycles'] == 1:
@@ -552,7 +570,11 @@ if mode == 'Auslegung':
                         xmin1, xmax1 = st.slider(
                             'X-Achsen Begrenzung (Kreislauf 1)',
                             min_value=0, max_value=3000, step=100,
-                            value=(100, 2200), format='%d kJ/kg',
+                            value=(
+                                state_props1['h']['min'],
+                                state_props1['h']['max']
+                                ),
+                            format='%d kJ/kg',
                             key='ph_x1slider'
                             )
                         ymin1, ymax1 = st.slider(
@@ -565,7 +587,11 @@ if mode == 'Auslegung':
                         xmin2, xmax2 = st.slider(
                             'X-Achsen Begrenzung (Kreislauf 2)',
                             min_value=0, max_value=3000, step=100,
-                            value=(100, 2200), format='%d kJ/kg',
+                            value=(
+                                state_props2['h']['min'],
+                                state_props2['h']['max']
+                                ),
+                            format='%d kJ/kg',
                             key='ph_x2slider'
                             )
                         ymin2, ymax2 = st.slider(
@@ -593,13 +619,17 @@ if mode == 'Auslegung':
                             return_diagram=True, display_info=False,
                             savefig=False, open_file=False
                             )
-                        diagram_placeholder.pyplot(diagram1.fig)
-                        diagram_placeholder.pyplot(diagram2.fig)
+                        diagram_placeholder1.pyplot(diagram1.fig)
+                        diagram_placeholder2.pyplot(diagram2.fig)
 
                 with col_right:
                     # %% T-s-Diagram
                     st.subheader('T-s-Diagramm')
-                    diagram_placeholder = st.empty()
+                    if hp_model['nr_cycles'] == 1:
+                        diagram_placeholder = st.empty()
+                    elif hp_model['nr_cycles'] == 2:
+                        diagram_placeholder1 = st.empty()
+                        diagram_placeholder2 = st.empty()
 
                 with slider_right:
                     if hp_model['nr_cycles'] == 1:
@@ -626,29 +656,43 @@ if mode == 'Auslegung':
                         xmin1, xmax1 = st.slider(
                             'X-Achsen Begrenzung (Kreislauf 1)',
                             min_value=0, max_value=3000, step=100,
-                            value=(100, 2200), format='%d kJ/kg',
+                            value=(
+                                state_props1['s']['min'],
+                                state_props1['s']['max']
+                                ),
+                            format='%d kJ/kg',
                             key='ts_x1slider'
                             )
                         ymin1, ymax1 = st.slider(
                             'Y-Achsen Begrenzung (Kreislauf 1)',
-                            min_value=-3, max_value=3,
-                            value=(0, 2), format='10^%d bar',
+                            min_value=-150, max_value=500,
+                            value=(
+                                state_props1['T']['min'],
+                                state_props1['T']['max']
+                                ),
+                            format='%d °C',
                             key='ts_y1slider'
                             )
-                        ymin1, ymax1 = 10**ymin1, 10**ymax1
                         xmin2, xmax2 = st.slider(
                             'X-Achsen Begrenzung (Kreislauf 2)',
                             min_value=0, max_value=3000, step=100,
-                            value=(100, 2200), format='%d kJ/kg',
+                            value=(
+                                state_props2['s']['min'],
+                                state_props2['s']['max']
+                                ),
+                            format='%d kJ/kg',
                             key='ts_x2slider'
                             )
                         ymin2, ymax2 = st.slider(
                             'Y-Achsen Begrenzung (Kreislauf 2)',
-                            min_value=-3, max_value=3,
-                            value=(0, 2), format='10^%d bar',
+                            min_value=-150, max_value=500,
+                            value=(
+                                state_props2['T']['min'],
+                                state_props2['T']['max']
+                                ),
+                            format='%d °C',
                             key='ts_y2slider'
                             )
-                        ymin2, ymax2 = 10**ymin2, 10**ymax2
 
                 with col_right:
                     if hp_model['nr_cycles'] == 1:
@@ -667,8 +711,8 @@ if mode == 'Auslegung':
                             return_diagram=True, display_info=False,
                             savefig=False, open_file=False
                             )
-                        diagram_placeholder.pyplot(diagram1.fig)
-                        diagram_placeholder.pyplot(diagram2.fig)
+                        diagram_placeholder1.pyplot(diagram1.fig)
+                        diagram_placeholder2.pyplot(diagram2.fig)
 
             with st.expander('Zustandsgrößen'):
                 # %% State Quantities
