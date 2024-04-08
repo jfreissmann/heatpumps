@@ -681,6 +681,139 @@ class HeatPumpBase:
 
         return char_ts
 
+    def plot_partload_char(self, partload_char, cmap_type='', cmap='viridis',
+                           return_fig_ax=False, savefig=False, open_file=False):
+        """
+        Plot the partload characteristic of the heat pump.
+
+        Parameters
+        ----------
+        partload_char : pd.DataFrame
+            DataFrame of the full partload characteristic containing 'Q', 'P'
+            and 'COP' with a MultiIndex of the three variables 'T_hs_ff',
+            'T_cons_ff' and 'pl'.
+
+        cmap_type : str
+            String of the possible colormap variations, which are 'T_cons_ff'
+            and 'COP'.
+
+        cmap : str
+            Name of colormap. Valid names are all colormaps implemented in
+            matplotlib. Defaults to 'veridis'.
+        """
+        if not cmap_type:
+            print(
+                'Please provide a cmap_type of eiher "T_cons_ff" or '
+                + '"COP" to plot the heat pump partload characteristic.'
+                )
+            return
+
+        colormap = plt.get_cmap(cmap)
+        T_hs_ff_range = set(
+            partload_char.index.get_level_values('T_hs_ff')
+            )
+
+        if cmap_type == 'T_cons_ff':
+            colors = colormap(
+                np.linspace(
+                    0, 1,
+                    len(set(
+                        partload_char.index.get_level_values('T_cons_ff'))
+                        ))
+                )
+            figs = {}
+            axes = {}
+            for T_hs_ff in T_hs_ff_range:
+                fig, ax = plt.subplots(figsize=(9.5, 6))
+
+                T_cons_ff_range = set(
+                    partload_char.index.get_level_values('T_cons_ff')
+                    )
+                for i, T_cons_ff in enumerate(T_cons_ff_range):
+                    ax.plot(
+                        partload_char.loc[(T_hs_ff, T_cons_ff), 'P'],
+                        partload_char.loc[(T_hs_ff, T_cons_ff), 'Q'],
+                        color=colors[i]
+                        )
+
+                ax.grid()
+                sm = plt.cm.ScalarMappable(
+                    cmap=colormap, norm=plt.Normalize(
+                        vmin=np.min(
+                            partload_char.index.get_level_values('T_cons_ff')
+                            ),
+                        vmax=np.max(
+                            partload_char.index.get_level_values('T_cons_ff')
+                            )
+                        )
+                    )
+                cbar = plt.colorbar(sm, ax=ax)
+                cbar.set_label('Senkentemperatur in $°C$')
+                ax.set_xlim(0, partload_char['P'].max() * 1.05)
+                ax.set_ylim(0, partload_char['Q'].max() * 1.05)
+                ax.set_xlabel('Elektrische Leistung $P$ in $MW$')
+                ax.set_ylabel('Wärmestrom $\\dot{{Q}}$ in $MW$')
+                ax.set_title(f'Quellentemperatur: {T_hs_ff:.0f} °C')
+                figs[T_hs_ff] = fig
+                axes[T_hs_ff] = ax
+
+        if cmap_type == 'COP':
+            figs = {}
+            axes = {}
+            for T_hs_ff in T_hs_ff_range:
+                fig, ax = plt.subplots(figsize=(9.5, 6))
+
+                scatterplot = ax.scatter(
+                    partload_char.loc[(T_hs_ff), 'P'],
+                    partload_char.loc[(T_hs_ff), 'Q'],
+                    c=partload_char.loc[(T_hs_ff), 'COP'],
+                    cmap=colormap,
+                    vmin=(
+                        partload_char['COP'].min()
+                        - partload_char['COP'].max() * 0.05
+                        ),
+                    vmax=(
+                        partload_char['COP'].max()
+                        + partload_char['COP'].max() * 0.05
+                        )
+                    )
+
+                cbar = plt.colorbar(scatterplot, ax=ax)
+                cbar.set_label('Leistungszahl $COP$')
+
+                ax.grid()
+                ax.set_xlim(0, partload_char['P'].max() * 1.05)
+                ax.set_ylim(0, partload_char['Q'].max() * 1.05)
+                ax.set_xlabel('Elektrische Leistung $P$ in $MW$')
+                ax.set_ylabel('Wärmestrom $\\dot{{Q}}$ in $MW$')
+                ax.set_title(f'Quellentemperatur: {T_hs_ff:.0f} °C')
+                figs[T_hs_ff] = fig
+                axes[T_hs_ff] = ax
+
+        if savefig:
+            try:
+                filename = (
+                    f'partload_{cmap_type}_{self.params["setup"]["type"]}_'
+                    + f'{self.params["setup"]["refrig"]}.pdf'
+                    )
+            except KeyError:
+                filename = (
+                    f'partload_{cmap_type}_{self.params["setup"]["type"]}_'
+                    + f'{self.params["setup"]["refrig1"]}_and_'
+                    + f'{self.params["setup"]["refrig2"]}.pdf'
+                    )
+            filepath = os.path.join(__file__, '..', 'output', filename)
+            plt.tight_layout()
+            plt.savefig(filepath, dpi=300)
+
+            if open_file:
+                os.startfile(filepath)
+
+        elif return_fig_ax:
+            return figs, axes
+        else:
+            plt.show()
+
     def validate_dir(self):
         """Check for a 'stable' directory and create it if necessary."""
         if not os.path.exists(os.path.join(__file__, '..', 'stable')):
