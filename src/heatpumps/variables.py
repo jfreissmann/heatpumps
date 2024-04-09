@@ -21,7 +21,7 @@ hp_models = {
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': None,
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'ihx': {
@@ -30,7 +30,7 @@ hp_models = {
         'nr_ihx': 1,
         'econ_type': None,
         'comp_var': None,
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'ic': {
@@ -39,7 +39,7 @@ hp_models = {
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': 'series',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'econ_closed': {
@@ -48,7 +48,7 @@ hp_models = {
         'nr_ihx': 0,
         'econ_type': 'closed',
         'comp_var': 'series',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'econ_closed_ihx': {
@@ -57,7 +57,7 @@ hp_models = {
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'series',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'ihx_econ_closed': {
@@ -66,7 +66,7 @@ hp_models = {
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'series',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'econ_open': {
@@ -75,7 +75,7 @@ hp_models = {
         'nr_ihx': 0,
         'econ_type': 'open',
         'comp_var': 'series',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'econ_open_ihx': {
@@ -84,7 +84,7 @@ hp_models = {
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'series',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'ihx_econ_open': {
@@ -93,7 +93,7 @@ hp_models = {
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'series',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'pc_econ_closed': {
@@ -102,7 +102,7 @@ hp_models = {
         'nr_ihx': 0,
         'econ_type': 'closed',
         'comp_var': 'parallel',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'pc_econ_closed_ihx': {
@@ -111,7 +111,7 @@ hp_models = {
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'parallel',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'pc_econ_closed_2ihx': {
@@ -120,7 +120,7 @@ hp_models = {
         'nr_ihx': 2,
         'econ_type': 'closed',
         'comp_var': 'parallel',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'pc_econ_open': {
@@ -129,7 +129,7 @@ hp_models = {
         'nr_ihx': 0,
         'econ_type': 'open',
         'comp_var': 'parallel',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'pc_econ_open_ihx': {
@@ -138,7 +138,7 @@ hp_models = {
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'parallel',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'pc_econ_open_2ihx': {
@@ -147,7 +147,7 @@ hp_models = {
         'nr_ihx': 2,
         'econ_type': 'open',
         'comp_var': 'parallel',
-        'nr_cycles': 1,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'flash': {
@@ -156,7 +156,7 @@ hp_models = {
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': 'series',
-        'nr_cycles': 2,
+        'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
     'cascade': {
@@ -165,7 +165,7 @@ hp_models = {
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': 'series',
-        'nr_cycles': 2,
+        'nr_refrigs': 2,
         'process_type': 'subcritical'
         },
     'cascade_2ihx': {
@@ -174,7 +174,7 @@ hp_models = {
         'nr_ihx': 2,
         'econ_type': None,
         'comp_var': 'series',
-        'nr_cycles': 2,
+        'nr_refrigs': 2,
         'process_type': 'subcritical'
         }
     }

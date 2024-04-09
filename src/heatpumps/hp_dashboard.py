@@ -101,7 +101,7 @@ with st.sidebar:
                         )
 
         with st.expander('Kältemittel'):
-            if hp_model['nr_cycles'] == 1:
+            if hp_model['nr_refrigs'] == 1:
                 refrig_index = None
                 for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
                     if rlabel == params['setup']['refrig']:
@@ -119,7 +119,7 @@ with st.sidebar:
                 params['fluids']['wf'] = refrigerants[refrig_label]['CP']
                 df_refrig = info_df(refrig_label, refrigerants)
 
-            elif hp_model['nr_cycles'] == 2:
+            elif hp_model['nr_refrigs'] == 2:
                 refrig1_index = None
                 for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
                     if rlabel == params['setup']['refrig1']:
@@ -155,9 +155,9 @@ with st.sidebar:
                 params['fluids']['wf2'] = refrigerants[refrig2_label]['CP']
                 df_refrig2 = info_df(refrig2_label, refrigerants)
 
-        if hp_model['nr_cycles'] == 1:
+        if hp_model['nr_refrigs'] == 1:
             T_crit = int(np.floor(refrigerants[refrig_label]['T_crit']))
-        elif hp_model['nr_cycles'] == 2:
+        elif hp_model['nr_refrigs'] == 2:
             T_crit = int(np.floor(refrigerants[refrig2_label]['T_crit']))
 
         st.session_state.T_crit = T_crit
@@ -195,7 +195,7 @@ with st.sidebar:
         #       dampfungs- und Kondensationstemperatur gebildet. An sich wäre
         #       es analytisch sicher interessant den Wert selbst festlegen zu
         #       können.
-        # if hp_model['nr_cycles'] == 2:
+        # if hp_model['nr_refrigs'] == 2:
         #     with st.expander('Zwischenwärmeübertrager'):
         #         param['design']['T_mid'] = st.slider(
         #             'Mittlere Temperatur', min_value=0, max_value=T_crit,
@@ -487,14 +487,14 @@ if mode == 'Auslegung':
                 )
             with open(stateconfigpath, 'r', encoding='utf-8') as file:
                 config = json.load(file)
-            if hp_model['nr_cycles'] == 1:
+            if hp_model['nr_refrigs'] == 1:
                 if st.session_state.hp.params['setup']['refrig'] in config:
                     state_props = config[
                         st.session_state.hp.params['setup']['refrig']
                         ]
                 else:
                     state_props = config['MISC']
-            if hp_model['nr_cycles'] == 2:
+            if hp_model['nr_refrigs'] == 2:
                 if st.session_state.hp.params['setup']['refrig1'] in config:
                     state_props1 = config[
                         st.session_state.hp.params['setup']['refrig1']
@@ -535,14 +535,14 @@ if mode == 'Auslegung':
                 with col_left:
                     # %% Log(p)-h-Diagram
                     st.subheader('Log(p)-h-Diagramm')
-                    if hp_model['nr_cycles'] == 1:
+                    if hp_model['nr_refrigs'] == 1:
                         diagram_placeholder = st.empty()
-                    elif hp_model['nr_cycles'] == 2:
+                    elif hp_model['nr_refrigs'] == 2:
                         diagram_placeholder1 = st.empty()
                         diagram_placeholder2 = st.empty()
 
                 with slider_left:
-                    if hp_model['nr_cycles'] == 1:
+                    if hp_model['nr_refrigs'] == 1:
                         xmin, xmax = st.slider(
                             'X-Achsen Begrenzung',
                             min_value=0, max_value=3000, step=100,
@@ -559,7 +559,7 @@ if mode == 'Auslegung':
                             value=(0, 2), format='10^%d bar', key='ph_yslider'
                             )
                         ymin, ymax = 10**ymin, 10**ymax
-                    elif hp_model['nr_cycles'] == 2:
+                    elif hp_model['nr_refrigs'] == 2:
                         xmin1, xmax1 = st.slider(
                             'X-Achsen Begrenzung (Kreislauf 1)',
                             min_value=0, max_value=3000, step=100,
@@ -596,7 +596,7 @@ if mode == 'Auslegung':
                         ymin2, ymax2 = 10**ymin2, 10**ymax2
 
                 with col_left:
-                    if hp_model['nr_cycles'] == 1:
+                    if hp_model['nr_refrigs'] == 1:
                         diagram = st.session_state.hp.generate_state_diagram(
                             diagram_type='logph',
                             xlims=(xmin, xmax), ylims=(ymin, ymax),
@@ -604,7 +604,7 @@ if mode == 'Auslegung':
                             open_file=False, savefig=False
                             )
                         diagram_placeholder.pyplot(diagram.fig)
-                    elif hp_model['nr_cycles'] == 2:
+                    elif hp_model['nr_refrigs'] == 2:
                         diagram1, diagram2 = st.session_state.hp.generate_state_diagram(
                             diagram_type='logph',
                             xlims=((xmin1, xmax1), (xmin2, xmax2)),
@@ -618,14 +618,14 @@ if mode == 'Auslegung':
                 with col_right:
                     # %% T-s-Diagram
                     st.subheader('T-s-Diagramm')
-                    if hp_model['nr_cycles'] == 1:
+                    if hp_model['nr_refrigs'] == 1:
                         diagram_placeholder = st.empty()
-                    elif hp_model['nr_cycles'] == 2:
+                    elif hp_model['nr_refrigs'] == 2:
                         diagram_placeholder1 = st.empty()
                         diagram_placeholder2 = st.empty()
 
                 with slider_right:
-                    if hp_model['nr_cycles'] == 1:
+                    if hp_model['nr_refrigs'] == 1:
                         xmin, xmax = st.slider(
                             'X-Achsen Begrenzung',
                             min_value=0, max_value=10000, step=100,
@@ -645,7 +645,7 @@ if mode == 'Auslegung':
                                 ),
                             format='%d °C', key='ts_yslider'
                             )
-                    elif hp_model['nr_cycles'] == 2:
+                    elif hp_model['nr_refrigs'] == 2:
                         xmin1, xmax1 = st.slider(
                             'X-Achsen Begrenzung (Kreislauf 1)',
                             min_value=0, max_value=3000, step=100,
@@ -688,7 +688,7 @@ if mode == 'Auslegung':
                             )
 
                 with col_right:
-                    if hp_model['nr_cycles'] == 1:
+                    if hp_model['nr_refrigs'] == 1:
                         diagram = st.session_state.hp.generate_state_diagram(
                             diagram_type='Ts',
                             xlims=(xmin, xmax), ylims=(ymin, ymax),
@@ -696,7 +696,7 @@ if mode == 'Auslegung':
                             open_file=False, savefig=False
                             )
                         diagram_placeholder.pyplot(diagram.fig)
-                    elif hp_model['nr_cycles'] == 2:
+                    elif hp_model['nr_refrigs'] == 2:
                         diagram1, diagram2 = st.session_state.hp.generate_state_diagram(
                             diagram_type='Ts',
                             xlims=((xmin1, xmax1), (xmin2, xmax2)),
@@ -720,12 +720,12 @@ if mode == 'Auslegung':
                     state_quantities['H2O'] = (
                         state_quantities['H2O'].apply(bool)
                         )
-                if hp_model['nr_cycles'] == 1:
+                if hp_model['nr_refrigs'] == 1:
                     refrig = st.session_state.hp.params['setup']['refrig']
                     state_quantities[refrig] = (
                         state_quantities[refrig].apply(bool)
                         )
-                elif hp_model['nr_cycles'] == 2:
+                elif hp_model['nr_refrigs'] == 2:
                     refrig1 = st.session_state.hp.params['setup']['refrig1']
                     state_quantities[refrig1] = (
                         state_quantities[refrig1].apply(bool)
@@ -765,25 +765,27 @@ if mode == 'Auslegung':
                     st.subheader('Topologie')
 
                     # TODO: Topologien einfügen und darstellen
-                    # top_file = os.path.join(src_path, 'img', 'topologies', 'hp')
-                    # if hp_model['nr_cycles'] == 1:
+                    top_file = os.path.join(
+                        src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
+                        )
+                    # if hp_model['nr_refrigs'] == 1:
                     #     if params['design']['int_heatex']:
                     #         top_file = os.path.join(top_file, '_ih.png')
                     #     # elif param['design']['intercooler']:
                     #     #     top_file = os.path.join(top_file, '_ic.png')
                     #     else:
                     #         top_file = os.path.join(top_file, '.png')
-                    # elif hp_model['nr_cycles'] == 2:
+                    # elif hp_model['nr_refrigs'] == 2:
                     #     top_file = os.path.join(top_file, '_2_ih.png')
 
-                    # st.image(top_file)
+                    st.image(top_file)
 
                 with col_right:
                     st.subheader('Kältemittel')
 
-                    if hp_model['nr_cycles'] == 1:
+                    if hp_model['nr_refrigs'] == 1:
                         st.table(df_refrig)
-                    elif hp_model['nr_cycles'] == 2:
+                    elif hp_model['nr_refrigs'] == 2:
                         st.table(df_refrig1)
                         st.table(df_refrig2)
 
