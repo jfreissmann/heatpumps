@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jun  2 09:54:24 2022
-
-@author: Jonas Freißmann
-"""
-
 import json
 import os
 

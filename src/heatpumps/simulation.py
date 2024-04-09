@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jun  2 12:49:42 2022
-
-@author: Jonas Freißmann
-"""
 import variables as var
 
 
