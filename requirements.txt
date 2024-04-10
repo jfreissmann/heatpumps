@@ -1,5 +1,6 @@
 tespy == 0.6.3
 streamlit >= 1.32.0
+streamlit-javascript == 0.1.5
 numpy >= 1.24.0
 pandas >= 1.5.3
 scipy >= 1.10.0

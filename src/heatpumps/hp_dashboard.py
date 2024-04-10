@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 import variables as var
 from simulation import run_design, run_partload
+from streamlit_javascript import st_javascript
 
 
 def switch2design():
@@ -32,6 +33,11 @@ def info_df(label, refrigs):
     df_refrig.loc[label, 'GWP'] = str(refrigs[label]['GWP100'])
 
     return df_refrig
+
+is_dark = st_javascript("""
+    function darkMode(i){
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)}(1)
+    """)
 
 root_path = os.path.abspath(__file__)
 src_path = os.path.join(root_path, '..', 'src')
