@@ -245,7 +245,7 @@ with st.sidebar:
     # autorun = st.checkbox('AutoRun Simulation', value=True)
 
     # %% Offdesign
-    if mode == 'Teillast':
+    if mode == 'Teillast' and 'hp' in st.session_state:
         params = st.session_state.hp_params
         st.header('Teillastsimulation der Wärmepumpe')
 
@@ -822,65 +822,74 @@ if mode == 'Teillast':
     # %% Offdesign Simulation
     st.header('Betriebscharakteristik')
 
-    if not run_pl_sim and 'partload_char' not in st.session_state:
-        # %% Landing Page
-        st.write(
+    if 'hp' not in st.session_state:
+        st.warning(
             '''
-            Parametrisierung der Teillastberechnung:
-            + Prozentualer Anteil Teillast
-            + Bereich der Quelltemperatur
-            + Bereich der Senkentemperatur
+            Um eine Teillastsimulation durchzuführen, muss zunächst eine 
+            Wärmepumpe ausgelegt werden. Wechseln Sie bitte zunächst in den 
+            Modus "Auslegung".
             '''
-            )
-
-    if run_pl_sim:
-        # %% Run Offdesign Simulation
-        with st.spinner(
-                'Teillastsimulation wird durchgeführt... Dies kann eine '
-                + 'Weile dauern.'
-                ):
-            st.session_state.hp, st.session_state.partload_char = (
-                run_partload(st.session_state.hp)
-                )
-            # st.session_state.partload_char = pd.read_csv(
-            #     'partload_char.csv', index_col=[0, 1, 2], sep=';'
-            #     )
-            st.success(
-                'Die Simulation der Wärmepumpencharakteristika war '
-                + 'erfolgreich.'
+        )
+    else:
+        if not run_pl_sim and 'partload_char' not in st.session_state:
+            # %% Landing Page
+            st.write(
+                '''
+                Parametrisierung der Teillastberechnung:
+                + Prozentualer Anteil Teillast
+                + Bereich der Quelltemperatur
+                + Bereich der Senkentemperatur
+                '''
                 )
 
-    if run_pl_sim or 'partload_char' in st.session_state:
-        # %% Results
-        with st.spinner('Ergebnisse werden visualisiert...'):
+        if run_pl_sim:
+            # %% Run Offdesign Simulation
+            with st.spinner(
+                    'Teillastsimulation wird durchgeführt... Dies kann eine '
+                    + 'Weile dauern.'
+                    ):
+                st.session_state.hp, st.session_state.partload_char = (
+                    run_partload(st.session_state.hp)
+                    )
+                # st.session_state.partload_char = pd.read_csv(
+                #     'partload_char.csv', index_col=[0, 1, 2], sep=';'
+                #     )
+                st.success(
+                    'Die Simulation der Wärmepumpencharakteristika war '
+                    + 'erfolgreich.'
+                    )
 
-            with st.expander('Diagramme', expanded=True):
-                col_left, col_right = st.columns(2)
+        if run_pl_sim or 'partload_char' in st.session_state:
+            # %% Results
+            with st.spinner('Ergebnisse werden visualisiert...'):
 
-                with col_left:
-                    figs, axes = st.session_state.hp.plot_partload_char(
-                        st.session_state.partload_char, cmap_type='COP',
-                        cmap='plasma', return_fig_ax=True
-                        )
-                    pl_cop_placeholder = st.empty()
-                    T_select_cop = st.select_slider(
-                        'Quellentemperatur',
-                        options=list(figs.keys()),
-                        value=float(np.median(list(figs.keys()))),
-                        key='pl_cop_slider'
-                        )
-                    pl_cop_placeholder.pyplot(figs[T_select_cop])
+                with st.expander('Diagramme', expanded=True):
+                    col_left, col_right = st.columns(2)
 
-                with col_right:
-                    figs, axes = st.session_state.hp.plot_partload_char(
-                        st.session_state.partload_char, cmap_type='T_cons_ff',
-                        cmap='plasma', return_fig_ax=True
-                        )
-                    pl_T_cons_ff_placeholder = st.empty()
-                    T_select_T_cons_ff = st.select_slider(
-                        'Quellentemperatur',
-                        options=list(figs.keys()),
-                        value=float(np.median(list(figs.keys()))),
-                        key='pl_T_cons_ff_slider'
-                        )
-                    pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
+                    with col_left:
+                        figs, axes = st.session_state.hp.plot_partload_char(
+                            st.session_state.partload_char, cmap_type='COP',
+                            cmap='plasma', return_fig_ax=True
+                            )
+                        pl_cop_placeholder = st.empty()
+                        T_select_cop = st.select_slider(
+                            'Quellentemperatur',
+                            options=list(figs.keys()),
+                            value=float(np.median(list(figs.keys()))),
+                            key='pl_cop_slider'
+                            )
+                        pl_cop_placeholder.pyplot(figs[T_select_cop])
+
+                    with col_right:
+                        figs, axes = st.session_state.hp.plot_partload_char(
+                            st.session_state.partload_char, cmap_type='T_cons_ff',
+                            cmap='plasma', return_fig_ax=True
+                            )
+                        pl_T_cons_ff_placeholder = st.empty()
+                        T_select_T_cons_ff = st.select_slider(
+                            'Quellentemperatur',
+                            options=list(figs.keys()),
+                            value=float(np.median(list(figs.keys()))),
+                            key='pl_T_cons_ff_slider'
+                            )
+                        pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
