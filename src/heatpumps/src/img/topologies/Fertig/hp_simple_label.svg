@@ -9,35 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="59.239868mm"
+   width="62.392452mm"
    height="66.304153mm"
-   viewBox="0 0 59.239868 66.304153"
+   viewBox="0 0 62.392452 66.304153"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="hp_ihx_label.svg">
+   sodipodi:docname="hp_simple_label.svg">
   <defs
      id="defs2">
-    <inkscape:path-effect
-       effect="bspline"
-       id="path-effect4704"
-       is_visible="true"
-       weight="33.333333"
-       steps="2"
-       helper_size="0"
-       apply_no_weight="true"
-       apply_with_weight="true"
-       only_selected="false" />
-    <inkscape:path-effect
-       effect="bspline"
-       id="path-effect4680"
-       is_visible="true"
-       weight="33.333333"
-       steps="2"
-       helper_size="0"
-       apply_no_weight="true"
-       apply_with_weight="true"
-       only_selected="false" />
     <inkscape:path-effect
        effect="bspline"
        id="path-effect4658"
@@ -170,17 +150,7 @@
        only_selected="false" />
     <inkscape:path-effect
        effect="bspline"
-       id="path-effect1368-4"
-       is_visible="true"
-       weight="33.333333"
-       steps="2"
-       helper_size="0"
-       apply_no_weight="true"
-       apply_with_weight="true"
-       only_selected="false" />
-    <inkscape:path-effect
-       effect="bspline"
-       id="path-effect1368-3-5"
+       id="path-effect4536-49-8"
        is_visible="true"
        weight="33.333333"
        steps="2"
@@ -196,9 +166,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.78"
-     inkscape:cx="118.79791"
-     inkscape:cy="145.85694"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="104.80288"
+     inkscape:cy="150.97422"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -208,10 +178,10 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1920"
-     inkscape:window-height="1009"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-width="3840"
+     inkscape:window-height="2054"
+     inkscape:window-x="3829"
+     inkscape:window-y="7"
      inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
@@ -224,67 +194,47 @@
        snapvisiblegridlinesonly="false"
        dotted="false"
        empspacing="10"
-       originx="0.73976865"
-       originy="5.2456301" />
+       originx="3.6108342"
+       originy="5.2456365" />
     <sodipodi:guide
-       position="3.1397686,8.2456302"
+       position="6.010834,8.2456365"
        orientation="0,1"
        id="guide4628"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="3.7397687,63.94563"
+       position="6.610834,63.945634"
        orientation="1,0"
        id="guide4630"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="53.739769,6.8456301"
+       position="56.610832,6.8456365"
        orientation="1,0"
        id="guide4632"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="11.839769,58.14563"
+       position="18.410834,58.245634"
        orientation="0,1"
        id="guide4634"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="53.739769,38.74563"
+       position="56.610832,38.745635"
        orientation="0,1"
        id="guide4660"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="3.7397686,27.74563"
+       position="6.6108339,27.745636"
        orientation="0,1"
        id="guide4662"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="23.239769,58.245631"
+       position="26.110834,58.245635"
        orientation="1,0"
        id="guide4664"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="34.239769,58.245631"
+       position="37.110833,58.245635"
        orientation="1,0"
        id="guide4666"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="3.7397687,50.74563"
-       orientation="0,1"
-       id="guide4706"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="3.7397687,45.74563"
-       orientation="0,1"
-       id="guide4708"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="41.239769,16.24563"
-       orientation="1,0"
-       id="guide4710"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="36.239769,16.24563"
-       orientation="1,0"
-       id="guide4712"
        inkscape:locked="false" />
   </sodipodi:namedview>
   <metadata
@@ -303,14 +253,14 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0.73976865,-235.94147)">
+     transform="translate(3.6108343,-235.94147)">
     <g
        id="g968"
        transform="matrix(1.0000823,0,0,1.0000787,-4.5682588,-21.029588)"
        style="stroke-width:0.99991947">
       <path
          inkscape:connector-curvature="0"
-         style="fill:none;stroke:#000000;stroke-width:0.99991951;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:none;stroke:#000000;stroke-width:0.99991953;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="M 9.3391378,285.01353 H 5.9961185"
          id="path824" />
       <path
@@ -331,21 +281,21 @@
     </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.42467335;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 11.499931,294 C 11.499931,294 3,294 3,294 3,294 3,277.02598 3,277.02598"
+       d="m 20,294 c 0,0 -17,0 -17,0 0,0 0,-16.97402 0,-16.97402"
        id="path4534"
        inkscape:connector-curvature="0"
        inkscape:path-effect="#path-effect4536"
-       inkscape:original-d="M 11.499931,294 H 3 v -16.97402"
+       inkscape:original-d="M 20,294 H 3 v -16.97402"
        sodipodi:nodetypes="ccc"
        transform="matrix(1.1764801,0,0,1.1782717,-0.5294403,-52.411871)" />
     <path
        transform="matrix(0,-1.1782712,1.1764801,0,-292.88515,297.53481)"
        style="fill:none;stroke:#000000;stroke-width:0.42467344;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 19.974018,294 C 19.974018,294 3,294 3,294 c 0,0 0,-8.49993 0,-8.49993"
+       d="M 19.974018,294 C 19.974018,294 3,294 3,294 c 0,0 0,-17 0,-17"
        id="path4534-4"
        inkscape:connector-curvature="0"
        inkscape:path-effect="#path-effect4536-4"
-       inkscape:original-d="M 19.974018,294 3,294 v -8.49993"
+       inkscape:original-d="M 19.974018,294 H 3 v -17"
        sodipodi:nodetypes="ccc" />
     <path
        transform="rotate(180,28,269)"
@@ -358,16 +308,16 @@
        sodipodi:nodetypes="ccc" />
     <path
        transform="matrix(0,1.0000245,-1.0000005,0,297.00016,241.00055)"
-       style="fill:none;stroke:#000000;stroke-width:0.49999375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 3,274 c 0,0 0,10 0,10 m 0,2.10002 c 0,0 0,7.89998 0,7.89998 m 0,0 c 0,0 7.499816,0 7.499816,0 0,0 -6.3e-4,-37.49997 -6.3e-4,-37.49997 0,0 34.499154,0 34.499154,0"
+       style="fill:none;stroke:#000000;stroke-width:0.49999368;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 22.999503,294 c 0,0 -19.9994995,0 -19.9994995,0 0,0 -3.5e-6,-7.69998 -3.5e-6,-7.69998"
        id="path4534-09"
        inkscape:connector-curvature="0"
        inkscape:path-effect="#path-effect4536-49"
-       inkscape:original-d="m 3,274 v 10 M 3,286.10002 3,294 m 0,0 h 7.499816 l -6.3e-4,-37.49997 H 44.99834"
-       sodipodi:nodetypes="cccccccc" />
+       inkscape:original-d="M 22.999503,294 H 3.0000035 L 3,286.30002"
+       sodipodi:nodetypes="ccc" />
     <g
        id="g1471"
-       transform="rotate(180,12.000116,292.50001)">
+       transform="rotate(180,17,292.50001)">
       <g
          transform="translate(-14.006273,14.016205)"
          id="g1443">
@@ -468,144 +418,75 @@
          d="m 3.4999998,286.49998 c 0,0 0,-3.49998 0,-3.49998"
          style="fill:none;stroke:#000000;stroke-width:0.50100017;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
-    <path
-       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 23,293.99999 c 0,0 10,0 10,0"
-       id="path4678"
-       inkscape:connector-curvature="0"
-       inkscape:path-effect="#path-effect4680"
-       inkscape:original-d="M 23,293.99999 H 33"
-       sodipodi:nodetypes="cc" />
-    <g
-       id="g1471-2"
-       transform="translate(32.000231,2.9996233)">
-      <g
-         transform="translate(-14.006273,14.016205)"
-         id="g1443-0">
-        <circle
-           id="path5185-6-2-17-8-4"
-           inkscape:label="circle"
-           style="fill:none;stroke:#000000;stroke-width:0.99999994;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
-           cx="276.9838"
-           cy="-20.006273"
-           transform="rotate(90)"
-           r="5" />
-        <path
-           id="path2736-7-4-6-1-7-7-1"
-           inkscape:label="none"
-           style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
-           d="m 14.988893,276.98381 5.017389,-3.28052 v 6.56102 l 5.017371,-3.2805"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="cccc" />
-      </g>
-      <path
-         transform="matrix(0.99800361,0,0,0.99800361,0.00698734,0.57292887)"
-         inkscape:original-d="M 3.4999998,286.49998 V 283"
-         inkscape:path-effect="#path-effect1368-4"
-         inkscape:connector-curvature="0"
-         id="path1366-71"
-         d="m 3.4999998,286.49998 c 0,0 0,-3.49998 0,-3.49998"
-         style="fill:none;stroke:#000000;stroke-width:0.50100017;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <path
-         transform="matrix(0.99800361,0,0,0.99800361,5.0070126,0.57348096)"
-         inkscape:original-d="M 3.4999998,286.49998 V 283"
-         inkscape:path-effect="#path-effect1368-3-5"
-         inkscape:connector-curvature="0"
-         id="path1366-7-9"
-         d="m 3.4999998,286.49998 c 0,0 0,-3.49998 0,-3.49998"
-         style="fill:none;stroke:#000000;stroke-width:0.50100017;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    </g>
-    <path
-       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 1.9999999,263.99999 c 0,0 1e-7,-7.49937 1e-7,-7.49937 0,0 32.499769,-0.001 32.499769,-0.001 0,0 0,29.49974 0,29.49974"
-       id="path4702"
-       inkscape:connector-curvature="0"
-       inkscape:path-effect="#path-effect4704"
-       inkscape:original-d="m 1.9999999,263.99999 1e-7,-7.49937 32.499769,-0.001 0,29.49974"
-       sodipodi:nodetypes="cc"
-       transform="translate(1.0002315,6.3343905e-4)" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        x="17.376827"
-       y="243.20502"
+       y="243.20503"
        id="text868"><tspan
          sodipodi:role="line"
          id="tspan866"
          x="17.376827"
-         y="243.20502"
+         y="243.20503"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">A0</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="-0.6425401"
-       y="243.20915"
+       x="-0.64253998"
+       y="243.20917"
        id="text868-1"><tspan
          sodipodi:role="line"
          id="tspan866-9"
-         x="-0.64254016"
-         y="243.20915"
+         x="-0.64254004"
+         y="243.20917"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">A1</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="-0.63840598"
-       y="258.48004"
-       id="text868-7"><tspan
-         sodipodi:role="line"
-         id="tspan866-5"
-         x="-0.6384061"
-         y="258.48004"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">A2</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        x="55.945614"
-       y="243.20364"
+       y="243.20503"
        id="text868-5"><tspan
          sodipodi:role="line"
          id="tspan866-52"
          x="55.945614"
-         y="243.20364"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">A6</tspan></text>
+         y="243.20503"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">A4</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="55.999359"
-       y="298.20749"
+       x="56.035187"
+       y="298.20752"
        id="text868-71"><tspan
          sodipodi:role="line"
          id="tspan866-8"
-         x="55.999359"
-         y="298.20749"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">A5</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="-0.62462562"
-       y="298.2254"
-       id="text868-6"><tspan
-         sodipodi:role="line"
-         id="tspan866-0"
-         x="-0.62462568"
-         y="298.2254"
+         x="56.035187"
+         y="298.20752"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">A3</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="28.299358"
-       y="298.2254"
-       id="text868-8"><tspan
+       x="-0.63840586"
+       y="298.22543"
+       id="text868-6"><tspan
          sodipodi:role="line"
-         id="tspan866-3"
-         x="28.299358"
-         y="298.2254"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">A4</tspan></text>
+         id="tspan866-0"
+         x="-0.63840592"
+         y="298.22543"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">A2</tspan></text>
     <path
        style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.49999905;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 12.8,245.99999 -2,-2 2,-2 z"
        id="path4652-12-9-60-5-4-2-9"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
+    <path
+       transform="matrix(0,1.0000245,-1.0000005,0,306.80015,240.99992)"
+       style="fill:none;stroke:#000000;stroke-width:0.49999368;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 3.0006335,294 c 0,0 0,-9.89999 0,-9.89999"
+       id="path4534-09-3"
+       inkscape:connector-curvature="0"
+       inkscape:path-effect="#path-effect4536-49-8"
+       inkscape:original-d="m 3.0006335,294 0,-9.89999"
+       sodipodi:nodetypes="cc" />
   </g>
 </svg>
