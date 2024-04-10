@@ -34,11 +34,6 @@ def info_df(label, refrigs):
 
     return df_refrig
 
-is_dark = st_javascript("""
-    function darkMode(i){
-        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)}(1)
-    """)
-
 root_path = os.path.abspath(__file__)
 src_path = os.path.join(root_path, '..', 'src')
 
@@ -51,6 +46,13 @@ st.set_page_config(
     layout='wide',
     page_title='Wärmepumpen Dashboard',
     page_icon=os.path.join(src_path, 'img', 'page_icon_ZNES.png')
+    )
+
+is_dark = st_javascript(
+    """
+    function darkMode(i){
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)}(1)
+    """
     )
 
 # %% Sidebar
