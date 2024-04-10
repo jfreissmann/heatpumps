@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 import variables as var
 from simulation import run_design, run_partload
+from streamlit_javascript import st_javascript
 
 
 def switch2design():
@@ -47,11 +48,21 @@ st.set_page_config(
     page_icon=os.path.join(src_path, 'img', 'page_icon_ZNES.png')
     )
 
+is_dark = st_javascript(
+    """
+    function darkMode(i){
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)}(1)
+    """
+    )
+
 # %% Sidebar
 with st.sidebar:
     st.image(os.path.join(src_path, 'img', 'Logo_ZNES.png'))
 
-    mode = st.selectbox('', ['Auslegung', 'Teillast'], key='select')
+    mode = st.selectbox(
+        'Auswahl Modus', ['Start', 'Auslegung', 'Teillast'],
+        key='select', label_visibility='hidden'
+        )
 
     st.markdown("""---""")
 
@@ -130,7 +141,7 @@ with st.sidebar:
                         break
 
                 refrig1_label = st.selectbox(
-                    '1. Kältemittel', refrigerants.keys(),
+                    'Kältemittel (Niedertemperaturkreis)', refrigerants.keys(),
                     index=refrig1_index, key='refrigerant1'
                     )
                 params['setup']['refrig1'] = refrigerants[refrig1_label]['CP']
@@ -148,7 +159,7 @@ with st.sidebar:
 
 
                 refrig2_label = st.selectbox(
-                    '2. Kältemittel', refrigerants.keys(),
+                    'Kältemittel (Hochtemperaturkreis)', refrigerants.keys(),
                     index=refrig2_index, key='refrigerant2'
                     )
                 params['setup']['refrig2'] = refrigerants[refrig2_label]['CP']
@@ -237,7 +248,7 @@ with st.sidebar:
     # autorun = st.checkbox('AutoRun Simulation', value=True)
 
     # %% Offdesign
-    if mode == 'Teillast':
+    if mode == 'Teillast' and 'hp' in st.session_state:
         params = st.session_state.hp_params
         st.header('Teillastsimulation der Wärmepumpe')
 
@@ -356,116 +367,173 @@ with st.sidebar:
 # %% Main Content
 st.title('Wärmepumpensimulator 3k Pro™')
 
+if mode == 'Start':
+    # %% Landing Page
+    st.write(
+        """
+        Der Wärmepumpensimulator 3k Pro™ ist eine leistungsfähige
+        Simulationssoftware zur Auslegung und Teillastbetrachtung von
+        Wärmepumpen.
+
+        Sie befinden sich auf der Oberfläche zur Auslegungssimulation
+        Ihrer Wärmepumpe. Dazu sind links in der Sidebar neben der
+        Dimensionierung und der Wahl des zu verwendenden Kältemittels
+        verschiedene zentrale Parameter des Kreisprozesse vorzugeben.
+
+        Dies sind zum Beispiel die Temperaturen der Wärmequelle und -senke,
+        aber auch die dazugehörigen Netzdrücke. Darüber hinaus kann
+        optional ein interner Wärmeübertrager hinzugefügt werden. Dazu ist
+        weiterhin die resultierende Überhitzung des verdampften
+        Kältemittels vorzugeben.
+
+        Ist die Auslegungssimulation erfolgreich abgeschlossen, werden die
+        generierten Ergebnisse graphisch in Zustandsdiagrammen
+        aufgearbeitet und quantifiziert. Die zentralen Größen wie die
+        Leistungszahl (COP) sowie die relevanten Wärmeströme und Leistung
+        werden aufgeführt. Darüber hinaus werden die thermodynamischen
+        Zustandsgrößen in allen Prozessschritten tabellarisch aufgelistet.
+
+        Im Anschluss an die Auslegungsimulation erscheint ein Knopf zum
+        Wechseln in die Teillastoberfläche. Dies kann ebenfalls über das
+        Dropdownmenü in der Sidebar erfolgen. Informationen zur
+        Durchführung der Teillastsimulationen befindet sich auf der
+        Startseite dieser Oberfläche.
+        """
+        )
+
+    st.button('Auslegung starten', on_click=switch2design)
+
+    st.markdown("""---""")
+
+    st.info(
+        """
+        #### Verwendete Software:
+
+        Zur Modellerstellung und Berechnung der Simulationen wird die
+        Open Source Software TESPy verwendet. Des Weiteren werden
+        eine Reihe weiterer Pythonpakete zur Datenverarbeitung,
+        -aufbereitung und -visualisierung genutzt.
+
+        ---
+
+        #### TESPy:
+
+        TESPy (Thermal Engineering Systems in Python) ist ein
+        leistungsfähiges Simulationswerkzeug für thermische
+        Verfahrenstechnik, zum Beispiel für Kraftwerke,
+        Fernwärmesysteme oder Wärmepumpen. Mit dem TESPy-Paket ist es
+        möglich, Anlagen auszulegen und den stationären Betrieb zu
+        simulieren. Danach kann das Teillastverhalten anhand der
+        zugrundeliegenden Charakteristiken für jede Komponente der
+        Anlage ermittelt werden. Die komponentenbasierte Struktur in
+        Kombination mit der Lösungsmethode bieten eine sehr hohe
+        Flexibilität hinsichtlich der Anlagentopologie und der
+        Parametrisierung. Weitere Informationen zu TESPy sind in dessen
+        [Onlinedokumentation](https://tespy.readthedocs.io) in
+        englischer Sprache zu finden.
+
+        #### Weitere Pakete:
+
+        - [Streamlit](https://docs.streamlit.io) (Graphische Oberfläche)
+        - [NumPy](https://numpy.org) (Datenverarbeitung)
+        - [pandas](https://pandas.pydata.org) (Datenverarbeitung)
+        - [SciPy](https://scipy.org/) (Interpolation)
+        - [scikit-learn](https://scikit-learn.org) (Regression)
+        - [Matplotlib](https://matplotlib.org) (Datenvisualisierung)
+        - [FluProDia](https://fluprodia.readthedocs.io) (Datenvisualisierung)
+        - [CoolProp](http://www.coolprop.org) (Stoffdaten)
+        """
+        )
+
+    with st.expander('Disclaimer'):
+        st.warning(
+            """
+            #### Simulationsergebnisse:
+
+            Numerische Simulationen sind Berechnungen mittels geeigneter
+            Iterationsverfahren in Bezug auf die vorgegebenen und gesetzten
+            Randbedingungen und Parameter. Eine Berücksichtigung aller
+            möglichen Einflüsse ist in Einzelfällen nicht möglich, so dass
+            Abweichungen zu Erfahrungswerten aus Praxisanwendungen
+            entstehen können und bei der Bewertung berücksichtigt werden
+            müssen. Die Ergebnisse geben hinreichenden bis genauen
+            Aufschluss über das prinzipielle Verhalten, den COP und
+            Zustandsgrößen in den einzelnen Komponenten der Wärmepumpe.
+            Dennoch sind alle Angaben und Ergebnisse ohne Gewähr.
+            """
+            )
+
+    with st.expander('Copyright'):
+        licpath = os.path.join(__file__, '..', '..', '..', 'LICENSE')
+        with open(licpath, 'r', encoding='utf-8') as file:
+            lictext = file.read()
+
+        st.success('#### Softwarelizenz\n' + lictext.replace('(c)', '©'))
+
 if mode == 'Auslegung':
     # %% Design Simulation
     if not run_sim and 'hp' not in st.session_state:
-        # %% Landing Page
-        st.write(
-            """
-            Der Wärmepumpensimulator 3k Pro™ ist eine leistungsfähige
-            Simulationssoftware zur Auslegung und Teillastbetrachtung von
-            Wärmepumpen.
-            """
-            )
 
-        st.write(
-            """
-            Sie befinden sich auf der Oberfläche zur Auslegungssimulation
-            Ihrer Wärmepumpe. Dazu sind links in der Sidebar neben der
-            Dimensionierung und der Wahl des zu verwendenden Kältemittels
-            verschiedene zentrale Parameter des Kreisprozesse vorzugeben.
-            """
-            )
 
-        st.write(
-            """
-            Dies sind zum Beispiel die Temperaturen der Wärmequelle und -senke,
-            aber auch die dazugehörigen Netzdrücke. Darüber hinaus kann
-            optional ein interner Wärmeübertrager hinzugefügt werden. Dazu ist
-            weiterhin die resultierende Überhitzung des verdampften
-            Kältemittels vorzugeben.
-            """
-            )
+        # %% Topology & Refrigerant
+        col_left, col_right = st.columns([1, 4])
 
-        st.write(
-            """
-            Ist die Auslegungssimulation erfolgreich abgeschlossen, werden die
-            generierten Ergebnisse graphisch in Zustandsdiagrammen
-            aufgearbeitet und quantifiziert. Die zentralen Größen wie die
-            Leistungszahl (COP) sowie die relevanten Wärmeströme und Leistung
-            werden aufgeführt. Darüber hinaus werden die thermodynamischen
-            Zustandsgrößen in allen Prozessschritten tabellarisch aufgelistet.
-            """
-            )
+        with col_left:
+            st.subheader('Topologie')
 
-        st.write(
-            """
-            Im Anschluss an die Auslegungsimulation erscheint ein Knopf zum
-            Wechseln in die Teillastoberfläche. Dies kann ebenfalls über das
-            Dropdownmenü in der Sidebar erfolgen. Informationen zur
-            Durchführung der Teillastsimulationen befindet sich auf der
-            Startseite dieser Oberfläche.
-            """
-            )
+            # TODO: Topologien einfügen und darstellen
+            top_file = os.path.join(
+                src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
+                )
+            st.image(top_file)
 
-        st.markdown("""---""")
+        with col_right:
+            st.subheader('Kältemittel')
 
-        with st.expander('Verwendete Software'):
-            st.info(
+            if hp_model['nr_refrigs'] == 1:
+                st.dataframe(df_refrig, use_container_width=True)
+            elif hp_model['nr_refrigs'] == 2:
+                st.markdown('#### Hochtemperaturkreis')
+                st.dataframe(df_refrig2, use_container_width=True)
+                st.markdown('#### Niedertemperaturkreis')
+                st.dataframe(df_refrig1, use_container_width=True)
+
+            st.write(
                 """
-                #### Verwendete Software:
-
-                Zur Modellerstellung und Berechnung der Simulationen wird die
-                Open Source Software TESPy verwendet. Des Weiteren werden
-                eine Reihe weiterer Pythonpakete zur Datenverarbeitung,
-                -aufbereitung und -visualisierung genutzt.
-
-                ---
-
-                #### TESPy:
-
-                TESPy (Thermal Engineering Systems in Python) ist ein
-                leistungsfähiges Simulationswerkzeug für thermische
-                Verfahrenstechnik, zum Beispiel für Kraftwerke,
-                Fernwärmesysteme oder Wärmepumpen. Mit dem TESPy-Paket ist es
-                möglich, Anlagen auszulegen und den stationären Betrieb zu
-                simulieren. Danach kann das Teillastverhalten anhand der
-                zugrundeliegenden Charakteristiken für jede Komponente der
-                Anlage ermittelt werden. Die komponentenbasierte Struktur in
-                Kombination mit der Lösungsmethode bieten eine sehr hohe
-                Flexibilität hinsichtlich der Anlagentopologie und der
-                Parametrisierung. Weitere Informationen zu TESPy sind in dessen
-                [Onlinedokumentation](https://tespy.readthedocs.io) in
-                englischer Sprache zu finden.
-
-                #### Weitere Pakete:
-
-                - [Streamlit](https://docs.streamlit.io) (Graphische Oberfläche)
-                - [NumPy](https://numpy.org) (Datenverarbeitung)
-                - [pandas](https://pandas.pydata.org) (Datenverarbeitung)
-                - [SciPy](https://scipy.org/) (Interpolation)
-                - [scikit-learn](https://scikit-learn.org) (Regression)
-                - [Matplotlib](https://matplotlib.org) (Datenvisualisierung)
-                - [FluProDia](https://fluprodia.readthedocs.io) (Datenvisualisierung)
-                - [CoolProp](http://www.coolprop.org) (Stoffdaten)
+                Alle Stoffdaten und Klassifikationen aus
+                [CoolProp](http://www.coolprop.org) oder
+                [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)
                 """
                 )
 
-        with st.expander('Disclaimer'):
-            st.warning(
+        with st.expander('Anleitung'):
+            st.info(
                 """
-                #### Simulationsergebnisse:
+                #### Anleitung
 
-                Numerische Simulationen sind Berechnungen mittels geeigneter
-                Iterationsverfahren in Bezug auf die vorgegebenen und gesetzten
-                Randbedingungen und Parameter. Eine Berücksichtigung aller
-                möglichen Einflüsse ist in Einzelfällen nicht möglich, so dass
-                Abweichungen zu Erfahrungswerten aus Praxisanwendungen
-                entstehen können und bei der Bewertung berücksichtigt werden
-                müssen. Die Ergebnisse geben hinreichenden bis genauen
-                Aufschluss über das prinzipielle Verhalten, den COP und
-                Zustandsgrößen in den einzelnen Komponenten der Wärmepumpe.
-                Dennoch sind alle Angaben und Ergebnisse ohne Gewähr.
+                Sie befinden sich auf der Oberfläche zur Auslegungssimulation
+                Ihrer Wärmepumpe. Dazu sind links in der Sidebar neben der
+                Dimensionierung und der Wahl des zu verwendenden Kältemittels
+                verschiedene zentrale Parameter des Kreisprozesse vorzugeben.
+
+                Dies sind zum Beispiel die Temperaturen der Wärmequelle und -senke,
+                aber auch die dazugehörigen Netzdrücke. Darüber hinaus kann
+                optional ein interner Wärmeübertrager hinzugefügt werden. Dazu ist
+                weiterhin die resultierende Überhitzung des verdampften
+                Kältemittels vorzugeben.
+
+                Ist die Auslegungssimulation erfolgreich abgeschlossen, werden die
+                generierten Ergebnisse graphisch in Zustandsdiagrammen
+                aufgearbeitet und quantifiziert. Die zentralen Größen wie die
+                Leistungszahl (COP) sowie die relevanten Wärmeströme und Leistung
+                werden aufgeführt. Darüber hinaus werden die thermodynamischen
+                Zustandsgrößen in allen Prozessschritten tabellarisch aufgelistet.
+
+                Im Anschluss an die Auslegungsimulation erscheint ein Knopf zum
+                Wechseln in die Teillastoberfläche. Dies kann ebenfalls über das
+                Dropdownmenü in der Sidebar erfolgen. Informationen zur
+                Durchführung der Teillastsimulationen befindet sich auf der
+                Startseite dieser Oberfläche.
                 """
                 )
 
@@ -784,10 +852,12 @@ if mode == 'Auslegung':
                     st.subheader('Kältemittel')
 
                     if hp_model['nr_refrigs'] == 1:
-                        st.table(df_refrig)
+                        st.dataframe(df_refrig, use_container_width=True)
                     elif hp_model['nr_refrigs'] == 2:
-                        st.table(df_refrig1)
-                        st.table(df_refrig2)
+                        st.markdown('#### Hochtemperaturkreis')
+                        st.dataframe(df_refrig2, use_container_width=True)
+                        st.markdown('#### Niedertemperaturkreis')
+                        st.dataframe(df_refrig1, use_container_width=True)
 
                     st.write(
                         """
@@ -814,65 +884,74 @@ if mode == 'Teillast':
     # %% Offdesign Simulation
     st.header('Betriebscharakteristik')
 
-    if not run_pl_sim and 'partload_char' not in st.session_state:
-        # %% Landing Page
-        st.write(
+    if 'hp' not in st.session_state:
+        st.warning(
             '''
-            Parametrisierung der Teillastberechnung:
-            + Prozentualer Anteil Teillast
-            + Bereich der Quelltemperatur
-            + Bereich der Senkentemperatur
+            Um eine Teillastsimulation durchzuführen, muss zunächst eine 
+            Wärmepumpe ausgelegt werden. Wechseln Sie bitte zunächst in den 
+            Modus "Auslegung".
             '''
-            )
-
-    if run_pl_sim:
-        # %% Run Offdesign Simulation
-        with st.spinner(
-                'Teillastsimulation wird durchgeführt... Dies kann eine '
-                + 'Weile dauern.'
-                ):
-            st.session_state.hp, st.session_state.partload_char = (
-                run_partload(st.session_state.hp)
-                )
-            # st.session_state.partload_char = pd.read_csv(
-            #     'partload_char.csv', index_col=[0, 1, 2], sep=';'
-            #     )
-            st.success(
-                'Die Simulation der Wärmepumpencharakteristika war '
-                + 'erfolgreich.'
+        )
+    else:
+        if not run_pl_sim and 'partload_char' not in st.session_state:
+            # %% Landing Page
+            st.write(
+                '''
+                Parametrisierung der Teillastberechnung:
+                + Prozentualer Anteil Teillast
+                + Bereich der Quelltemperatur
+                + Bereich der Senkentemperatur
+                '''
                 )
 
-    if run_pl_sim or 'partload_char' in st.session_state:
-        # %% Results
-        with st.spinner('Ergebnisse werden visualisiert...'):
+        if run_pl_sim:
+            # %% Run Offdesign Simulation
+            with st.spinner(
+                    'Teillastsimulation wird durchgeführt... Dies kann eine '
+                    + 'Weile dauern.'
+                    ):
+                st.session_state.hp, st.session_state.partload_char = (
+                    run_partload(st.session_state.hp)
+                    )
+                # st.session_state.partload_char = pd.read_csv(
+                #     'partload_char.csv', index_col=[0, 1, 2], sep=';'
+                #     )
+                st.success(
+                    'Die Simulation der Wärmepumpencharakteristika war '
+                    + 'erfolgreich.'
+                    )
 
-            with st.expander('Diagramme', expanded=True):
-                col_left, col_right = st.columns(2)
+        if run_pl_sim or 'partload_char' in st.session_state:
+            # %% Results
+            with st.spinner('Ergebnisse werden visualisiert...'):
 
-                with col_left:
-                    figs, axes = st.session_state.hp.plot_partload_char(
-                        st.session_state.partload_char, cmap_type='COP',
-                        cmap='plasma', return_fig_ax=True
-                        )
-                    pl_cop_placeholder = st.empty()
-                    T_select_cop = st.select_slider(
-                        'Quellentemperatur',
-                        options=list(figs.keys()),
-                        value=float(np.median(list(figs.keys()))),
-                        key='pl_cop_slider'
-                        )
-                    pl_cop_placeholder.pyplot(figs[T_select_cop])
+                with st.expander('Diagramme', expanded=True):
+                    col_left, col_right = st.columns(2)
 
-                with col_right:
-                    figs, axes = st.session_state.hp.plot_partload_char(
-                        st.session_state.partload_char, cmap_type='T_cons_ff',
-                        cmap='plasma', return_fig_ax=True
-                        )
-                    pl_T_cons_ff_placeholder = st.empty()
-                    T_select_T_cons_ff = st.select_slider(
-                        'Quellentemperatur',
-                        options=list(figs.keys()),
-                        value=float(np.median(list(figs.keys()))),
-                        key='pl_T_cons_ff_slider'
-                        )
-                    pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
+                    with col_left:
+                        figs, axes = st.session_state.hp.plot_partload_char(
+                            st.session_state.partload_char, cmap_type='COP',
+                            cmap='plasma', return_fig_ax=True
+                            )
+                        pl_cop_placeholder = st.empty()
+                        T_select_cop = st.select_slider(
+                            'Quellentemperatur',
+                            options=list(figs.keys()),
+                            value=float(np.median(list(figs.keys()))),
+                            key='pl_cop_slider'
+                            )
+                        pl_cop_placeholder.pyplot(figs[T_select_cop])
+
+                    with col_right:
+                        figs, axes = st.session_state.hp.plot_partload_char(
+                            st.session_state.partload_char, cmap_type='T_cons_ff',
+                            cmap='plasma', return_fig_ax=True
+                            )
+                        pl_T_cons_ff_placeholder = st.empty()
+                        T_select_T_cons_ff = st.select_slider(
+                            'Quellentemperatur',
+                            options=list(figs.keys()),
+                            value=float(np.median(list(figs.keys()))),
+                            key='pl_T_cons_ff_slider'
+                            )
+                        pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
