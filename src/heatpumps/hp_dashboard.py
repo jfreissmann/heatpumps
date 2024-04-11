@@ -1,12 +1,12 @@
 import json
 import os
 
+import darkdetect
 import numpy as np
 import pandas as pd
 import streamlit as st
 import variables as var
 from simulation import run_design, run_partload
-from streamlit_javascript import st_javascript
 
 
 def switch2design():
@@ -48,16 +48,20 @@ st.set_page_config(
     page_icon=os.path.join(src_path, 'img', 'page_icon_ZNES.png')
     )
 
-is_dark = st_javascript(
-    """
-    function darkMode(i){
-        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)}(1)
-    """
-    )
+is_dark = darkdetect.isDark()
+
+print(is_dark)
 
 # %% Sidebar
 with st.sidebar:
-    st.image(os.path.join(src_path, 'img', 'Logo_ZNES.png'))
+    if is_dark:
+        st.image(
+            os.path.join(src_path, 'img', 'Logo_ZNES_mitUnis_dark.svg'),
+            use_column_width=True
+            # width=300
+            )
+    else:
+        st.image(os.path.join(src_path, 'img', 'Logo_ZNES.png'))
 
     mode = st.selectbox(
         'Auswahl Modus', ['Start', 'Auslegung', 'Teillast'],
