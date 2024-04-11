@@ -50,18 +50,13 @@ st.set_page_config(
 
 is_dark = darkdetect.isDark()
 
-print(is_dark)
-
 # %% Sidebar
 with st.sidebar:
     if is_dark:
-        st.image(
-            os.path.join(src_path, 'img', 'Logo_ZNES_mitUnis_dark.svg'),
-            use_column_width=True
-            # width=300
-            )
+        logo = os.path.join(src_path, 'img', 'Logo_ZNES_mitUnisV2_dark.svg')
     else:
-        st.image(os.path.join(src_path, 'img', 'Logo_ZNES.png'))
+        logo = os.path.join(src_path, 'img', 'Logo_ZNES_mitUnisV2.svg')
+    st.image(logo, use_column_width=True)
 
     mode = st.selectbox(
         'Auswahl Modus', ['Start', 'Auslegung', 'Teillast'],
