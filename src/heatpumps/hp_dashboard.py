@@ -481,10 +481,24 @@ if mode == 'Auslegung':
             st.subheader('Topologie')
 
             # TODO: Topologien einfügen und darstellen
-            top_file = os.path.join(
-                src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
-                )
-            st.image(top_file)
+            if is_dark:
+                try:
+                    top_file = os.path.join(
+                        src_path, 'img', 'topologies',
+                        f'hp_{hp_model_name}_dark.svg'
+                        )
+                    st.image(top_file)
+                except:
+                    top_file = os.path.join(
+                        src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
+                        )
+                    st.image(top_file)
+
+            else:
+                top_file = os.path.join(
+                    src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
+                    )
+                st.image(top_file)
 
         with col_right:
             st.subheader('Kältemittel')
