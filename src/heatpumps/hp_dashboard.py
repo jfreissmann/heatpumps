@@ -592,6 +592,48 @@ if mode == 'Auslegung':
                 )
             col4.metric('Q_dot_zu', f'{Q_dot_zu:.2f} MW')
 
+            with st.expander('Topologie & Kältemittel'):
+                # %% Topology & Refrigerant
+                col_left, col_right = st.columns([1, 4])
+
+                with col_left:
+                    st.subheader('Topologie')
+
+                    # TODO: Topologien einfügen und darstellen
+                    top_file = os.path.join(
+                        src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
+                        )
+                    # if hp_model['nr_refrigs'] == 1:
+                    #     if params['design']['int_heatex']:
+                    #         top_file = os.path.join(top_file, '_ih.png')
+                    #     # elif param['design']['intercooler']:
+                    #     #     top_file = os.path.join(top_file, '_ic.png')
+                    #     else:
+                    #         top_file = os.path.join(top_file, '.png')
+                    # elif hp_model['nr_refrigs'] == 2:
+                    #     top_file = os.path.join(top_file, '_2_ih.png')
+
+                    st.image(top_file)
+
+                with col_right:
+                    st.subheader('Kältemittel')
+
+                    if hp_model['nr_refrigs'] == 1:
+                        st.dataframe(df_refrig, use_container_width=True)
+                    elif hp_model['nr_refrigs'] == 2:
+                        st.markdown('#### Hochtemperaturkreis')
+                        st.dataframe(df_refrig2, use_container_width=True)
+                        st.markdown('#### Niedertemperaturkreis')
+                        st.dataframe(df_refrig1, use_container_width=True)
+
+                    st.write(
+                        """
+                        Alle Stoffdaten und Klassifikationen aus
+                        [CoolProp](http://www.coolprop.org) oder
+                        [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)
+                        """
+                        )
+
             with st.expander('Zustandsdiagramme', expanded=True):
                 # %% State Diagrams
                 col_left, _, col_right = st.columns([0.495, 0.01, 0.495])
@@ -824,53 +866,35 @@ if mode == 'Auslegung':
                     inplace=True)
                 st.dataframe(data=state_quantities, use_container_width=True)
 
-            with st.expander('Topologie & Kältemittel'):
-                # %% Topology & Refrigerant
-                col_left, col_right = st.columns([1, 4])
-
-                with col_left:
-                    st.subheader('Topologie')
-
-                    # TODO: Topologien einfügen und darstellen
-                    top_file = os.path.join(
-                        src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
-                        )
-                    # if hp_model['nr_refrigs'] == 1:
-                    #     if params['design']['int_heatex']:
-                    #         top_file = os.path.join(top_file, '_ih.png')
-                    #     # elif param['design']['intercooler']:
-                    #     #     top_file = os.path.join(top_file, '_ic.png')
-                    #     else:
-                    #         top_file = os.path.join(top_file, '.png')
-                    # elif hp_model['nr_refrigs'] == 2:
-                    #     top_file = os.path.join(top_file, '_2_ih.png')
-
-                    st.image(top_file)
-
-                with col_right:
-                    st.subheader('Kältemittel')
-
-                    if hp_model['nr_refrigs'] == 1:
-                        st.dataframe(df_refrig, use_container_width=True)
-                    elif hp_model['nr_refrigs'] == 2:
-                        st.markdown('#### Hochtemperaturkreis')
-                        st.dataframe(df_refrig2, use_container_width=True)
-                        st.markdown('#### Niedertemperaturkreis')
-                        st.dataframe(df_refrig1, use_container_width=True)
-
-                    st.write(
-                        """
-                        Alle Stoffdaten und Klassifikationen aus
-                        [CoolProp](http://www.coolprop.org) oder
-                        [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)
-                        """
-                        )
-
             with st.expander('Ökonomische Bewertung'):
                 # %% Eco Results
-                # TODO: Komponentenkosten berechnen und Ergebnisse darstellen.
-                # TODO: Man müsste auch die Annahmen dafür hier angeben.
-                st.write('Ökonomische Bewertung an dieser Stelle einfügen.')
+                st.session_state.hp.calc_cost(
+                    ref_year='2013', current_year='2019'
+                    )
+
+                col1, col2 = st.columns(2)
+                invest_total = sum(st.session_state.hp.cost.values())
+                col1.metric(
+                    'Gesamtinvestitionskosten',
+                    f'{invest_total:,.2f} €'
+                    )
+                col2.metric(
+                    'Spez. Investitionskosten',
+                    f'{invest_total/abs(st.session_state.hp.params["cons"]["Q"]/1e6):,.2f} €/MW'
+                    )
+                costdata = pd.DataFrame(
+                    {k: [round(v, 2)] for k, v in st.session_state.hp.cost.items()}
+                )
+                st.dataframe(costdata, use_container_width=True, hide_index=True)
+
+                st.write(
+                    """
+                    Methodik zur Berechnung der Kosten analog zu
+                    [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488),
+                    basierend auf [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).
+                    """
+                    )
+
 
             st.info(
                 'Um die Teillast zu berechnen, drücke auf "Teillast '
