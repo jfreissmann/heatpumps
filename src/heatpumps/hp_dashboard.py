@@ -69,7 +69,7 @@ with st.sidebar:
     if mode == 'Auslegung':
         st.header('Auslegung der Wärmepumpe')
 
-        with st.expander('Setup'):
+        with st.expander('Setup', expanded=True):
             base_topology = st.selectbox(
                 'Grundtopologie',
                 var.base_topologies,
@@ -364,13 +364,13 @@ with st.sidebar:
         run_pl_sim = st.button('🧮 Teillast simulieren')
 
 # %% Main Content
-st.title('Wärmepumpensimulator 3k Pro™')
+st.title('Wärmepumpensimulator')
 
 if mode == 'Start':
     # %% Landing Page
     st.write(
         """
-        Der Wärmepumpensimulator 3k Pro™ ist eine leistungsfähige
+        Der Wärmepumpensimulator ist eine leistungsfähige
         Simulationssoftware zur Auslegung und Teillastbetrachtung von
         Wärmepumpen.
 
@@ -480,7 +480,6 @@ if mode == 'Auslegung':
         with col_left:
             st.subheader('Topologie')
 
-            # TODO: Topologien einfügen und darstellen
             if is_dark:
                 try:
                     top_file = os.path.join(
@@ -613,21 +612,26 @@ if mode == 'Auslegung':
                 with col_left:
                     st.subheader('Topologie')
 
-                    # TODO: Topologien einfügen und darstellen
-                    top_file = os.path.join(
-                        src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
-                        )
-                    # if hp_model['nr_refrigs'] == 1:
-                    #     if params['design']['int_heatex']:
-                    #         top_file = os.path.join(top_file, '_ih.png')
-                    #     # elif param['design']['intercooler']:
-                    #     #     top_file = os.path.join(top_file, '_ic.png')
-                    #     else:
-                    #         top_file = os.path.join(top_file, '.png')
-                    # elif hp_model['nr_refrigs'] == 2:
-                    #     top_file = os.path.join(top_file, '_2_ih.png')
+                    if is_dark:
+                        try:
+                            top_file = os.path.join(
+                                src_path, 'img', 'topologies',
+                                f'hp_{hp_model_name}_label_dark.svg'
+                                )
+                            st.image(top_file)
+                        except:
+                            top_file = os.path.join(
+                                src_path, 'img', 'topologies',
+                                f'hp_{hp_model_name}_label.svg'
+                                )
+                            st.image(top_file)
 
-                    st.image(top_file)
+                    else:
+                        top_file = os.path.join(
+                            src_path, 'img', 'topologies',
+                            f'hp_{hp_model_name}_label.svg'
+                            )
+                        st.image(top_file)
 
                 with col_right:
                     st.subheader('Kältemittel')
@@ -648,7 +652,7 @@ if mode == 'Auslegung':
                         """
                         )
 
-            with st.expander('Zustandsdiagramme', expanded=True):
+            with st.expander('Zustandsdiagramme'):
                 # %% State Diagrams
                 col_left, _, col_right = st.columns([0.495, 0.01, 0.495])
                 _, slider_left, _, slider_right, _ = (
