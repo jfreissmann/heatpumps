@@ -971,12 +971,18 @@ if mode == 'Teillast':
                             cmap='plasma', return_fig_ax=True
                             )
                         pl_cop_placeholder = st.empty()
-                        T_select_cop = st.select_slider(
+
+                        T_hs_min = st.session_state.hp.params['offdesign']['T_hs_ff_start']
+                        T_hs_max = st.session_state.hp.params['offdesign']['T_hs_ff_end']
+                        T_select_cop = st.slider(
                             'Quellentemperatur',
-                            options=list(figs.keys()),
-                            value=float(np.median(list(figs.keys()))),
+                            min_value=T_hs_min,
+                            max_value=T_hs_max,
+                            value=int((T_hs_max+T_hs_min)/2),
+                            format='%d °C',
                             key='pl_cop_slider'
                             )
+
                         pl_cop_placeholder.pyplot(figs[T_select_cop])
 
                     with col_right:
@@ -985,10 +991,13 @@ if mode == 'Teillast':
                             cmap='plasma', return_fig_ax=True
                             )
                         pl_T_cons_ff_placeholder = st.empty()
-                        T_select_T_cons_ff = st.select_slider(
+
+                        T_select_T_cons_ff = st.slider(
                             'Quellentemperatur',
-                            options=list(figs.keys()),
-                            value=float(np.median(list(figs.keys()))),
+                            min_value=T_hs_min,
+                            max_value=T_hs_max,
+                            value=int((T_hs_max+T_hs_min)/2),
+                            format='%d °C',
                             key='pl_T_cons_ff_slider'
                             )
                         pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
