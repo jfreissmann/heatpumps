@@ -197,7 +197,7 @@ hp_model_classes = {
     'pc_econ_open_2ihx': HeatPumpPC2IHX.HeatPumpPC2IHX,
     'flash': HeatPumpFlash.HeatPumpFlash,
     'cascade': HeatPumpCascade.HeatPumpCascade,
-    'cascade_2ihx': HeatPumpCascade2IHX
+    'cascade_2ihx': HeatPumpCascade2IHX.HeatPumpCascade2IHX
     }
 
 # %% Misc

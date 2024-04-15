@@ -165,7 +165,7 @@
             "isorange_step": 10
         },
         "s": {
-            "min": 0,
+            "min": 800,
             "max": 2200,
             "isorange_low": 0,
             "isorange_high": 4000,
