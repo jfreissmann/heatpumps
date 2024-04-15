@@ -5,9 +5,9 @@
    version="1.1"
    id="svg2"
    xml:space="preserve"
-   width="262.61017"
+   width="293.46283"
    height="327.49286"
-   viewBox="0 0 262.61017 327.49286"
+   viewBox="0 0 293.46283 327.49286"
    sodipodi:docname="hp_econ_closed_ihx_label_dark.svg"
    inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -54,7 +54,7 @@
      id="namedview4"
      showgrid="true"
      inkscape:zoom="2.5647289"
-     inkscape:cx="126.13419"
+     inkscape:cx="147.57895"
      inkscape:cy="153.62247"
      inkscape:window-x="1912"
      inkscape:window-y="-8"
@@ -69,12 +69,12 @@
      inkscape:deskcolor="#d1d1d1"><inkscape:grid
        type="xygrid"
        id="grid1058"
-       originx="-0.027566004"
-       originy="-10.081612" /></sodipodi:namedview><g
+       originx="20.947307"
+       originy="-10.081614" /></sodipodi:namedview><g
      id="g10"
      inkscape:groupmode="layer"
      inkscape:label="hp_econ_closed_ihx1"
-     transform="matrix(1.3333333,0,0,1.3333333,-0.027566,-0.01378467)"><g
+     transform="matrix(1.3333333,0,0,1.3333333,20.947307,-0.01378666)"><g
    id="g14"
    style="stroke:#f9f9f9;stroke-opacity:1"><path
      inkscape:connector-curvature="0"
@@ -313,7 +313,7 @@
      id="tspan866"
      x="86.492485"
      y="12.831636"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A0</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A0</tspan></text>
 
 <text
    xml:space="preserve"
@@ -325,7 +325,7 @@
      id="tspan866-9"
      x="50.249886"
      y="20.53087"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A2</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A2</tspan></text>
 
 <text
    xml:space="preserve"
@@ -337,7 +337,7 @@
      id="tspan866-0"
      x="50.288948"
      y="79.239677"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A3</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A3</tspan></text>
 
 <text
    xml:space="preserve"
@@ -349,7 +349,7 @@
      id="tspan866-2"
      x="28.760828"
      y="156.33008"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A4</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A4</tspan></text>
 
 <text
    xml:space="preserve"
@@ -361,7 +361,7 @@
      id="tspan866-1"
      x="29.548685"
      y="235.31868"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A5</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A5</tspan></text>
 
 <text
    xml:space="preserve"
@@ -373,7 +373,7 @@
      id="tspan866-4"
      x="192.15617"
      y="235.36946"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A7</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A7</tspan></text>
 
 <text
    xml:space="preserve"
@@ -385,7 +385,7 @@
      id="tspan866-5"
      x="192.1132"
      y="156.33008"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A8</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A8</tspan></text>
 
 <text
    xml:space="preserve"
@@ -397,7 +397,7 @@
      id="tspan866-7"
      x="192.06242"
      y="20.480089"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A10</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A10</tspan></text>
 
 <text
    xml:space="preserve"
@@ -409,7 +409,7 @@
      id="tspan866-3"
      x="192.19133"
      y="105.67766"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A9</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A9</tspan></text>
 
 <text
    xml:space="preserve"
@@ -421,7 +421,7 @@
      id="tspan866-8"
      x="-3.0346994"
      y="20.491808"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A11</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A11</tspan></text>
 
 <text
    xml:space="preserve"
@@ -433,7 +433,7 @@
      id="tspan866-9-2"
      x="110.82619"
      y="140.66281"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A1</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A1</tspan></text>
 
 <text
    xml:space="preserve"
@@ -445,7 +445,7 @@
      id="tspan866-9-2-4"
      x="110.84476"
      y="235.36555"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A6</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A6</tspan></text>
 
 <path
    style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#f9f9f9;stroke-width:1.41732;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -470,6 +470,6 @@
      id="tspan866-8-1"
      x="-3.0229802"
      y="127.52909"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.75;fill:#f9f9f9">A12</tspan></text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.75">A12</tspan></text>
 
 </g></svg>
