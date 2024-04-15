@@ -370,33 +370,27 @@ if mode == 'Start':
     # %% Landing Page
     st.write(
         """
-        Der Wärmepumpensimulator ist eine leistungsfähige
-        Simulationssoftware zur Auslegung und Teillastbetrachtung von
-        Wärmepumpen.
+        Der Wärmepumpensimulator ist eine leistungsfähige Simulationssoftware
+        zur Analyse und Bewertung von Wärmepumpen.
 
-        Sie befinden sich auf der Oberfläche zur Auslegungssimulation
-        Ihrer Wärmepumpe. Dazu sind links in der Sidebar neben der
-        Dimensionierung und der Wahl des zu verwendenden Kältemittels
-        verschiedene zentrale Parameter des Kreisprozesse vorzugeben.
+        Mit diesem Dashboard lassen sich eine Vielzahl komplexer
+        thermodynamischer Anlagenmodelle mithilfe numerischer Methoden über eine
+        einfache Oberfläche steuern, ohne Fachkenntnisse über diese
+        vorauszusetzen. Dies beinhaltet sowohl die Auslegung von Wärmepumpen,
+        als auch die Simulation ihres stationären Teillastbetriebs. Dabei geben
+        die Ergebnisse der Simulationen Aufschluss über das prinzipielle
+        Verhalten, den COP, Zustandsgrößen und Kosten der einzelnen Komponenten
+        sowie Gesamtinvestitionskosten der betrachteten Wärmepumpe. Damit
+        wird Zugang zu komplexen Fragestellungen ermöglicht, die regelmäßig in
+        der Konzeption und Planung von Wärmepumpen aufkommen.
 
-        Dies sind zum Beispiel die Temperaturen der Wärmequelle und -senke,
-        aber auch die dazugehörigen Netzdrücke. Darüber hinaus kann
-        optional ein interner Wärmeübertrager hinzugefügt werden. Dazu ist
-        weiterhin die resultierende Überhitzung des verdampften
-        Kältemittels vorzugeben.
+        ### Key Features
 
-        Ist die Auslegungssimulation erfolgreich abgeschlossen, werden die
-        generierten Ergebnisse graphisch in Zustandsdiagrammen
-        aufgearbeitet und quantifiziert. Die zentralen Größen wie die
-        Leistungszahl (COP) sowie die relevanten Wärmeströme und Leistung
-        werden aufgeführt. Darüber hinaus werden die thermodynamischen
-        Zustandsgrößen in allen Prozessschritten tabellarisch aufgelistet.
-
-        Im Anschluss an die Auslegungsimulation erscheint ein Knopf zum
-        Wechseln in die Teillastoberfläche. Dies kann ebenfalls über das
-        Dropdownmenü in der Sidebar erfolgen. Informationen zur
-        Durchführung der Teillastsimulationen befindet sich auf der
-        Startseite dieser Oberfläche.
+        - Stationäre Auslegungs- und Teillastsimulation basierend auf [TESPy](https://github.com/oemof/tespy)
+        - Parametrisierung and Ergebnisvisualisierung mithilfe eines [Streamlit](https://github.com/streamlit/streamlit) Dashboards
+        - In der Industrie, Forschung und Entwicklung gängige Schaltungstopologien
+        - Sub- und transkritische Prozesse
+        - Große Auswahl an Arbeitsmedien aufgrund der Integration von [CoolProp](https://github.com/CoolProp/CoolProp)
         """
         )
 
@@ -404,45 +398,46 @@ if mode == 'Start':
 
     st.markdown("""---""")
 
-    st.info(
-        """
-        #### Verwendete Software:
+    with st.expander('Verwendete Software'):
+        st.info(
+            """
+            #### Verwendete Software:
 
-        Zur Modellerstellung und Berechnung der Simulationen wird die
-        Open Source Software TESPy verwendet. Des Weiteren werden
-        eine Reihe weiterer Pythonpakete zur Datenverarbeitung,
-        -aufbereitung und -visualisierung genutzt.
+            Zur Modellerstellung und Berechnung der Simulationen wird die
+            Open Source Software TESPy verwendet. Des Weiteren werden
+            eine Reihe weiterer Pythonpakete zur Datenverarbeitung,
+            -aufbereitung und -visualisierung genutzt.
 
-        ---
+            ---
 
-        #### TESPy:
+            #### TESPy:
 
-        TESPy (Thermal Engineering Systems in Python) ist ein
-        leistungsfähiges Simulationswerkzeug für thermische
-        Verfahrenstechnik, zum Beispiel für Kraftwerke,
-        Fernwärmesysteme oder Wärmepumpen. Mit dem TESPy-Paket ist es
-        möglich, Anlagen auszulegen und den stationären Betrieb zu
-        simulieren. Danach kann das Teillastverhalten anhand der
-        zugrundeliegenden Charakteristiken für jede Komponente der
-        Anlage ermittelt werden. Die komponentenbasierte Struktur in
-        Kombination mit der Lösungsmethode bieten eine sehr hohe
-        Flexibilität hinsichtlich der Anlagentopologie und der
-        Parametrisierung. Weitere Informationen zu TESPy sind in dessen
-        [Onlinedokumentation](https://tespy.readthedocs.io) in
-        englischer Sprache zu finden.
+            TESPy (Thermal Engineering Systems in Python) ist ein
+            leistungsfähiges Simulationswerkzeug für thermische
+            Verfahrenstechnik, zum Beispiel für Kraftwerke,
+            Fernwärmesysteme oder Wärmepumpen. Mit dem TESPy-Paket ist es
+            möglich, Anlagen auszulegen und den stationären Betrieb zu
+            simulieren. Danach kann das Teillastverhalten anhand der
+            zugrundeliegenden Charakteristiken für jede Komponente der
+            Anlage ermittelt werden. Die komponentenbasierte Struktur in
+            Kombination mit der Lösungsmethode bieten eine sehr hohe
+            Flexibilität hinsichtlich der Anlagentopologie und der
+            Parametrisierung. Weitere Informationen zu TESPy sind in dessen
+            [Onlinedokumentation](https://tespy.readthedocs.io) in
+            englischer Sprache zu finden.
 
-        #### Weitere Pakete:
+            #### Weitere Pakete:
 
-        - [Streamlit](https://docs.streamlit.io) (Graphische Oberfläche)
-        - [NumPy](https://numpy.org) (Datenverarbeitung)
-        - [pandas](https://pandas.pydata.org) (Datenverarbeitung)
-        - [SciPy](https://scipy.org/) (Interpolation)
-        - [scikit-learn](https://scikit-learn.org) (Regression)
-        - [Matplotlib](https://matplotlib.org) (Datenvisualisierung)
-        - [FluProDia](https://fluprodia.readthedocs.io) (Datenvisualisierung)
-        - [CoolProp](http://www.coolprop.org) (Stoffdaten)
-        """
-        )
+            - [Streamlit](https://docs.streamlit.io) (Graphische Oberfläche)
+            - [NumPy](https://numpy.org) (Datenverarbeitung)
+            - [pandas](https://pandas.pydata.org) (Datenverarbeitung)
+            - [SciPy](https://scipy.org/) (Interpolation)
+            - [scikit-learn](https://scikit-learn.org) (Regression)
+            - [Matplotlib](https://matplotlib.org) (Datenvisualisierung)
+            - [FluProDia](https://fluprodia.readthedocs.io) (Datenvisualisierung)
+            - [CoolProp](http://www.coolprop.org) (Stoffdaten)
+            """
+            )
 
     with st.expander('Disclaimer'):
         st.warning(
