@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="62.599155mm"
+   width="62.599152mm"
    height="66.297035mm"
-   viewBox="0 0 62.599155 66.297035"
+   viewBox="0 0 62.599151 66.297035"
    version="1.1"
    id="svg8"
    inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
@@ -181,7 +181,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4.68529"
-     inkscape:cx="117.28196"
+     inkscape:cx="117.4954"
      inkscape:cy="125.28573"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -211,45 +211,45 @@
        snapvisiblegridlinesonly="false"
        dotted="false"
        empspacing="10"
-       originx="3.6838702"
-       originy="5.242071" />
+       originx="3.6838679"
+       originy="5.2420754" />
     <sodipodi:guide
-       position="6.08387,8.2420839"
+       position="6.0838677,8.2420795"
        orientation="0,1"
        id="guide4628"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="6.68387,63.942082"
+       position="6.6838677,63.942078"
        orientation="1,0"
        id="guide4630"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="56.683868,6.8420838"
+       position="56.683866,6.8420794"
        orientation="1,0"
        id="guide4632"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="18.48387,58.242082"
+       position="18.483868,58.242078"
        orientation="0,1"
        id="guide4634"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="56.683868,38.742083"
+       position="56.683866,38.742079"
        orientation="0,1"
        id="guide4660"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="6.6838699,27.742084"
+       position="6.6838676,27.74208"
        orientation="0,1"
        id="guide4662"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="26.18387,58.242083"
+       position="26.183868,58.242079"
        orientation="1,0"
        id="guide4664"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="37.183869,58.242083"
+       position="37.183867,58.242079"
        orientation="1,0"
        id="guide4666"
        inkscape:locked="false" />
@@ -269,7 +269,7 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(3.6838703,-235.94504)">
+     transform="translate(3.683868,-235.94504)">
     <g
        id="g968"
        transform="matrix(1.0000823,0,0,1.0000787,-4.5682588,-21.029588)"
@@ -456,7 +456,7 @@
        id="text868-1"><tspan
          sodipodi:role="line"
          id="tspan866-9"
-         x="-0.6425401"
+         x="-0.64254016"
          y="243.20917"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.264583">A1</tspan></text>
     <text
@@ -489,7 +489,7 @@
        id="text868-6"><tspan
          sodipodi:role="line"
          id="tspan866-0"
-         x="-0.63840598"
+         x="-0.63840604"
          y="298.22543"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#f9f9f9;stroke-width:0.264583">A2</tspan></text>
     <path
