@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="hp_2_ft_new_labeled.svg">
+   sodipodi:docname="hp_flash_label.svg">
   <defs
      id="defs2">
     <inkscape:path-effect
@@ -148,6 +148,16 @@
        apply_no_weight="true"
        apply_with_weight="true"
        only_selected="false" />
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect4536-49-8"
+       is_visible="true"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -156,9 +166,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="109.24375"
-     inkscape:cy="138.74812"
+     inkscape:zoom="5.3751701"
+     inkscape:cx="111.74207"
+     inkscape:cy="267.48711"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -168,11 +178,11 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="958"
-     inkscape:window-height="1120"
-     inkscape:window-x="-7"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0">
+     inkscape:window-width="3840"
+     inkscape:window-height="2054"
+     inkscape:window-x="3829"
+     inkscape:window-y="7"
+     inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
        id="grid815"
@@ -235,7 +245,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -430,11 +440,11 @@
     <path
        transform="matrix(0,1.0000847,-1.0000001,0,297.00007,200.99974)"
        style="fill:none;stroke:#000000;stroke-width:0.49999368;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 12.999143,294 C 12.999143,294 3,294 3,294 3,294 3,274 3,274"
+       d="m 12.999143,294 c 0,0 -9.999143,0 -9.999143,0 0,0 0,-8.29996 0,-8.29996"
        id="path4534-09-7"
        inkscape:connector-curvature="0"
        inkscape:path-effect="#path-effect4536-49-2"
-       inkscape:original-d="M 12.999143,294 H 3 v -20"
+       inkscape:original-d="M 12.999143,294 H 3 l 0,-8.29996"
        sodipodi:nodetypes="ccc" />
     <g
        transform="matrix(0.99707814,0,0,0.99707814,32.563259,-70.059413)"
@@ -663,5 +673,20 @@
          x="56.846813"
          y="202.51982"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">A8</tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.49999905;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 13.200001,205.99936 -2,-2 2,-2 z"
+       id="path4652-12-9-60-5-4-2-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <path
+       transform="matrix(0,1.0000245,-1.0000005,0,307.20015,200.99929)"
+       style="fill:none;stroke:#000000;stroke-width:0.49999368;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 3.0006335,294 c 0,0 0,-9.89999 0,-9.89999"
+       id="path4534-09-3"
+       inkscape:connector-curvature="0"
+       inkscape:path-effect="#path-effect4536-49-8"
+       inkscape:original-d="m 3.0006335,294 v -9.89999"
+       sodipodi:nodetypes="cc" />
   </g>
 </svg>

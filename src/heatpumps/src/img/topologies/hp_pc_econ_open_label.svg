@@ -630,6 +630,13 @@
        apply_no_weight="true"
        apply_with_weight="true"
        only_selected="false" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-0" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -638,18 +645,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="57.116313"
-     inkscape:cy="138.44202"
+     inkscape:zoom="8.2181586"
+     inkscape:cx="145.80839"
+     inkscape:cy="225.62915"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1009"
-     inkscape:window-x="1912"
-     inkscape:window-y="185"
+     inkscape:window-width="3840"
+     inkscape:window-height="2054"
+     inkscape:window-x="3829"
+     inkscape:window-y="7"
      inkscape:window-maximized="1"
      inkscape:showpageshadow="2"
      inkscape:pagecheckerboard="0"
@@ -677,7 +684,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -974,11 +981,11 @@
     <path
        transform="matrix(1,0,0,-1,39,430.05433)"
        style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 23,294 c 0,0 -20,0 -20,0 0,0 0,-9.99999 0,-9.99999"
+       d="m 11.104419,294 c 0,0 -8.104419,0 -8.104419,0 0,0 0,-9.99999 0,-9.99999"
        id="path4534-0-0"
        inkscape:connector-curvature="0"
        inkscape:path-effect="#path-effect4536-3-9"
-       inkscape:original-d="M 23,294 H 3 v -9.99999"
+       inkscape:original-d="M 11.104419,294 H 3 v -9.99999"
        sodipodi:nodetypes="ccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.42401743;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -1108,5 +1115,15 @@
          x="55.954948"
          y="135.34686"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Carlito;-inkscape-font-specification:'Carlito, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">A0</tspan></text>
+    <path
+       id="path941"
+       d="m 52.094071,138.06515 -1.989652,-2.01082 1.989652,-1.98965 z"
+       style="fill:none;stroke:#000000;stroke-width:0.50799626px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path943"
+       d="m 52.094071,136.05433 h 9.905927"
+       style="fill:none;stroke:#000000;stroke-width:0.50799626px;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
