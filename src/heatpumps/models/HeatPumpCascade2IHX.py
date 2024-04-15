@@ -333,7 +333,10 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                 )
 
         # Parametrization
-        self.comps['comp'].set_attr(
+        self.comps['comp1'].set_attr(
+            design=['eta_s'], offdesign=['eta_s_char']
+            )
+        self.comps['comp2'].set_attr(
             design=['eta_s'], offdesign=['eta_s_char']
             )
         self.comps['hs_pump'].set_attr(
