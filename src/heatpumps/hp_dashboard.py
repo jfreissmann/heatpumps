@@ -879,6 +879,19 @@ if mode == 'Auslegung':
                     inplace=True)
                 st.dataframe(data=state_quantities, use_container_width=True)
 
+            with st.expander('Exergie Bewertung'):
+                # %% Exergy Analysis
+                st.header('Ergebnisse der Exergieanalyse')
+
+                col1, col2, col3, col4, col5 = st.columns(5)
+                col1.metric('Epsilon',00)
+                col2.metric('E_F', 00)
+                col3.metric('E_P', 00)
+                col4.metric('E_D', 00)
+                col5.metric('E_L', 00)
+
+                st.write('place for exergy analysis')
+
             with st.expander('Ökonomische Bewertung'):
                 # %% Eco Results
                 st.session_state.hp.calc_cost(
