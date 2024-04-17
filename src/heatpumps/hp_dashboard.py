@@ -884,24 +884,43 @@ if mode == 'Auslegung':
                 st.header('Ergebnisse der Exergieanalyse')
 
                 col1, col2, col3, col4, col5 = st.columns(5)
-                col1.metric('Epsilon',00)
-                col2.metric('E_F', f"{00} MW")
-                col3.metric('E_P', f"{00} MW")
-                col4.metric('E_D', f"{00} MW")
-                col5.metric('E_L', f"{00} MW")
+                col1.metric('Epsilon', f"{(st.session_state.hp.ean.network_data.epsilon)*1e2:.2f} %")
+                col2.metric('E_F', f"{(st.session_state.hp.ean.network_data.E_F)/1e6:.2f} MW")
+                col3.metric('E_P', f"{(st.session_state.hp.ean.network_data.E_P)/1e6:.2f} MW")
+                col4.metric('E_D', f"{(st.session_state.hp.ean.network_data.E_D)/1e6:.2f} MW")
+                col5.metric('E_L', f"{(st.session_state.hp.ean.network_data.E_L)/1e3:.2f} KW")
 
                 col6, _, col7 = st.columns([0.495, 0.01, 0.495])
 
                 with col6:
                     st.subheader('Sankey Diagram')
+                    """(need to implement)"""
                     diagram_placeholder_sankey = st.empty()
 
                 with col7:
                     st.subheader('Waterfall Diagram')
+                    """(need to implement)"""
                     diagram_placeholder_waterfall = st.empty()
 
-                with st.subheader('Component wise Exergy Result'):
-                    print('need to add exergy component table')
+                st.subheader('Exergy Result - Component')
+                exergy_component_result = (
+                    st.session_state.hp.ean.component_data.copy()
+                )
+                exergy_component_result =exergy_component_result.drop('group',axis=1)
+                exergy_component_result.dropna(inplace=True)
+                for col in ['E_F', 'E_P', 'E_D']:
+                    exergy_component_result[col]=exergy_component_result[col].round(2)
+                for col in ['epsilon', 'y_Dk', 'y*_Dk']:
+                    exergy_component_result[col]=exergy_component_result[col].round(4)
+                exergy_component_result.rename(
+                    columns={
+                        'E_F': 'E_F in W',
+                        'E_P': 'E_P in W',
+                        'E_D': 'E_D in W',
+                    },
+                    inplace=True)
+                st.dataframe(data=exergy_component_result, use_container_width=True)
+
 
             with st.expander('Ökonomische Bewertung'):
                 # %% Eco Results
