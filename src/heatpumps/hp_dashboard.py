@@ -885,12 +885,23 @@ if mode == 'Auslegung':
 
                 col1, col2, col3, col4, col5 = st.columns(5)
                 col1.metric('Epsilon',00)
-                col2.metric('E_F', 00)
-                col3.metric('E_P', 00)
-                col4.metric('E_D', 00)
-                col5.metric('E_L', 00)
+                col2.metric('E_F', f"{00} MW")
+                col3.metric('E_P', f"{00} MW")
+                col4.metric('E_D', f"{00} MW")
+                col5.metric('E_L', f"{00} MW")
 
-                st.write('place for exergy analysis')
+                col6, _, col7 = st.columns([0.495, 0.01, 0.495])
+
+                with col6:
+                    st.subheader('Sankey Diagram')
+                    diagram_placeholder_sankey = st.empty()
+
+                with col7:
+                    st.subheader('Waterfall Diagram')
+                    diagram_placeholder_waterfall = st.empty()
+
+                with st.subheader('Component wise Exergy Result'):
+                    print('need to add exergy component table')
 
             with st.expander('Ökonomische Bewertung'):
                 # %% Eco Results
