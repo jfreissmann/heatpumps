@@ -89,6 +89,7 @@ class HeatPumpBase:
         self.generate_connections()
         self.init_simulation(**kwargs)
         self.design_simulation(**kwargs)
+        self.perform_exergy_analysis(**kwargs)
         if print_cop:
             print(f'COP = {self.cop:.3f}')
 
