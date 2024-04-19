@@ -890,28 +890,16 @@ if mode == 'Auslegung':
                 col4.metric('E_D', f"{(st.session_state.hp.ean.network_data.E_D)/1e6:.2f} MW")
                 col5.metric('E_L', f"{(st.session_state.hp.ean.network_data.E_L)/1e3:.2f} KW")
 
-                col6, _, col7 = st.columns([0.495, 0.01, 0.495])
-
-                with col6:
-                    st.subheader('Sankey Diagram')
-                    """(need to implement)"""
-                    diagram_placeholder_sankey = st.empty()
-
-                with col7:
-                    st.subheader('Waterfall Diagram')
-                    """(need to implement)"""
-                    diagram_placeholder_waterfall = st.empty()
-
                 st.subheader('Exergy Result - Component')
                 exergy_component_result = (
                     st.session_state.hp.ean.component_data.copy()
                 )
-                exergy_component_result =exergy_component_result.drop('group',axis=1)
-                exergy_component_result.dropna(inplace=True)
+                exergy_component_result = exergy_component_result.drop('group', axis=1)
+                exergy_component_result.dropna(subset=['E_F'], inplace=True)
                 for col in ['E_F', 'E_P', 'E_D']:
-                    exergy_component_result[col]=exergy_component_result[col].round(2)
+                    exergy_component_result[col] = exergy_component_result[col].round(2)
                 for col in ['epsilon', 'y_Dk', 'y*_Dk']:
-                    exergy_component_result[col]=exergy_component_result[col].round(4)
+                    exergy_component_result[col] = exergy_component_result[col].round(4)
                 exergy_component_result.rename(
                     columns={
                         'E_F': 'E_F in W',
@@ -921,6 +909,66 @@ if mode == 'Auslegung':
                     inplace=True)
                 st.dataframe(data=exergy_component_result, use_container_width=True)
 
+                col6, _, col7 = st.columns([0.495, 0.01, 0.495])
+
+                with col6:
+                    st.subheader('Sankey Diagram')
+                    """(need to implement)"""
+                    diagram_placeholder_sankey = st.empty()
+
+
+
+                with col7:
+                    st.subheader('Waterfall Diagram')
+                    diagram_placeholder_waterfall = st.empty()
+
+                    #diagram_waterfall = st.session_state.hp.generate_waterfall_diagram()
+                    #diagram_placeholder_waterfall.pyplot(diagram_waterfall)
+                    #ean = self.ean
+                    comps = ['Fuel Exergy']
+                    E_F = st.session_state.hp.ean.network_data.E_F
+                    E_D = [0]
+                    E_P = [E_F]
+                    for comp in st.session_state.hp.ean.aggregation_data.sort_values(by='E_D', ascending=False).index:
+                        # only plot components with exergy destruction > 1 W
+                        if st.session_state.hp.ean.aggregation_data.E_D[comp] > 1:
+                            comps.append(comp)
+                            E_D.append(st.session_state.hp.ean.aggregation_data.E_D[comp])
+                            E_F = E_F - st.session_state.hp.ean.aggregation_data.E_D[comp]
+                            E_P.append(E_F)
+                    comps.append('Product Exergy')
+                    E_D.append(0)
+                    E_P.append(E_F)
+
+                    E_D = [E * 1e-3 for E in E_D]
+                    E_P = [E * 1e-3 for E in E_P]
+
+                    colors_E_P = ['#74ADC0'] * len(comps)
+                    colors_E_P[0] = '#00395B'
+                    colors_E_P[-1] = '#B54036'
+                    import matplotlib.pyplot as plt
+                    fig, ax = plt.subplots(figsize=(16, 10))
+
+                    ax.barh(np.arange(len(comps)), E_P, align='center', color=colors_E_P)
+                    ax.barh(np.arange(len(comps)), E_D, align='center', left=E_P, label='E_D', color='#EC6707')
+
+                    ax.legend()
+                    ax.annotate(
+                        f'$\epsilon_{{tot}} = ${st.session_state.hp.ean.network_data.epsilon:.3f}', (0.96, 0.06),
+                        xycoords='axes fraction',
+                        ha='right', va='center', color='k',
+                        bbox=dict(boxstyle='round,pad=0.3', fc='white')
+                    )
+
+                    ax.set_xlabel('Exergy in kW')
+                    ax.set_yticks(np.arange(len(comps)))
+                    ax.set_yticklabels(comps)
+                    ax.set_xlim([0, ((st.session_state.hp.ean.network_data.E_F) / 1000) + 1000])
+                    ax.set_xticks(np.linspace(0, ((st.session_state.hp.ean.network_data.E_F) / 1000) + 1000, 9))
+                    ax.invert_yaxis()
+                    ax.grid(axis='x')
+                    ax.set_axisbelow(True)
+                    diagram_placeholder_waterfall.pyplot(plt.show())
 
             with st.expander('Ökonomische Bewertung'):
                 # %% Eco Results
