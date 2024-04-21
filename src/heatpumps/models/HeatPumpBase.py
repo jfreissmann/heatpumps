@@ -10,6 +10,7 @@ from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
 from tespy.networks import Network
 from tespy.tools import ExergyAnalysis
+import plotly.graph_objects as go
 
 
 class HeatPumpBase:
@@ -414,6 +415,20 @@ class HeatPumpBase:
 
         if return_diagram:
             return diagram
+
+    def generate_sankey_diagram(self):
+        """Sankey Diagram of Heat Pump model"""
+        links, nodes = self.ean.generate_plotly_sankey_input()
+        fig = go.Figure(go.Sankey(
+            arrangement='snap',
+            node={
+                'label': nodes,
+                'pad': 15,
+                'color': 'orange'
+                },
+            link=links
+        ))
+        return fig
 
     def generate_waterfall_diagram(self, figsize=(16, 10)):
         """Generates waterfall diagram of exergy analysis"""

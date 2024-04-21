@@ -910,20 +910,21 @@ if mode == 'Auslegung':
                 st.dataframe(data=exergy_component_result, use_container_width=True)
 
                 col6, _, col7 = st.columns([0.495, 0.01, 0.495])
-
+                # col6 = st.columns([1])
+                # col7 = st.columns([1])
                 with col6:
                     st.subheader('Sankey Diagram')
-                    """(need to implement)"""
                     diagram_placeholder_sankey = st.empty()
 
-
+                    diagram_sankey = st.session_state.hp.generate_sankey_diagram()
+                    diagram_placeholder_sankey.plotly_chart(diagram_sankey, use_container_width=True)
 
                 with col7:
                     st.subheader('Waterfall Diagram')
                     diagram_placeholder_waterfall = st.empty()
 
                     diagram_waterfall = st.session_state.hp.generate_waterfall_diagram()
-                    diagram_placeholder_waterfall.pyplot(diagram_waterfall)
+                    diagram_placeholder_waterfall.pyplot(diagram_waterfall, use_container_width=True)
 
 
             with st.expander('Ökonomische Bewertung'):
