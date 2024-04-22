@@ -4,13 +4,13 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 from CoolProp.CoolProp import PropsSI as PSI
 from fluprodia import FluidPropertyDiagram
 from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
 from tespy.networks import Network
 from tespy.tools import ExergyAnalysis
-import plotly.graph_objects as go
 
 
 class HeatPumpBase:
@@ -428,21 +428,21 @@ class HeatPumpBase:
                 },
             link=links
         ))
+
         return fig
 
     def generate_waterfall_diagram(self, figsize=(16, 10)):
         """Generates waterfall diagram of exergy analysis"""
-        ean = self.ean
         comps = ['Fuel Exergy']
-        E_F = ean.network_data.E_F
+        E_F = self.ean.network_data.E_F
         E_D = [0]
         E_P = [E_F]
-        for comp in ean.aggregation_data.sort_values(by='E_D', ascending=False).index:
+        for comp in self.ean.aggregation_data.sort_values(by='E_D', ascending=False).index:
             # only plot components with exergy destruction > 1 W
-            if ean.aggregation_data.E_D[comp] > 1:
+            if self.ean.aggregation_data.E_D[comp] > 1:
                 comps.append(comp)
-                E_D.append(ean.aggregation_data.E_D[comp])
-                E_F = E_F - ean.aggregation_data.E_D[comp]
+                E_D.append(self.ean.aggregation_data.E_D[comp])
+                E_F = E_F - self.ean.aggregation_data.E_D[comp]
                 E_P.append(E_F)
         comps.append('Product Exergy')
         E_D.append(0)
@@ -457,12 +457,19 @@ class HeatPumpBase:
 
         fig, ax = plt.subplots(figsize=figsize)
 
-        ax.barh(np.arange(len(comps)), E_P, align='center', color=colors_E_P)
-        ax.barh(np.arange(len(comps)), E_D, align='center', left=E_P, label='E_D', color='#EC6707')
+        ax.barh(
+            np.arange(len(comps)), E_P,
+            align='center', color=colors_E_P
+            )
+        ax.barh(
+            np.arange(len(comps)), E_D,
+            align='center', left=E_P, label='E_D', color='#EC6707'
+            )
 
         ax.legend()
         ax.annotate(
-            f'$\epsilon_{{tot}} = ${ean.network_data.epsilon:.3f}', (0.96, 0.06),
+            f'$\epsilon_{{tot}} = ${self.ean.network_data.epsilon:.3f}',
+            (0.96, 0.06),
             xycoords='axes fraction',
             ha='right', va='center', color='k',
             bbox=dict(boxstyle='round,pad=0.3', fc='white')
@@ -471,12 +478,13 @@ class HeatPumpBase:
         ax.set_xlabel('Exergy in kW')
         ax.set_yticks(np.arange(len(comps)))
         ax.set_yticklabels(comps)
-        ax.set_xlim([0, ((ean.network_data.E_F) / 1000) + 1000])
-        ax.set_xticks(np.linspace(0, ((ean.network_data.E_F) / 1000) + 1000, 9))
+        ax.set_xlim([0, ((self.ean.network_data.E_F) / 1000) + 1000])
+        ax.set_xticks(
+            np.linspace(0, ((self.ean.network_data.E_F) / 1000) + 1000, 9)
+            )
         ax.invert_yaxis()
         ax.grid(axis='x')
         ax.set_axisbelow(True)
-        return plt.show()
 
     def calc_partload_char(self, **kwargs):
         """
