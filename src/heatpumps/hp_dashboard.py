@@ -879,6 +879,54 @@ if mode == 'Auslegung':
                     inplace=True)
                 st.dataframe(data=state_quantities, use_container_width=True)
 
+            with st.expander('Exergie Bewertung'):
+                # %% Exergy Analysis
+                st.header('Ergebnisse der Exergieanalyse')
+
+                col1, col2, col3, col4, col5 = st.columns(5)
+                col1.metric('Epsilon', f"{(st.session_state.hp.ean.network_data.epsilon)*1e2:.2f} %")
+                col2.metric('E_F', f"{(st.session_state.hp.ean.network_data.E_F)/1e6:.2f} MW")
+                col3.metric('E_P', f"{(st.session_state.hp.ean.network_data.E_P)/1e6:.2f} MW")
+                col4.metric('E_D', f"{(st.session_state.hp.ean.network_data.E_D)/1e6:.2f} MW")
+                col5.metric('E_L', f"{(st.session_state.hp.ean.network_data.E_L)/1e3:.2f} KW")
+
+                st.subheader('Exergy Result - Component')
+                exergy_component_result = (
+                    st.session_state.hp.ean.component_data.copy()
+                )
+                exergy_component_result = exergy_component_result.drop('group', axis=1)
+                exergy_component_result.dropna(subset=['E_F'], inplace=True)
+                for col in ['E_F', 'E_P', 'E_D']:
+                    exergy_component_result[col] = exergy_component_result[col].round(2)
+                for col in ['epsilon', 'y_Dk', 'y*_Dk']:
+                    exergy_component_result[col] = exergy_component_result[col].round(4)
+                exergy_component_result.rename(
+                    columns={
+                        'E_F': 'E_F in W',
+                        'E_P': 'E_P in W',
+                        'E_D': 'E_D in W',
+                    },
+                    inplace=True)
+                st.dataframe(data=exergy_component_result, use_container_width=True)
+
+                col6, _, col7 = st.columns([0.495, 0.01, 0.495])
+                # col6 = st.columns([1])
+                # col7 = st.columns([1])
+                with col6:
+                    st.subheader('Sankey Diagram')
+                    diagram_placeholder_sankey = st.empty()
+
+                    diagram_sankey = st.session_state.hp.generate_sankey_diagram()
+                    diagram_placeholder_sankey.plotly_chart(diagram_sankey, use_container_width=True)
+
+                with col7:
+                    st.subheader('Waterfall Diagram')
+                    diagram_placeholder_waterfall = st.empty()
+
+                    diagram_waterfall = st.session_state.hp.generate_waterfall_diagram()
+                    diagram_placeholder_waterfall.pyplot(diagram_waterfall, use_container_width=True)
+
+
             with st.expander('Ökonomische Bewertung'):
                 # %% Eco Results
                 st.session_state.hp.calc_cost(

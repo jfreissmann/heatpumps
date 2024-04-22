@@ -8,3 +8,4 @@ matplotlib >= 3.6.3
 fluprodia >= 2.0
 coolprop >= 6.4.1
 darkdetect >=0.8.0
+plotly >= 5.20.0
