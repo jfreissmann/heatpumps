@@ -7,16 +7,17 @@ import pandas as pd
 import streamlit as st
 import variables as var
 from simulation import run_design, run_partload
+from streamlit import session_state as ss
 
 
 def switch2design():
     """Switch to design simulation tab."""
-    st.session_state.select = 'Auslegung'
+    ss.select = 'Auslegung'
 
 
 def switch2partload():
     """Switch to partload simulation tab."""
-    st.session_state.select = 'Teillast'
+    ss.select = 'Teillast'
 
 
 def info_df(label, refrigs):
@@ -169,7 +170,7 @@ with st.sidebar:
         elif hp_model['nr_refrigs'] == 2:
             T_crit = int(np.floor(refrigerants[refrig2_label]['T_crit']))
 
-        st.session_state.T_crit = T_crit
+        ss.T_crit = T_crit
 
         with st.expander('Thermische Nennleistung'):
             params['cons']['Q'] = st.number_input(
@@ -239,15 +240,15 @@ with st.sidebar:
                 key='p_consumer_ff'
                 )
 
-        st.session_state.hp_params = params
+        ss.hp_params = params
 
         run_sim = st.button('🧮 Auslegung ausführen')
         # run_sim = True
     # autorun = st.checkbox('AutoRun Simulation', value=True)
 
     # %% Offdesign
-    if mode == 'Teillast' and 'hp' in st.session_state:
-        params = st.session_state.hp_params
+    if mode == 'Teillast' and 'hp' in ss:
+        params = ss.hp_params
         st.header('Teillastsimulation der Wärmepumpe')
 
         with st.expander('Teillast'):
@@ -274,7 +275,7 @@ with st.sidebar:
                 )
             if type_hs == 'Konstant':
                 params['offdesign']['T_hs_ff_start'] = (
-                    st.session_state.hp.params['B1']['T']
+                    ss.hp.params['B1']['T']
                     )
                 params['offdesign']['T_hs_ff_end'] = (
                     params['offdesign']['T_hs_ff_start'] + 1
@@ -291,18 +292,18 @@ with st.sidebar:
             elif type_hs == 'Variabel':
                 params['offdesign']['T_hs_ff_start'] = st.slider(
                     'Starttemperatur',
-                    min_value=0, max_value=st.session_state.T_crit, step=1,
+                    min_value=0, max_value=ss.T_crit, step=1,
                     value=int(
-                        st.session_state.hp.params['B1']['T']
+                        ss.hp.params['B1']['T']
                         - 5
                         ),
                     format='%d°C', key='T_hs_ff_start_slider'
                     )
                 params['offdesign']['T_hs_ff_end'] = st.slider(
                     'Endtemperatur',
-                    min_value=0, max_value=st.session_state.T_crit, step=1,
+                    min_value=0, max_value=ss.T_crit, step=1,
                     value=int(
-                        st.session_state.hp.params['B1']['T']
+                        ss.hp.params['B1']['T']
                         + 5
                         ),
                     format='%d°C', key='T_hs_ff_end_slider'
@@ -320,7 +321,7 @@ with st.sidebar:
                 )
             if type_cons == 'Konstant':
                 params['offdesign']['T_cons_ff_start'] = (
-                    st.session_state.hp.params['C3']['T']
+                    ss.hp.params['C3']['T']
                     )
                 params['offdesign']['T_cons_ff_end'] = (
                     params['offdesign']['T_cons_ff_start'] + 1
@@ -337,18 +338,18 @@ with st.sidebar:
             elif type_cons == 'Variabel':
                 params['offdesign']['T_cons_ff_start'] = st.slider(
                     'Starttemperatur',
-                    min_value=0, max_value=st.session_state.T_crit, step=1,
+                    min_value=0, max_value=ss.T_crit, step=1,
                     value=int(
-                        st.session_state.hp.params['C3']['T']
+                        ss.hp.params['C3']['T']
                         - 10
                         ),
                     format='%d°C', key='T_cons_ff_start_slider'
                     )
                 params['offdesign']['T_cons_ff_end'] = st.slider(
                     'Endtemperatur',
-                    min_value=0, max_value=st.session_state.T_crit, step=1,
+                    min_value=0, max_value=ss.T_crit, step=1,
                     value=int(
-                        st.session_state.hp.params['C3']['T']
+                        ss.hp.params['C3']['T']
                         + 10
                         ),
                     format='%d°C', key='T_cons_ff_end_slider'
@@ -359,7 +360,7 @@ with st.sidebar:
                     / 3
                     ) + 1)
 
-        st.session_state.hp_params = params
+        ss.hp_params = params
         run_pl_sim = st.button('🧮 Teillast simulieren')
 
 # %% Main Content
@@ -467,7 +468,7 @@ if mode == 'Start':
 
 if mode == 'Auslegung':
     # %% Design Simulation
-    if not run_sim and 'hp' not in st.session_state:
+    if not run_sim and 'hp' not in ss:
 
 
         # %% Topology & Refrigerant
@@ -548,13 +549,13 @@ if mode == 'Auslegung':
     if run_sim:
         # %% Run Design Simulation
         with st.spinner('Simulation wird durchgeführt...'):
-            st.session_state.hp = run_design(hp_model_name, params)
+            ss.hp = run_design(hp_model_name, params)
 
             st.success(
                 'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
                 )
 
-    if run_sim or 'hp' in st.session_state:
+    if run_sim or 'hp' in ss:
         # %% Results
         with st.spinner('Ergebnisse werden visualisiert...'):
 
@@ -565,22 +566,22 @@ if mode == 'Auslegung':
             with open(stateconfigpath, 'r', encoding='utf-8') as file:
                 config = json.load(file)
             if hp_model['nr_refrigs'] == 1:
-                if st.session_state.hp.params['setup']['refrig'] in config:
+                if ss.hp.params['setup']['refrig'] in config:
                     state_props = config[
-                        st.session_state.hp.params['setup']['refrig']
+                        ss.hp.params['setup']['refrig']
                         ]
                 else:
                     state_props = config['MISC']
             if hp_model['nr_refrigs'] == 2:
-                if st.session_state.hp.params['setup']['refrig1'] in config:
+                if ss.hp.params['setup']['refrig1'] in config:
                     state_props1 = config[
-                        st.session_state.hp.params['setup']['refrig1']
+                        ss.hp.params['setup']['refrig1']
                         ]
                 else:
                     state_props1 = config['MISC']
-                if st.session_state.hp.params['setup']['refrig2'] in config:
+                if ss.hp.params['setup']['refrig2'] in config:
                     state_props2 = config[
-                        st.session_state.hp.params['setup']['refrig2']
+                        ss.hp.params['setup']['refrig2']
                         ]
                 else:
                     state_props2 = config['MISC']
@@ -588,17 +589,17 @@ if mode == 'Auslegung':
             st.header('Ergebnisse der Auslegung')
 
             col1, col2, col3, col4 = st.columns(4)
-            col1.metric('COP', round(st.session_state.hp.cop, 2))
+            col1.metric('COP', round(ss.hp.cop, 2))
             Q_dot_ab = abs(
-                st.session_state.hp.buses['heat output'].P.val / 1e6
+                ss.hp.buses['heat output'].P.val / 1e6
                 )
             col2.metric('Q_dot_ab', f"{Q_dot_ab:.2f} MW")
             col3.metric(
                 'P_zu',
-                f"{st.session_state.hp.buses['power input'].P.val/1e6:.2f} MW"
+                f"{ss.hp.buses['power input'].P.val/1e6:.2f} MW"
                 )
             Q_dot_zu = abs(
-                st.session_state.hp.comps['evap'].Q.val/1e6
+                ss.hp.comps['evap'].Q.val/1e6
                 )
             col4.metric('Q_dot_zu', f'{Q_dot_zu:.2f} MW')
 
@@ -721,7 +722,7 @@ if mode == 'Auslegung':
 
                 with col_left:
                     if hp_model['nr_refrigs'] == 1:
-                        diagram = st.session_state.hp.generate_state_diagram(
+                        diagram = ss.hp.generate_state_diagram(
                             diagram_type='logph',
                             xlims=(xmin, xmax), ylims=(ymin, ymax),
                             return_diagram=True, display_info=False,
@@ -729,7 +730,7 @@ if mode == 'Auslegung':
                             )
                         diagram_placeholder.pyplot(diagram.fig)
                     elif hp_model['nr_refrigs'] == 2:
-                        diagram1, diagram2 = st.session_state.hp.generate_state_diagram(
+                        diagram1, diagram2 = ss.hp.generate_state_diagram(
                             diagram_type='logph',
                             xlims=((xmin1, xmax1), (xmin2, xmax2)),
                             ylims=((ymin1, ymax1), (ymin2, ymax2)),
@@ -813,7 +814,7 @@ if mode == 'Auslegung':
 
                 with col_right:
                     if hp_model['nr_refrigs'] == 1:
-                        diagram = st.session_state.hp.generate_state_diagram(
+                        diagram = ss.hp.generate_state_diagram(
                             diagram_type='Ts',
                             xlims=(xmin, xmax), ylims=(ymin, ymax),
                             return_diagram=True, display_info=False,
@@ -821,7 +822,7 @@ if mode == 'Auslegung':
                             )
                         diagram_placeholder.pyplot(diagram.fig)
                     elif hp_model['nr_refrigs'] == 2:
-                        diagram1, diagram2 = st.session_state.hp.generate_state_diagram(
+                        diagram1, diagram2 = ss.hp.generate_state_diagram(
                             diagram_type='Ts',
                             xlims=((xmin1, xmax1), (xmin2, xmax2)),
                             ylims=((ymin1, ymax1), (ymin2, ymax2)),
@@ -834,7 +835,7 @@ if mode == 'Auslegung':
             with st.expander('Zustandsgrößen'):
                 # %% State Quantities
                 state_quantities = (
-                    st.session_state.hp.nw.results['Connection'].copy()
+                    ss.hp.nw.results['Connection'].copy()
                     )
                 try:
                     state_quantities['water'] = (
@@ -845,16 +846,16 @@ if mode == 'Auslegung':
                         state_quantities['H2O'].apply(bool)
                         )
                 if hp_model['nr_refrigs'] == 1:
-                    refrig = st.session_state.hp.params['setup']['refrig']
+                    refrig = ss.hp.params['setup']['refrig']
                     state_quantities[refrig] = (
                         state_quantities[refrig].apply(bool)
                         )
                 elif hp_model['nr_refrigs'] == 2:
-                    refrig1 = st.session_state.hp.params['setup']['refrig1']
+                    refrig1 = ss.hp.params['setup']['refrig1']
                     state_quantities[refrig1] = (
                         state_quantities[refrig1].apply(bool)
                         )
-                    refrig2 = st.session_state.hp.params['setup']['refrig2']
+                    refrig2 = ss.hp.params['setup']['refrig2']
                     state_quantities[refrig2] = (
                         state_quantities[refrig2].apply(bool)
                         )
@@ -883,19 +884,19 @@ if mode == 'Auslegung':
 
             with st.expander('Ökonomische Bewertung'):
                 # %% Eco Results
-                st.session_state.hp.calc_cost(
+                ss.hp.calc_cost(
                     ref_year='2013', current_year='2019'
                     )
 
                 col1, col2 = st.columns(2)
-                invest_total = sum(st.session_state.hp.cost.values())
+                invest_total = sum(ss.hp.cost.values())
                 col1.metric(
                     'Gesamtinvestitionskosten',
                     f'{invest_total:,.2f} €'
                     )
                 inv_sepc = (
                     invest_total
-                    / abs(st.session_state.hp.params["cons"]["Q"]/1e6)
+                    / abs(ss.hp.params["cons"]["Q"]/1e6)
                     )
                 col2.metric(
                     'Spez. Investitionskosten',
@@ -903,7 +904,7 @@ if mode == 'Auslegung':
                     )
                 costdata = pd.DataFrame({
                     k: [round(v, 2)]
-                    for k, v in st.session_state.hp.cost.items()
+                    for k, v in ss.hp.cost.items()
                     })
                 st.dataframe(
                     costdata, use_container_width=True, hide_index=True
@@ -925,28 +926,28 @@ if mode == 'Auslegung':
                 col1, col2, col3, col4, col5 = st.columns(5)
                 col1.metric(
                     'Epsilon',
-                    f'{st.session_state.hp.ean.network_data.epsilon*1e2:.2f} %'
+                    f'{ss.hp.ean.network_data.epsilon*1e2:.2f} %'
                     )
                 col2.metric(
                     'E_F',
-                    f'{(st.session_state.hp.ean.network_data.E_F)/1e6:.2f} MW'
+                    f'{(ss.hp.ean.network_data.E_F)/1e6:.2f} MW'
                     )
                 col3.metric(
                     'E_P',
-                    f'{(st.session_state.hp.ean.network_data.E_P)/1e6:.2f} MW'
+                    f'{(ss.hp.ean.network_data.E_P)/1e6:.2f} MW'
                     )
                 col4.metric(
                     'E_D',
-                    f'{(st.session_state.hp.ean.network_data.E_D)/1e6:.2f} MW'
+                    f'{(ss.hp.ean.network_data.E_D)/1e6:.2f} MW'
                     )
                 col5.metric(
                     'E_L',
-                    f'{(st.session_state.hp.ean.network_data.E_L)/1e3:.2f} KW'
+                    f'{(ss.hp.ean.network_data.E_L)/1e3:.2f} KW'
                     )
 
                 st.subheader('Ergebnisse nach Komponente')
                 exergy_component_result = (
-                    st.session_state.hp.ean.component_data.copy()
+                    ss.hp.ean.component_data.copy()
                     )
                 exergy_component_result = exergy_component_result.drop(
                     'group', axis=1
@@ -976,7 +977,7 @@ if mode == 'Auslegung':
                     st.subheader('Grassmann Diagramm')
                     diagram_placeholder_sankey = st.empty()
 
-                    diagram_sankey = st.session_state.hp.generate_sankey_diagram()
+                    diagram_sankey = ss.hp.generate_sankey_diagram()
                     diagram_placeholder_sankey.plotly_chart(
                         diagram_sankey, use_container_width=True
                         )
@@ -985,7 +986,7 @@ if mode == 'Auslegung':
                     st.subheader('Wasserfall Diagramm')
                     diagram_placeholder_waterfall = st.empty()
 
-                    diagram_waterfall = st.session_state.hp.generate_waterfall_diagram()
+                    diagram_waterfall = ss.hp.generate_waterfall_diagram()
                     diagram_placeholder_waterfall.pyplot(
                         diagram_waterfall, use_container_width=True
                         )
@@ -1010,7 +1011,7 @@ if mode == 'Teillast':
     # %% Offdesign Simulation
     st.header('Betriebscharakteristik')
 
-    if 'hp' not in st.session_state:
+    if 'hp' not in ss:
         st.warning(
             '''
             Um eine Teillastsimulation durchzuführen, muss zunächst eine 
@@ -1019,7 +1020,7 @@ if mode == 'Teillast':
             '''
         )
     else:
-        if not run_pl_sim and 'partload_char' not in st.session_state:
+        if not run_pl_sim and 'partload_char' not in ss:
             # %% Landing Page
             st.write(
                 '''
@@ -1036,10 +1037,10 @@ if mode == 'Teillast':
                     'Teillastsimulation wird durchgeführt... Dies kann eine '
                     + 'Weile dauern.'
                     ):
-                st.session_state.hp, st.session_state.partload_char = (
-                    run_partload(st.session_state.hp)
+                ss.hp, ss.partload_char = (
+                    run_partload(ss.hp)
                     )
-                # st.session_state.partload_char = pd.read_csv(
+                # ss.partload_char = pd.read_csv(
                 #     'partload_char.csv', index_col=[0, 1, 2], sep=';'
                 #     )
                 st.success(
@@ -1047,7 +1048,7 @@ if mode == 'Teillast':
                     + 'erfolgreich.'
                     )
 
-        if run_pl_sim or 'partload_char' in st.session_state:
+        if run_pl_sim or 'partload_char' in ss:
             # %% Results
             with st.spinner('Ergebnisse werden visualisiert...'):
 
@@ -1055,38 +1056,48 @@ if mode == 'Teillast':
                     col_left, col_right = st.columns(2)
 
                     with col_left:
-                        figs, axes = st.session_state.hp.plot_partload_char(
-                            st.session_state.partload_char, cmap_type='COP',
+                        figs, axes = ss.hp.plot_partload_char(
+                            ss.partload_char, cmap_type='COP',
                             cmap='plasma', return_fig_ax=True
                             )
                         pl_cop_placeholder = st.empty()
 
-                        T_hs_min = st.session_state.hp.params['offdesign']['T_hs_ff_start']
-                        T_hs_max = st.session_state.hp.params['offdesign']['T_hs_ff_end']
-                        T_select_cop = st.slider(
-                            'Quellentemperatur',
-                            min_value=T_hs_min,
-                            max_value=T_hs_max,
-                            value=int((T_hs_max+T_hs_min)/2),
-                            format='%d °C',
-                            key='pl_cop_slider'
-                            )
+                        if type_hs == 'Konstant':
+                            T_select_cop = (
+                                ss.hp.params['offdesign']['T_hs_ff_start']
+                                )
+                        elif type_hs == 'Variabel':
+                            T_hs_min = ss.hp.params['offdesign']['T_hs_ff_start']
+                            T_hs_max = ss.hp.params['offdesign']['T_hs_ff_end']
+                            T_select_cop = st.slider(
+                                'Quellentemperatur',
+                                min_value=T_hs_min,
+                                max_value=T_hs_max,
+                                value=int((T_hs_max+T_hs_min)/2),
+                                format='%d °C',
+                                key='pl_cop_slider'
+                                )
 
                         pl_cop_placeholder.pyplot(figs[T_select_cop])
 
                     with col_right:
-                        figs, axes = st.session_state.hp.plot_partload_char(
-                            st.session_state.partload_char, cmap_type='T_cons_ff',
+                        figs, axes = ss.hp.plot_partload_char(
+                            ss.partload_char, cmap_type='T_cons_ff',
                             cmap='plasma', return_fig_ax=True
                             )
                         pl_T_cons_ff_placeholder = st.empty()
 
-                        T_select_T_cons_ff = st.slider(
-                            'Quellentemperatur',
-                            min_value=T_hs_min,
-                            max_value=T_hs_max,
-                            value=int((T_hs_max+T_hs_min)/2),
-                            format='%d °C',
-                            key='pl_T_cons_ff_slider'
-                            )
+                        if type_hs == 'Konstant':
+                            T_select_T_cons_ff = (
+                                ss.hp.params['offdesign']['T_hs_ff_start']
+                                )
+                        elif type_hs == 'Variabel':
+                            T_select_T_cons_ff = st.slider(
+                                'Quellentemperatur',
+                                min_value=T_hs_min,
+                                max_value=T_hs_max,
+                                value=int((T_hs_max+T_hs_min)/2),
+                                format='%d °C',
+                                key='pl_T_cons_ff_slider'
+                                )
                         pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
