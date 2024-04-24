@@ -20,6 +20,14 @@ def switch2partload():
     ss.select = 'Teillast'
 
 
+def reset2design():
+    """Reset session state and switch to design simulation tab."""
+    keys = list(ss.keys())
+    for key in keys:
+        ss.pop(key)
+    ss.select = 'Auslegung'
+
+
 def info_df(label, refrigs):
     """Create Dataframe with info of chosen refrigerant."""
     df_refrig = pd.DataFrame(
@@ -1005,7 +1013,7 @@ if mode == 'Auslegung':
                 + 'simulieren".'
                 )
 
-            run_pl = st.button('Teillast simulieren', on_click=switch2partload)
+            st.button('Teillast simulieren', on_click=switch2partload)
 
 if mode == 'Teillast':
     # %% Offdesign Simulation
@@ -1101,3 +1109,5 @@ if mode == 'Teillast':
                                 key='pl_T_cons_ff_slider'
                                 )
                         pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
+
+                st.button('Neue Wärmepumpe auslegen', on_click=reset2design)
