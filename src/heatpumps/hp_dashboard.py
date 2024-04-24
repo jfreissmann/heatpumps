@@ -34,8 +34,7 @@ def info_df(label, refrigs):
 
     return df_refrig
 
-root_path = os.path.abspath(__file__)
-src_path = os.path.join(root_path, '..', 'src')
+src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src'))
 
 # %% Initialisation
 refrigpath = os.path.join(src_path, 'refrigerants.json')
@@ -93,10 +92,10 @@ with st.sidebar:
                     hp_model_name = model
                     break
 
-            parampath = os.path.join(
-                __file__, '..', 'models', 'input',
+            parampath = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), 'models', 'input',
                 f'params_hp_{hp_model_name}.json'
-            )
+                ))
             with open(parampath, 'r', encoding='utf-8') as file:
                 params = json.load(file)
 
@@ -458,7 +457,9 @@ if mode == 'Start':
             )
 
     with st.expander('Copyright'):
-        licpath = os.path.join(__file__, '..', '..', '..', 'LICENSE')
+        licpath = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), '..', '..', 'LICENSE'
+            ))
         with open(licpath, 'r', encoding='utf-8') as file:
             lictext = file.read()
 
@@ -557,9 +558,10 @@ if mode == 'Auslegung':
         # %% Results
         with st.spinner('Ergebnisse werden visualisiert...'):
 
-            stateconfigpath = os.path.join(
-                __file__, '..', 'models', 'input', 'state_diagram_config.json'
-                )
+            stateconfigpath = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), 'models', 'input',
+                'state_diagram_config.json'
+                ))
             with open(stateconfigpath, 'r', encoding='utf-8') as file:
                 config = json.load(file)
             if hp_model['nr_refrigs'] == 1:
