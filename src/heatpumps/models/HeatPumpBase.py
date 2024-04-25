@@ -50,9 +50,9 @@ class HeatPumpBase:
             f"{self.params['setup']['type']}_"
             + f"{self.params['setup']['refrig']}"
             )
-        self.design_path = os.path.join(
-            __file__, '..', 'stable', f'{self.subdirname}_design'
-            )
+        self.design_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 'stable', f'{self.subdirname}_design'
+            ))
         self.validate_dir()
 
     def generate_components(self):
@@ -175,7 +175,9 @@ class HeatPumpBase:
 
         DOI: https://doi.org/10.1016/j.enconman.2020.113488
         """
-        cepcipath = os.path.join(__file__, '..', 'input', 'CEPCI.json')
+        cepcipath = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 'input', 'CEPCI.json'
+            ))
         with open(cepcipath, 'r', encoding='utf-8') as file:
             cepci = json.load(file)
         if isinstance(ref_year, int):
@@ -325,9 +327,9 @@ class HeatPumpBase:
                 )
 
         # Generate isolines
-        path = os.path.join(
-            __file__, '..', 'input', 'state_diagram_config.json'
-            )
+        path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 'input', 'state_diagram_config.json'
+            ))
         with open(path, 'r', encoding='utf-8') as file:
             config = json.load(file)
 
@@ -404,9 +406,9 @@ class HeatPumpBase:
             filename = (
                 f'logph_{self.params["setup"]["type"]}_{refrig}.pdf'
                 )
-            filepath = os.path.join(
-                __file__, '..', 'output', diagram_type, filename
-                )
+            filepath = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), 'output', diagram_type, filename
+                ))
             plt.tight_layout()
             plt.savefig(filepath, dpi=300)
 
@@ -874,7 +876,9 @@ class HeatPumpBase:
                     + f'{self.params["setup"]["refrig1"]}_and_'
                     + f'{self.params["setup"]["refrig2"]}.pdf'
                     )
-            filepath = os.path.join(__file__, '..', 'output', filename)
+            filepath = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), 'output', filename
+                ))
             plt.tight_layout()
             plt.savefig(filepath, dpi=300)
 
@@ -888,7 +892,13 @@ class HeatPumpBase:
 
     def validate_dir(self):
         """Check for a 'stable' directory and create it if necessary."""
-        if not os.path.exists(os.path.join(__file__, '..', 'stable')):
-            os.mkdir(os.path.join(__file__, '..', 'stable'))
-        if not os.path.exists(os.path.join(__file__, '..', 'output')):
-            os.mkdir(os.path.join(__file__, '..', 'output'))
+        stablepath = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 'stable'
+            ))
+        if not os.path.exists(stablepath):
+            os.mkdir(stablepath)
+        outputpath = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 'output'
+            ))
+        if not os.path.exists(outputpath):
+            os.mkdir(outputpath)

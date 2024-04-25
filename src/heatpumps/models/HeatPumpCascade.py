@@ -81,9 +81,9 @@ class HeatPumpCascade(HeatPumpBase):
             + f"{self.params['setup']['refrig1']}_"
             + f"{self.params['setup']['refrig2']}"
             )
-        self.design_path = os.path.join(
-            __file__, '..', 'stable', f'{self.subdirname}_design'
-            )
+        self.design_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 'stable', f'{self.subdirname}_design'
+            ))
         self.validate_dir()
 
     def generate_components(self):
@@ -378,9 +378,10 @@ class HeatPumpCascade(HeatPumpBase):
                         and (pl == self.pl_range[-1])
                         )
                     if no_init_path:
-                        self.init_path = os.path.join(
-                            __file__, '..', 'stable', f'{self.subdirname}_init'
-                         )
+                        self.init_path = os.path.abspath(os.path.join(
+                            os.path.dirname(__file__), 'stable',
+                            f'{self.subdirname}_init'
+                         ))
 
                     self.comps['cons'].set_attr(Q=None)
                     self.conns['A0'].set_attr(m=pl*self.m_design)
@@ -395,14 +396,14 @@ class HeatPumpCascade(HeatPumpBase):
 
                     # Logging simulation
                     if log_simulations:
-                        logdirpath = os.path.join(
-                            __file__, '..', 'output', 'logging'
-                            )
+                        logdirpath = os.path.abspath(os.path.join(
+                            os.path.dirname(__file__), 'output', 'logging'
+                            ))
                         if not os.path.exists(logdirpath):
                             os.mkdir(logdirpath)
-                        logpath = os.path.join(
+                        logpath = os.path.abspath(os.path.join(
                             logdirpath, f'{self.subdirname}_offdesign_log.csv'
-                            )
+                            ))
                         timestamp = datetime.fromtimestamp(time()).strftime(
                             '%H:%M:%S'
                             )
@@ -423,9 +424,10 @@ class HeatPumpCascade(HeatPumpBase):
                                 file.write(log_entry)
 
                     if pl == self.pl_range[-1] and self.nw.res[-1] < 1e-3:
-                        self.nw.save(os.path.join(
-                            __file__, '..', 'stable', f'{self.subdirname}_init'
-                         ))
+                        self.nw.save(os.path.abspath(os.path.join(
+                            os.path.dirname(__file__), 'stable',
+                            f'{self.subdirname}_init'
+                         )))
 
                     inranges = (
                         (T_hs_ff in self.T_hs_ff_range)
@@ -461,9 +463,10 @@ class HeatPumpCascade(HeatPumpBase):
                                 )
 
         if self.params['offdesign']['save_results']:
-            resultpath = os.path.join(
-                __file__, '..', 'output', f'{self.subdirname}_partload.csv'
-                )
+            resultpath = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), 'output',
+                f'{self.subdirname}_partload.csv'
+                ))
             results_offdesign.to_csv(resultpath, sep=';')
 
         self.df_to_array(results_offdesign)
