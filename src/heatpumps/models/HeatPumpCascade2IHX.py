@@ -307,7 +307,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
         self.comps['evap'].set_attr(ttd_l=self.params['evap']['ttd_l'])
         self.comps['cond'].set_attr(ttd_u=self.params['cond']['ttd_u'])
         self.comps['inter'].set_attr(ttd_u=self.params['inter']['ttd_u'])
-        self.conns['A3'].set_attr(T=self.T_mid-self.params['inter']['ttd_u']/2)
+        self.conns['A4'].set_attr(T=self.T_mid-self.params['inter']['ttd_u']/2)
         self.conns['A5'].set_attr(
             T=Ref(self.conns['A4'], 1, self.params['ihx2']['dT_sh'])
             )
@@ -404,7 +404,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
             )
 
         results_offdesign = pd.DataFrame(
-            index=multiindex, columns=['Q', 'P', 'COP', 'residual']
+            index=multiindex, columns=['Q', 'P', 'COP', 'epsilon', 'residual']
             )
 
         for T_hs_ff in self.T_hs_ff_stablerange:
@@ -444,6 +444,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                         self.nw.solve(
                             'offdesign', design_path=self.design_path
                             )
+                        self.perform_exergy_analysis()
                         failed = False
                     except ValueError:
                         failed = True
@@ -500,6 +501,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                             if failed:
                                 results_offdesign.loc[idx, 'Q'] = np.nan
                                 results_offdesign.loc[idx, 'P'] = np.nan
+                                results_offdesign.loc[idx, 'epsilon'] = np.nan
                             else:
                                 results_offdesign.loc[idx, 'Q'] = abs(
                                     self.buses['heat output'].P.val * 1e-6
@@ -507,6 +509,9 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                                 results_offdesign.loc[idx, 'P'] = (
                                     self.buses['power input'].P.val * 1e-6
                                     )
+                                results_offdesign.loc[idx, 'epsilon'] = round(
+                                    self.ean.network_data['epsilon'], 3
+                                )
 
                             results_offdesign.loc[idx, 'COP'] = (
                                 results_offdesign.loc[idx, 'Q']

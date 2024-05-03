@@ -1110,4 +1110,33 @@ if mode == 'Teillast':
                                 )
                         pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
 
+                    st.markdown("---")
+
+                    col_left_1, col_right_1 = st.columns(2)
+
+                    with col_left_1:
+                        figs, axes = ss.hp.plot_partload_char(
+                            ss.partload_char, cmap_type='epsilon',
+                            cmap='plasma', return_fig_ax=True
+                        )
+                        pl_epsilon_placeholder = st.empty()
+
+                        if type_hs == 'Konstant':
+                            T_select_epsilon = (
+                                ss.hp.params['offdesign']['T_hs_ff_start']
+                            )
+                        elif type_hs == 'Variabel':
+                            T_hs_min = ss.hp.params['offdesign']['T_hs_ff_start']
+                            T_hs_max = ss.hp.params['offdesign']['T_hs_ff_end']
+                            T_select_epsilon = st.slider(
+                                'Quellentemperatur',
+                                min_value=T_hs_min,
+                                max_value=T_hs_max,
+                                value=int((T_hs_max + T_hs_min) / 2),
+                                format='%d °C',
+                                key='pl_epsilon_slider'
+                            )
+
+                        pl_epsilon_placeholder.pyplot(figs[T_select_epsilon])
+
                 st.button('Neue Wärmepumpe auslegen', on_click=reset2design)

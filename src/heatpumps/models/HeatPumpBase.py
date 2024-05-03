@@ -133,18 +133,23 @@ class HeatPumpBase:
             )
 
     def df_to_array(self, results_offdesign):
-        """Create 3D arrays of heat output and power input from DataFrame."""
+        """Create 3D arrays of heat output, power input and epsilon from DataFrame."""
         self.Q_array = []
         self.P_array = []
+        self.epsilon_array = []
         for i, T_hs_ff in enumerate(self.T_hs_ff_range):
             self.Q_array.append([])
             self.P_array.append([])
+            self.epsilon_array.append([])
             for T_cons_ff in self.T_cons_ff_range:
                 self.Q_array[i].append(
                     results_offdesign.loc[(T_hs_ff, T_cons_ff), 'Q'].tolist()
                     )
                 self.P_array[i].append(
                     results_offdesign.loc[(T_hs_ff, T_cons_ff), 'P'].tolist()
+                    )
+                self.epsilon_array[i].append(
+                    results_offdesign.loc[(T_hs_ff, T_cons_ff), 'epsilon'].tolist()
                     )
 
     def get_pressure_levels(self, T_evap, T_cond, wf=None):
@@ -490,10 +495,10 @@ class HeatPumpBase:
 
     def calc_partload_char(self, **kwargs):
         """
-        Interpolate data points of heat output and power input.
+        Interpolate data points of heat output, power input and epsilon.
 
-        Return functions to interpolate values heat output and
-        power input based on the partload and the feed flow
+        Return functions to interpolate values heat output power input
+        and epsilon based on the partload and the feed flow
         temperatures of the heat source and sink. If there is
         no data given through keyword arguments, the instances
         attributes will be searched for the necessary data.
@@ -504,12 +509,13 @@ class HeatPumpBase:
             Necessary data is:
                 Q_array : 3d array
                 P_array : 3d array
+                epsilon_array : 3d array
                 pl_range : 1d array
                 T_hs_ff_range : 1d array
                 T_cons_ff_range : 1d array
         """
         necessary_params = [
-            'Q_array', 'P_array', 'pl_range', 'T_hs_ff_range',
+            'Q_array', 'P_array', 'epsilon_array', 'pl_range', 'T_hs_ff_range',
             'T_cons_ff_range'
             ]
         if len(kwargs):
@@ -522,6 +528,7 @@ class HeatPumpBase:
                         )
             Q_array = np.asarray(kwargs['Q_array'])
             P_array = np.asarray(kwargs['P_array'])
+            epsilon_array = np.asarray(kwargs['epsilon_array'])
             pl_range = kwargs['pl_range']
             T_hs_ff_range = kwargs['T_hs_ff_range']
             T_cons_ff_range = kwargs['T_cons_ff_range']
@@ -539,6 +546,7 @@ class HeatPumpBase:
                         )
             Q_array = np.asarray(self.Q_array)
             P_array = np.asarray(self.P_array)
+            epsilon_array = np.asarray(self.epsilon_array)
             pl_range = self.pl_range
             T_hs_ff_range = self.T_hs_ff_range
             T_cons_ff_range = self.T_cons_ff_range
@@ -566,7 +574,7 @@ class HeatPumpBase:
                         )
 
         partload_char = pd.DataFrame(
-            index=multiindex, columns=['Q', 'P', 'COP']
+            index=multiindex, columns=['Q', 'P', 'COP', 'epsilon']
             )
 
         for T_hs_ff in T_hs_ff_fullrange:
@@ -591,6 +599,12 @@ class HeatPumpBase:
                         partload_char.loc[(T_hs_ff, T_cons_ff, pl), 'Q']
                         / partload_char.loc[(T_hs_ff, T_cons_ff, pl), 'P']
                         )
+                    partload_char.loc[(T_hs_ff, T_cons_ff, pl), 'epsilon'] = interpn(
+                        (T_hs_ff_range, T_cons_ff_range, pl_range),
+                        epsilon_array,
+                        (round(T_hs_ff, 3), round(T_cons_ff, 3), round(pl, 3)),
+                        bounds_error=False
+                        )[0]
 
         return partload_char
 
@@ -763,13 +777,13 @@ class HeatPumpBase:
         Parameters
         ----------
         partload_char : pd.DataFrame
-            DataFrame of the full partload characteristic containing 'Q', 'P'
-            and 'COP' with a MultiIndex of the three variables 'T_hs_ff',
+            DataFrame of the full partload characteristic containing 'Q', 'P',
+            'COP' and epsilon with a MultiIndex of the three variables 'T_hs_ff',
             'T_cons_ff' and 'pl'.
 
         cmap_type : str
-            String of the possible colormap variations, which are 'T_cons_ff'
-            and 'COP'.
+            String of the possible colormap variations, which are 'T_cons_ff',
+            'COP' and epsilon.
 
         cmap : str
             Name of colormap. Valid names are all colormaps implemented in
@@ -778,7 +792,7 @@ class HeatPumpBase:
         if not cmap_type:
             print(
                 'Please provide a cmap_type of eiher "T_cons_ff" or '
-                + '"COP" to plot the heat pump partload characteristic.'
+                + '"COP" or' + '"epsilon" to plot the heat pump partload characteristic.'
                 )
             return
 
@@ -854,6 +868,38 @@ class HeatPumpBase:
 
                 cbar = plt.colorbar(scatterplot, ax=ax)
                 cbar.set_label('Leistungszahl $COP$')
+
+                ax.grid()
+                ax.set_xlim(0, partload_char['P'].max() * 1.05)
+                ax.set_ylim(0, partload_char['Q'].max() * 1.05)
+                ax.set_xlabel('Elektrische Leistung $P$ in $MW$')
+                ax.set_ylabel('Wärmestrom $\\dot{{Q}}$ in $MW$')
+                ax.set_title(f'Quellentemperatur: {T_hs_ff:.0f} °C')
+                figs[T_hs_ff] = fig
+                axes[T_hs_ff] = ax
+
+        if cmap_type == 'epsilon':
+            figs = {}
+            axes = {}
+            for T_hs_ff in T_hs_ff_range:
+                fig, ax = plt.subplots(figsize=(9.5, 6))
+                scatterplot = ax.scatter(
+                    partload_char.loc[T_hs_ff, 'P'],
+                    partload_char.loc[T_hs_ff, 'Q'],
+                    c=partload_char.loc[T_hs_ff, 'epsilon'],
+                    cmap=colormap,
+                    vmin=(
+                        partload_char['epsilon'].min()
+                        - partload_char['epsilon'].max() * 0.05
+                        ),
+                    vmax=(
+                        partload_char['epsilon'].max()
+                        + partload_char['epsilon'].max() * 0.05
+                        )
+                    )
+
+                cbar = plt.colorbar(scatterplot, ax=ax)
+                cbar.set_label('Exergetische Effizienz $ε$')
 
                 ax.grid()
                 ax.set_xlim(0, partload_char['P'].max() * 1.05)

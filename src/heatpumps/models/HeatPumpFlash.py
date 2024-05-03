@@ -207,9 +207,12 @@ class HeatPumpFlash(HeatPumpBase):
                 )
 
         # Parametrization
-        self.comps['comp'].set_attr(
+        self.comps['comp1'].set_attr(
             design=['eta_s'], offdesign=['eta_s_char']
             )
+        self.comps['comp2'].set_attr(
+            design=['eta_s'], offdesign=['eta_s_char']
+        )
         self.comps['hs_pump'].set_attr(
             design=['eta_s'], offdesign=['eta_s_char']
             )
@@ -260,7 +263,7 @@ class HeatPumpFlash(HeatPumpBase):
             )
 
         results_offdesign = pd.DataFrame(
-            index=multiindex, columns=['Q', 'P', 'COP', 'residual']
+            index=multiindex, columns=['Q', 'P', 'COP', 'epsilon', 'residual']
             )
 
         for T_hs_ff in self.T_hs_ff_stablerange:
@@ -301,6 +304,7 @@ class HeatPumpFlash(HeatPumpBase):
                         self.nw.solve(
                             'offdesign', design_path=self.design_path
                             )
+                        self.perform_exergy_analysis()
                         failed = False
                     except ValueError:
                         failed = True
@@ -357,6 +361,7 @@ class HeatPumpFlash(HeatPumpBase):
                             if failed:
                                 results_offdesign.loc[idx, 'Q'] = np.nan
                                 results_offdesign.loc[idx, 'P'] = np.nan
+                                results_offdesign.loc[idx, 'epsilon'] = np.nan
                             else:
                                 results_offdesign.loc[idx, 'Q'] = abs(
                                     self.buses['heat output'].P.val * 1e-6
@@ -364,6 +369,9 @@ class HeatPumpFlash(HeatPumpBase):
                                 results_offdesign.loc[idx, 'P'] = (
                                     self.buses['power input'].P.val * 1e-6
                                     )
+                                results_offdesign.loc[idx, 'epsilon'] = round(
+                                    self.ean.network_data['epsilon'], 3
+                                )
 
                             results_offdesign.loc[idx, 'COP'] = (
                                 results_offdesign.loc[idx, 'Q']
