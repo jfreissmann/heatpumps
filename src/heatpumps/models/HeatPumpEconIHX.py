@@ -20,7 +20,7 @@ else:
 
 
 class HeatPumpEconIHX(HeatPumpBase):
-    """Heat pump with open or closed economizer."""
+    """Heat pump with open or closed economizer and ihx in front of it."""
 
     def __init__(self, params, econ_type='closed'):
         """Initialize model and set necessary attributes."""
@@ -42,10 +42,10 @@ class HeatPumpEconIHX(HeatPumpBase):
         # Main cycle
         self.comps['cond'] = Condenser('Condenser')
         self.comps['cc'] = CycleCloser('Main Cycle Closer')
+        self.comps['ihx'] = HeatExchanger('Internal Heat Exchanger')
         self.comps['mid_valve'] = Valve('Intermediate Valve')
         self.comps['evap_valve'] = Valve('Evaporation Valve')
         self.comps['evap'] = HeatExchanger('Evaporator')
-        self.comps['ihx'] = HeatExchanger('Internal Heat Exchanger')
         self.comps['comp1'] = Compressor('Compressor 1')
         self.comps['merge'] = Merge('Economizer Injection')
         self.comps['comp2'] = Compressor('Compressor 2')
@@ -67,11 +67,11 @@ class HeatPumpEconIHX(HeatPumpBase):
         self.conns['A0'] = Connection(
             self.comps['cond'], 'out1', self.comps['cc'], 'in1', 'A0'
             )
-        self.conns['A3'] = Connection(
-            self.comps['econ'], 'out1', self.comps['ihx'], 'in1', 'A3'
+        self.conns['A1'] = Connection(
+            self.comps['cc'], 'out1', self.comps['ihx'], 'in1', 'A1'
             )
         self.conns['A4'] = Connection(
-            self.comps['ihx'], 'out1', self.comps['evap_valve'], 'in1', 'A4'
+            self.comps['econ'], 'out1', self.comps['evap_valve'], 'in1', 'A4'
             )
         self.conns['A5'] = Connection(
             self.comps['evap_valve'], 'out1', self.comps['evap'], 'in2', 'A5'
@@ -119,11 +119,11 @@ class HeatPumpEconIHX(HeatPumpBase):
             )
 
         if self.econ_type.lower() == 'closed':
-            self.conns['A1'] = Connection(
-                self.comps['cc'], 'out1', self.comps['split'], 'in1', 'A1'
-                )
             self.conns['A2'] = Connection(
-                self.comps['split'], 'out1', self.comps['econ'], 'in1', 'A2'
+                self.comps['ihx'], 'out1', self.comps['split'], 'in1', 'A2'
+                )
+            self.conns['A3'] = Connection(
+                self.comps['split'], 'out1', self.comps['econ'], 'in1', 'A3'
                 )
             self.conns['A12'] = Connection(
                 self.comps['split'], 'out2',
@@ -134,11 +134,11 @@ class HeatPumpEconIHX(HeatPumpBase):
                 self.comps['econ'], 'in2', 'A13'
                 )
         elif self.econ_type.lower() == 'open':
-            self.conns['A1'] = Connection(
-                self.comps['cc'], 'out1', self.comps['mid_valve'], 'in1', 'A1'
-                )
             self.conns['A2'] = Connection(
-                self.comps['mid_valve'], 'out1', self.comps['econ'], 'in1', 'A2'
+                self.comps['ihx'], 'out1', self.comps['mid_valve'], 'in1', 'A2'
+                )
+            self.conns['A3'] = Connection(
+                self.comps['mid_valve'], 'out1', self.comps['econ'], 'in1', 'A3'
                 )
 
         self.nw.add_conns(*[conn for conn in self.conns.values()])
@@ -217,43 +217,15 @@ class HeatPumpEconIHX(HeatPumpBase):
                 + self.params['ihx']['dT_sh']),
             self.wf
             ) * 1e-3
-        h_sattdampf_evap = PSI(
-            'H', 'P', p_evap*1e5,
-            'Q', 1,
-            self.wf
-            ) * 1e-3
 
         # Main cycle
         self.conns['A6'].set_attr(x=self.params['A6']['x'], p=p_evap)
         self.conns['A0'].set_attr(p=p_cond, fluid=self.fluid_vec_wf)
-        if self.params['C3']['T'] == 90:
-            self.conns['A7'].set_attr(h=h_sattdampf_evap)
-        else:
-            self.conns['A7'].set_attr(h=h_superheat)
-        if self.econ_type == 'open':
-            h_sattdampf_mid = PSI(
-                'H', 'P', p_mid*1e5,
-                'Q', 1,
-                self.wf
-                ) * 1e-3
-            h_sattwasser_mid = PSI(
-                'H', 'P', p_mid*1e5,
-                'Q', 0,
-                self.wf
-                ) * 1e-3
-            h_mix_mid = PSI(
-                'H', 'P', p_cond*1e5,
-                'T', (self.params['C3']['T'] + self.params['cond']['ttd_u']
-                      + 273.15 - self.params['ihx']['dT_sh']),
-                self.wf
-                ) * 1e-3
-            self.conns['A2'].set_attr(h0=h_mix_mid)
-            self.conns['A3'].set_attr(h0=h_sattwasser_mid)
-            self.conns['A11'].set_attr(h0=h_sattdampf_mid)
+        self.conns['A7'].set_attr(h=h_superheat)
         self.conns['A11'].set_attr(p=p_mid)
         if self.econ_type.lower() == 'closed':
             self.conns['A11'].set_attr(x=1)
-            self.conns['A2'].set_attr(
+            self.conns['A3'].set_attr(
                 m=Ref(self.conns['A0'], 0.9, 0)
                 )
 
@@ -276,11 +248,10 @@ class HeatPumpEconIHX(HeatPumpBase):
         self._solve_model(**kwargs)
 
         if self.econ_type == 'closed':
-            self.conns['A2'].set_attr(m=None)
+            self.conns['A3'].set_attr(m=None)
         self.conns['A6'].set_attr(p=None)
         self.conns['A0'].set_attr(p=None)
         self.conns['A7'].set_attr(h=None)
-        # self.conns['A7'].set_attr(T=None)
 
     def design_simulation(self, **kwargs):
         """Perform final parametrization and design simulation."""
@@ -394,6 +365,7 @@ class HeatPumpEconIHX(HeatPumpBase):
                     T_evap=T_hs_ff, T_cond=T_cons_ff
                     )
                 self.conns['A11'].set_attr(p=p_mid)
+
                 for pl in self.pl_stablerange[::-1]:
                     print(
                         f'### Temp. HS = {T_hs_ff} °C, Temp. Cons = '
@@ -409,7 +381,7 @@ class HeatPumpEconIHX(HeatPumpBase):
                             os.path.dirname(__file__), 'stable',
                             f'{self.subdirname}_init'
                          ))
-
+    
                     self.comps['cons'].set_attr(Q=None)
                     self.conns['A0'].set_attr(m=pl*self.m_design)
 
@@ -529,20 +501,12 @@ class HeatPumpEconIHX(HeatPumpBase):
             {'Compressed gas': self.comps['merge'].get_plotting_data()[2]}
             )
         data.update(
-            {self.comps['ihx'].label + ' (hot)':
-             self.comps['ihx'].get_plotting_data()[1]}
-        )
-        data.update(
             {self.comps['evap_valve'].label:
              self.comps['evap_valve'].get_plotting_data()[1]}
         )
         data.update(
             {self.comps['evap'].label:
              self.comps['evap'].get_plotting_data()[2]}
-        )
-        data.update(
-            {self.comps['ihx'].label + ' (cold)':
-             self.comps['ihx'].get_plotting_data()[2]}
         )
         data.update(
             {self.comps['comp1'].label:

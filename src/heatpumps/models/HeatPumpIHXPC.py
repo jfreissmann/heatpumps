@@ -19,7 +19,7 @@ else:
     from .HeatPumpBase import HeatPumpBase
 
 
-class HeatPumpPCIHX(HeatPumpBase):
+class HeatPumpIHXPC(HeatPumpBase):
     """Heat pump with open/closed economizer, parallel compression and ihx."""
 
     def __init__(self, params, econ_type='closed'):

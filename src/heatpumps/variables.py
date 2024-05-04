@@ -1,6 +1,6 @@
 from models import (HeatPumpCascade, HeatPumpCascade2IHX, HeatPumpEcon,
                     HeatPumpEconIHX, HeatPumpFlash, HeatPumpIC, HeatPumpIHX,
-                    HeatPumpIHXEcon, HeatPumpPC, HeatPumpPC2IHX, HeatPumpPCIHX,
+                    HeatPumpIHXEcon, HeatPumpPC, HeatPumpPC2IHX, HeatPumpIHXPC,
                     HeatPumpSimple)
 
 # %% Important variables for the heat pump dashboard
@@ -105,9 +105,9 @@ hp_models = {
         'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
-    'pc_econ_closed_ihx': {
+    'pc_ihx_econ_closed': {
         'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT',
+        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante B)',
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -132,9 +132,9 @@ hp_models = {
         'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
-    'pc_econ_open_ihx': {
+    'pc_ihx_econ_open': {
         'base_topology': 'Economizer',
-        'display_name': 'Offen | Parallelschaltung | interne WÜT',
+        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante B)',
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -190,10 +190,10 @@ hp_model_classes = {
     'econ_open_ihx': HeatPumpEconIHX.HeatPumpEconIHX,
     'ihx_econ_open': HeatPumpIHXEcon.HeatPumpIHXEcon,
     'pc_econ_closed': HeatPumpPC.HeatPumpPC,
-    'pc_econ_closed_ihx': HeatPumpPCIHX.HeatPumpPCIHX,
+    'pc_ihx_econ_closed': HeatPumpIHXPC.HeatPumpIHXPC,
     'pc_econ_closed_2ihx': HeatPumpPC2IHX.HeatPumpPC2IHX,
     'pc_econ_open': HeatPumpPC.HeatPumpPC,
-    'pc_econ_open_ihx': HeatPumpPCIHX.HeatPumpPCIHX,
+    'pc_ihx_econ_open': HeatPumpIHXPC.HeatPumpIHXPC,
     'pc_econ_open_2ihx': HeatPumpPC2IHX.HeatPumpPC2IHX,
     'flash': HeatPumpFlash.HeatPumpFlash,
     'cascade': HeatPumpCascade.HeatPumpCascade,
