@@ -51,7 +51,7 @@ hp_models = {
         'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
-    'econ_closed_ihx': {
+    'ihx_econ_closed': {
         'base_topology': 'Economizer',
         'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante A)',
         'nr_ihx': 1,
@@ -60,7 +60,7 @@ hp_models = {
         'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
-    'ihx_econ_closed': {
+    'econ_closed_ihx': {
         'base_topology': 'Economizer',
         'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante B)',
         'nr_ihx': 1,
@@ -78,7 +78,7 @@ hp_models = {
         'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
-    'econ_open_ihx': {
+    'ihx_econ_open': {
         'base_topology': 'Economizer',
         'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante A)',
         'nr_ihx': 1,
@@ -87,7 +87,7 @@ hp_models = {
         'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
-    'ihx_econ_open': {
+    'econ_open_ihx': {
         'base_topology': 'Economizer',
         'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante B)',
         'nr_ihx': 1,
