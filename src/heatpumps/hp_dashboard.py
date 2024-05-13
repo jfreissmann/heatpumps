@@ -247,6 +247,15 @@ with st.sidebar:
                 value=float(params['C3']['p']), step=0.1, format='%f bar',
                 key='p_consumer_ff'
                 )
+        with st.expander('Umgebungsbedingung (Exergie)'):
+            params['ambient']['T'] = st.slider(
+                'Temperatur', min_value=1, max_value=45, step=1,
+                value=params['ambient']['T'], format='%d°C', key='T_env'
+                )
+            params['ambient']['p'] = st.number_input(
+                'Druck in bar', value=float(params['ambient']['p']), step=0.01,
+                format='%.4f', key='p_env'
+                )
 
         ss.hp_params = params
 
