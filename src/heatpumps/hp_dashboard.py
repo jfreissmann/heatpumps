@@ -107,8 +107,13 @@ with st.sidebar:
                 ))
             with open(parampath, 'r', encoding='utf-8') as file:
                 params = json.load(file)
-
-        if hp_model['nr_ihx'] > 0:
+        if hp_model['nr_ihx'] == 1:
+            with st.expander('Interne Wärmerübertragung'):
+                params['ihx']['dT_sh'] = st.slider(
+                    'Überhitzung/Unterkühlung', value=5,
+                    min_value=0, max_value=25, format='%d°C',
+                    key='dT_sh')
+        if hp_model['nr_ihx'] > 1:
             with st.expander('Interne Wärmerübertragung'):
                 dT_ihx = {}
                 for i in range(1, hp_model['nr_ihx']+1):
@@ -117,6 +122,7 @@ with st.sidebar:
                         min_value=0, max_value=25, format='%d°C',
                         key=f'dT_ihx{i}'
                         )
+                     params[f'ihx{i}']['dT_sh'] = dT_ihx[i]
 
         with st.expander('Kältemittel'):
             if hp_model['nr_refrigs'] == 1:
@@ -175,10 +181,19 @@ with st.sidebar:
 
         if hp_model['nr_refrigs'] == 1:
             T_crit = int(np.floor(refrigerants[refrig_label]['T_crit']))
+            p_crit = int(np.floor(refrigerants[refrig_label]['p_crit']))
         elif hp_model['nr_refrigs'] == 2:
             T_crit = int(np.floor(refrigerants[refrig2_label]['T_crit']))
+            p_crit = int(np.floor(refrigerants[refrig2_label]['p_crit']))
 
         ss.T_crit = T_crit
+        ss.p_crit = p_crit
+
+        if 'trans' in hp_model_name:
+            with st.expander('Traskritischer Druck'):
+                params['A0']['p'] = st.slider('Wert in bar', min_value=ss.p_crit,
+                                        value=params['A0']['p'], max_value=300,
+                                        format='%d bar', key='p_trans_out')
 
         with st.expander('Thermische Nennleistung'):
             params['cons']['Q'] = st.number_input(
