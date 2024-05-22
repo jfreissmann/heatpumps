@@ -1,7 +1,7 @@
 from models import (HeatPumpCascade, HeatPumpCascade2IHX, HeatPumpEcon,
                     HeatPumpEconIHX, HeatPumpFlash, HeatPumpIC, HeatPumpIHX,
-                    HeatPumpIHXEcon, HeatPumpPC, HeatPumpPC2IHX, HeatPumpPCIHX,
-                    HeatPumpSimple)
+                    HeatPumpIHXEcon, HeatPumpIHXPC, HeatPumpIHXPCIHX,
+                    HeatPumpPC, HeatPumpSimple)
 
 # %% Important variables for the heat pump dashboard
 
@@ -105,7 +105,7 @@ hp_models = {
         'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
-    'pc_econ_closed_ihx': {
+    'ihx_pc_econ_closed': {
         'base_topology': 'Economizer',
         'display_name': 'Geschlossen | Parallelschaltung | interne WÜT',
         'nr_ihx': 1,
@@ -114,7 +114,7 @@ hp_models = {
         'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
-    'pc_econ_closed_2ihx': {
+    'ihx_pc_econ_closed_ihx': {
         'base_topology': 'Economizer',
         'display_name': 'Geschlossen | Parallelschaltung | doppelte interne WÜT',
         'nr_ihx': 2,
@@ -132,7 +132,7 @@ hp_models = {
         'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
-    'pc_econ_open_ihx': {
+    'ihx_pc_econ_open': {
         'base_topology': 'Economizer',
         'display_name': 'Offen | Parallelschaltung | interne WÜT',
         'nr_ihx': 1,
@@ -141,7 +141,7 @@ hp_models = {
         'nr_refrigs': 1,
         'process_type': 'subcritical'
         },
-    'pc_econ_open_2ihx': {
+    'ihx_pc_econ_open_ihx': {
         'base_topology': 'Economizer',
         'display_name': 'Offen | Parallelschaltung | doppelte interne WÜT',
         'nr_ihx': 2,
@@ -190,11 +190,11 @@ hp_model_classes = {
     'econ_open_ihx': HeatPumpEconIHX.HeatPumpEconIHX,
     'ihx_econ_open': HeatPumpIHXEcon.HeatPumpIHXEcon,
     'pc_econ_closed': HeatPumpPC.HeatPumpPC,
-    'pc_econ_closed_ihx': HeatPumpPCIHX.HeatPumpPCIHX,
-    'pc_econ_closed_2ihx': HeatPumpPC2IHX.HeatPumpPC2IHX,
+    'ihx_pc_econ_closed': HeatPumpIHXPC.HeatPumpIHXPC,
+    'ihx_pc_econ_closed_ihx': HeatPumpIHXPCIHX.HeatPumpIHXPCIHX,
     'pc_econ_open': HeatPumpPC.HeatPumpPC,
-    'pc_econ_open_ihx': HeatPumpPCIHX.HeatPumpPCIHX,
-    'pc_econ_open_2ihx': HeatPumpPC2IHX.HeatPumpPC2IHX,
+    'ihx_pc_econ_open': HeatPumpIHXPC.HeatPumpIHXPC,
+    'ihx_pc_econ_open_ihx': HeatPumpIHXPCIHX.HeatPumpIHXPCIHX,
     'flash': HeatPumpFlash.HeatPumpFlash,
     'cascade': HeatPumpCascade.HeatPumpCascade,
     'cascade_2ihx': HeatPumpCascade2IHX.HeatPumpCascade2IHX

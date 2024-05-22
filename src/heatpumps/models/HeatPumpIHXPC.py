@@ -19,7 +19,7 @@ else:
     from .HeatPumpBase import HeatPumpBase
 
 
-class HeatPumpPC2IHX(HeatPumpBase):
+class HeatPumpIHXPC(HeatPumpBase):
     """Heat pump with open/closed economizer, parallel compression and ihx."""
 
     def __init__(self, params, econ_type='closed'):
@@ -45,8 +45,7 @@ class HeatPumpPC2IHX(HeatPumpBase):
         self.comps['mid_valve'] = Valve('Intermediate Valve')
         self.comps['evap_valve'] = Valve('Evaporation Valve')
         self.comps['evap'] = HeatExchanger('Evaporator')
-        self.comps['ihx1'] = HeatExchanger('Internal Heat Exchanger 1')
-        self.comps['ihx2'] = HeatExchanger('Internal Heat Exchanger 2')
+        self.comps['ihx'] = HeatExchanger('Internal Heat Exchanger')
         self.comps['comp1'] = Compressor('Compressor 1')
         self.comps['comp2'] = Compressor('Compressor 2')
         self.comps['merge'] = Merge('Compressor Merge')
@@ -68,38 +67,32 @@ class HeatPumpPC2IHX(HeatPumpBase):
         self.conns['A0'] = Connection(
             self.comps['cond'], 'out1', self.comps['cc'], 'in1', 'A0'
             )
-        self.conns['A1'] = Connection(
-            self.comps['cc'], 'out1', self.comps['ihx2'], 'in1', 'A1'
+        self.conns['A3'] = Connection(
+            self.comps['econ'], 'out1', self.comps['ihx'], 'in1', 'A3'
             )
         self.conns['A4'] = Connection(
-            self.comps['econ'], 'out1', self.comps['ihx1'], 'in1', 'A4'
+            self.comps['ihx'], 'out1', self.comps['evap_valve'], 'in1', 'A4'
             )
         self.conns['A5'] = Connection(
-            self.comps['ihx1'], 'out1', self.comps['evap_valve'], 'in1', 'A5'
+            self.comps['evap_valve'], 'out1', self.comps['evap'], 'in2', 'A5'
             )
         self.conns['A6'] = Connection(
-            self.comps['evap_valve'], 'out1', self.comps['evap'], 'in2', 'A6'
+            self.comps['evap'], 'out2', self.comps['ihx'], 'in2', 'A6'
             )
         self.conns['A7'] = Connection(
-            self.comps['evap'], 'out2', self.comps['ihx1'], 'in2', 'A7'
+            self.comps['ihx'], 'out2', self.comps['comp1'], 'in1', 'A7'
             )
         self.conns['A8'] = Connection(
-            self.comps['ihx1'], 'out2', self.comps['comp1'], 'in1', 'A8'
+            self.comps['comp1'], 'out1', self.comps['merge'], 'in1', 'A8'
             )
         self.conns['A9'] = Connection(
-            self.comps['comp1'], 'out1', self.comps['merge'], 'in1', 'A9'
+            self.comps['merge'], 'out1', self.comps['cond'], 'in1', 'A9'
             )
         self.conns['A10'] = Connection(
-            self.comps['merge'], 'out1', self.comps['cond'], 'in1', 'A10'
+            self.comps['econ'], 'out2', self.comps['comp2'], 'in1', 'A10'
             )
         self.conns['A11'] = Connection(
-            self.comps['econ'], 'out2', self.comps['ihx2'], 'in2', 'A11'
-            )
-        self.conns['A12'] = Connection(
-            self.comps['ihx2'], 'out2', self.comps['comp2'], 'in1', 'A12'
-            )
-        self.conns['A13'] = Connection(
-            self.comps['comp2'], 'out1', self.comps['merge'], 'in2', 'A13'
+            self.comps['comp2'], 'out1', self.comps['merge'], 'in2', 'A11'
             )
 
         self.conns['B1'] = Connection(
@@ -126,26 +119,26 @@ class HeatPumpPC2IHX(HeatPumpBase):
             )
 
         if self.econ_type.lower() == 'closed':
+            self.conns['A1'] = Connection(
+                self.comps['cc'], 'out1', self.comps['split'], 'in1', 'A1'
+                )
             self.conns['A2'] = Connection(
-                self.comps['ihx2'], 'out1', self.comps['split'], 'in1', 'A2'
+                self.comps['split'], 'out1', self.comps['econ'], 'in1', 'A2'
                 )
-            self.conns['A3'] = Connection(
-                self.comps['split'], 'out1', self.comps['econ'], 'in1', 'A3'
-                )
-            self.conns['A14'] = Connection(
+            self.conns['A12'] = Connection(
                 self.comps['split'], 'out2',
-                self.comps['mid_valve'], 'in1', 'A14'
+                self.comps['mid_valve'], 'in1', 'A12'
                 )
-            self.conns['A15'] = Connection(
+            self.conns['A13'] = Connection(
                 self.comps['mid_valve'], 'out1',
-                self.comps['econ'], 'in2', 'A15'
+                self.comps['econ'], 'in2', 'A13'
                 )
         elif self.econ_type.lower() == 'open':
-            self.conns['A2'] = Connection(
-                self.comps['ihx2'], 'out1', self.comps['mid_valve'], 'in1', 'A2'
+            self.conns['A1'] = Connection(
+                self.comps['cc'], 'out1', self.comps['mid_valve'], 'in1', 'A1'
                 )
-            self.conns['A3'] = Connection(
-                self.comps['mid_valve'], 'out1', self.comps['econ'], 'in1', 'A3'
+            self.conns['A2'] = Connection(
+                self.comps['mid_valve'], 'out1', self.comps['econ'], 'in1', 'A2'
                 )
 
         self.nw.add_conns(*[conn for conn in self.conns.values()])
@@ -200,11 +193,8 @@ class HeatPumpPC2IHX(HeatPumpBase):
         self.comps['cond'].set_attr(
             pr1=self.params['cond']['pr1'], pr2=self.params['cond']['pr2']
             )
-        self.comps['ihx1'].set_attr(
-            pr1=self.params['ihx1']['pr1'], pr2=self.params['ihx2']['pr1']
-            )
-        self.comps['ihx2'].set_attr(
-            pr1=self.params['ihx2']['pr1'], pr2=self.params['ihx2']['pr1']
+        self.comps['ihx'].set_attr(
+            pr1=self.params['ihx']['pr1'], pr2=self.params['ihx']['pr1']
             )
         self.comps['cons'].set_attr(
             pr=self.params['cons']['pr'], Q=self.params['cons']['Q'],
@@ -220,29 +210,22 @@ class HeatPumpPC2IHX(HeatPumpBase):
         p_evap, p_cond, p_mid = self.get_pressure_levels(
             T_evap=self.params['B2']['T'], T_cond=self.params['C3']['T']
             )
-        h_superheat1 = PSI(
+        h_superheat = PSI(
             'H', 'P', p_evap*1e5,
             'T', (
                 self.params['B2']['T'] - self.params['evap']['ttd_l'] + 273.15
-                + self.params['ihx1']['dT_sh']),
-            self.wf
-            ) * 1e-3
-        T_mid = PSI('T', 'Q', 1, 'P', p_mid*1e5, self.wf) - 273.15
-        h_superheat2 = PSI(
-            'H', 'P', p_mid*1e5,
-            'T', (T_mid + 273.15 + self.params['ihx2']['dT_sh']),
+                + self.params['ihx']['dT_sh']),
             self.wf
             ) * 1e-3
 
         # Main cycle
-        self.conns['A7'].set_attr(x=self.params['A7']['x'], p=p_evap)
+        self.conns['A6'].set_attr(x=self.params['A6']['x'], p=p_evap)
         self.conns['A0'].set_attr(p=p_cond, fluid=self.fluid_vec_wf)
-        self.conns['A8'].set_attr(h=h_superheat1)
-        self.conns['A12'].set_attr(h=h_superheat2)
-        self.conns['A11'].set_attr(p=p_mid)
+        self.conns['A7'].set_attr(h=h_superheat)
+        self.conns['A10'].set_attr(p=p_mid)
         if self.econ_type.lower() == 'closed':
-            self.conns['A11'].set_attr(x=1)
-            self.conns['A3'].set_attr(
+            self.conns['A10'].set_attr(x=1)
+            self.conns['A2'].set_attr(
                 m=Ref(self.conns['A0'], 0.9, 0)
                 )
 
@@ -265,11 +248,10 @@ class HeatPumpPC2IHX(HeatPumpBase):
         self._solve_model(**kwargs)
 
         if self.econ_type == 'closed':
-            self.conns['A3'].set_attr(m=None)
-        self.conns['A7'].set_attr(p=None)
+            self.conns['A2'].set_attr(m=None)
+        self.conns['A6'].set_attr(p=None)
         self.conns['A0'].set_attr(p=None)
-        self.conns['A8'].set_attr(h=None)
-        self.conns['A12'].set_attr(h=None)
+        self.conns['A7'].set_attr(h=None)
 
     def design_simulation(self, **kwargs):
         """Perform final parametrization and design simulation."""
@@ -277,11 +259,8 @@ class HeatPumpPC2IHX(HeatPumpBase):
         self.comps['cond'].set_attr(ttd_u=self.params['cond']['ttd_u'])
         if self.econ_type == 'closed':
             self.comps['econ'].set_attr(ttd_l=self.params['econ']['ttd_l'])
-        self.conns['A8'].set_attr(
-            T=Ref(self.conns['A7'], 1, self.params['ihx1']['dT_sh'])
-            )
-        self.conns['A12'].set_attr(
-            T=Ref(self.conns['A11'], 1, self.params['ihx2']['dT_sh'])
+        self.conns['A7'].set_attr(
+            T=Ref(self.conns['A6'], 1, self.params['ihx']['dT_sh'])
             )
 
         self._solve_model(**kwargs)
@@ -343,12 +322,7 @@ class HeatPumpPC2IHX(HeatPumpBase):
             design=['pr1', 'ttd_l'], offdesign=['zeta1', 'kA_char']
             )
 
-        self.comps['ihx1'].set_attr(
-            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
-            design=['pr1', 'pr2'], offdesign=['zeta1', 'zeta2']
-            )
-
-        self.comps['ihx2'].set_attr(
+        self.comps['ihx'].set_attr(
             kA_char1=kA_char1_default, kA_char2=kA_char2_default,
             design=['pr1', 'pr2'], offdesign=['zeta1', 'zeta2']
             )
@@ -390,7 +364,7 @@ class HeatPumpPC2IHX(HeatPumpBase):
                 _, _, p_mid = self.get_pressure_levels(
                     T_evap=T_hs_ff, T_cond=T_cons_ff
                     )
-                self.conns['A11'].set_attr(p=p_mid)
+                self.conns['A10'].set_attr(p=p_mid)
 
                 for pl in self.pl_stablerange[::-1]:
                     print(
@@ -472,7 +446,7 @@ class HeatPumpPC2IHX(HeatPumpBase):
                             if failed:
                                 results_offdesign.loc[idx, 'Q'] = np.nan
                                 results_offdesign.loc[idx, 'P'] = np.nan
-                                results_offdesign.loc[idx, 'eosilon'] = np.nan
+                                results_offdesign.loc[idx, 'epsilon'] = np.nan
                             else:
                                 results_offdesign.loc[idx, 'Q'] = abs(
                                     self.buses['heat output'].P.val * 1e-6
@@ -506,15 +480,11 @@ class HeatPumpPC2IHX(HeatPumpBase):
         data = {}
         data.update(
             {self.comps['cond'].label:
-                self.comps['cond'].get_plotting_data()[1]}
-        )
-        data.update(
-            {self.comps['ihx2'].label + ' (hot)':
-                self.comps['ihx2'].get_plotting_data()[1]}
+             self.comps['cond'].get_plotting_data()[1]}
         )
         data.update(
             {self.comps['mid_valve'].label:
-                self.comps['mid_valve'].get_plotting_data()[1]}
+             self.comps['mid_valve'].get_plotting_data()[1]}
         )
         data.update(
             {self.comps['econ'].label + ' (hot)':
@@ -525,24 +495,24 @@ class HeatPumpPC2IHX(HeatPumpBase):
                 self.comps['econ'].get_plotting_data()[2]}
         )
         data.update(
-            {self.comps['ihx1'].label + ' (hot)':
-                self.comps['ihx1'].get_plotting_data()[1]}
+            {self.comps['ihx'].label + ' (hot)':
+                self.comps['ihx'].get_plotting_data()[1]}
         )
         data.update(
             {self.comps['evap_valve'].label:
-                self.comps['evap_valve'].get_plotting_data()[1]}
+             self.comps['evap_valve'].get_plotting_data()[1]}
         )
         data.update(
             {self.comps['evap'].label:
-                self.comps['evap'].get_plotting_data()[2]}
+             self.comps['evap'].get_plotting_data()[2]}
         )
         data.update(
-            {self.comps['ihx1'].label + ' (cold)':
-                self.comps['ihx1'].get_plotting_data()[2]}
+            {self.comps['ihx'].label + ' (cold)':
+                self.comps['ihx'].get_plotting_data()[2]}
         )
         data.update(
             {self.comps['comp1'].label:
-                self.comps['comp1'].get_plotting_data()[1]}
+             self.comps['comp1'].get_plotting_data()[1]}
         )
         data.update(
             {'Main gas stream': self.comps['merge'].get_plotting_data()[1]}
@@ -551,12 +521,8 @@ class HeatPumpPC2IHX(HeatPumpBase):
             {'Parallel gas stream': self.comps['merge'].get_plotting_data()[2]}
             )
         data.update(
-            {self.comps['ihx2'].label + ' (cold)':
-                self.comps['ihx2'].get_plotting_data()[2]}
-        )
-        data.update(
             {self.comps['comp2'].label:
-                self.comps['comp2'].get_plotting_data()[1]}
+             self.comps['comp2'].get_plotting_data()[1]}
         )
 
         for comp in data:
