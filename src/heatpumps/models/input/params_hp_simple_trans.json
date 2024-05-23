@@ -2,14 +2,14 @@
     "setup": {
         "name": "simple trans",
         "type": "HeatPumpSimpleTrans",
-        "refrig": "R744"
+        "refrig": "R717"
     },
     "ambient": {
         "p": 1,
         "T": 25
     },
     "fluids": {
-        "wf": "R744",
+        "wf": "R717",
         "si": "H2O",
         "so": "H2O"
     },
