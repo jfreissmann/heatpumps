@@ -19,7 +19,7 @@ else:
     from .HeatPumpBase import HeatPumpBase
 
 
-class HeatPumpIHXPC(HeatPumpBase):
+class HeatPumpPCIHX(HeatPumpBase):
     """Heat pump with open/closed economizer, parallel compression and ihx."""
 
     def __init__(self, params, econ_type='closed'):
@@ -42,10 +42,10 @@ class HeatPumpIHXPC(HeatPumpBase):
         # Main cycle
         self.comps['cond'] = Condenser('Condenser')
         self.comps['cc'] = CycleCloser('Main Cycle Closer')
-        self.comps['ihx'] = HeatExchanger('Internal Heat Exchanger')
         self.comps['mid_valve'] = Valve('Intermediate Valve')
         self.comps['evap_valve'] = Valve('Evaporation Valve')
         self.comps['evap'] = HeatExchanger('Evaporator')
+        self.comps['ihx'] = HeatExchanger('Internal Heat Exchanger')
         self.comps['comp1'] = Compressor('Compressor 1')
         self.comps['comp2'] = Compressor('Compressor 2')
         self.comps['merge'] = Merge('Compressor Merge')
@@ -67,11 +67,11 @@ class HeatPumpIHXPC(HeatPumpBase):
         self.conns['A0'] = Connection(
             self.comps['cond'], 'out1', self.comps['cc'], 'in1', 'A0'
             )
-        self.conns['A1'] = Connection(
-            self.comps['cc'], 'out1', self.comps['ihx'], 'in1', 'A1'
+        self.conns['A3'] = Connection(
+            self.comps['econ'], 'out1', self.comps['ihx'], 'in1', 'A3'
             )
         self.conns['A4'] = Connection(
-            self.comps['econ'], 'out1', self.comps['evap_valve'], 'in1', 'A4'
+            self.comps['ihx'], 'out1', self.comps['evap_valve'], 'in1', 'A4'
             )
         self.conns['A5'] = Connection(
             self.comps['evap_valve'], 'out1', self.comps['evap'], 'in2', 'A5'
@@ -119,11 +119,11 @@ class HeatPumpIHXPC(HeatPumpBase):
             )
 
         if self.econ_type.lower() == 'closed':
-            self.conns['A2'] = Connection(
-                self.comps['ihx'], 'out1', self.comps['split'], 'in1', 'A2'
+            self.conns['A1'] = Connection(
+                self.comps['cc'], 'out1', self.comps['split'], 'in1', 'A1'
                 )
-            self.conns['A3'] = Connection(
-                self.comps['split'], 'out1', self.comps['econ'], 'in1', 'A3'
+            self.conns['A2'] = Connection(
+                self.comps['split'], 'out1', self.comps['econ'], 'in1', 'A2'
                 )
             self.conns['A12'] = Connection(
                 self.comps['split'], 'out2',
@@ -134,11 +134,11 @@ class HeatPumpIHXPC(HeatPumpBase):
                 self.comps['econ'], 'in2', 'A13'
                 )
         elif self.econ_type.lower() == 'open':
-            self.conns['A2'] = Connection(
-                self.comps['ihx'], 'out1', self.comps['mid_valve'], 'in1', 'A2'
+            self.conns['A1'] = Connection(
+                self.comps['cc'], 'out1', self.comps['mid_valve'], 'in1', 'A1'
                 )
-            self.conns['A3'] = Connection(
-                self.comps['mid_valve'], 'out1', self.comps['econ'], 'in1', 'A3'
+            self.conns['A2'] = Connection(
+                self.comps['mid_valve'], 'out1', self.comps['econ'], 'in1', 'A2'
                 )
 
         self.nw.add_conns(*[conn for conn in self.conns.values()])
@@ -225,7 +225,7 @@ class HeatPumpIHXPC(HeatPumpBase):
         self.conns['A10'].set_attr(p=p_mid)
         if self.econ_type.lower() == 'closed':
             self.conns['A10'].set_attr(x=1)
-            self.conns['A3'].set_attr(
+            self.conns['A2'].set_attr(
                 m=Ref(self.conns['A0'], 0.9, 0)
                 )
 
@@ -248,7 +248,7 @@ class HeatPumpIHXPC(HeatPumpBase):
         self._solve_model(**kwargs)
 
         if self.econ_type == 'closed':
-            self.conns['A3'].set_attr(m=None)
+            self.conns['A2'].set_attr(m=None)
         self.conns['A6'].set_attr(p=None)
         self.conns['A0'].set_attr(p=None)
         self.conns['A7'].set_attr(h=None)
