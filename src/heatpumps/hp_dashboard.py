@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import variables as var
+from CoolProp.CoolProp import PropsSI as PSI
 from simulation import run_design, run_partload
 from streamlit import session_state as ss
 
@@ -99,6 +100,10 @@ with st.sidebar:
                 if correct_base and correct_model_name:
                     hp_model = mdata
                     hp_model_name = model
+                    if 'trans' in hp_model_name:
+                        hp_model_name_topology = hp_model_name.replace('_trans', '')
+                    else:
+                        hp_model_name_topology = hp_model_name
                     break
 
             parampath = os.path.abspath(os.path.join(
@@ -236,26 +241,85 @@ with st.sidebar:
         #             )
 
         with st.expander('Wärmesenke'):
-            params['C3']['T'] = st.slider(
-                'Temperatur Vorlauf', min_value=0, max_value=T_crit,
-                value=params['C3']['T'], format='%d°C', key='T_consumer_ff'
+            if 'trans' in hp_model_name:
+                if hp_model['nr_refrigs'] == 1:
+                    if 'Einfacher Kreis' in base_topology or 'Zwischenkühlung' in base_topology:
+                        h_evap_liquid = PSI(
+                            'H', 'Q', 0, 'T', params['B2']['T'] - params['evap']['ttd_l'] + 273.15,
+                            params['fluids']['wf']
+                        ) * 1e-3
+                        T_min_trans_out = PSI(
+                            'T', 'H', h_evap_liquid * 1e3, 'P', params['A0']['p'] * 1e5,
+                            params['fluids']['wf']
+                        ) - 273.15
+                    else:
+                        p_evap = PSI(
+                            'P', 'Q', 1,
+                            'T', params['B2']['T'] - params['trans']['ttd_l'] + 273.15,
+                            params['fluids']['wf']
+                        ) * 1e-5
+                        p_mid = np.sqrt(p_evap * params['A0']['p'])
+                        h_mid_liquid = PSI(
+                            'H', 'P', p_mid * 1e5, 'Q', 0,
+                            params['fluids']['wf']
+                        ) * 1e-3
+                        T_min_trans_out = PSI(
+                            'T', 'H', h_mid_liquid * 1e3, 'P', params['A0']['p'] * 1e5,
+                            params['fluids']['wf']
+                        ) - 273.15
+                elif hp_model['nr_refrigs'] == 2:
+                    T_mid = params['B2']['T'] + params['C3']['T'] / 4
+                    h_evap_liquid = PSI(
+                        'H', 'T', T_mid + 273.15, 'Q', 0,
+                        params['fluids']['wf2']
+                    ) * 1e-3
+                    T_min_trans_out = PSI(
+                        'T', 'H', h_evap_liquid * 1e3, 'P', params['A0']['p'] * 1e5,
+                        params['fluids']['wf2']
+                    ) - 273.15
+
+                params['C3']['T'] = st.slider(
+                    'Temperatur Vorlauf', min_value=0, max_value=T_crit,
+                    value=params['C3']['T'], format='%d°C', key='T_consumer_ff'
                 )
-            params['C0']['T'] = st.slider(
-                'Temperatur Rücklauf', min_value=0, max_value=T_crit,
-                value=params['C0']['T'], format='%d°C', key='T_consumer_bf'
+                params['C0']['T'] = st.slider(
+                    'Temperatur Rücklauf', min_value=int(T_min_trans_out), max_value=T_crit,
+                    value=int(T_min_trans_out) + 15, format='%d°C', key='T_consumer_bf'
                 )
 
-            invalid_temp_diff = params['C0']['T'] >= params['C3']['T']
-            if invalid_temp_diff:
-                st.error(
-                    'Die Rücklauftemperatur muss niedriger sein, als die '
-                    + 'Vorlauftemperatur.'
+                invalid_temp_diff = params['C0']['T'] >= params['C3']['T']
+                if invalid_temp_diff:
+                    st.error(
+                        'Die Rücklauftemperatur muss niedriger sein, als die '
+                        + 'Vorlauftemperatur.'
                     )
-            invalid_temp_diff = params['C0']['T'] <= params['B1']['T']
-            if invalid_temp_diff:
-                st.error(
-                    'Die Temperatur der Wärmesenke muss höher sein, als die '
-                    + 'der Wärmequelle.'
+                invalid_temp_diff = params['C0']['T'] <= params['B1']['T']
+                if invalid_temp_diff:
+                    st.error(
+                        'Die Temperatur der Wärmesenke muss höher sein, als die '
+                        + 'der Wärmequelle.'
+                    )
+            else:
+                params['C3']['T'] = st.slider(
+                    'Temperatur Vorlauf', min_value=0, max_value=T_crit,
+                    value=params['C3']['T'], format='%d°C', key='T_consumer_ff'
+                )
+                params['C0']['T'] = st.slider(
+                    'Temperatur Rücklauf', min_value=0, max_value=T_crit,
+                    value=params['C0']['T'], format='%d°C', key='T_consumer_bf'
+                )
+
+                invalid_temp_diff = params['C0']['T'] >= params['C3']['T']
+                if invalid_temp_diff:
+                    st.error(
+                        'Die Rücklauftemperatur muss niedriger sein, als die '
+                        + 'Vorlauftemperatur.'
+                    )
+                invalid_temp_diff = params['C0']['T'] <= params['B1']['T']
+                if invalid_temp_diff:
+                    st.error(
+                        'Die Temperatur der Wärmesenke muss höher sein, als die '
+                        + 'der Wärmequelle.'
                     )
             params['C3']['p'] = st.slider(
                 'Druck', min_value=1.0, max_value=20.0,
@@ -513,18 +577,18 @@ if mode == 'Auslegung':
                 try:
                     top_file = os.path.join(
                         src_path, 'img', 'topologies',
-                        f'hp_{hp_model_name}_dark.svg'
+                        f'hp_{hp_model_name_topology}_dark.svg'
                         )
                     st.image(top_file)
                 except:
                     top_file = os.path.join(
-                        src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
+                        src_path, 'img', 'topologies', f'hp_{hp_model_name_topology}.svg'
                         )
                     st.image(top_file)
 
             else:
                 top_file = os.path.join(
-                    src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
+                    src_path, 'img', 'topologies', f'hp_{hp_model_name_topology}.svg'
                     )
                 st.image(top_file)
 
@@ -646,20 +710,20 @@ if mode == 'Auslegung':
                         try:
                             top_file = os.path.join(
                                 src_path, 'img', 'topologies',
-                                f'hp_{hp_model_name}_label_dark.svg'
+                                f'hp_{hp_model_name_topology}_label_dark.svg'
                                 )
                             st.image(top_file)
                         except:
                             top_file = os.path.join(
                                 src_path, 'img', 'topologies',
-                                f'hp_{hp_model_name}_label.svg'
+                                f'hp_{hp_model_name_topology}_label.svg'
                                 )
                             st.image(top_file)
 
                     else:
                         top_file = os.path.join(
                             src_path, 'img', 'topologies',
-                            f'hp_{hp_model_name}_label.svg'
+                            f'hp_{hp_model_name_topology}_label.svg'
                             )
                         st.image(top_file)
 
