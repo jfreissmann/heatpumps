@@ -99,7 +99,10 @@ with st.sidebar:
                 correct_model_name = mdata['display_name'] == model_name
                 if correct_base and correct_model_name:
                     hp_model = mdata
-                    hp_model_name = model
+                    if 'trans' in model:
+                        hp_model_name = model.replace('_trans', '')
+                    else:
+                        hp_model_name = model
                     break
 
             parampath = os.path.abspath(os.path.join(
