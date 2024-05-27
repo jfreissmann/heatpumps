@@ -1,17 +1,15 @@
 {
     "setup": {
-        "name": "two stage cascade with transcritical upper stage",
-        "type": "HeatPumpCascadeTrans",
-        "refrig1": "R1234yf",
-        "refrig2": "R717"
+        "name": "parallel compression with open economizer and internal heat exchanger",
+        "type": "HeatPumpIHXPCEconOpen",
+        "refrig": "R1234yf"
     },
     "ambient": {
         "p": 1,
         "T": 25
     },
     "fluids": {
-        "wf1": "R1234yf",
-        "wf2": "R717",
+        "wf": "R1234yf",
         "si": "H2O",
         "so": "H2O"
     },
@@ -24,21 +22,26 @@
     "trans" : {
         "pr1": 0.98,
         "pr2": 0.98,
-        "ttd_l": 2
+        "ttd_u": l
     },
     "evap": {
         "pr1": 0.98,
         "pr2": 0.98,
         "ttd_l": 2
     },
-    "inter": {
-        "pr1": 0.98,
-        "pr2": 0.98,
-        "ttd_u": 2
-    },
     "cons" : {
         "pr": 0.98,
         "Q": -10e6
+    },
+    "ihx": {
+        "pr1": 0.98,
+        "pr2": 0.98,
+        "dT_sh": 5
+    },
+    "econ": {
+        "pr1": 0.98,
+        "pr2": 0.98,
+        "ttd_l": 2
     },
     "comp1": {
         "eta_s": 0.75
@@ -52,14 +55,11 @@
     "cons_pump": {
         "eta_s": 0.8
     },
+    "A6": {
+        "x": 1
+    },
     "A0": {
-        "p": 130
-    },
-    "A3": {
-        "x": 1
-    },
-    "D3": {
-        "x": 1
+        "p": 40
     },
     "B1": {
         "T": 10,
@@ -69,7 +69,7 @@
         "T": 5
     },
     "C0": {
-        "T": 50
+        "T": 60
     },
     "C3": {
         "T": 90,
@@ -79,12 +79,12 @@
         "T_hs_ff_start": 10,
         "T_hs_ff_end": 10,
         "T_hs_ff_steps": 1,
-        "T_cons_ff_start": 70,
-        "T_cons_ff_end": 124,
+        "T_cons_ff_start": 56,
+        "T_cons_ff_end": 85,
         "T_cons_ff_steps": 10,
-        "partload_min": 0.5,
+        "partload_min": 0.3,
         "partload_max": 1.0,
-        "partload_steps": 6,
+        "partload_steps": 8,
         "save_results": true
     }
 }
