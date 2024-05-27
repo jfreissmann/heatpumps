@@ -8,8 +8,7 @@ from CoolProp.CoolProp import PropsSI as PSI
 from tespy.components import (Compressor, Condenser, CycleCloser,
                               HeatExchanger, HeatExchangerSimple, Pump, Sink,
                               Source, Valve)
-from tespy.connections import Bus, Connection
-from tespy.networks import Network
+from tespy.connections import Bus, Connection, Ref
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
 
@@ -19,72 +18,8 @@ else:
     from .HeatPumpBase import HeatPumpBase
 
 
-class HeatPumpCascadeTrans(HeatPumpBase):
-    """Two stage cascading heat pump with two refrigerants."""
-
-    def __init__(self, params):
-        """Initialize model and set necessary attributes."""
-        self.params = params
-
-        self.wf1 = self.params['fluids']['wf1']
-        self.wf2 = self.params['fluids']['wf2']
-        self.si = self.params['fluids']['si']
-        self.so = self.params['fluids']['so']
-
-        if self.wf1 == self.wf2:
-            if self.si == self.so:
-                self.fluid_vec_wf1 = {self.wf1: 1, self.si: 0}
-                self.fluid_vec_wf2 = {self.wf1: 1, self.si: 0}
-                self.fluid_vec_si = {self.wf1: 0, self.si: 1}
-                self.fluid_vec_so = {self.wf1: 0, self.si: 1}
-            else:
-                self.fluid_vec_wf1 = {self.wf1: 1, self.si: 0, self.so: 0}
-                self.fluid_vec_wf2 = {self.wf1: 1, self.si: 0, self.so: 0}
-                self.fluid_vec_si = {self.wf1: 0, self.si: 1, self.so: 0}
-                self.fluid_vec_so = {self.wf1: 0, self.si: 0, self.so: 1}
-        else:
-            if self.si == self.so:
-                self.fluid_vec_wf1 = {self.wf1: 1, self.wf2: 0, self.si: 0}
-                self.fluid_vec_wf2 = {self.wf1: 0, self.wf2: 1, self.si: 0}
-                self.fluid_vec_si = {self.wf1: 0, self.wf2: 0, self.si: 1}
-                self.fluid_vec_so = {self.wf1: 0, self.wf2: 0, self.si: 1}
-            else:
-                self.fluid_vec_wf1 = {
-                    self.wf1: 1, self.wf2: 0, self.si: 0, self.so: 0
-                    }
-                self.fluid_vec_wf2 = {
-                    self.wf1: 0, self.wf2: 1, self.si: 0, self.so: 0
-                    }
-                self.fluid_vec_si = {
-                    self.wf1: 0, self.wf2: 0, self.si: 1, self.so: 0
-                    }
-                self.fluid_vec_so = {
-                    self.wf1: 0, self.wf2: 0, self.si: 0, self.so: 1
-                    }
-
-        self.comps = dict()
-        self.conns = dict()
-        self.buses = dict()
-
-        self.nw = Network(
-            fluids=[fluid for fluid in self.fluid_vec_wf1],
-            T_unit='C', p_unit='bar', h_unit='kJ / kg',
-            m_unit='kg / s'
-            )
-
-        self.cop = np.nan
-        self.epsilon = np.nan
-
-        self.solved_design = False
-        self.subdirname = (
-            f"{self.params['setup']['type']}_"
-            + f"{self.params['setup']['refrig1']}_"
-            + f"{self.params['setup']['refrig2']}"
-            )
-        self.design_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 'stable', f'{self.subdirname}_design'
-            ))
-        self.validate_dir()
+class HeatPumpICTrans(HeatPumpBase):
+    """Heat pump model with two stage compression and intercooling."""
 
     def generate_components(self):
         """Initialize components of heat pump."""
@@ -100,48 +35,36 @@ class HeatPumpCascadeTrans(HeatPumpBase):
 
         # Main cycle
         self.comps['trans'] = HeatExchanger('Transcritical Heat Exchanger')
-        self.comps['cc1'] = CycleCloser('Main Cycle Closer 1')
-        self.comps['cc2'] = CycleCloser('Main Cycle Closer 2')
-        self.comps['valve1'] = Valve('Valve 1')
-        self.comps['valve2'] = Valve('Valve 2')
-        self.comps['inter'] = Condenser('Intermediate Heat Exchanger')
+        self.comps['cc'] = CycleCloser('Main Cycle Closer')
+        self.comps['valve'] = Valve('Valve')
         self.comps['evap'] = HeatExchanger('Evaporator')
         self.comps['comp1'] = Compressor('Compressor 1')
+        self.comps['ic'] = HeatExchangerSimple('Intercooler')
         self.comps['comp2'] = Compressor('Compressor 2')
 
     def generate_connections(self):
         """Initialize and add connections and busses to network."""
         # Connections
         self.conns['A0'] = Connection(
-            self.comps['trans'], 'out1', self.comps['cc2'], 'in1', 'A0'
+            self.comps['trans'], 'out1', self.comps['cc'], 'in1', 'A0'
             )
         self.conns['A1'] = Connection(
-            self.comps['cc2'], 'out1', self.comps['valve2'], 'in1', 'A1'
+            self.comps['cc'], 'out1', self.comps['valve'], 'in1', 'A1'
             )
         self.conns['A2'] = Connection(
-            self.comps['valve2'], 'out1', self.comps['inter'], 'in2', 'A2'
+            self.comps['valve'], 'out1', self.comps['evap'], 'in2', 'A2'
             )
         self.conns['A3'] = Connection(
-            self.comps['inter'], 'out2', self.comps['comp2'], 'in1', 'A3'
+            self.comps['evap'], 'out2', self.comps['comp1'], 'in1', 'A3'
             )
         self.conns['A4'] = Connection(
-            self.comps['comp2'], 'out1', self.comps['trans'], 'in1', 'A4'
+            self.comps['comp1'], 'out1', self.comps['ic'], 'in1', 'A4'
             )
-
-        self.conns['D0'] = Connection(
-            self.comps['inter'], 'out1', self.comps['cc1'], 'in1', 'D0'
+        self.conns['A5'] = Connection(
+            self.comps['ic'], 'out1', self.comps['comp2'], 'in1', 'A5'
             )
-        self.conns['D1'] = Connection(
-            self.comps['cc1'], 'out1', self.comps['valve1'], 'in1', 'D1'
-            )
-        self.conns['D2'] = Connection(
-            self.comps['valve1'], 'out1', self.comps['evap'], 'in2', 'D2'
-            )
-        self.conns['D3'] = Connection(
-            self.comps['evap'], 'out2', self.comps['comp1'], 'in1', 'D3'
-            )
-        self.conns['D4'] = Connection(
-            self.comps['comp1'], 'out1', self.comps['inter'], 'in1', 'D4'
+        self.conns['A6'] = Connection(
+            self.comps['comp2'], 'out1', self.comps['trans'], 'in1', 'A6'
             )
 
         self.conns['B1'] = Connection(
@@ -216,9 +139,6 @@ class HeatPumpCascadeTrans(HeatPumpBase):
         self.comps['evap'].set_attr(
             pr1=self.params['evap']['pr1'], pr2=self.params['evap']['pr2']
             )
-        self.comps['inter'].set_attr(
-            pr1=self.params['inter']['pr1'], pr2=self.params['inter']['pr2']
-            )
         self.comps['trans'].set_attr(
             pr1=self.params['trans']['pr1'], pr2=self.params['trans']['pr2']
             )
@@ -226,22 +146,23 @@ class HeatPumpCascadeTrans(HeatPumpBase):
             pr=self.params['cons']['pr'], Q=self.params['cons']['Q'],
             dissipative=False
             )
+        self.comps['ic'].set_attr(pr=self.params['ic']['pr'], dissipative=True)
 
         # Connections
-        self.T_mid = (self.params['B2']['T'] + self.params['C3']['T']) / 4
-
         # Starting values
-        p_evap1, p_cond1, p_evap2, h_trans_out = self.get_pressure_levels(
-            T_mid=self.T_mid
-            )
+        p_evap, h_trans_out, p_mid = self.get_pressure_levels()
+
+        h_s_mid = PSI(
+            'H', 'P', p_mid * 1e5,
+            'S', PSI('S', 'Q', 1, 'P', p_evap*1e5, self.wf),
+            self.wf
+            ) * 1e-3
+
 
         # Main cycle
-        self.conns['A3'].set_attr(x=self.params['A3']['x'], p=p_evap2)
-        self.conns['A0'].set_attr(
-            p=self.params['A0']['p'], h=h_trans_out, fluid=self.fluid_vec_wf2
-            )
-        self.conns['D3'].set_attr(x=self.params['D3']['x'], p=p_evap1)
-        self.conns['D0'].set_attr(p=p_cond1, fluid=self.fluid_vec_wf1)
+        self.conns['A3'].set_attr(x=self.params['A3']['x'], p=p_evap)
+        self.conns['A0'].set_attr(p=self.params['A0']['p'], h=h_trans_out, fluid=self.fluid_vec_wf)
+        self.conns['A5'].set_attr(p=p_mid, h=h_s_mid)
         # Heat source
         self.conns['B1'].set_attr(
             T=self.params['B1']['T'], p=self.params['B1']['p'],
@@ -260,17 +181,23 @@ class HeatPumpCascadeTrans(HeatPumpBase):
         # Perform initial simulation and unset starting values
         self._solve_model(**kwargs)
 
-        self.conns['A0'].set_attr(h=None)
         self.conns['A3'].set_attr(p=None)
-        self.conns['D0'].set_attr(p=None)
-        self.conns['D3'].set_attr(p=None)
+        self.conns['A0'].set_attr(h=None)
+        self.conns['A5'].set_attr(h=None)
 
     def design_simulation(self, **kwargs):
         """Perform final parametrization and design simulation."""
         self.comps['evap'].set_attr(ttd_l=self.params['evap']['ttd_l'])
         self.comps['trans'].set_attr(ttd_l=self.params['trans']['ttd_l'])
-        self.comps['inter'].set_attr(ttd_u=self.params['inter']['ttd_u'])
-        self.conns['A3'].set_attr(T=self.T_mid-self.params['inter']['ttd_u']/2)
+
+        T_bp = PSI('T', 'P', self.conns['A4'].p.val_SI, 'Q', 1, self.wf)-273.15
+
+        if abs(T_bp - self.conns['A4'].T.val) < abs(self.params['ic']['dT_ic']):
+            self.conns['A5'].set_attr(Td_bp=1)
+        else:
+            self.conns['A5'].set_attr(
+                T=Ref(self.conns['A4'], 1, self.params['ic']['dT_ic'])
+                )
 
         self._solve_model(**kwargs)
 
@@ -290,7 +217,10 @@ class HeatPumpCascadeTrans(HeatPumpBase):
                 )
 
         # Parametrization
-        self.comps['comp'].set_attr(
+        self.comps['comp1'].set_attr(
+            design=['eta_s'], offdesign=['eta_s_char']
+            )
+        self.comps['comp2'].set_attr(
             design=['eta_s'], offdesign=['eta_s_char']
             )
         self.comps['hs_pump'].set_attr(
@@ -316,8 +246,8 @@ class HeatPumpCascadeTrans(HeatPumpBase):
             'heat exchanger', 'kA_char2', 'DEFAULT', CharLine
             )
 
-        self.comps['trans'].set_attr(
-            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
+        self.comps['cond'].set_attr(
+            kA_char1=kA_char1_cond, kA_char2=kA_char2_default,
             design=['pr2', 'ttd_u'], offdesign=['zeta2', 'kA_char']
             )
 
@@ -326,11 +256,6 @@ class HeatPumpCascadeTrans(HeatPumpBase):
         self.comps['evap'].set_attr(
             kA_char1=kA_char1_default, kA_char2=kA_char2_evap,
             design=['pr1', 'ttd_l'], offdesign=['zeta1', 'kA_char']
-            )
-
-        self.comps['inter'].set_attr(
-            kA_char1=kA_char1_cond, kA_char2=kA_char2_evap,
-            design=['pr1', 'ttd_u'], offdesign=['zeta1', 'kA_char']
             )
 
         # Simulation
@@ -361,10 +286,11 @@ class HeatPumpCascadeTrans(HeatPumpBase):
             for T_cons_ff in self.T_cons_ff_stablerange:
                 self.conns['C3'].set_attr(T=T_cons_ff)
 
-                self.T_mid = ((T_hs_ff-deltaT_hs) + T_cons_ff) / 2
-                self.conns['A3'].set_attr(
-                    T=self.T_mid-self.params['inter']['ttd_u']/2
+                _, _, p_mid = self.get_pressure_levels(
+                    T_evap=T_hs_ff, T_cond=T_cons_ff
                     )
+                self.conns['A5'].set_attr(p=p_mid)
+
                 for pl in self.pl_stablerange[::-1]:
                     print(
                         f'### Temp. HS = {T_hs_ff} °C, Temp. Cons = '
@@ -474,115 +400,55 @@ class HeatPumpCascadeTrans(HeatPumpBase):
 
         self.df_to_array(results_offdesign)
 
-    def get_pressure_levels(self, T_mid):
-        """Calculate evaporation and condensation pressure for both cycles."""
-        p_evap1 = PSI(
+    def get_pressure_levels(self, wf=None):
+        """Calculate evaporation, middle pressure in bar heat sink outlet enthalpy
+        (hot side)."""
+        if not wf:
+            wf = self.wf
+        p_evap = PSI(
             'P', 'Q', 1,
-            'T', self.params['B2']['T']-self.params['evap']['ttd_l'] + 273.15,
-            self.wf1
-            ) * 1e-5
-        p_cond1 = PSI(
-            'P', 'Q', 0,
-            'T', T_mid + self.params['inter']['ttd_u']/2 + 273.15,
-            self.wf1
-            ) * 1e-5
-        p_evap2 = PSI(
-            'P', 'Q', 1,
-            'T', T_mid - self.params['inter']['ttd_u']/2 + 273.15,
-            self.wf2
+            'T', self.params['B2']['T'] - self.params['evap']['ttd_l'] + 273.15,
+            wf
             ) * 1e-5
         h_trans_out = PSI(
             'H', 'P', self.params['A0']['p']*1e5,
-            'T', self.params['C3']['T']+self.params['trans']['ttd_l'] + 273.15,
-            self.wf2
+            'T', self.params['C3']['T'] + self.params['trans']['ttd_l'] + 273.15,
+            wf
             ) * 1e-3
+        p_mid = np.sqrt(p_evap * self.params['A0']['p'])
 
-        return p_evap1, p_cond1, p_evap2, h_trans_out
+        return p_evap, h_trans_out, p_mid
 
     def get_plotting_states(self, **kwargs):
         """Generate data of states to plot in state diagram."""
         data = {}
-        if kwargs['cycle'] == 1:
-            data.update(
-                {self.comps['inter'].label:
-                self.comps['inter'].get_plotting_data()[1]}
-            )
-            data.update(
-                {self.comps['valve1'].label:
-                self.comps['valve1'].get_plotting_data()[1]}
-            )
-            data.update(
-                {self.comps['evap'].label:
-                self.comps['evap'].get_plotting_data()[2]}
-            )
-            data.update(
-                {self.comps['comp1'].label:
-                self.comps['comp1'].get_plotting_data()[1]}
-            )
-        elif kwargs['cycle'] == 2:
-            data.update(
-                {self.comps['trans'].label:
-                self.comps['trans'].get_plotting_data()[1]}
-            )
-            data.update(
-                {self.comps['valve2'].label:
-                self.comps['valve2'].get_plotting_data()[1]}
-            )
-            data.update(
-                {self.comps['inter'].label:
-                self.comps['inter'].get_plotting_data()[2]}
-            )
-            data.update(
-                {self.comps['comp2'].label:
-                self.comps['comp2'].get_plotting_data()[1]}
-            )
-        else:
-            raise ValueError(
-                f'Cycle {kwargs["cycle"]} not defined for heat pump '
-                + f"'{self.params['setup']['type']}'."
-                )
+        data.update(
+            {self.comps['trans'].label:
+             self.comps['trans'].get_plotting_data()[1]}
+        )
+        data.update(
+            {self.comps['valve'].label:
+             self.comps['valve'].get_plotting_data()[1]}
+        )
+        data.update(
+            {self.comps['evap'].label:
+             self.comps['evap'].get_plotting_data()[2]}
+        )
+        data.update(
+            {self.comps['comp1'].label:
+             self.comps['comp1'].get_plotting_data()[1]}
+        )
+        data.update(
+            {self.comps['ic'].label:
+             self.comps['ic'].get_plotting_data()[1]}
+        )
+        data.update(
+            {self.comps['comp2'].label:
+             self.comps['comp2'].get_plotting_data()[1]}
+        )
 
         for comp in data:
             if 'Compressor' in comp:
                 data[comp]['starting_point_value'] *= 0.999999
 
         return data
-
-    def generate_state_diagram(self, refrig='', diagram_type='logph',
-                               legend=True, return_diagram=False, savefig=True,
-                               open_file=True, **kwargs):
-        kwargs1 = {}
-        kwargs2 = {}
-        if 'xlims' in kwargs:
-            kwargs1['xlims'] = kwargs['xlims'][0]
-            kwargs2['xlims'] = kwargs['xlims'][1]
-        if 'ylims' in kwargs:
-            kwargs1['ylims'] = kwargs['ylims'][0]
-            kwargs2['ylims'] = kwargs['ylims'][1]
-        if return_diagram:
-            diagram1 = super().generate_state_diagram(
-                refrig=self.params['setup']['refrig1'],
-                diagram_type=diagram_type, legend=legend,
-                return_diagram=return_diagram, savefig=savefig,
-                open_file=open_file, cycle=1, **kwargs1
-            )
-            diagram2 = super().generate_state_diagram(
-                refrig=self.params['setup']['refrig2'],
-                diagram_type=diagram_type, legend=legend,
-                return_diagram=return_diagram, savefig=savefig,
-                open_file=open_file, cycle=2, **kwargs2
-            )
-            return diagram1, diagram2
-        else:
-            super().generate_state_diagram(
-                refrig=self.params['setup']['refrig1'],
-                diagram_type=diagram_type, legend=legend,
-                return_diagram=return_diagram, savefig=savefig,
-                open_file=open_file, cycle=1, **kwargs1
-            )
-            super().generate_state_diagram(
-                refrig=self.params['setup']['refrig2'],
-                diagram_type=diagram_type, legend=legend,
-                return_diagram=return_diagram, savefig=savefig,
-                open_file=open_file, cycle=2, **kwargs2
-            )

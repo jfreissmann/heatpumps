@@ -1,17 +1,15 @@
 {
     "setup": {
-        "name": "two stage cascade with transcritical upper stage",
-        "type": "HeatPumpCascadeTrans",
-        "refrig1": "R1234yf",
-        "refrig2": "R717"
+        "name": "flash tank",
+        "type": "HeatPumpFlashTrans",
+        "refrig": "R717"
     },
     "ambient": {
         "p": 1,
         "T": 25
     },
     "fluids": {
-        "wf1": "R1234yf",
-        "wf2": "R717",
+        "wf": "NH3",
         "si": "H2O",
         "so": "H2O"
     },
@@ -31,11 +29,6 @@
         "pr2": 0.98,
         "ttd_l": 2
     },
-    "inter": {
-        "pr1": 0.98,
-        "pr2": 0.98,
-        "ttd_u": 2
-    },
     "cons" : {
         "pr": 0.98,
         "Q": -10e6
@@ -53,12 +46,9 @@
         "eta_s": 0.8
     },
     "A0": {
-        "p": 130
+	"p": 120
     },
-    "A3": {
-        "x": 1
-    },
-    "D3": {
+    "A5": {
         "x": 1
     },
     "B1": {
@@ -69,7 +59,7 @@
         "T": 5
     },
     "C0": {
-        "T": 50
+        "T": 80
     },
     "C3": {
         "T": 90,
