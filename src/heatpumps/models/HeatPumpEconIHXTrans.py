@@ -208,6 +208,8 @@ class HeatPumpEconIHXTrans(HeatPumpBase):
         # Connections
         # Starting values
         p_evap, h_trans_out, p_mid = self.get_pressure_levels()
+        self.p_mid = p_mid
+        self.p_evap = p_evap
         h_superheat = PSI(
             'H', 'P', p_evap*1e5,
             'T', (
@@ -575,3 +577,72 @@ class HeatPumpEconIHXTrans(HeatPumpBase):
                 data[comp]['starting_point_value'] *= 0.999999
 
         return data
+
+    # def simulation_condiion_check(self):
+    #     """Checks the state after the expansion process,
+    #     to avoid the position of the state after expansion outside the liquid vapor region"""
+    #
+    #     errors = []
+    #     T_valve_in = self.conns['A4'].T.val  # evap valve inlet
+    #     T_sat_evap = PSI(
+    #         'T', 'Q', 0, 'P', self.p_evap*1e5,
+    #             self.wf)-273.15 # self.conns['A5'].T.val
+    #     if T_valve_in > T_sat_evap:
+    #         pass
+    #     else:
+    #         errors.append(
+    #             f'Error: The temperature before the expansion {round(T_valve_in, 2)} °C '
+    #             f'should be greater than the saturation temperature {round(T_sat_evap, 2)}°C '
+    #             f'corresponding evaporator pressure.')
+    #
+    #     ### mid valve
+    #     p_crit = PSI('p_critical', self.wf)*1e-5
+    #     if self.p_mid > p_crit:
+    #         errors.append(f'The intermediate pressure {round(self.p_mid,4)} bar '
+    #                       f'should be less than the critical pressure {round(p_crit,4)} bar')
+    #     else:
+    #         pass
+    #
+    #     T_mid_valve_in = self.conns['A0'].T.val
+    #     if self.econ_type == 'closed':
+    #         T_sat_p_mid = PSI(
+    #             'T', 'Q', 0, 'P', self.p_mid * 1e5 / self.params['econ']['pr2'],
+    #             self.wf) - 273.15
+    #     elif self.econ_type == 'open':
+    #         T_sat_p_mid = PSI(
+    #             'T', 'Q', 0, 'P', self.p_mid * 1e5,
+    #             self.wf) - 273.15
+    #
+    #     if T_mid_valve_in > T_sat_p_mid:
+    #         pass
+    #     else:
+    #         errors.append(f'Error: The temperature before mid expansion {round(T_mid_valve_in, 2)}°C '
+    #                       f'should be greater than the saturation temperature {round(T_sat_p_mid, 2)}°C '
+    #                       f'corresponding mid pressure')
+    #
+    #     if errors:
+    #         return errors
+    #     else:
+    #         return 'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
+
+    def simulation_condiion_check(self):
+        result = set()
+        error_valve = self.evap_state_condition_check(
+            conn_valve_in='A4', p_evap=self.p_evap, wf=self.wf
+        )
+        result.update(error_valve)
+        if self.econ_type == 'closed':
+            error_mid_valve = self.mid_evap_state_condition_check(
+                conn_mid_valve_in='A12', p_mid=self.p_mid, wf=self.wf, econ=True
+            )
+            result.update(error_mid_valve)
+        elif self.econ_type == 'open':
+            error_mid_valve = self.mid_evap_state_condition_check(
+                conn_mid_valve_in='A1', p_mid=self.p_mid, wf=self.wf, econ=True
+            )
+            result.update(error_mid_valve)
+
+        if result:
+            return result
+        else:
+            return f'Die Simulation der Wärmepumpenauslegung war erfolgreich.'

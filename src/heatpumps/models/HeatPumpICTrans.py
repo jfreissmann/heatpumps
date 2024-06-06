@@ -151,6 +151,7 @@ class HeatPumpICTrans(HeatPumpBase):
         # Connections
         # Starting values
         p_evap, h_trans_out, p_mid = self.get_pressure_levels()
+        self.p_evap = p_evap
 
         h_s_mid = PSI(
             'H', 'P', p_mid * 1e5,
@@ -452,3 +453,37 @@ class HeatPumpICTrans(HeatPumpBase):
                 data[comp]['starting_point_value'] *= 0.999999
 
         return data
+
+    # def simulation_condiion_check(self):
+    #     """Checks the state after the expansion process,
+    #     to avoid the position of the state after expansion outside the liquid vapor region"""
+    #
+    #     errors = []
+    #     T_valve_in = self.conns['A0'].T.val # condenser outlet
+    #     T_sat_evap = PSI(
+    #         'T', 'Q', 0, 'P', self.p_evap * 1e5,
+    #         self.wf) - 273.15
+    #
+    #     if T_valve_in > T_sat_evap:
+    #         pass
+    #     else:
+    #         errors.append(
+    #             f'Error: Inlet temperature before the expansion {round(T_valve_in, 2)} °C '
+    #             f'should be greater than the saturation temperature {round(T_sat_evap, 2)}°C '
+    #             f'corresponding evaporator pressure.')
+    #     if errors:
+    #         return errors
+    #     else:
+    #         return 'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
+
+    def simulation_condiion_check(self):
+        result = set()
+        error = self.evap_state_condition_check(
+            conn_valve_in='A0', p_evap=self.p_evap, wf=self.wf
+        )
+        result.update(error)
+
+        if result:
+            return result
+        else:
+            return f'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
