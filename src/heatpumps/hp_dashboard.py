@@ -241,65 +241,6 @@ with st.sidebar:
         #             )
 
         with st.expander('Wärmesenke'):
-            # if 'trans' in hp_model_name:
-            #     if hp_model['nr_refrigs'] == 1:
-            #         if 'Einfacher Kreis' in base_topology or 'Zwischenkühlung' in base_topology:
-            #             h_evap_liquid = PSI(
-            #                 'H', 'Q', 0, 'T', params['B2']['T'] - params['evap']['ttd_l'] + 273.15,
-            #                 params['fluids']['wf']
-            #             ) * 1e-3
-            #             T_min_trans_out = PSI(
-            #                 'T', 'H', h_evap_liquid * 1e3, 'P', params['A0']['p'] * 1e5,
-            #                 params['fluids']['wf']
-            #             ) - 273.15
-            #         else:
-            #             p_evap = PSI(
-            #                 'P', 'Q', 1,
-            #                 'T', params['B2']['T'] - params['trans']['ttd_l'] + 273.15,
-            #                 params['fluids']['wf']
-            #             ) * 1e-5
-            #             p_mid = np.sqrt(p_evap * params['A0']['p'])
-            #             h_mid_liquid = PSI(
-            #                 'H', 'P', p_mid * 1e5, 'Q', 0,
-            #                 params['fluids']['wf']
-            #             ) * 1e-3
-            #             T_min_trans_out = PSI(
-            #                 'T', 'H', h_mid_liquid * 1e3, 'P', params['A0']['p'] * 1e5,
-            #                 params['fluids']['wf']
-            #             ) - 273.15
-            #     elif hp_model['nr_refrigs'] == 2:
-            #         T_mid = params['B2']['T'] + params['C3']['T'] / 4
-            #         h_evap_liquid = PSI(
-            #             'H', 'T', T_mid + 273.15, 'Q', 0,
-            #             params['fluids']['wf2']
-            #         ) * 1e-3
-            #         T_min_trans_out = PSI(
-            #             'T', 'H', h_evap_liquid * 1e3, 'P', params['A0']['p'] * 1e5,
-            #             params['fluids']['wf2']
-            #         ) - 273.15
-            #
-            #     params['C3']['T'] = st.slider(
-            #         'Temperatur Vorlauf', min_value=0, max_value=T_crit,
-            #         value=params['C3']['T'], format='%d°C', key='T_consumer_ff'
-            #     )
-            #     params['C0']['T'] = st.slider(
-            #         'Temperatur Rücklauf', min_value=int(T_min_trans_out), max_value=T_crit,
-            #         value=int(T_min_trans_out) + 15, format='%d°C', key='T_consumer_bf'
-            #     )
-            #
-            #     invalid_temp_diff = params['C0']['T'] >= params['C3']['T']
-            #     if invalid_temp_diff:
-            #         st.error(
-            #             'Die Rücklauftemperatur muss niedriger sein, als die '
-            #             + 'Vorlauftemperatur.'
-            #         )
-            #     invalid_temp_diff = params['C0']['T'] <= params['B1']['T']
-            #     if invalid_temp_diff:
-            #         st.error(
-            #             'Die Temperatur der Wärmesenke muss höher sein, als die '
-            #             + 'der Wärmequelle.'
-            #         )
-            # else:
             params['C3']['T'] = st.slider(
                 'Temperatur Vorlauf', min_value=0, max_value=T_crit,
                 value=params['C3']['T'], format='%d°C', key='T_consumer_ff'
@@ -648,7 +589,7 @@ if mode == 'Auslegung':
             ss.hp = run_design(hp_model_name, params)
 
             if 'trans' in hp_model_name:
-                message = ss.hp.simulation_condiion_check()
+                message = ss.hp.simulation_condition_check()
                 if message == 'Die Simulation der Wärmepumpenauslegung war erfolgreich.':
                     st.success(message)
                 else:

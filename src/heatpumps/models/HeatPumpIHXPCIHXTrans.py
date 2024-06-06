@@ -583,55 +583,7 @@ class HeatPumpIHXPCIHXTrans(HeatPumpBase):
 
         return data
 
-    # def simulation_condiion_check(self):
-    #     """Checks the state after the expansion process,
-    #     to avoid the position of the state after expansion outside the liquid vapor region"""
-    #
-    #     errors = []
-    #     T_valve_in = self.conns['A5'].T.val  # evap valve inlet
-    #     T_sat_evap = PSI(
-    #         'T', 'Q', 0, 'P', self.p_evap*1e5,
-    #             self.wf)-273.15
-    #
-    #     if T_valve_in > T_sat_evap:
-    #         pass
-    #     else:
-    #         errors.append(
-    #             f'Error: The temperature before the expansion {round(T_valve_in, 2)} °C '
-    #             f'should be greater than the saturation temperature {round(T_sat_evap, 2)}°C '
-    #             f'corresponding evaporator pressure.')
-    #
-    #     ### mid valve
-    #     p_crit = PSI('p_critical', self.wf)*1e-5
-    #     if self.p_mid > p_crit:
-    #         errors.append(f'The intermediate pressure {round(self.p_mid,3)} bar '
-    #                       f'should be less than the critical pressure {round(p_crit,3)} bar')
-    #     else:
-    #         pass
-    #
-    #     T_mid_valve_in = self.conns['A2'].T.val
-    #     if self.econ_type == 'closed':
-    #         T_sat_p_mid = PSI(
-    #             'T', 'Q', 0, 'P', self.p_mid * 1e5 / self.params['econ']['pr2'],
-    #             self.wf) - 273.15
-    #     elif self.econ_type == 'open':
-    #         T_sat_p_mid = PSI(
-    #             'T', 'Q', 0, 'P', self.p_mid * 1e5,
-    #             self.wf) - 273.15
-    #
-    #     if T_mid_valve_in > T_sat_p_mid:
-    #         pass
-    #     else:
-    #         errors.append(f'Error: The temperature before mid expansion {round(T_mid_valve_in, 2)}°C '
-    #                       f'should be greater than the saturation temperature {round(T_sat_p_mid, 2)}°C '
-    #                       f'corresponding mid pressure')
-    #
-    #     if errors:
-    #         return errors
-    #     else:
-    #         return 'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
-
-    def simulation_condiion_check(self):
+    def simulation_condition_check(self):
         result = set()
         error_valve = self.evap_state_condition_check(
             conn_valve_in='A5', p_evap=self.p_evap, wf=self.wf
@@ -651,4 +603,4 @@ class HeatPumpIHXPCIHXTrans(HeatPumpBase):
         if result:
             return result
         else:
-            return f'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
+            return "Die Simulation der Wärmepumpenauslegung war erfolgreich."

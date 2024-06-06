@@ -589,54 +589,7 @@ class HeatPumpCascadeTrans(HeatPumpBase):
                 open_file=open_file, cycle=2, **kwargs2
             )
 
-    # def simulation_condiion_check(self):
-    #     """Checks the state after the expansion process,
-    #     to avoid the position of the state after expansion outside the liquid vapor region.
-    #     And also checks the mid temperature which should be less than critical temperature
-    #     of the lower cycle working fluid."""
-    #
-    #     errors = []
-    #     # cycle 2 - high temperature cycle
-    #     T_valve_in2 = self.conns['A0'].T.val
-    #     T_sat_evap2 = PSI(
-    #         'T', 'Q', 0, 'P', self.p_evap2 * 1e5 / self.params['inter']['pr1'],
-    #         self.wf2) - 273.15
-    #
-    #     if T_valve_in2 > T_sat_evap2:
-    #         pass
-    #     else:
-    #         errors.append(
-    #             f'Error: The temperature before the expansion {round(T_valve_in2, 2)} °C '
-    #             f'should be greater than the saturation temperature {round(T_sat_evap2, 2)}°C '
-    #             f'corresponding evaporator pressure.')
-    #
-    #     # cycle 1 - low temperature cycle
-    #     T_valve_in1 = self.conns['D0'].T.val
-    #     T_sat_evap1 = PSI(
-    #         'T', 'Q', 0, 'P', self.p_evap1 * 1e5,
-    #         self.wf1) - 273.15
-    #
-    #     if T_valve_in1 > T_sat_evap1:
-    #         pass
-    #     else:
-    #         errors.append(
-    #             f'Error: The temperature before the expansion {round(T_valve_in1, 2)} °C '
-    #             f'should be greater than the saturation temperature {round(T_sat_evap1, 2)}°C '
-    #             f'corresponding evaporator pressure.')
-    #     # T_mid should be less than the critical temperature of lower cycle working fluid.
-    #     # T_mid < T_crit(wf1)
-    #     T_crit_wf1 = PSI('T_critical', self.wf1)-273.15
-    #     if self.T_mid > T_crit_wf1:
-    #         errors.append(f'Error: Mid Temerature should be less than the '
-    #                       f'critical temeperature {round(T_crit_wf1, 2)} of lower cycle working fluid')
-    #     else:
-    #         pass
-    #     if errors:
-    #         return errors
-    #     else:
-    #         return 'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
-
-    def simulation_condiion_check(self):
+    def simulation_condition_check(self):
         errors = set()
         cycle2_err = self.evap_state_condition_check(
             conn_valve_in='A0', p_evap=self.p_evap2, wf=self.wf2
@@ -650,11 +603,11 @@ class HeatPumpCascadeTrans(HeatPumpBase):
 
         T_crit_wf1 = PSI('T_critical', self.wf1)-273.15
         if self.T_mid > T_crit_wf1:
-            errors.update(f'Error: Mid Temerature should be less than the '
-            f'critical temeperature {round(T_crit_wf1, 2)} of lower cycle working fluid')
+            errors.update(f'Error: Mid temperature should be less than the '
+                          + f'critical temperature {T_crit_wf1:.2f)} of lower cycle working fluid')
         else:
             pass
         if errors:
             return errors
         else:
-            return f'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
+            return "Die Simulation der Wärmepumpenauslegung war erfolgreich."
