@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import variables as var
+from CoolProp.CoolProp import PropsSI as PSI
 from simulation import run_design, run_partload
 from streamlit import session_state as ss
 
@@ -99,6 +100,10 @@ with st.sidebar:
                 if correct_base and correct_model_name:
                     hp_model = mdata
                     hp_model_name = model
+                    if 'trans' in hp_model_name:
+                        hp_model_name_topology = hp_model_name.replace('_trans', '')
+                    else:
+                        hp_model_name_topology = hp_model_name
                     break
 
             parampath = os.path.abspath(os.path.join(
@@ -239,29 +244,29 @@ with st.sidebar:
             params['C3']['T'] = st.slider(
                 'Temperatur Vorlauf', min_value=0, max_value=T_crit,
                 value=params['C3']['T'], format='%d°C', key='T_consumer_ff'
-                )
+            )
             params['C0']['T'] = st.slider(
                 'Temperatur Rücklauf', min_value=0, max_value=T_crit,
                 value=params['C0']['T'], format='%d°C', key='T_consumer_bf'
-                )
+            )
 
             invalid_temp_diff = params['C0']['T'] >= params['C3']['T']
             if invalid_temp_diff:
                 st.error(
                     'Die Rücklauftemperatur muss niedriger sein, als die '
                     + 'Vorlauftemperatur.'
-                    )
+                )
             invalid_temp_diff = params['C0']['T'] <= params['B1']['T']
             if invalid_temp_diff:
                 st.error(
                     'Die Temperatur der Wärmesenke muss höher sein, als die '
                     + 'der Wärmequelle.'
-                    )
-            params['C3']['p'] = st.slider(
-                'Druck', min_value=1.0, max_value=20.0,
-                value=float(params['C3']['p']), step=0.1, format='%f bar',
-                key='p_consumer_ff'
                 )
+        params['C3']['p'] = st.slider(
+            'Druck', min_value=1.0, max_value=20.0,
+            value=float(params['C3']['p']), step=0.1, format='%f bar',
+            key='p_consumer_ff'
+            )
         with st.expander('Umgebungsbedingung (Exergie)'):
             params['ambient']['T'] = st.slider(
                 'Temperatur', min_value=1, max_value=45, step=1,
@@ -513,18 +518,18 @@ if mode == 'Auslegung':
                 try:
                     top_file = os.path.join(
                         src_path, 'img', 'topologies',
-                        f'hp_{hp_model_name}_dark.svg'
+                        f'hp_{hp_model_name_topology}_dark.svg'
                         )
                     st.image(top_file)
                 except:
                     top_file = os.path.join(
-                        src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
+                        src_path, 'img', 'topologies', f'hp_{hp_model_name_topology}.svg'
                         )
                     st.image(top_file)
 
             else:
                 top_file = os.path.join(
-                    src_path, 'img', 'topologies', f'hp_{hp_model_name}.svg'
+                    src_path, 'img', 'topologies', f'hp_{hp_model_name_topology}.svg'
                     )
                 st.image(top_file)
 
@@ -583,9 +588,16 @@ if mode == 'Auslegung':
         with st.spinner('Simulation wird durchgeführt...'):
             ss.hp = run_design(hp_model_name, params)
 
-            st.success(
-                'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
-                )
+            if 'trans' in hp_model_name:
+                message = ss.hp.simulation_condition_check()
+                if message == 'Die Simulation der Wärmepumpenauslegung war erfolgreich.':
+                    st.success(message)
+                else:
+                    st.error(message)
+            else:
+                st.success(
+                    'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
+                    )
 
     if run_sim or 'hp' in ss:
         # %% Results
@@ -646,20 +658,20 @@ if mode == 'Auslegung':
                         try:
                             top_file = os.path.join(
                                 src_path, 'img', 'topologies',
-                                f'hp_{hp_model_name}_label_dark.svg'
+                                f'hp_{hp_model_name_topology}_label_dark.svg'
                                 )
                             st.image(top_file)
                         except:
                             top_file = os.path.join(
                                 src_path, 'img', 'topologies',
-                                f'hp_{hp_model_name}_label.svg'
+                                f'hp_{hp_model_name_topology}_label.svg'
                                 )
                             st.image(top_file)
 
                     else:
                         top_file = os.path.join(
                             src_path, 'img', 'topologies',
-                            f'hp_{hp_model_name}_label.svg'
+                            f'hp_{hp_model_name_topology}_label.svg'
                             )
                         st.image(top_file)
 
