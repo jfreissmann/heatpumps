@@ -549,24 +549,34 @@ class HeatPumpPCIHXTrans(HeatPumpBase):
 
         return data
 
-    def simulation_condition_check(self):
-        result = set()
-        error_valve = self.evap_state_condition_check(
-            conn_valve_in='A4', p_evap=self.p_evap, wf=self.wf
+    def check_consistency(self):
+        """Perform all necessary checks to protect consistency of parameters."""
+        self.check_expansion_into_vapor_liquid_region(
+            conn='A4', p=self.p_evap, wf=self.wf
         )
-        result.update(error_valve)
-        if self.econ_type == 'closed':
-            error_mid_valve = self.mid_evap_state_condition_check(
-                conn_mid_valve_in='A12', p_mid=self.p_mid, wf=self.wf, econ=True
+        if self.econ_type == 'open':
+            self.check_expansion_into_vapor_liquid_region(
+                conn='A1', p=self.p_mid, wf=self.wf
             )
-            result.update(error_mid_valve)
-        elif self.econ_type == 'open':
-            error_mid_valve = self.mid_evap_state_condition_check(
-                conn_mid_valve_in='A1', p_mid=self.p_mid, wf=self.wf, econ=True
+        elif self.econ_type == 'closed':
+            self.check_expansion_into_vapor_liquid_region(
+                conn='A12', p=self.p_mid, wf=self.wf
             )
-            result.update(error_mid_valve)
 
-        if result:
-            return result
+    def check_expansion_into_vapor_liquid_region(self, conn, p, wf):
+        T = self.conns[conn].T.val
+
+        if 'econ_type' in self.__dict__.keys():
+            if self.econ_type == 'closed':
+                T_sat = PSI(
+                    'T', 'Q', 0, 'P', p * 1e5 / self.params['econ']['pr2'],
+                    wf) - 273.15
         else:
-            return "Die Simulation der Wärmepumpenauslegung war erfolgreich."
+            T_sat = PSI('T', 'Q', 0, 'P', p * 1e5, wf) - 273.15
+
+        if T < T_sat:
+            raise ValueError(
+                f'The temperature of {T:.1f} °C at connection {conn} is lower '
+                + f'than the saturation temperature {T_sat} °C at {p:2f} bar. '
+                + 'Therefore, the vapor-liquid region can not be reached.'
+            )

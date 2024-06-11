@@ -586,18 +586,13 @@ if mode == 'Auslegung':
     if run_sim:
         # %% Run Design Simulation
         with st.spinner('Simulation wird durchgeführt...'):
-            ss.hp = run_design(hp_model_name, params)
-
-            if 'trans' in hp_model_name:
-                message = ss.hp.simulation_condition_check()
-                if message == 'Die Simulation der Wärmepumpenauslegung war erfolgreich.':
-                    st.success(message)
-                else:
-                    st.error(message)
-            else:
+            try:
+                ss.hp = run_design(hp_model_name, params)
                 st.success(
                     'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
                     )
+            except ValueError as e:
+                st.error(e + '\nBitte korrigieren Sie die Eingangsparameter.')
 
     if run_sim or 'hp' in ss:
         # %% Results

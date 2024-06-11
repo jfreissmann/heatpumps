@@ -589,25 +589,49 @@ class HeatPumpCascadeTrans(HeatPumpBase):
                 open_file=open_file, cycle=2, **kwargs2
             )
 
-    def simulation_condition_check(self):
-        errors = set()
-        cycle2_err = self.evap_state_condition_check(
-            conn_valve_in='A0', p_evap=self.p_evap2, wf=self.wf2
+    def check_consistency(self):
+        """Perform all necessary checks to protect consistency of parameters."""
+        self.check_expansion_into_vapor_liquid_region(
+            conn='A0', p=self.p_evap2, wf=self.wf2
         )
-        errors.update(cycle2_err)
-        cycle1_err = self.evap_state_condition_check(
-            conn_valve_in='D0', p_evap=self.p_evap1, wf=self.wf1
+        self.check_expansion_into_vapor_liquid_region(
+            conn='D0', p=self.p_evap1, wf=self.wf1
         )
+        self.check_mid_pressure(p_mid=self.p_evap2, wf=self.wf2)
+        self.check_mid_temperature(wf=self.wf1)
 
-        errors.update(cycle1_err)
+    def check_mid_pressure(self, p_mid, wf):
+        """Check if the intermediate pressure is below the critical pressure."""
+        p_crit = PSI('p_critical', wf) * 1e-5
+        if p_mid > p_crit:
+            raise ValueError(
+                f'Intermediate pressure of {p_mid:2f} bar must be below the '
+                + f'critical pressure of {wf} of {p_crit:.2f} bar'
+                )
 
-        T_crit_wf1 = PSI('T_critical', self.wf1)-273.15
-        if self.T_mid > T_crit_wf1:
-            errors.update(f'Error: Mid temperature should be less than the '
-                          + f'critical temperature {T_crit_wf1:.2f)} of lower cycle working fluid')
+    def check_mid_temperature(self, wf):
+        """Check if the intermediate pressure is below the critical pressure."""
+        T_crit = PSI('T_critical', wf) - 273.15
+        if self.T_mid > T_crit:
+            raise ValueError(
+                f'Intermediate temperature of {self.T_mid:1f} °C must be below '
+                + f'the  critical temperature of {wf} of {T_crit:.1f} °C'
+                )
+
+    def check_expansion_into_vapor_liquid_region(self, conn, p, wf):
+        T = self.conns[conn].T.val
+
+        if 'econ_type' in self.__dict__.keys():
+            if self.econ_type == 'closed':
+                T_sat = PSI(
+                    'T', 'Q', 0, 'P', p * 1e5 / self.params['econ']['pr2'],
+                    wf) - 273.15
         else:
-            pass
-        if errors:
-            return errors
-        else:
-            return "Die Simulation der Wärmepumpenauslegung war erfolgreich."
+            T_sat = PSI('T', 'Q', 0, 'P', p * 1e5, wf) - 273.15
+
+        if T < T_sat:
+            raise ValueError(
+                f'The temperature of {T:.1f} °C at connection {conn} is lower '
+                + f'than the saturation temperature {T_sat} °C at {p:2f} bar. '
+                + 'Therefore, the vapor-liquid region can not be reached.'
+            )
