@@ -262,11 +262,11 @@ with st.sidebar:
                     'Die Temperatur der Wärmesenke muss höher sein, als die '
                     + 'der Wärmequelle.'
                 )
-        params['C3']['p'] = st.slider(
-            'Druck', min_value=1.0, max_value=20.0,
-            value=float(params['C3']['p']), step=0.1, format='%f bar',
-            key='p_consumer_ff'
-            )
+            params['C3']['p'] = st.slider(
+                'Druck', min_value=1.0, max_value=20.0,
+                value=float(params['C3']['p']), step=0.1, format='%f bar',
+                key='p_consumer_ff'
+                )
         with st.expander('Umgebungsbedingung (Exergie)'):
             params['ambient']['T'] = st.slider(
                 'Temperatur', min_value=1, max_value=45, step=1,
