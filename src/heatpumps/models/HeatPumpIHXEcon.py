@@ -483,6 +483,10 @@ class HeatPumpIHXEcon(HeatPumpBase):
              self.comps['cond'].get_plotting_data()[1]}
         )
         data.update(
+            {self.comps['ihx'].label + ' (hot)':
+                 self.comps['ihx'].get_plotting_data()[1]}
+        )
+        data.update(
             {self.comps['mid_valve'].label:
              self.comps['mid_valve'].get_plotting_data()[1]}
         )
@@ -507,6 +511,10 @@ class HeatPumpIHXEcon(HeatPumpBase):
         data.update(
             {self.comps['evap'].label:
              self.comps['evap'].get_plotting_data()[2]}
+        )
+        data.update(
+            {self.comps['ihx'].label + ' (cold)':
+                 self.comps['ihx'].get_plotting_data()[2]}
         )
         data.update(
             {self.comps['comp1'].label:

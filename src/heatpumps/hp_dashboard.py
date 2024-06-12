@@ -592,7 +592,7 @@ if mode == 'Auslegung':
                     'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
                     )
             except ValueError as e:
-                st.error(e + '\nBitte korrigieren Sie die Eingangsparameter.')
+                st.error(str(e) + '\nBitte korrigieren Sie die Eingangsparameter.')
 
     if run_sim or 'hp' in ss:
         # %% Results
