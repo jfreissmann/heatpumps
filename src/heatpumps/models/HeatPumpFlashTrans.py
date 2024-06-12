@@ -460,13 +460,12 @@ class HeatPumpFlashTrans(HeatPumpBase):
     def check_expansion_into_vapor_liquid_region(self, conn, p, wf):
         T = self.conns[conn].T.val
 
+        T_sat = PSI('T', 'Q', 0, 'P', p * 1e5, wf) - 273.15
         if 'econ_type' in self.__dict__.keys():
             if self.econ_type == 'closed':
                 T_sat = PSI(
                     'T', 'Q', 0, 'P', p * 1e5 / self.params['econ']['pr2'],
                     wf) - 273.15
-        else:
-            T_sat = PSI('T', 'Q', 0, 'P', p * 1e5, wf) - 273.15
 
         if T < T_sat:
             raise ValueError(
