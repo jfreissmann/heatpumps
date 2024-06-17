@@ -171,8 +171,9 @@ class HeatPumpBase:
 
         return p_evap, p_cond, p_mid
 
-    def calc_cost(self, ref_year, current_year):
-        """
+    def calc_cost(self, ref_year, current_year, k_evap=1500, k_cond=3500,
+                  k_trans=60, k_misc=50, residence_time=10):
+        r"""
         Calculate CAPEX based on cost relevant components.
         
         Method as defined by Kosmadakis & Arpagaus et al. in:
@@ -180,6 +181,22 @@ class HeatPumpBase:
         warming potential refrigerants for upgrading waste heat up to 150 ◦C"
 
         DOI: https://doi.org/10.1016/j.enconman.2020.113488
+
+        Parameters
+        ----------
+
+        ref_year : int or str
+            Reference year of component cost for calculation of CEPCI factor.
+
+        current_year : int or str
+            The year the component cost are calculated for.
+
+        k_xxxx : int or float
+            Heat transfer coefficients of various heat exchangers in
+            $\frac{W}{m^2\cdotK}$
+
+        residence_time : int or float
+            Time of residence in minutes of the refrigerant in flash tanks.
         """
         cepcipath = os.path.abspath(os.path.join(
             os.path.dirname(__file__), 'input', 'CEPCI.json'
@@ -208,25 +225,24 @@ class HeatPumpBase:
 
             elif comptype == 'HeatExchanger':
                 if 'Evaporator' in complabel or 'Economizer' in complabel:
-                    val = comp.kA.val / 1500
+                    val = comp.kA.val / k_evap
                 elif 'Transcritical' in complabel:
-                    val = comp.kA.val / 60
+                    val = comp.kA.val / k_trans
                 else:
-                    val = comp.kA.val / 50
+                    val = comp.kA.val / k_misc
                 self.cost[complabel] = self.eval_costfunc(
                     val, 42, 15526, 0.80
                     ) * cepci_factor
                 self.design_params[complabel] = val
 
             elif comptype == 'Condenser':
-                val = comp.kA.val / 3500
+                val = comp.kA.val / k_cond
                 self.cost[complabel] = self.eval_costfunc(
                     val, 42, 15526, 0.80
                     ) * cepci_factor
                 self.design_params[complabel] = val
 
             elif comptype == 'DropletSeparator' or comptype == 'Drum':
-                residence_time = 10
                 conn_liquid = (
                     self.nw.conns[
                         (self.nw.conns['source'].apply(lambda x: x.label) == complabel)
