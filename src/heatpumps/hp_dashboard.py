@@ -267,7 +267,8 @@ with st.sidebar:
                 value=float(params['C3']['p']), step=0.1, format='%f bar',
                 key='p_consumer_ff'
                 )
-        with st.expander('Umgebungsbedingung (Exergie)'):
+
+        with st.expander('Umgebungsbedingungen (Exergie)'):
             params['ambient']['T'] = st.slider(
                 'Temperatur', min_value=1, max_value=45, step=1,
                 value=params['ambient']['T'], format='%d°C', key='T_env'
@@ -275,6 +276,39 @@ with st.sidebar:
             params['ambient']['p'] = st.number_input(
                 'Druck in bar', value=float(params['ambient']['p']), step=0.01,
                 format='%.4f', key='p_env'
+                )
+
+        with st.expander('Parameter zur Kostenkalkulation'):
+            costcalcparams = {}
+            costcalcparams['k_evap'] = st.slider(
+                'Wärmedurchgangskoeffizient (Verdampfung)',
+                min_value=0, max_value=5000, step=10,
+                value=1500, format='%d W/m²K', key='k_evap'
+                )
+
+            costcalcparams['k_cond'] = st.slider(
+                'Wärmedurchgangskoeffizient (Verflüssigung)',
+                min_value=0, max_value=5000, step=10,
+                value=3500, format='%d W/m²K', key='k_cond'
+                )
+
+            if 'trans' in hp_model_name:
+                costcalcparams['k_trans'] = st.slider(
+                    'Wärmedurchgangskoeffizient (transkritisch)',
+                    min_value=0, max_value=1000, step=5,
+                    value=60, format='%d W/m²K', key='k_trans'
+                    )
+
+            costcalcparams['k_misc'] = st.slider(
+                'Wärmedurchgangskoeffizient (Sonstige)',
+                min_value=0, max_value=1000, step=5,
+                value=50, format='%d W/m²K', key='k_misc'
+                )
+
+            costcalcparams['residence_time'] = st.slider(
+                'Aufenthaltsdauer Flashtank',
+                min_value=0, max_value=60, step=1,
+                value=10, format='%d min', key='residence_time'
                 )
 
         ss.hp_params = params
@@ -924,7 +958,7 @@ if mode == 'Auslegung':
             with st.expander('Ökonomische Bewertung'):
                 # %% Eco Results
                 ss.hp.calc_cost(
-                    ref_year='2013', current_year='2019'
+                    ref_year='2013', current_year='2019', **costcalcparams
                     )
 
                 col1, col2 = st.columns(2)
