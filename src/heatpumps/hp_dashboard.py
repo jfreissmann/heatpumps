@@ -76,6 +76,7 @@ with st.sidebar:
 
     # %% MARK: Design
     if mode == 'Auslegung':
+        ss.rerun_req = True
         st.header('Auslegung der Wärmepumpe')
 
         with st.expander('Setup', expanded=True):
@@ -539,9 +540,7 @@ if mode == 'Start':
 
 if mode == 'Auslegung':
     # %% MARK: Design Simulation
-    if not run_sim and 'hp' not in ss:
-
-
+    if not run_sim:
         # %% Topology & Refrigerant
         col_left, col_right = st.columns([1, 4])
 
@@ -628,7 +627,6 @@ if mode == 'Auslegung':
             except ValueError as e:
                 st.error(str(e) + '\nBitte korrigieren Sie die Eingangsparameter.')
 
-    if run_sim or 'hp' in ss:
         # %% MARK: Results
         with st.spinner('Ergebnisse werden visualisiert...'):
 
