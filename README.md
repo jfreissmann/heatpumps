@@ -12,7 +12,7 @@ Steady-state simulation of design and partload operation of a wide collection of
 
 ## Installation
 
-For now, only direct download from the [GitHub Repository](https://github.com/jfreissmann/heatpumps) is supported, so just clone it locally or download a ZIP file of the code. To use the heat pump model classes or visualization dashboard, the necessary dependencies have to be installed from the `requirements.txt` file. In a clean environment from the root directory the installation from this file could look like this:
+For now, only direct download from the [GitHub Repository](https://github.com/jfreissmann/heatpumps) is supported, so just clone it locally or download a ZIP file of the code.  If you are using [Miniforge](https://github.com/conda-forge/miniforge), you can create and activate a clean environment like this:
 
 ```
 conda create -n my_new_env python=3.11
@@ -22,18 +22,41 @@ conda create -n my_new_env python=3.11
 conda activate my_new_env
 ```
 
+If you want to build the package locally and install it, you should use these commands from the root directory of the repository:
+
 ```
-python -m pip install -r requirements.txt
+python setup.py sdist bdist_wheel
+```
+
+```
+python -m pip install .
+```
+
+If you want to use an editable version of the package, e.g. if you want to contribute to the project and test your own changes, skip the commands above and use this one:
+
+```
+python -m pip install -e "path/to/the/heatpumps/dir/"
 ```
 
 ## Run the dashboard
 
-Running the heat pump dashboard is as easy as running the following command from the root directory in your virtual environment with dependencies installed:
+The heatpumps package comes with a command to run the dashboard directly from your terminal. Running the dashboard is as easy as typing the following command:
 
 ```
-streamlit run src\heatpumps\hp_dashboard.py
+heatpumps-dashboard
 ```
 
+## Using the heat pump model classes
+
+To use the heat pump model classes in your own scripts, you can import them as follows:
+
+```python
+from heatpumps.models import HeatPumpSimple, HeatPumpEconIHX
+
+...
+
+hp = HeatPumpEconIHX(params=params)
+```
 
 ## License
 
