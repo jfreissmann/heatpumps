@@ -46,7 +46,7 @@ def info_df(label, refrigs):
 
 src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src'))
 
-# %% Initialisation
+# %% MARK: Initialisation
 refrigpath = os.path.join(src_path, 'refrigerants.json')
 with open(refrigpath, 'r', encoding='utf-8') as file:
     refrigerants = json.load(file)
@@ -59,7 +59,7 @@ st.set_page_config(
 
 is_dark = darkdetect.isDark()
 
-# %% Sidebar
+# %% MARK: Sidebar
 with st.sidebar:
     if is_dark:
         logo = os.path.join(src_path, 'img', 'Logo_ZNES_mitUnisV2_dark.svg')
@@ -74,7 +74,7 @@ with st.sidebar:
 
     st.markdown("""---""")
 
-    # %% Design
+    # %% MARK: Design
     if mode == 'Auslegung':
         st.header('Auslegung der Wärmepumpe')
 
@@ -317,7 +317,7 @@ with st.sidebar:
         # run_sim = True
     # autorun = st.checkbox('AutoRun Simulation', value=True)
 
-    # %% Offdesign
+    # %% MARK: Offdesign
     if mode == 'Teillast' and 'hp' in ss:
         params = ss.hp_params
         st.header('Teillastsimulation der Wärmepumpe')
@@ -434,11 +434,11 @@ with st.sidebar:
         ss.hp_params = params
         run_pl_sim = st.button('🧮 Teillast simulieren')
 
-# %% Main Content
+# %% MARK: Main Content
 st.title('Wärmepumpensimulator')
 
 if mode == 'Start':
-    # %% Landing Page
+    # %% MARK: Landing Page
     st.write(
         """
         Der Wärmepumpensimulator ist eine leistungsfähige Simulationssoftware
@@ -538,7 +538,7 @@ if mode == 'Start':
         st.success('#### Softwarelizenz\n' + lictext.replace('(c)', '©'))
 
 if mode == 'Auslegung':
-    # %% Design Simulation
+    # %% MARK: Design Simulation
     if not run_sim and 'hp' not in ss:
 
 
@@ -629,7 +629,7 @@ if mode == 'Auslegung':
                 st.error(str(e) + '\nBitte korrigieren Sie die Eingangsparameter.')
 
     if run_sim or 'hp' in ss:
-        # %% Results
+        # %% MARK: Results
         with st.spinner('Ergebnisse werden visualisiert...'):
 
             stateconfigpath = os.path.abspath(os.path.join(
@@ -1081,7 +1081,7 @@ if mode == 'Auslegung':
             st.button('Teillast simulieren', on_click=switch2partload)
 
 if mode == 'Teillast':
-    # %% Offdesign Simulation
+    # %% MARK: Offdesign Simulation
     st.header('Betriebscharakteristik')
 
     if 'hp' not in ss:
