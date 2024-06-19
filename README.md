@@ -52,10 +52,14 @@ To use the heat pump model classes in your own scripts, you can import them as f
 
 ```python
 from heatpumps.models import HeatPumpSimple, HeatPumpEconIHX
+from heatpumps.parameters import get_params
 
-...
+econ_type = 'closed'
+params = get_params('HeatPumpEconIHX', econ_type=econ_type)
 
-hp = HeatPumpEconIHX(params=params)
+hp = HeatPumpEconIHX(params=params, econ_type=econ_type)
+
+hp.run_model()
 ```
 
 ## License
