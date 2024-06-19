@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from CoolProp.CoolProp import PropsSI as PSI
 from tespy.components import (Compressor, Condenser, CycleCloser,
-                              HeatExchanger, HeatExchangerSimple, Pump, Sink,
+                              HeatExchanger, Pump, SimpleHeatExchanger, Sink,
                               Source, Valve)
 from tespy.connections import Bus, Connection, Ref
 from tespy.networks import Network
@@ -95,7 +95,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
         # Heat sink
         self.comps['cons_cc'] = CycleCloser('Consumer Cycle Closer')
         self.comps['cons_pump'] = Pump('Consumer Recirculation Pump')
-        self.comps['cons'] = HeatExchangerSimple('Consumer')
+        self.comps['cons'] = SimpleHeatExchanger('Consumer')
 
         # Main cycle
         self.comps['cond'] = Condenser('Condenser')

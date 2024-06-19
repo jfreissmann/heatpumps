@@ -5,7 +5,7 @@ from time import time
 import numpy as np
 import pandas as pd
 from tespy.components import (Compressor, Condenser, CycleCloser,
-                              HeatExchanger, HeatExchangerSimple, Pump, Sink,
+                              HeatExchanger, Pump, SimpleHeatExchanger, Sink,
                               Source, Valve)
 from tespy.connections import Bus, Connection
 from tespy.tools.characteristics import CharLine
@@ -30,7 +30,7 @@ class HeatPumpSimple(HeatPumpBase):
         # Heat sink
         self.comps['cons_cc'] = CycleCloser('Consumer Cycle Closer')
         self.comps['cons_pump'] = Pump('Consumer Recirculation Pump')
-        self.comps['cons'] = HeatExchangerSimple('Consumer')
+        self.comps['cons'] = SimpleHeatExchanger('Consumer')
 
         # Main cycle
         self.comps['cond'] = Condenser('Condenser')

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from CoolProp.CoolProp import PropsSI as PSI
 from tespy.components import (Compressor, CycleCloser, DropletSeparator,
-                              HeatExchanger, HeatExchangerSimple, Merge, Pump,
+                              HeatExchanger, Merge, Pump, SimpleHeatExchanger,
                               Sink, Source, Splitter, Valve)
 from tespy.connections import Bus, Connection, Ref
 from tespy.tools.characteristics import CharLine
@@ -36,7 +36,7 @@ class HeatPumpPCTrans(HeatPumpBase):
         # Heat sink
         self.comps['cons_cc'] = CycleCloser('Consumer Cycle Closer')
         self.comps['cons_pump'] = Pump('Consumer Recirculation Pump')
-        self.comps['cons'] = HeatExchangerSimple('Consumer')
+        self.comps['cons'] = SimpleHeatExchanger('Consumer')
 
         # Main cycle
         self.comps['trans'] = HeatExchanger('Transcritical Heat Exchanger')

@@ -5,8 +5,8 @@ from time import time
 import numpy as np
 import pandas as pd
 from CoolProp.CoolProp import PropsSI as PSI
-from tespy.components import (Compressor, CycleCloser, HeatExchanger,
-                              HeatExchangerSimple, Pump, Sink, Source, Valve)
+from tespy.components import (Compressor, CycleCloser, HeatExchanger, Pump,
+                              SimpleHeatExchanger, Sink, Source, Valve)
 from tespy.connections import Bus, Connection
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
@@ -30,7 +30,7 @@ class HeatPumpSimpleTrans(HeatPumpBase):
         # Heat sink
         self.comps['cons_cc'] = CycleCloser('Consumer Cycle Closer')
         self.comps['cons_pump'] = Pump('Consumer Recirculation Pump')
-        self.comps['cons'] = HeatExchangerSimple('Consumer')
+        self.comps['cons'] = SimpleHeatExchanger('Consumer')
 
         # Main cycle
         self.comps['trans'] = HeatExchanger('Transcritical Heat Exchanger')
