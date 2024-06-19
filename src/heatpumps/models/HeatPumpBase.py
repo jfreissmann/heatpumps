@@ -23,23 +23,12 @@ class HeatPumpBase:
         self.si = self.params['fluids']['si']
         self.so = self.params['fluids']['so']
 
-        if self.si == self.so:
-            self.fluid_vec_wf = {self.wf: 1, self.si:0}
-            self.fluid_vec_si = {self.wf: 0, self.si: 1}
-            self.fluid_vec_so = {self.wf: 0, self.si: 1}
-        else:
-            self.fluid_vec_wf = {self.wf: 1, self.si: 0, self.so: 0}
-            self.fluid_vec_si = {self.wf: 0, self.si: 1, self.so: 0}
-            self.fluid_vec_so = {self.wf: 0, self.si: 0, self.so: 1}
-
         self.comps = dict()
         self.conns = dict()
         self.buses = dict()
 
         self.nw = Network(
-            fluids=[fluid for fluid in self.fluid_vec_wf],
-            T_unit='C', p_unit='bar', h_unit='kJ / kg',
-            m_unit='kg / s'
+            T_unit='C', p_unit='bar', h_unit='kJ / kg', m_unit='kg / s'
             )
 
         self.cop = np.nan
@@ -80,7 +69,7 @@ class HeatPumpBase:
         if 'print_results' in kwargs:
             if kwargs['print_results']:
                 self.nw.print_results()
-        if self.nw.res[-1] < 1e-3:
+        if self.nw.residual[-1] < 1e-3:
             self.solved_design = True
             self.nw.save(self.design_path)
 

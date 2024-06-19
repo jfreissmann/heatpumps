@@ -29,7 +29,7 @@ setup(
     },
     python_requires='>=3.9',
     install_requires=[
-        'tespy==0.6.3',
+        'tespy>=0.7.0',
         'streamlit>=1.32.0',
         'numpy>=1.24.0',
         'pandas>=1.5.3',

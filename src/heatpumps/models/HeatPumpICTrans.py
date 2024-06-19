@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from CoolProp.CoolProp import PropsSI as PSI
 from tespy.components import (Compressor, Condenser, CycleCloser,
-                              HeatExchanger, HeatExchangerSimple, Pump, Sink,
+                              HeatExchanger, Pump, SimpleHeatExchanger, Sink,
                               Source, Valve)
 from tespy.connections import Bus, Connection, Ref
 from tespy.tools.characteristics import CharLine
@@ -31,7 +31,7 @@ class HeatPumpICTrans(HeatPumpBase):
         # Heat sink
         self.comps['cons_cc'] = CycleCloser('Consumer Cycle Closer')
         self.comps['cons_pump'] = Pump('Consumer Recirculation Pump')
-        self.comps['cons'] = HeatExchangerSimple('Consumer')
+        self.comps['cons'] = SimpleHeatExchanger('Consumer')
 
         # Main cycle
         self.comps['trans'] = HeatExchanger('Transcritical Heat Exchanger')
@@ -39,7 +39,7 @@ class HeatPumpICTrans(HeatPumpBase):
         self.comps['valve'] = Valve('Valve')
         self.comps['evap'] = HeatExchanger('Evaporator')
         self.comps['comp1'] = Compressor('Compressor 1')
-        self.comps['ic'] = HeatExchangerSimple('Intercooler')
+        self.comps['ic'] = SimpleHeatExchanger('Intercooler')
         self.comps['comp2'] = Compressor('Compressor 2')
 
     def generate_connections(self):
@@ -162,12 +162,14 @@ class HeatPumpICTrans(HeatPumpBase):
 
         # Main cycle
         self.conns['A3'].set_attr(x=self.params['A3']['x'], p=p_evap)
-        self.conns['A0'].set_attr(p=self.params['A0']['p'], h=h_trans_out, fluid=self.fluid_vec_wf)
+        self.conns['A0'].set_attr(
+            p=self.params['A0']['p'], h=h_trans_out, fluid={self.wf: 1}
+            )
         self.conns['A5'].set_attr(p=p_mid, h=h_s_mid)
         # Heat source
         self.conns['B1'].set_attr(
             T=self.params['B1']['T'], p=self.params['B1']['p'],
-            fluid=self.fluid_vec_so
+            fluid={self.so: 1}
             )
         self.conns['B2'].set_attr(T=self.params['B2']['T'])
         self.conns['B3'].set_attr(p=self.params['B1']['p'])
@@ -175,7 +177,7 @@ class HeatPumpICTrans(HeatPumpBase):
         # Heat sink
         self.conns['C3'].set_attr(
             T=self.params['C3']['T'], p=self.params['C3']['p'],
-            fluid=self.fluid_vec_si
+            fluid={self.si: 1}
             )
         self.conns['C0'].set_attr(T=self.params['C0']['T'])
 
@@ -334,9 +336,9 @@ class HeatPumpICTrans(HeatPumpBase):
                             '%H:%M:%S'
                             )
                         log_entry = (
-                            f'{timestamp};{(self.nw.res[-1] < 1e-3)};'
+                            f'{timestamp};{(self.nw.residual[-1] < 1e-3)};'
                             + f'{T_hs_ff:.2f};{T_cons_ff:.2f};{pl:.1f};'
-                            + f'{self.nw.res[-1]:.2e}\n'
+                            + f'{self.nw.residual[-1]:.2e}\n'
                             )
                         if not os.path.exists(logpath):
                             with open(logpath, 'w', encoding='utf-8') as file:
@@ -349,7 +351,7 @@ class HeatPumpICTrans(HeatPumpBase):
                             with open(logpath, 'a', encoding='utf-8') as file:
                                 file.write(log_entry)
 
-                    if pl == self.pl_range[-1] and self.nw.res[-1] < 1e-3:
+                    if pl == self.pl_range[-1] and self.nw.residual[-1] < 1e-3:
                         self.nw.save(os.path.abspath(os.path.join(
                             os.path.dirname(__file__), 'stable',
                             f'{self.subdirname}_init'
@@ -364,7 +366,7 @@ class HeatPumpICTrans(HeatPumpBase):
                     if inranges:
                         empty_or_worse = (
                             pd.isnull(results_offdesign.loc[idx, 'Q'])
-                            or (self.nw.res[-1]
+                            or (self.nw.residual[-1]
                                 < results_offdesign.loc[idx, 'residual']
                                 )
                         )
@@ -389,7 +391,7 @@ class HeatPumpICTrans(HeatPumpBase):
                                 / results_offdesign.loc[idx, 'P']
                             )
                             results_offdesign.loc[idx, 'residual'] = (
-                                self.nw.res[-1]
+                                self.nw.residual[-1]
                                 )
 
         if self.params['offdesign']['save_results']:

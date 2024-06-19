@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from CoolProp.CoolProp import PropsSI as PSI
 from tespy.components import (Compressor, Condenser, CycleCloser,
-                              HeatExchanger, HeatExchangerSimple, Pump, Sink,
+                              HeatExchanger, Pump, SimpleHeatExchanger, Sink,
                               Source, Valve)
 from tespy.connections import Bus, Connection, Ref
 from tespy.networks import Network
@@ -31,45 +31,12 @@ class HeatPumpCascade2IHX(HeatPumpBase):
         self.si = self.params['fluids']['si']
         self.so = self.params['fluids']['so']
 
-        if self.wf1 == self.wf2:
-            if self.si == self.so:
-                self.fluid_vec_wf1 = {self.wf1: 1, self.si: 0}
-                self.fluid_vec_wf2 = {self.wf1: 1, self.si: 0}
-                self.fluid_vec_si = {self.wf1: 0, self.si: 1}
-                self.fluid_vec_so = {self.wf1: 0, self.si: 1}
-            else:
-                self.fluid_vec_wf1 = {self.wf1: 1, self.si: 0, self.so: 0}
-                self.fluid_vec_wf2 = {self.wf1: 1, self.si: 0, self.so: 0}
-                self.fluid_vec_si = {self.wf1: 0, self.si: 1, self.so: 0}
-                self.fluid_vec_so = {self.wf1: 0, self.si: 0, self.so: 1}
-        else:
-            if self.si == self.so:
-                self.fluid_vec_wf1 = {self.wf1: 1, self.wf2: 0, self.si: 0}
-                self.fluid_vec_wf2 = {self.wf1: 0, self.wf2: 1, self.si: 0}
-                self.fluid_vec_si = {self.wf1: 0, self.wf2: 0, self.si: 1}
-                self.fluid_vec_so = {self.wf1: 0, self.wf2: 0, self.si: 1}
-            else:
-                self.fluid_vec_wf1 = {
-                    self.wf1: 1, self.wf2: 0, self.si: 0, self.so: 0
-                    }
-                self.fluid_vec_wf2 = {
-                    self.wf1: 0, self.wf2: 1, self.si: 0, self.so: 0
-                    }
-                self.fluid_vec_si = {
-                    self.wf1: 0, self.wf2: 0, self.si: 1, self.so: 0
-                    }
-                self.fluid_vec_so = {
-                    self.wf1: 0, self.wf2: 0, self.si: 0, self.so: 1
-                    }
-
         self.comps = dict()
         self.conns = dict()
         self.buses = dict()
 
         self.nw = Network(
-            fluids=[fluid for fluid in self.fluid_vec_wf1],
-            T_unit='C', p_unit='bar', h_unit='kJ / kg',
-            m_unit='kg / s'
+            T_unit='C', p_unit='bar', h_unit='kJ / kg', m_unit='kg / s'
             )
 
         self.cop = np.nan
@@ -96,7 +63,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
         # Heat sink
         self.comps['cons_cc'] = CycleCloser('Consumer Cycle Closer')
         self.comps['cons_pump'] = Pump('Consumer Recirculation Pump')
-        self.comps['cons'] = HeatExchangerSimple('Consumer')
+        self.comps['cons'] = SimpleHeatExchanger('Consumer')
 
         # Main cycle
         self.comps['cond'] = Condenser('Condenser')
@@ -272,15 +239,15 @@ class HeatPumpCascade2IHX(HeatPumpBase):
 
         # Main cycle
         self.conns['A4'].set_attr(x=self.params['A4']['x'], p=p_evap2)
-        self.conns['A0'].set_attr(p=p_cond2, fluid=self.fluid_vec_wf2)
+        self.conns['A0'].set_attr(p=p_cond2, fluid={self.wf2: 1})
         self.conns['A5'].set_attr(h=h_superheat2)
         self.conns['D4'].set_attr(x=self.params['D4']['x'], p=p_evap1)
-        self.conns['D0'].set_attr(p=p_cond1, fluid=self.fluid_vec_wf1)
+        self.conns['D0'].set_attr(p=p_cond1, fluid={self.wf1: 1})
         self.conns['D5'].set_attr(h=h_superheat1)
         # Heat source
         self.conns['B1'].set_attr(
             T=self.params['B1']['T'], p=self.params['B1']['p'],
-            fluid=self.fluid_vec_so
+            fluid={self.so: 1}
             )
         self.conns['B2'].set_attr(T=self.params['B2']['T'])
         self.conns['B3'].set_attr(p=self.params['B1']['p'])
@@ -288,7 +255,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
         # Heat sink
         self.conns['C3'].set_attr(
             T=self.params['C3']['T'], p=self.params['C3']['p'],
-            fluid=self.fluid_vec_si
+            fluid={self.si: 1}
             )
         self.conns['C0'].set_attr(T=self.params['C0']['T'])
 
@@ -463,9 +430,9 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                             '%H:%M:%S'
                             )
                         log_entry = (
-                            f'{timestamp};{(self.nw.res[-1] < 1e-3)};'
+                            f'{timestamp};{(self.nw.residual[-1] < 1e-3)};'
                             + f'{T_hs_ff:.2f};{T_cons_ff:.2f};{pl:.1f};'
-                            + f'{self.nw.res[-1]:.2e}\n'
+                            + f'{self.nw.residual[-1]:.2e}\n'
                             )
                         if not os.path.exists(logpath):
                             with open(logpath, 'w', encoding='utf-8') as file:
@@ -478,7 +445,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                             with open(logpath, 'a', encoding='utf-8') as file:
                                 file.write(log_entry)
 
-                    if pl == self.pl_range[-1] and self.nw.res[-1] < 1e-3:
+                    if pl == self.pl_range[-1] and self.nw.residual[-1] < 1e-3:
                         self.nw.save(os.path.abspath(os.path.join(
                             os.path.dirname(__file__), 'stable',
                             f'{self.subdirname}_init'
@@ -493,7 +460,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                     if inranges:
                         empty_or_worse = (
                             pd.isnull(results_offdesign.loc[idx, 'Q'])
-                            or (self.nw.res[-1]
+                            or (self.nw.residual[-1]
                                 < results_offdesign.loc[idx, 'residual']
                                 )
                         )
@@ -518,7 +485,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                                 / results_offdesign.loc[idx, 'P']
                             )
                             results_offdesign.loc[idx, 'residual'] = (
-                                self.nw.res[-1]
+                                self.nw.residual[-1]
                                 )
 
         if self.params['offdesign']['save_results']:
