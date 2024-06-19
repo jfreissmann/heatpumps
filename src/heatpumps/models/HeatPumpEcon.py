@@ -202,7 +202,7 @@ class HeatPumpEcon(HeatPumpBase):
 
         # Main cycle
         self.conns['A5'].set_attr(x=self.params['A5']['x'], p=p_evap)
-        self.conns['A0'].set_attr(p=p_cond, fluid=self.fluid_vec_wf)
+        self.conns['A0'].set_attr(p=p_cond, fluid={self.wf: 1})
         self.conns['A9'].set_attr(p=p_mid)
         if self.econ_type.lower() == 'closed':
             self.conns['A9'].set_attr(x=1)

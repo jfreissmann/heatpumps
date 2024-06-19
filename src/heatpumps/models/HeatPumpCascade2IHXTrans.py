@@ -270,10 +270,12 @@ class HeatPumpCascade2IHXTrans(HeatPumpBase):
 
         # Main cycle
         self.conns['A4'].set_attr(x=self.params['A4']['x'], p=p_evap2)
-        self.conns['A0'].set_attr(p=self.params['A0']['p'], h=h_trans_out, fluid=self.fluid_vec_wf2)
+        self.conns['A0'].set_attr(
+            p=self.params['A0']['p'], h=h_trans_out, fluid={self.wf2: 1}
+            )
         self.conns['A5'].set_attr(h=h_superheat2)
         self.conns['D4'].set_attr(x=self.params['D4']['x'], p=p_evap1)
-        self.conns['D0'].set_attr(p=p_cond1, fluid=self.fluid_vec_wf1)
+        self.conns['D0'].set_attr(p=p_cond1, fluid={self.wf1: 1})
         self.conns['D5'].set_attr(h=h_superheat1)
         # Heat source
         self.conns['B1'].set_attr(

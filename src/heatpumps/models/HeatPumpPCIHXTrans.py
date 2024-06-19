@@ -220,7 +220,9 @@ class HeatPumpPCIHXTrans(HeatPumpBase):
 
         # Main cycle
         self.conns['A6'].set_attr(x=self.params['A6']['x'], p=p_evap)
-        self.conns['A0'].set_attr(p=self.params['A0']['p'], h=h_trans_out, fluid=self.fluid_vec_wf)
+        self.conns['A0'].set_attr(
+            p=self.params['A0']['p'], h=h_trans_out, fluid={self.wf: 1}
+            )
         self.conns['A7'].set_attr(h=h_superheat)
         self.conns['A10'].set_attr(p=p_mid)
         if self.econ_type.lower() == 'closed':

@@ -236,7 +236,7 @@ class HeatPumpIHXPCIHX(HeatPumpBase):
 
         # Main cycle
         self.conns['A7'].set_attr(x=self.params['A7']['x'], p=p_evap)
-        self.conns['A0'].set_attr(p=p_cond, fluid=self.fluid_vec_wf)
+        self.conns['A0'].set_attr(p=p_cond, fluid={self.wf: 1})
         self.conns['A8'].set_attr(h=h_superheat1)
         self.conns['A12'].set_attr(h=h_superheat2)
         self.conns['A11'].set_attr(p=p_mid)

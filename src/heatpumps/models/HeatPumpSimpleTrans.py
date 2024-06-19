@@ -144,7 +144,7 @@ class HeatPumpSimpleTrans(HeatPumpBase):
         # Main cycle
         self.conns['A3'].set_attr(x=self.params['A3']['x'], p=p_evap)
         self.conns['A0'].set_attr(
-            p=self.params['A0']['p'], h=h_trans_out, fluid=self.fluid_vec_wf
+            p=self.params['A0']['p'], h=h_trans_out, fluid={self.wf: 1}
             )
         # Heat source
         self.conns['B1'].set_attr(

@@ -237,9 +237,9 @@ class HeatPumpCascade(HeatPumpBase):
 
         # Main cycle
         self.conns['A3'].set_attr(x=self.params['A3']['x'], p=p_evap2)
-        self.conns['A0'].set_attr(p=p_cond2, fluid=self.fluid_vec_wf2)
+        self.conns['A0'].set_attr(p=p_cond2, fluid={self.wf2: 1})
         self.conns['D3'].set_attr(x=self.params['D3']['x'], p=p_evap1)
-        self.conns['D0'].set_attr(p=p_cond1, fluid=self.fluid_vec_wf1)
+        self.conns['D0'].set_attr(p=p_cond1, fluid={self.wf1: 1})
         # Heat source
         self.conns['B1'].set_attr(
             T=self.params['B1']['T'], p=self.params['B1']['p'],
