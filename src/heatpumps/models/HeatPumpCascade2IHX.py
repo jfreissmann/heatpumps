@@ -463,9 +463,9 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                             '%H:%M:%S'
                             )
                         log_entry = (
-                            f'{timestamp};{(self.nw.res[-1] < 1e-3)};'
+                            f'{timestamp};{(self.nw.residual[-1] < 1e-3)};'
                             + f'{T_hs_ff:.2f};{T_cons_ff:.2f};{pl:.1f};'
-                            + f'{self.nw.res[-1]:.2e}\n'
+                            + f'{self.nw.residual[-1]:.2e}\n'
                             )
                         if not os.path.exists(logpath):
                             with open(logpath, 'w', encoding='utf-8') as file:
@@ -478,7 +478,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                             with open(logpath, 'a', encoding='utf-8') as file:
                                 file.write(log_entry)
 
-                    if pl == self.pl_range[-1] and self.nw.res[-1] < 1e-3:
+                    if pl == self.pl_range[-1] and self.nw.residual[-1] < 1e-3:
                         self.nw.save(os.path.abspath(os.path.join(
                             os.path.dirname(__file__), 'stable',
                             f'{self.subdirname}_init'
@@ -493,7 +493,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                     if inranges:
                         empty_or_worse = (
                             pd.isnull(results_offdesign.loc[idx, 'Q'])
-                            or (self.nw.res[-1]
+                            or (self.nw.residual[-1]
                                 < results_offdesign.loc[idx, 'residual']
                                 )
                         )
@@ -518,7 +518,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                                 / results_offdesign.loc[idx, 'P']
                             )
                             results_offdesign.loc[idx, 'residual'] = (
-                                self.nw.res[-1]
+                                self.nw.residual[-1]
                                 )
 
         if self.params['offdesign']['save_results']:

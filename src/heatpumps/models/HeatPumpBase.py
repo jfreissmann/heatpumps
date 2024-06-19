@@ -80,7 +80,7 @@ class HeatPumpBase:
         if 'print_results' in kwargs:
             if kwargs['print_results']:
                 self.nw.print_results()
-        if self.nw.res[-1] < 1e-3:
+        if self.nw.residual[-1] < 1e-3:
             self.solved_design = True
             self.nw.save(self.design_path)
 
