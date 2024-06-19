@@ -37,7 +37,6 @@ class HeatPumpBase:
         self.buses = dict()
 
         self.nw = Network(
-            fluids=[fluid for fluid in self.fluid_vec_wf],
             T_unit='C', p_unit='bar', h_unit='kJ / kg',
             m_unit='kg / s'
             )
