@@ -31,44 +31,12 @@ class HeatPumpCascade2IHXTrans(HeatPumpBase):
         self.si = self.params['fluids']['si']
         self.so = self.params['fluids']['so']
 
-        if self.wf1 == self.wf2:
-            if self.si == self.so:
-                self.fluid_vec_wf1 = {self.wf1: 1, self.si: 0}
-                self.fluid_vec_wf2 = {self.wf1: 1, self.si: 0}
-                self.fluid_vec_si = {self.wf1: 0, self.si: 1}
-                self.fluid_vec_so = {self.wf1: 0, self.si: 1}
-            else:
-                self.fluid_vec_wf1 = {self.wf1: 1, self.si: 0, self.so: 0}
-                self.fluid_vec_wf2 = {self.wf1: 1, self.si: 0, self.so: 0}
-                self.fluid_vec_si = {self.wf1: 0, self.si: 1, self.so: 0}
-                self.fluid_vec_so = {self.wf1: 0, self.si: 0, self.so: 1}
-        else:
-            if self.si == self.so:
-                self.fluid_vec_wf1 = {self.wf1: 1, self.wf2: 0, self.si: 0}
-                self.fluid_vec_wf2 = {self.wf1: 0, self.wf2: 1, self.si: 0}
-                self.fluid_vec_si = {self.wf1: 0, self.wf2: 0, self.si: 1}
-                self.fluid_vec_so = {self.wf1: 0, self.wf2: 0, self.si: 1}
-            else:
-                self.fluid_vec_wf1 = {
-                    self.wf1: 1, self.wf2: 0, self.si: 0, self.so: 0
-                }
-                self.fluid_vec_wf2 = {
-                    self.wf1: 0, self.wf2: 1, self.si: 0, self.so: 0
-                }
-                self.fluid_vec_si = {
-                    self.wf1: 0, self.wf2: 0, self.si: 1, self.so: 0
-                }
-                self.fluid_vec_so = {
-                    self.wf1: 0, self.wf2: 0, self.si: 0, self.so: 1
-                }
-
         self.comps = dict()
         self.conns = dict()
         self.buses = dict()
 
         self.nw = Network(
-            T_unit='C', p_unit='bar', h_unit='kJ / kg',
-            m_unit='kg / s'
+            T_unit='C', p_unit='bar', h_unit='kJ / kg', m_unit='kg / s'
         )
 
         self.cop = np.nan
