@@ -260,7 +260,7 @@ class HeatPumpEconIHXTrans(HeatPumpBase):
         # Heat source
         self.conns['B1'].set_attr(
             T=self.params['B1']['T'], p=self.params['B1']['p'],
-            fluid=self.fluid_vec_so
+            fluid={self.so: 1}
             )
         self.conns['B2'].set_attr(T=self.params['B2']['T'])
         self.conns['B3'].set_attr(p=self.params['B1']['p'])
@@ -268,7 +268,7 @@ class HeatPumpEconIHXTrans(HeatPumpBase):
         # Heat sink
         self.conns['C3'].set_attr(
             T=self.params['C3']['T'], p=self.params['C3']['p'],
-            fluid=self.fluid_vec_si
+            fluid={self.si: 1}
             )
         self.conns['C0'].set_attr(T=self.params['C0']['T'])
 
