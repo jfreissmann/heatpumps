@@ -246,18 +246,18 @@ with st.sidebar:
                 'Temperatur Vorlauf', min_value=0, max_value=T_crit,
                 value=params['C3']['T'], format='%d°C', key='T_consumer_ff'
             )
-            params['C0']['T'] = st.slider(
+            params['C1']['T'] = st.slider(
                 'Temperatur Rücklauf', min_value=0, max_value=T_crit,
-                value=params['C0']['T'], format='%d°C', key='T_consumer_bf'
+                value=params['C1']['T'], format='%d°C', key='T_consumer_bf'
             )
 
-            invalid_temp_diff = params['C0']['T'] >= params['C3']['T']
+            invalid_temp_diff = params['C1']['T'] >= params['C3']['T']
             if invalid_temp_diff:
                 st.error(
                     'Die Rücklauftemperatur muss niedriger sein, als die '
                     + 'Vorlauftemperatur.'
                 )
-            invalid_temp_diff = params['C0']['T'] <= params['B1']['T']
+            invalid_temp_diff = params['C1']['T'] <= params['B1']['T']
             if invalid_temp_diff:
                 st.error(
                     'Die Temperatur der Wärmesenke muss höher sein, als die '
