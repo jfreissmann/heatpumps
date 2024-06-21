@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as file:
 
 setup(
     name='heatpumps',
-    version='1.1.1',
+    version='1.1.2',
     author='Jonas Freißmann, Malte Fritz',
     author_email='jonas.freissmann@web.de',
     description='Collection of TESPy heat pump models and additional Streamlit dashboard.',
