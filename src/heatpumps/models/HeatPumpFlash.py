@@ -176,7 +176,7 @@ class HeatPumpFlash(HeatPumpBase):
             T=self.params['C3']['T'], p=self.params['C3']['p'],
             fluid={self.si: 1}
             )
-        self.conns['C0'].set_attr(T=self.params['C0']['T'])
+        self.conns['C1'].set_attr(T=self.params['C1']['T'])
 
         # Perform initial simulation and unset starting values
         self._solve_model(**kwargs)

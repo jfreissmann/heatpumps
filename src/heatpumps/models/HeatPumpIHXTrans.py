@@ -178,7 +178,7 @@ class HeatPumpIHXTrans(HeatPumpBase):
             T=self.params['C3']['T'], p=self.params['C3']['p'],
             fluid={self.si: 1}
             )
-        self.conns['C0'].set_attr(T=self.params['C0']['T'])
+        self.conns['C1'].set_attr(T=self.params['C1']['T'])
 
         # Perform initial simulation and unset starting values
         self._solve_model(**kwargs)
@@ -407,7 +407,7 @@ class HeatPumpIHXTrans(HeatPumpBase):
             ) * 1e-5
         h_trans_out = PSI(
             'H', 'P', self.params['A0']['p']*1e5,
-            'T', self.params['C0']['T']+self.params['trans']['ttd_l'] + 273.15,
+            'T', self.params['C1']['T']+self.params['trans']['ttd_l'] + 273.15,
             wf
             ) * 1e-3
 
