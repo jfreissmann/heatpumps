@@ -25,6 +25,24 @@ from .HeatPumpPCIHXTrans import HeatPumpPCIHXTrans
 from .HeatPumpPCTrans import HeatPumpPCTrans
 from .HeatPumpSimple import HeatPumpSimple
 from .HeatPumpSimpleTrans import HeatPumpSimpleTrans
+from .HeatPumpCascadeEcon import HeatPumpCascadeEcon
+from .HeatPumpCascadeEconIHX import HeatPumpCascadeEconIHX
+from .HeatPumpCascadeEconIHXTrans import HeatPumpCascadeEconIHXTrans
+from .HeatPumpCascadeEconTrans import HeatPumpCascadeEconTrans
+from .HeatPumpCascadeFlash import HeatPumpCascadeFlash
+from .HeatPumpCascadeFlashTrans import HeatPumpCascadeFlashTrans
+from .HeatPumpCascadeIC import HeatPumpCascadeIC
+from .HeatPumpCascadeICTrans import HeatPumpCascadeICTrans
+from .HeatPumpCascadeIHXEcon import HeatPumpCascadeIHXEcon
+from .HeatPumpCascadeIHXEconTrans import HeatPumpCascadeIHXEconTrans
+from .HeatPumpCascadeIHXPC import HeatPumpCascadeIHXPC
+from .HeatPumpCascadeIHXPCIHX import HeatPumpCascadeIHXPCIHX
+from .HeatPumpCascadeIHXPCIHXTrans import HeatPumpCascadeIHXPCIHXTrans
+from .HeatPumpCascadeIHXPCTrans import HeatPumpCascadeIHXPCTrans
+from .HeatPumpCascadePC import HeatPumpCascadePC
+from .HeatPumpCascadePCIHX import HeatPumpCascadePCIHX
+from .HeatPumpCascadePCIHXTrans import HeatPumpCascadePCIHXTrans
+from .HeatPumpCascadePCTrans import HeatPumpCascadePCTrans
 
 __all__ = [
     'HeatPumpBase', 'HeatPumpCascade', 'HeatPumpCascade2IHX',
@@ -34,5 +52,11 @@ __all__ = [
     'HeatPumpIHX', 'HeatPumpIHXEcon', 'HeatPumpIHXEconTrans', 'HeatPumpIHXPC',
     'HeatPumpIHXPCIHX', 'HeatPumpIHXPCIHXTrans', 'HeatPumpIHXPCTrans',
     'HeatPumpIHXTrans', 'HeatPumpPC', 'HeatPumpPCIHX', 'HeatPumpPCIHXTrans',
-    'HeatPumpPCTrans', 'HeatPumpSimple', 'HeatPumpSimpleTrans'
+    'HeatPumpPCTrans', 'HeatPumpSimple', 'HeatPumpSimpleTrans',
+    'HeatPumpCascadeEcon', 'HeatPumpCascadeEconIHX', 'HeatPumpCascadeEconIHXTrans',
+    'HeatPumpCascadeEconTrans', 'HeatPumpCascadeFlash', 'HeatPumpCascadeFlashTrans',
+    'HeatPumpCascadeIC', 'HeatPumpCascadeICTrans', 'HeatPumpCascadeIHXEcon',
+    'HeatPumpCascadeIHXEconTrans', 'HeatPumpCascadeIHXPC', 'HeatPumpCascadeIHXPCIHX',
+    'HeatPumpCascadeIHXPCIHXTrans', 'HeatPumpCascadeIHXPCTrans', 'HeatPumpCascadePC',
+    'HeatPumpCascadePCIHX', 'HeatPumpCascadePCIHXTrans', 'HeatPumpCascadePCTrans'
 ]
