@@ -1,0 +1,103 @@
+{
+    "setup": {
+        "name": "two stage cascade with open economizer",
+        "type": "HeatPumpCascadeEcon",
+        "refrig1": "R1234yf",
+        "refrig2": "R717"
+    },
+    "ambient": {
+        "p": 1,
+        "T": 25
+    },
+    "fluids": {
+        "wf1": "R1234yf",
+        "wf2": "NH3",
+        "si": "H2O",
+        "so": "H2O"
+    },
+    "logph": {
+        "x_min": 250,
+        "x_max": 2250,
+        "y_min": 1e0,
+        "y_max": 3e2
+    },
+    "cond" : {
+        "pr1": 0.98,
+        "pr2": 0.98,
+        "ttd_u": 2
+    },
+    "evap": {
+        "pr1": 0.98,
+        "pr2": 0.98,
+        "ttd_l": 2
+    },
+    "inter": {
+        "pr1": 0.98,
+        "pr2": 0.98,
+        "ttd_u": 2
+    },
+    "cons" : {
+        "pr": 0.98,
+        "Q": -10e6
+    },
+    "econ1": {
+        "pr1": 0.98,
+        "pr2": 0.98,
+        "ttd_l": 2
+    },
+    "econ2": {
+        "pr1": 0.98,
+        "pr2": 0.98,
+        "ttd_l": 2
+    },
+    "LT_comp1": {
+        "eta_s": 0.75
+    },
+    "LT_comp2": {
+        "eta_s": 0.75
+    },
+    "HT_comp1": {
+        "eta_s": 0.75
+    },
+    "HT_comp2": {
+        "eta_s": 0.75
+    },
+    "hs_pump": {
+        "eta_s": 0.8
+    },
+    "cons_pump": {
+        "eta_s": 0.8
+    },
+    "A5": {
+        "x": 1
+    },
+    "D5": {
+        "x": 1
+    },
+    "B1": {
+        "T": 10,
+        "p": 1.013
+    },
+    "B2": {
+        "T": 5
+    },
+    "C1": {
+        "T": 70
+    },
+    "C3": {
+        "T": 90,
+        "p": 10
+    },
+    "offdesign": {
+        "T_hs_ff_start": 10,
+        "T_hs_ff_end": 10,
+        "T_hs_ff_steps": 1,
+        "T_cons_ff_start": 70,
+        "T_cons_ff_end": 124,
+        "T_cons_ff_steps": 10,
+        "partload_min": 0.5,
+        "partload_max": 1.0,
+        "partload_steps": 6,
+        "save_results": true
+    }
+}

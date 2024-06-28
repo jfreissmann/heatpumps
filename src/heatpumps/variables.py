@@ -7,7 +7,15 @@ from models import (HeatPumpCascade, HeatPumpCascade2IHX,
                     HeatPumpIHXPCIHXTrans, HeatPumpIHXPCTrans,
                     HeatPumpIHXTrans, HeatPumpPC, HeatPumpPCIHX,
                     HeatPumpPCIHXTrans, HeatPumpPCTrans, HeatPumpSimple,
-                    HeatPumpSimpleTrans)
+                    HeatPumpSimpleTrans, HeatPumpCascadeEcon, HeatPumpCascadeEconIHX,
+                    HeatPumpCascadeEconIHXTrans, HeatPumpCascadeEconTrans,
+                    HeatPumpCascadeFlash, HeatPumpCascadeFlashTrans,
+                    HeatPumpCascadeIC, HeatPumpCascadeICTrans, HeatPumpCascadeIHXEcon,
+                    HeatPumpCascadeIHXEconTrans, HeatPumpCascadeIHXPC,
+                    HeatPumpCascadeIHXPCIHX, HeatPumpCascadeIHXPCIHXTrans,
+                    HeatPumpCascadeIHXPCTrans, HeatPumpCascadePC,
+                    HeatPumpCascadePCIHX, HeatPumpCascadePCIHXTrans,
+                    HeatPumpCascadePCTrans)
 
 # %% Important variables for the heat pump dashboard
 
@@ -380,7 +388,295 @@ hp_models = {
         'comp_var': 'series',
         'nr_refrigs': 2,
         'process_type': 'transcritical'
-        }
+        },
+    'cascade_ic': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Zwischenkühlung',
+        'nr_ihx': 0,
+        'econ_type': None,
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_ic_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Zwischenkühlung | Transkritisch',
+        'nr_ihx': 0,
+        'econ_type': None,
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_econ_closed': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Reihenschaltung',
+        'nr_ihx': 0,
+        'econ_type': 'closed',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_econ_closed_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Reihenschaltung | Transkritisch',
+        'nr_ihx': 0,
+        'econ_type': 'closed',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_ihx_econ_closed': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante A)',
+        'nr_ihx': 2,
+        'econ_type': 'closed',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_ihx_econ_closed_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante A) | Transkritisch',
+        'nr_ihx': 2,
+        'econ_type': 'closed',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_econ_closed_ihx': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante B)',
+        'nr_ihx': 2,
+        'econ_type': 'closed',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_econ_closed_ihx_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante B) | Transkritisch',
+        'nr_ihx': 2,
+        'econ_type': 'closed',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_econ_open': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Reihenschaltung',
+        'nr_ihx': 0,
+        'econ_type': 'open',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_econ_open_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Reihenschaltung | Transkritisch',
+        'nr_ihx': 0,
+        'econ_type': 'open',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_ihx_econ_open': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante A)',
+        'nr_ihx': 2,
+        'econ_type': 'open',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_ihx_econ_open_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante A) | Transkritisch',
+        'nr_ihx': 2,
+        'econ_type': 'open',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_econ_open_ihx': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante B)',
+        'nr_ihx': 2,
+        'econ_type': 'open',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_econ_open_ihx_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante B) | Transkritisch',
+        'nr_ihx': 2,
+        'econ_type': 'open',
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_pc_econ_closed': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Parallelschaltung',
+        'nr_ihx': 0,
+        'econ_type': 'closed',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_pc_econ_closed_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Parallelschaltung | Transkritisch',
+        'nr_ihx': 0,
+        'econ_type': 'closed',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_ihx_pc_econ_closed': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante A)',
+        'nr_ihx': 2,
+        'econ_type': 'closed',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_ihx_pc_econ_closed_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante A) | Transkritisch',
+        'nr_ihx': 2,
+        'econ_type': 'closed',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_pc_econ_closed_ihx': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante B)',
+        'nr_ihx': 2,
+        'econ_type': 'closed',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_pc_econ_closed_ihx_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante B) | Transkritisch',
+        'nr_ihx': 2,
+        'econ_type': 'closed',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_ihx_pc_econ_closed_ihx': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Parallelschaltung | doppelte interne WÜT',
+        'nr_ihx': 4,
+        'econ_type': 'closed',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_ihx_pc_econ_closed_ihx_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Geschlossen | Parallelschaltung | doppelte interne WÜT | Transkritisch',
+        'nr_ihx': 4,
+        'econ_type': 'closed',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_pc_econ_open': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Parallelschaltung',
+        'nr_ihx': 0,
+        'econ_type': 'open',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_pc_econ_open_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Parallelschaltung | Transkritisch',
+        'nr_ihx': 0,
+        'econ_type': 'open',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_ihx_pc_econ_open': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante A)',
+        'nr_ihx': 2,
+        'econ_type': 'open',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_ihx_pc_econ_open_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante A) | Transkritisch',
+        'nr_ihx': 2,
+        'econ_type': 'open',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_pc_econ_open_ihx': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante B)',
+        'nr_ihx': 2,
+        'econ_type': 'open',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_pc_econ_open_ihx_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante B) | Transkritisch',
+        'nr_ihx': 2,
+        'econ_type': 'open',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_ihx_pc_econ_open_ihx': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Parallelschaltung | doppelte interne WÜT',
+        'nr_ihx': 4,
+        'econ_type': 'open',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_ihx_pc_econ_open_ihx_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Offen | Parallelschaltung | doppelte interne WÜT | Transkritisch',
+        'nr_ihx': 4,
+        'econ_type': 'open',
+        'comp_var': 'parallel',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
+    'cascade_flash': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Flashtank',
+        'nr_ihx': 0,
+        'econ_type': None,
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'subcritical'
+        },
+    'cascade_flash_trans': {
+        'base_topology': 'Kaskadierter Kreis',
+        'display_name': 'Flashtank | Transkritisch',
+        'nr_ihx': 0,
+        'econ_type': None,
+        'comp_var': 'series',
+        'nr_refrigs': 2,
+        'process_type': 'transcritical'
+        },
     }
 
 hp_model_classes = {
@@ -423,7 +719,39 @@ hp_model_classes = {
     'cascade': HeatPumpCascade,
     'cascade_trans': HeatPumpCascadeTrans,
     'cascade_2ihx': HeatPumpCascade2IHX,
-    'cascade_2ihx_trans': HeatPumpCascade2IHXTrans
+    'cascade_2ihx_trans': HeatPumpCascade2IHXTrans,
+    'cascade_ic': HeatPumpCascadeIC,
+    'cascade_ic_trans': HeatPumpCascadeICTrans,
+    'cascade_econ_closed': HeatPumpCascadeEcon,
+    'cascade_econ_closed_trans': HeatPumpCascadeEconTrans,
+    'cascade_ihx_econ_closed': HeatPumpCascadeIHXEcon,
+    'cascade_ihx_econ_closed_trans': HeatPumpCascadeIHXEconTrans,
+    'cascade_econ_closed_ihx': HeatPumpCascadeEconIHX,
+    'cascade_econ_closed_ihx_trans': HeatPumpCascadeEconIHXTrans,
+    'cascade_econ_open': HeatPumpCascadeEcon,
+    'cascade_econ_open_trans': HeatPumpCascadeEconTrans,
+    'cascade_ihx_econ_open': HeatPumpCascadeIHXEcon,
+    'cascade_ihx_econ_open_trans': HeatPumpCascadeIHXEconTrans,
+    'cascade_econ_open_ihx': HeatPumpCascadeEconIHX,
+    'cascade_econ_open_ihx_trans': HeatPumpCascadeEconIHXTrans,
+    'cascade_pc_econ_closed': HeatPumpCascadePC,
+    'cascade_pc_econ_closed_trans': HeatPumpCascadePCTrans,
+    'cascade_ihx_pc_econ_closed': HeatPumpCascadeIHXPC,
+    'cascade_ihx_pc_econ_closed_trans': HeatPumpCascadeIHXPCTrans,
+    'cascade_pc_econ_closed_ihx': HeatPumpCascadePCIHX,
+    'cascade_pc_econ_closed_ihx_trans': HeatPumpCascadePCIHXTrans,
+    'cascade_ihx_pc_econ_closed_ihx': HeatPumpCascadeIHXPCIHX,
+    'cascade_ihx_pc_econ_closed_ihx_trans': HeatPumpCascadeIHXPCIHXTrans,
+    'cascade_pc_econ_open': HeatPumpCascadePC,
+    'cascade_pc_econ_open_trans': HeatPumpCascadePCTrans,
+    'cascade_ihx_pc_econ_open': HeatPumpCascadeIHXPC,
+    'cascade_ihx_pc_econ_open_trans': HeatPumpCascadeIHXPCTrans,
+    'cascade_pc_econ_open_ihx': HeatPumpCascadePCIHX,
+    'cascade_pc_econ_open_ihx_trans': HeatPumpCascadePCIHXTrans,
+    'cascade_ihx_pc_econ_open_ihx': HeatPumpCascadeIHXPCIHX,
+    'cascade_ihx_pc_econ_open_ihx_trans': HeatPumpCascadeIHXPCIHXTrans,
+    'cascade_flash': HeatPumpCascadeFlash,
+    'cascade_flash_trans': HeatPumpCascadeFlashTrans
     }
 
 # %% Misc
