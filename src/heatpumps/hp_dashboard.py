@@ -645,7 +645,12 @@ if mode == 'Auslegung':
                     'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
                     )
             except ValueError as e:
-                st.error(str(e) + '\nBitte korrigieren Sie die Eingangsparameter.')
+                print(f'ValueError: {e}')
+                st.error(
+                    'Bei der Simulation der Wärmepumpe ist der nachfolgende '
+                    + 'Fehler aufgetreten. Bitte korrigieren Sie die '
+                    + f'Eingangsparameter und versuchen es erneut.\n\n"{e}"'
+                    )
 
         # %% MARK: Results
         with st.spinner('Ergebnisse werden visualisiert...'):
