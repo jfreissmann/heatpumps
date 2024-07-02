@@ -709,26 +709,19 @@ if mode == 'Auslegung':
                     with col_left:
                         st.subheader('Topologie')
 
+                        top_file = os.path.join(
+                            src_path, 'img', 'topologies',
+                            f'hp_{hp_model_name_topology}_label.svg'
+                            )
                         if is_dark:
-                            try:
-                                top_file = os.path.join(
-                                    src_path, 'img', 'topologies',
-                                    f'hp_{hp_model_name_topology}_label_dark.svg'
-                                    )
-                                st.image(top_file)
-                            except:
-                                top_file = os.path.join(
-                                    src_path, 'img', 'topologies',
-                                    f'hp_{hp_model_name_topology}_label.svg'
-                                    )
-                                st.image(top_file)
-
-                        else:
-                            top_file = os.path.join(
+                            top_file_dark = os.path.join(
                                 src_path, 'img', 'topologies',
-                                f'hp_{hp_model_name_topology}_label.svg'
+                                f'hp_{hp_model_name_topology}_label_dark.svg'
                                 )
-                            st.image(top_file)
+                            if os.path.exists(top_file_dark):
+                                top_file = top_file_dark
+
+                        st.image(top_file)
 
                     with col_right:
                         st.subheader('Kältemittel')
