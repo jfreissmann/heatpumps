@@ -641,10 +641,12 @@ if mode == 'Auslegung':
         with st.spinner('Simulation wird durchgeführt...'):
             try:
                 ss.hp = run_design(hp_model_name, params)
+                sim_succeded = True
                 st.success(
                     'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
                     )
             except ValueError as e:
+                sim_succeded = False
                 print(f'ValueError: {e}')
                 st.error(
                     'Bei der Simulation der Wärmepumpe ist der nachfolgende '
@@ -653,455 +655,459 @@ if mode == 'Auslegung':
                     )
 
         # %% MARK: Results
-        with st.spinner('Ergebnisse werden visualisiert...'):
+        if sim_succeded:
+            with st.spinner('Ergebnisse werden visualisiert...'):
 
-            stateconfigpath = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'models', 'input',
-                'state_diagram_config.json'
-                ))
-            with open(stateconfigpath, 'r', encoding='utf-8') as file:
-                config = json.load(file)
-            if hp_model['nr_refrigs'] == 1:
-                if ss.hp.params['setup']['refrig'] in config:
-                    state_props = config[
-                        ss.hp.params['setup']['refrig']
-                        ]
-                else:
-                    state_props = config['MISC']
-            if hp_model['nr_refrigs'] == 2:
-                if ss.hp.params['setup']['refrig1'] in config:
-                    state_props1 = config[
-                        ss.hp.params['setup']['refrig1']
-                        ]
-                else:
-                    state_props1 = config['MISC']
-                if ss.hp.params['setup']['refrig2'] in config:
-                    state_props2 = config[
-                        ss.hp.params['setup']['refrig2']
-                        ]
-                else:
-                    state_props2 = config['MISC']
+                stateconfigpath = os.path.abspath(os.path.join(
+                    os.path.dirname(__file__), 'models', 'input',
+                    'state_diagram_config.json'
+                    ))
+                with open(stateconfigpath, 'r', encoding='utf-8') as file:
+                    config = json.load(file)
+                if hp_model['nr_refrigs'] == 1:
+                    if ss.hp.params['setup']['refrig'] in config:
+                        state_props = config[
+                            ss.hp.params['setup']['refrig']
+                            ]
+                    else:
+                        state_props = config['MISC']
+                if hp_model['nr_refrigs'] == 2:
+                    if ss.hp.params['setup']['refrig1'] in config:
+                        state_props1 = config[
+                            ss.hp.params['setup']['refrig1']
+                            ]
+                    else:
+                        state_props1 = config['MISC']
+                    if ss.hp.params['setup']['refrig2'] in config:
+                        state_props2 = config[
+                            ss.hp.params['setup']['refrig2']
+                            ]
+                    else:
+                        state_props2 = config['MISC']
 
-            st.header('Ergebnisse der Auslegung')
+                st.header('Ergebnisse der Auslegung')
 
-            col1, col2, col3, col4 = st.columns(4)
-            col1.metric('COP', round(ss.hp.cop, 2))
-            Q_dot_ab = abs(
-                ss.hp.buses['heat output'].P.val / 1e6
-                )
-            col2.metric('Q_dot_ab', f"{Q_dot_ab:.2f} MW")
-            col3.metric(
-                'P_zu',
-                f"{ss.hp.buses['power input'].P.val/1e6:.2f} MW"
-                )
-            Q_dot_zu = abs(
-                ss.hp.comps['evap'].Q.val/1e6
-                )
-            col4.metric('Q_dot_zu', f'{Q_dot_zu:.2f} MW')
+                col1, col2, col3, col4 = st.columns(4)
+                col1.metric('COP', round(ss.hp.cop, 2))
+                Q_dot_ab = abs(
+                    ss.hp.buses['heat output'].P.val / 1e6
+                    )
+                col2.metric('Q_dot_ab', f"{Q_dot_ab:.2f} MW")
+                col3.metric(
+                    'P_zu',
+                    f"{ss.hp.buses['power input'].P.val/1e6:.2f} MW"
+                    )
+                Q_dot_zu = abs(
+                    ss.hp.comps['evap'].Q.val/1e6
+                    )
+                col4.metric('Q_dot_zu', f'{Q_dot_zu:.2f} MW')
 
-            with st.expander('Topologie & Kältemittel'):
-                # %% Topology & Refrigerant
-                col_left, col_right = st.columns([1, 4])
+                with st.expander('Topologie & Kältemittel'):
+                    # %% Topology & Refrigerant
+                    col_left, col_right = st.columns([1, 4])
 
-                with col_left:
-                    st.subheader('Topologie')
+                    with col_left:
+                        st.subheader('Topologie')
 
-                    if is_dark:
-                        try:
-                            top_file = os.path.join(
-                                src_path, 'img', 'topologies',
-                                f'hp_{hp_model_name_topology}_label_dark.svg'
-                                )
-                            st.image(top_file)
-                        except:
+                        if is_dark:
+                            try:
+                                top_file = os.path.join(
+                                    src_path, 'img', 'topologies',
+                                    f'hp_{hp_model_name_topology}_label_dark.svg'
+                                    )
+                                st.image(top_file)
+                            except:
+                                top_file = os.path.join(
+                                    src_path, 'img', 'topologies',
+                                    f'hp_{hp_model_name_topology}_label.svg'
+                                    )
+                                st.image(top_file)
+
+                        else:
                             top_file = os.path.join(
                                 src_path, 'img', 'topologies',
                                 f'hp_{hp_model_name_topology}_label.svg'
                                 )
                             st.image(top_file)
 
-                    else:
-                        top_file = os.path.join(
-                            src_path, 'img', 'topologies',
-                            f'hp_{hp_model_name_topology}_label.svg'
+                    with col_right:
+                        st.subheader('Kältemittel')
+
+                        if hp_model['nr_refrigs'] == 1:
+                            st.dataframe(df_refrig, use_container_width=True)
+                        elif hp_model['nr_refrigs'] == 2:
+                            st.markdown('#### Hochtemperaturkreis')
+                            st.dataframe(df_refrig2, use_container_width=True)
+                            st.markdown('#### Niedertemperaturkreis')
+                            st.dataframe(df_refrig1, use_container_width=True)
+
+                        st.write(
+                            """
+                            Alle Stoffdaten und Klassifikationen aus
+                            [CoolProp](http://www.coolprop.org) oder
+                            [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)
+                            """
                             )
-                        st.image(top_file)
 
-                with col_right:
-                    st.subheader('Kältemittel')
+                with st.expander('Zustandsdiagramme'):
+                    # %% State Diagrams
+                    col_left, _, col_right = st.columns([0.495, 0.01, 0.495])
+                    _, slider_left, _, slider_right, _ = (
+                        st.columns([0.5, 8, 1, 8, 0.5])
+                        )
 
+                    with col_left:
+                        # %% Log(p)-h-Diagram
+                        st.subheader('Log(p)-h-Diagramm')
+                        if hp_model['nr_refrigs'] == 1:
+                            diagram_placeholder = st.empty()
+                        elif hp_model['nr_refrigs'] == 2:
+                            diagram_placeholder1 = st.empty()
+                            diagram_placeholder2 = st.empty()
+
+                    with slider_left:
+                        if hp_model['nr_refrigs'] == 1:
+                            xmin, xmax = st.slider(
+                                'X-Achsen Begrenzung',
+                                min_value=0, max_value=3000, step=100,
+                                value=(
+                                    state_props['h']['min'],
+                                    state_props['h']['max']
+                                    ),
+                                format='%d kJ/kg',
+                                key='ph_xslider'
+                                )
+                            ymin, ymax = st.slider(
+                                'Y-Achsen Begrenzung',
+                                min_value=-3, max_value=3,
+                                value=(0, 2), format='10^%d bar',
+                                key='ph_yslider'
+                                )
+                            ymin, ymax = 10**ymin, 10**ymax
+                        elif hp_model['nr_refrigs'] == 2:
+                            xmin1, xmax1 = st.slider(
+                                'X-Achsen Begrenzung (Kreislauf 1)',
+                                min_value=0, max_value=3000, step=100,
+                                value=(
+                                    state_props1['h']['min'],
+                                    state_props1['h']['max']
+                                    ),
+                                format='%d kJ/kg',
+                                key='ph_x1slider'
+                                )
+                            ymin1, ymax1 = st.slider(
+                                'Y-Achsen Begrenzung (Kreislauf 1)',
+                                min_value=-3, max_value=3,
+                                value=(0, 2), format='10^%d bar',
+                                key='ph_y1slider'
+                                )
+                            ymin1, ymax1 = 10**ymin1, 10**ymax1
+                            xmin2, xmax2 = st.slider(
+                                'X-Achsen Begrenzung (Kreislauf 2)',
+                                min_value=0, max_value=3000, step=100,
+                                value=(
+                                    state_props2['h']['min'],
+                                    state_props2['h']['max']
+                                    ),
+                                format='%d kJ/kg',
+                                key='ph_x2slider'
+                                )
+                            ymin2, ymax2 = st.slider(
+                                'Y-Achsen Begrenzung (Kreislauf 2)',
+                                min_value=-3, max_value=3,
+                                value=(0, 2), format='10^%d bar',
+                                key='ph_y2slider'
+                                )
+                            ymin2, ymax2 = 10**ymin2, 10**ymax2
+
+                    with col_left:
+                        if hp_model['nr_refrigs'] == 1:
+                            diagram = ss.hp.generate_state_diagram(
+                                diagram_type='logph',
+                                xlims=(xmin, xmax), ylims=(ymin, ymax),
+                                return_diagram=True, display_info=False,
+                                open_file=False, savefig=False
+                                )
+                            diagram_placeholder.pyplot(diagram.fig)
+                        elif hp_model['nr_refrigs'] == 2:
+                            diagram1, diagram2 = ss.hp.generate_state_diagram(
+                                diagram_type='logph',
+                                xlims=((xmin1, xmax1), (xmin2, xmax2)),
+                                ylims=((ymin1, ymax1), (ymin2, ymax2)),
+                                return_diagram=True, display_info=False,
+                                savefig=False, open_file=False
+                                )
+                            diagram_placeholder1.pyplot(diagram1.fig)
+                            diagram_placeholder2.pyplot(diagram2.fig)
+
+                    with col_right:
+                        # %% T-s-Diagram
+                        st.subheader('T-s-Diagramm')
+                        if hp_model['nr_refrigs'] == 1:
+                            diagram_placeholder = st.empty()
+                        elif hp_model['nr_refrigs'] == 2:
+                            diagram_placeholder1 = st.empty()
+                            diagram_placeholder2 = st.empty()
+
+                    with slider_right:
+                        if hp_model['nr_refrigs'] == 1:
+                            xmin, xmax = st.slider(
+                                'X-Achsen Begrenzung',
+                                min_value=0, max_value=10000, step=100,
+                                value=(
+                                    state_props['s']['min'],
+                                    state_props['s']['max']
+                                    ),
+                                format='%d kJ/(kgK)',
+                                key='ts_xslider'
+                                )
+                            ymin, ymax = st.slider(
+                                'Y-Achsen Begrenzung',
+                                min_value=-150, max_value=500,
+                                value=(
+                                    state_props['T']['min'],
+                                    state_props['T']['max']
+                                    ),
+                                format='%d °C', key='ts_yslider'
+                                )
+                        elif hp_model['nr_refrigs'] == 2:
+                            xmin1, xmax1 = st.slider(
+                                'X-Achsen Begrenzung (Kreislauf 1)',
+                                min_value=0, max_value=3000, step=100,
+                                value=(
+                                    state_props1['s']['min'],
+                                    state_props1['s']['max']
+                                    ),
+                                format='%d kJ/kg',
+                                key='ts_x1slider'
+                                )
+                            ymin1, ymax1 = st.slider(
+                                'Y-Achsen Begrenzung (Kreislauf 1)',
+                                min_value=-150, max_value=500,
+                                value=(
+                                    state_props1['T']['min'],
+                                    state_props1['T']['max']
+                                    ),
+                                format='%d °C',
+                                key='ts_y1slider'
+                                )
+                            xmin2, xmax2 = st.slider(
+                                'X-Achsen Begrenzung (Kreislauf 2)',
+                                min_value=0, max_value=3000, step=100,
+                                value=(
+                                    state_props2['s']['min'],
+                                    state_props2['s']['max']
+                                    ),
+                                format='%d kJ/kg',
+                                key='ts_x2slider'
+                                )
+                            ymin2, ymax2 = st.slider(
+                                'Y-Achsen Begrenzung (Kreislauf 2)',
+                                min_value=-150, max_value=500,
+                                value=(
+                                    state_props2['T']['min'],
+                                    state_props2['T']['max']
+                                    ),
+                                format='%d °C',
+                                key='ts_y2slider'
+                                )
+
+                    with col_right:
+                        if hp_model['nr_refrigs'] == 1:
+                            diagram = ss.hp.generate_state_diagram(
+                                diagram_type='Ts',
+                                xlims=(xmin, xmax), ylims=(ymin, ymax),
+                                return_diagram=True, display_info=False,
+                                open_file=False, savefig=False
+                                )
+                            diagram_placeholder.pyplot(diagram.fig)
+                        elif hp_model['nr_refrigs'] == 2:
+                            diagram1, diagram2 = ss.hp.generate_state_diagram(
+                                diagram_type='Ts',
+                                xlims=((xmin1, xmax1), (xmin2, xmax2)),
+                                ylims=((ymin1, ymax1), (ymin2, ymax2)),
+                                return_diagram=True, display_info=False,
+                                savefig=False, open_file=False
+                                )
+                            diagram_placeholder1.pyplot(diagram1.fig)
+                            diagram_placeholder2.pyplot(diagram2.fig)
+
+                with st.expander('Zustandsgrößen'):
+                    # %% State Quantities
+                    state_quantities = (
+                        ss.hp.nw.results['Connection'].copy()
+                        )
+                    try:
+                        state_quantities['water'] = (
+                            state_quantities['water'].apply(bool)
+                            )
+                    except KeyError:
+                        state_quantities['H2O'] = (
+                            state_quantities['H2O'].apply(bool)
+                            )
                     if hp_model['nr_refrigs'] == 1:
-                        st.dataframe(df_refrig, use_container_width=True)
+                        refrig = ss.hp.params['setup']['refrig']
+                        state_quantities[refrig] = (
+                            state_quantities[refrig].apply(bool)
+                            )
                     elif hp_model['nr_refrigs'] == 2:
-                        st.markdown('#### Hochtemperaturkreis')
-                        st.dataframe(df_refrig2, use_container_width=True)
-                        st.markdown('#### Niedertemperaturkreis')
-                        st.dataframe(df_refrig1, use_container_width=True)
+                        refrig1 = ss.hp.params['setup']['refrig1']
+                        state_quantities[refrig1] = (
+                            state_quantities[refrig1].apply(bool)
+                            )
+                        refrig2 = ss.hp.params['setup']['refrig2']
+                        state_quantities[refrig2] = (
+                            state_quantities[refrig2].apply(bool)
+                            )
+                    if 'Td_bp' in state_quantities.columns:
+                        del state_quantities['Td_bp']
+                    for col in state_quantities.columns:
+                        if state_quantities[col].dtype == np.float64:
+                            state_quantities[col] = state_quantities[col].apply(
+                                lambda x: f'{x:.5}'
+                                )
+                    state_quantities['x'] = state_quantities['x'].apply(
+                        lambda x: '-' if float(x) < 0 else x
+                        )
+                    state_quantities.rename(
+                        columns={
+                            'm': 'm in kg/s',
+                            'p': 'p in bar',
+                            'h': 'h in kJ/kg',
+                            'T': 'T in °C',
+                            'v': 'v in m³/kg',
+                            'vol': 'vol in m³/s',
+                            's': 's in kJ/(kgK)'
+                            },
+                        inplace=True)
+                    st.dataframe(
+                        data=state_quantities, use_container_width=True
+                        )
+
+                with st.expander('Ökonomische Bewertung'):
+                    # %% Eco Results
+                    ss.hp.calc_cost(
+                        ref_year='2013', current_year='2019', **costcalcparams
+                        )
+
+                    col1, col2 = st.columns(2)
+                    invest_total = sum(ss.hp.cost.values())
+                    col1.metric(
+                        'Gesamtinvestitionskosten',
+                        f'{invest_total:,.2f} €'
+                        )
+                    inv_sepc = (
+                        invest_total
+                        / abs(ss.hp.params["cons"]["Q"]/1e6)
+                        )
+                    col2.metric(
+                        'Spez. Investitionskosten',
+                        f'{inv_sepc:,.2f} €/MW'
+                        )
+                    costdata = pd.DataFrame({
+                        k: [round(v, 2)]
+                        for k, v in ss.hp.cost.items()
+                        })
+                    st.dataframe(
+                        costdata, use_container_width=True, hide_index=True
+                        )
 
                     st.write(
                         """
-                        Alle Stoffdaten und Klassifikationen aus
-                        [CoolProp](http://www.coolprop.org) oder
-                        [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)
+                        Methodik zur Berechnung der Kosten analog zu
+                        [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488),
+                        basierend auf [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).
                         """
                         )
 
-            with st.expander('Zustandsdiagramme'):
-                # %% State Diagrams
-                col_left, _, col_right = st.columns([0.495, 0.01, 0.495])
-                _, slider_left, _, slider_right, _ = (
-                    st.columns([0.5, 8, 1, 8, 0.5])
-                    )
 
-                with col_left:
-                    # %% Log(p)-h-Diagram
-                    st.subheader('Log(p)-h-Diagramm')
-                    if hp_model['nr_refrigs'] == 1:
-                        diagram_placeholder = st.empty()
-                    elif hp_model['nr_refrigs'] == 2:
-                        diagram_placeholder1 = st.empty()
-                        diagram_placeholder2 = st.empty()
+                with st.expander('Exergiebewertung'):
+                    # %% Exergy Analysis
+                    st.header('Ergebnisse der Exergieanalyse')
 
-                with slider_left:
-                    if hp_model['nr_refrigs'] == 1:
-                        xmin, xmax = st.slider(
-                            'X-Achsen Begrenzung',
-                            min_value=0, max_value=3000, step=100,
-                            value=(
-                                state_props['h']['min'],
-                                state_props['h']['max']
-                                ),
-                            format='%d kJ/kg',
-                            key='ph_xslider'
-                            )
-                        ymin, ymax = st.slider(
-                            'Y-Achsen Begrenzung',
-                            min_value=-3, max_value=3,
-                            value=(0, 2), format='10^%d bar', key='ph_yslider'
-                            )
-                        ymin, ymax = 10**ymin, 10**ymax
-                    elif hp_model['nr_refrigs'] == 2:
-                        xmin1, xmax1 = st.slider(
-                            'X-Achsen Begrenzung (Kreislauf 1)',
-                            min_value=0, max_value=3000, step=100,
-                            value=(
-                                state_props1['h']['min'],
-                                state_props1['h']['max']
-                                ),
-                            format='%d kJ/kg',
-                            key='ph_x1slider'
-                            )
-                        ymin1, ymax1 = st.slider(
-                            'Y-Achsen Begrenzung (Kreislauf 1)',
-                            min_value=-3, max_value=3,
-                            value=(0, 2), format='10^%d bar',
-                            key='ph_y1slider'
-                            )
-                        ymin1, ymax1 = 10**ymin1, 10**ymax1
-                        xmin2, xmax2 = st.slider(
-                            'X-Achsen Begrenzung (Kreislauf 2)',
-                            min_value=0, max_value=3000, step=100,
-                            value=(
-                                state_props2['h']['min'],
-                                state_props2['h']['max']
-                                ),
-                            format='%d kJ/kg',
-                            key='ph_x2slider'
-                            )
-                        ymin2, ymax2 = st.slider(
-                            'Y-Achsen Begrenzung (Kreislauf 2)',
-                            min_value=-3, max_value=3,
-                            value=(0, 2), format='10^%d bar',
-                            key='ph_y2slider'
-                            )
-                        ymin2, ymax2 = 10**ymin2, 10**ymax2
-
-                with col_left:
-                    if hp_model['nr_refrigs'] == 1:
-                        diagram = ss.hp.generate_state_diagram(
-                            diagram_type='logph',
-                            xlims=(xmin, xmax), ylims=(ymin, ymax),
-                            return_diagram=True, display_info=False,
-                            open_file=False, savefig=False
-                            )
-                        diagram_placeholder.pyplot(diagram.fig)
-                    elif hp_model['nr_refrigs'] == 2:
-                        diagram1, diagram2 = ss.hp.generate_state_diagram(
-                            diagram_type='logph',
-                            xlims=((xmin1, xmax1), (xmin2, xmax2)),
-                            ylims=((ymin1, ymax1), (ymin2, ymax2)),
-                            return_diagram=True, display_info=False,
-                            savefig=False, open_file=False
-                            )
-                        diagram_placeholder1.pyplot(diagram1.fig)
-                        diagram_placeholder2.pyplot(diagram2.fig)
-
-                with col_right:
-                    # %% T-s-Diagram
-                    st.subheader('T-s-Diagramm')
-                    if hp_model['nr_refrigs'] == 1:
-                        diagram_placeholder = st.empty()
-                    elif hp_model['nr_refrigs'] == 2:
-                        diagram_placeholder1 = st.empty()
-                        diagram_placeholder2 = st.empty()
-
-                with slider_right:
-                    if hp_model['nr_refrigs'] == 1:
-                        xmin, xmax = st.slider(
-                            'X-Achsen Begrenzung',
-                            min_value=0, max_value=10000, step=100,
-                            value=(
-                                state_props['s']['min'],
-                                state_props['s']['max']
-                                ),
-                            format='%d kJ/(kgK)',
-                            key='ts_xslider'
-                            )
-                        ymin, ymax = st.slider(
-                            'Y-Achsen Begrenzung',
-                            min_value=-150, max_value=500,
-                            value=(
-                                state_props['T']['min'],
-                                state_props['T']['max']
-                                ),
-                            format='%d °C', key='ts_yslider'
-                            )
-                    elif hp_model['nr_refrigs'] == 2:
-                        xmin1, xmax1 = st.slider(
-                            'X-Achsen Begrenzung (Kreislauf 1)',
-                            min_value=0, max_value=3000, step=100,
-                            value=(
-                                state_props1['s']['min'],
-                                state_props1['s']['max']
-                                ),
-                            format='%d kJ/kg',
-                            key='ts_x1slider'
-                            )
-                        ymin1, ymax1 = st.slider(
-                            'Y-Achsen Begrenzung (Kreislauf 1)',
-                            min_value=-150, max_value=500,
-                            value=(
-                                state_props1['T']['min'],
-                                state_props1['T']['max']
-                                ),
-                            format='%d °C',
-                            key='ts_y1slider'
-                            )
-                        xmin2, xmax2 = st.slider(
-                            'X-Achsen Begrenzung (Kreislauf 2)',
-                            min_value=0, max_value=3000, step=100,
-                            value=(
-                                state_props2['s']['min'],
-                                state_props2['s']['max']
-                                ),
-                            format='%d kJ/kg',
-                            key='ts_x2slider'
-                            )
-                        ymin2, ymax2 = st.slider(
-                            'Y-Achsen Begrenzung (Kreislauf 2)',
-                            min_value=-150, max_value=500,
-                            value=(
-                                state_props2['T']['min'],
-                                state_props2['T']['max']
-                                ),
-                            format='%d °C',
-                            key='ts_y2slider'
-                            )
-
-                with col_right:
-                    if hp_model['nr_refrigs'] == 1:
-                        diagram = ss.hp.generate_state_diagram(
-                            diagram_type='Ts',
-                            xlims=(xmin, xmax), ylims=(ymin, ymax),
-                            return_diagram=True, display_info=False,
-                            open_file=False, savefig=False
-                            )
-                        diagram_placeholder.pyplot(diagram.fig)
-                    elif hp_model['nr_refrigs'] == 2:
-                        diagram1, diagram2 = ss.hp.generate_state_diagram(
-                            diagram_type='Ts',
-                            xlims=((xmin1, xmax1), (xmin2, xmax2)),
-                            ylims=((ymin1, ymax1), (ymin2, ymax2)),
-                            return_diagram=True, display_info=False,
-                            savefig=False, open_file=False
-                            )
-                        diagram_placeholder1.pyplot(diagram1.fig)
-                        diagram_placeholder2.pyplot(diagram2.fig)
-
-            with st.expander('Zustandsgrößen'):
-                # %% State Quantities
-                state_quantities = (
-                    ss.hp.nw.results['Connection'].copy()
-                    )
-                try:
-                    state_quantities['water'] = (
-                        state_quantities['water'].apply(bool)
+                    col1, col2, col3, col4, col5 = st.columns(5)
+                    col1.metric(
+                        'Epsilon',
+                        f'{ss.hp.ean.network_data.epsilon*1e2:.2f} %'
                         )
-                except KeyError:
-                    state_quantities['H2O'] = (
-                        state_quantities['H2O'].apply(bool)
+                    col2.metric(
+                        'E_F',
+                        f'{(ss.hp.ean.network_data.E_F)/1e6:.2f} MW'
                         )
-                if hp_model['nr_refrigs'] == 1:
-                    refrig = ss.hp.params['setup']['refrig']
-                    state_quantities[refrig] = (
-                        state_quantities[refrig].apply(bool)
+                    col3.metric(
+                        'E_P',
+                        f'{(ss.hp.ean.network_data.E_P)/1e6:.2f} MW'
                         )
-                elif hp_model['nr_refrigs'] == 2:
-                    refrig1 = ss.hp.params['setup']['refrig1']
-                    state_quantities[refrig1] = (
-                        state_quantities[refrig1].apply(bool)
+                    col4.metric(
+                        'E_D',
+                        f'{(ss.hp.ean.network_data.E_D)/1e6:.2f} MW'
                         )
-                    refrig2 = ss.hp.params['setup']['refrig2']
-                    state_quantities[refrig2] = (
-                        state_quantities[refrig2].apply(bool)
+                    col5.metric(
+                        'E_L',
+                        f'{(ss.hp.ean.network_data.E_L)/1e3:.2f} KW'
                         )
-                if 'Td_bp' in state_quantities.columns:
-                    del state_quantities['Td_bp']
-                for col in state_quantities.columns:
-                    if state_quantities[col].dtype == np.float64:
-                        state_quantities[col] = state_quantities[col].apply(
-                            lambda x: f'{x:.5}'
+
+                    st.subheader('Ergebnisse nach Komponente')
+                    exergy_component_result = (
+                        ss.hp.ean.component_data.copy()
+                        )
+                    exergy_component_result = exergy_component_result.drop(
+                        'group', axis=1
+                        )
+                    exergy_component_result.dropna(subset=['E_F'], inplace=True)
+                    for col in ['E_F', 'E_P', 'E_D']:
+                        exergy_component_result[col] = (
+                            exergy_component_result[col].round(2)
                             )
-                state_quantities['x'] = state_quantities['x'].apply(
-                    lambda x: '-' if float(x) < 0 else x
-                    )
-                state_quantities.rename(
-                    columns={
-                        'm': 'm in kg/s',
-                        'p': 'p in bar',
-                        'h': 'h in kJ/kg',
-                        'T': 'T in °C',
-                        'v': 'v in m³/kg',
-                        'vol': 'vol in m³/s',
-                        's': 's in kJ/(kgK)'
+                    for col in ['epsilon', 'y_Dk', 'y*_Dk']:
+                        exergy_component_result[col] = (
+                            exergy_component_result[col].round(4)
+                            )
+                    exergy_component_result.rename(
+                        columns={
+                            'E_F': 'E_F in W',
+                            'E_P': 'E_P in W',
+                            'E_D': 'E_D in W',
                         },
-                    inplace=True)
-                st.dataframe(data=state_quantities, use_container_width=True)
-
-            with st.expander('Ökonomische Bewertung'):
-                # %% Eco Results
-                ss.hp.calc_cost(
-                    ref_year='2013', current_year='2019', **costcalcparams
-                    )
-
-                col1, col2 = st.columns(2)
-                invest_total = sum(ss.hp.cost.values())
-                col1.metric(
-                    'Gesamtinvestitionskosten',
-                    f'{invest_total:,.2f} €'
-                    )
-                inv_sepc = (
-                    invest_total
-                    / abs(ss.hp.params["cons"]["Q"]/1e6)
-                    )
-                col2.metric(
-                    'Spez. Investitionskosten',
-                    f'{inv_sepc:,.2f} €/MW'
-                    )
-                costdata = pd.DataFrame({
-                    k: [round(v, 2)]
-                    for k, v in ss.hp.cost.items()
-                    })
-                st.dataframe(
-                    costdata, use_container_width=True, hide_index=True
-                    )
-
-                st.write(
-                    """
-                    Methodik zur Berechnung der Kosten analog zu
-                    [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488),
-                    basierend auf [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).
-                    """
-                    )
-
-
-            with st.expander('Exergiebewertung'):
-                # %% Exergy Analysis
-                st.header('Ergebnisse der Exergieanalyse')
-
-                col1, col2, col3, col4, col5 = st.columns(5)
-                col1.metric(
-                    'Epsilon',
-                    f'{ss.hp.ean.network_data.epsilon*1e2:.2f} %'
-                    )
-                col2.metric(
-                    'E_F',
-                    f'{(ss.hp.ean.network_data.E_F)/1e6:.2f} MW'
-                    )
-                col3.metric(
-                    'E_P',
-                    f'{(ss.hp.ean.network_data.E_P)/1e6:.2f} MW'
-                    )
-                col4.metric(
-                    'E_D',
-                    f'{(ss.hp.ean.network_data.E_D)/1e6:.2f} MW'
-                    )
-                col5.metric(
-                    'E_L',
-                    f'{(ss.hp.ean.network_data.E_L)/1e3:.2f} KW'
-                    )
-
-                st.subheader('Ergebnisse nach Komponente')
-                exergy_component_result = (
-                    ss.hp.ean.component_data.copy()
-                    )
-                exergy_component_result = exergy_component_result.drop(
-                    'group', axis=1
-                    )
-                exergy_component_result.dropna(subset=['E_F'], inplace=True)
-                for col in ['E_F', 'E_P', 'E_D']:
-                    exergy_component_result[col] = (
-                        exergy_component_result[col].round(2)
-                        )
-                for col in ['epsilon', 'y_Dk', 'y*_Dk']:
-                    exergy_component_result[col] = (
-                        exergy_component_result[col].round(4)
-                        )
-                exergy_component_result.rename(
-                    columns={
-                        'E_F': 'E_F in W',
-                        'E_P': 'E_P in W',
-                        'E_D': 'E_D in W',
-                    },
-                    inplace=True)
-                st.dataframe(
-                    data=exergy_component_result, use_container_width=True
-                    )
-
-                col6, _, col7 = st.columns([0.495, 0.01, 0.495])
-                with col6:
-                    st.subheader('Grassmann Diagramm')
-                    diagram_placeholder_sankey = st.empty()
-
-                    diagram_sankey = ss.hp.generate_sankey_diagram()
-                    diagram_placeholder_sankey.plotly_chart(
-                        diagram_sankey, use_container_width=True
+                        inplace=True)
+                    st.dataframe(
+                        data=exergy_component_result, use_container_width=True
                         )
 
-                with col7:
-                    st.subheader('Wasserfall Diagramm')
-                    diagram_placeholder_waterfall = st.empty()
+                    col6, _, col7 = st.columns([0.495, 0.01, 0.495])
+                    with col6:
+                        st.subheader('Grassmann Diagramm')
+                        diagram_placeholder_sankey = st.empty()
 
-                    diagram_waterfall = ss.hp.generate_waterfall_diagram()
-                    diagram_placeholder_waterfall.pyplot(
-                        diagram_waterfall, use_container_width=True
+                        diagram_sankey = ss.hp.generate_sankey_diagram()
+                        diagram_placeholder_sankey.plotly_chart(
+                            diagram_sankey, use_container_width=True
+                            )
+
+                    with col7:
+                        st.subheader('Wasserfall Diagramm')
+                        diagram_placeholder_waterfall = st.empty()
+
+                        diagram_waterfall = ss.hp.generate_waterfall_diagram()
+                        diagram_placeholder_waterfall.pyplot(
+                            diagram_waterfall, use_container_width=True
+                            )
+
+                    st.write(
+                        """
+                        Definitionen und Methodik der Exergieanalyse basierend auf
+                        [Morosuk und Tsatsaronis (2019)](https://doi.org/10.1016/j.energy.2018.10.090),
+                        dessen Implementation in TESPy beschrieben in [Witte und Hofmann et al. (2022)](https://doi.org/10.3390/en15114087)
+                        und didaktisch aufbereitet in [Witte, Freißmann und Fritz (2023)](https://fwitte.github.io/TESPy_teaching_exergy/).
+                        """
                         )
 
-                st.write(
-                    """
-                    Definitionen und Methodik der Exergieanalyse basierend auf
-                    [Morosuk und Tsatsaronis (2019)](https://doi.org/10.1016/j.energy.2018.10.090),
-                    dessen Implementation in TESPy beschrieben in [Witte und Hofmann et al. (2022)](https://doi.org/10.3390/en15114087)
-                    und didaktisch aufbereitet in [Witte, Freißmann und Fritz (2023)](https://fwitte.github.io/TESPy_teaching_exergy/).
-                    """
+                st.info(
+                    'Um die Teillast zu berechnen, drücke auf "Teillast '
+                    + 'simulieren".'
                     )
 
-            st.info(
-                'Um die Teillast zu berechnen, drücke auf "Teillast '
-                + 'simulieren".'
-                )
-
-            st.button('Teillast simulieren', on_click=switch2partload)
+                st.button('Teillast simulieren', on_click=switch2partload)
 
 if mode == 'Teillast':
     # %% MARK: Offdesign Simulation
