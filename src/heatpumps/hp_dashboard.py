@@ -934,6 +934,7 @@ if mode == 'Auslegung':
                     state_quantities = (
                         ss.hp.nw.results['Connection'].copy()
                         )
+                    state_quantities = state_quantities.loc[:, ~state_quantities.columns.str.contains('_unit', case=False, regex=False)]
                     try:
                         state_quantities['water'] = (
                             state_quantities['water'].apply(bool)
