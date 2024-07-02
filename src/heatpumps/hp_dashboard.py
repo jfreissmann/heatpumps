@@ -242,12 +242,16 @@ with st.sidebar:
         #             )
 
         with st.expander('Wärmesenke'):
+            T_max_sink = T_crit
+            if 'trans' in hp_model_name:
+                T_max_sink = 200  # °C -- Ad hoc value, maybe find better one
+
             params['C3']['T'] = st.slider(
-                'Temperatur Vorlauf', min_value=0, max_value=T_crit,
+                'Temperatur Vorlauf', min_value=0, max_value=T_max_sink,
                 value=params['C3']['T'], format='%d°C', key='T_consumer_ff'
             )
             params['C1']['T'] = st.slider(
-                'Temperatur Rücklauf', min_value=0, max_value=T_crit,
+                'Temperatur Rücklauf', min_value=0, max_value=T_max_sink,
                 value=params['C1']['T'], format='%d°C', key='T_consumer_bf'
             )
 
