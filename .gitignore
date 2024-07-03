@@ -134,3 +134,4 @@ hp_ss_design/
 hp_ds_design/
 src/heatpumps/models/stable/*
 src/heatpumps/models/output/*
+src/heatpumps/models/input/diagrams/
