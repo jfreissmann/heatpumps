@@ -777,7 +777,15 @@ if mode == 'Auslegung':
                             ymin, ymax = st.slider(
                                 'Y-Achsen Begrenzung',
                                 min_value=-3, max_value=3,
-                                value=(0, 2), format='10^%d bar',
+                                value=(
+                                    int(np.floor(np.log10(
+                                        state_props['p']['min']
+                                        ))),
+                                    int(np.ceil(np.log10(
+                                        state_props['p']['max']
+                                        )))
+                                    ),
+                                format='10^%d bar',
                                 key='ph_yslider'
                                 )
                             ymin, ymax = 10**ymin, 10**ymax
@@ -795,7 +803,15 @@ if mode == 'Auslegung':
                             ymin1, ymax1 = st.slider(
                                 'Y-Achsen Begrenzung (Kreislauf 1)',
                                 min_value=-3, max_value=3,
-                                value=(0, 2), format='10^%d bar',
+                                value=(
+                                    int(np.floor(np.log10(
+                                        state_props1['p']['min']
+                                        ))),
+                                    int(np.ceil(np.log10(
+                                        state_props1['p']['max']
+                                        )))
+                                    ),
+                                format='10^%d bar',
                                 key='ph_y1slider'
                                 )
                             ymin1, ymax1 = 10**ymin1, 10**ymax1
@@ -812,7 +828,15 @@ if mode == 'Auslegung':
                             ymin2, ymax2 = st.slider(
                                 'Y-Achsen Begrenzung (Kreislauf 2)',
                                 min_value=-3, max_value=3,
-                                value=(0, 2), format='10^%d bar',
+                                value=(
+                                    int(np.floor(np.log10(
+                                        state_props2['p']['min']
+                                        ))),
+                                    int(np.ceil(np.log10(
+                                        state_props2['p']['max']
+                                        )))
+                                    ),
+                                    format='10^%d bar',
                                 key='ph_y2slider'
                                 )
                             ymin2, ymax2 = 10**ymin2, 10**ymax2
