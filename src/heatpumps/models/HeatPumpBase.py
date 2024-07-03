@@ -164,7 +164,7 @@ class HeatPumpBase:
                   k_trans=60, k_misc=50, residence_time=10):
         r"""
         Calculate CAPEX based on cost relevant components.
-        
+
         Method as defined by Kosmadakis & Arpagaus et al. in:
         "Techno-economic analysis of high-temperature heat pumps with low-global
         warming potential refrigerants for upgrading waste heat up to 150 ◦C"
@@ -271,7 +271,7 @@ class HeatPumpBase:
     def eval_costfunc(self, val, val_ref, cost_ref, alpha):
         r"""
         Evaluate cost function for given variable value.
-    
+
         cost function of type:
         $C = C_{ref} \cdot \left(\frac{X}{X_{ref}}\right)^\alpha$
         """
@@ -326,45 +326,55 @@ class HeatPumpBase:
 
         # Initialize fluid property diagram
         fig, ax = plt.subplots(figsize=figsize)
-        diagram = FluidPropertyDiagram(refrig)
-        diagram.fig = fig
-        diagram.ax = ax
-        diagram.set_unit_system(T='°C', p='bar', h='kJ/kg')
+
+        diagram_data_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 'input', 'diagrams', f"{refrig}.json"
+        ))
+
+        if os.path.isfile(diagram_data_path):
+            diagram = FluidPropertyDiagram.from_json(diagram_data_path)
+        else:
+            diagram = FluidPropertyDiagram(refrig)
+            diagram.set_unit_system(T='°C', p='bar', h='kJ/kg')
+
+            # Generate isolines
+            path = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), 'input', 'state_diagram_config.json'
+                ))
+            with open(path, 'r', encoding='utf-8') as file:
+                config = json.load(file)
+
+            if refrig in config:
+                state_props = config[refrig]
+            else:
+                state_props = config['MISC']
+
+            iso1 = np.arange(
+                state_props[var['isolines'][0]]['isorange_low'],
+                state_props[var['isolines'][0]]['isorange_high'],
+                state_props[var['isolines'][0]]['isorange_step']
+                )
+            iso2 = np.arange(
+                state_props[var['isolines'][1]]['isorange_low'],
+                state_props[var['isolines'][1]]['isorange_high'],
+                state_props[var['isolines'][1]]['isorange_step']
+                )
+
+            diagram.set_isolines(**{
+                var['isolines'][0]: iso1,
+                var['isolines'][1]: iso2
+                })
+            diagram.calc_isolines()
+            diagram.to_json(diagram_data_path)
+
 
         # Calculate components process data
         for compdata in result_dict.values():
             compdata['datapoints'] = (
                 diagram.calc_individual_isoline(**compdata)
-                )
-
-        # Generate isolines
-        path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 'input', 'state_diagram_config.json'
-            ))
-        with open(path, 'r', encoding='utf-8') as file:
-            config = json.load(file)
-
-        if refrig in config:
-            state_props = config[refrig]
-        else:
-            state_props = config['MISC']
-
-        iso1 = np.arange(
-            state_props[var['isolines'][0]]['isorange_low'],
-            state_props[var['isolines'][0]]['isorange_high'],
-            state_props[var['isolines'][0]]['isorange_step']
             )
-        iso2 = np.arange(
-            state_props[var['isolines'][1]]['isorange_low'],
-            state_props[var['isolines'][1]]['isorange_high'],
-            state_props[var['isolines'][1]]['isorange_step']
-            )
-
-        diagram.set_isolines(**{
-            var['isolines'][0]: iso1,
-            var['isolines'][1]: iso2
-            })
-        diagram.calc_isolines()
+        diagram.fig = fig
+        diagram.ax = ax
 
         # Set axes limits
         if 'xlims' in kwargs:
