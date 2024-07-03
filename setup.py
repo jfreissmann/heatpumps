@@ -36,7 +36,7 @@ setup(
         'scipy>=1.10.0',
         'scikit-learn>=1.2.1',
         'matplotlib>=3.6.3',
-        'fluprodia>=2.0',
+        'fluprodia>=3.2',
         'coolprop>=6.4.1',
         'darkdetect>=0.8.0',
         'plotly>=5.20.0',
