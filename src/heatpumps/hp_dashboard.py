@@ -44,6 +44,50 @@ def info_df(label, refrigs):
 
     return df_refrig
 
+
+def calc_limits(wf, property, padding_rel, scale='lin'):
+    """
+    Calculate states diagram limits of given property.
+
+    Parameters
+    ----------
+
+    wf : str
+        Working fluid for which to filter heat pump simulation results.
+    
+    property : str
+        Fluid property to calculate limits for.
+
+    padding_rel : float
+        Padding from minimum and maximum value to axes limit in relation to
+        full range between minimum and maximum.
+
+    scale : str
+        Either 'lin' or 'log'. Scale on with padding is applied. Defaults to
+        'lin'.
+    """
+    if scale not in ['lin', 'log']:
+        raise ValueError(
+            f"Parameter 'scale' has to be either 'lin' or 'log'. '{scale}' is "
+            + "not allowed."
+            )
+
+    wfmask = ss.hp.nw.results['Connection'][wf] == 1.0
+
+    min_val = ss.hp.nw.results['Connection'].loc[wfmask, property].min()
+    max_val = ss.hp.nw.results['Connection'].loc[wfmask, property].max()
+    if scale == 'lin':
+        delta_val = max_val - min_val
+        ax_min_val = min_val - padding_rel * delta_val
+        ax_max_val = max_val + padding_rel * delta_val
+    elif scale == 'log':
+        delta_val = np.log10(max_val) - np.log10(min_val)
+        ax_min_val = 10 ** (np.log10(min_val) - padding_rel * delta_val)
+        ax_max_val = 10 ** (np.log10(max_val) + padding_rel * delta_val)
+
+    return ax_min_val, ax_max_val
+
+
 src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
 
 # %% MARK: Initialisation
@@ -758,88 +802,34 @@ if mode == 'Auslegung':
                         st.subheader('Log(p)-h-Diagramm')
                         if hp_model['nr_refrigs'] == 1:
                             diagram_placeholder = st.empty()
+
+                            xmin, xmax = calc_limits(
+                                wf=ss.hp.wf, property='h', padding_rel=0.25
+                                )
+                            ymin, ymax = calc_limits(
+                                wf=ss.hp.wf, property='p', padding_rel=0.25,
+                                scale='log'
+                                )
+
                         elif hp_model['nr_refrigs'] == 2:
                             diagram_placeholder1 = st.empty()
                             diagram_placeholder2 = st.empty()
 
-                    with slider_left:
-                        if hp_model['nr_refrigs'] == 1:
-                            xmin, xmax = st.slider(
-                                'X-Achsen Begrenzung',
-                                min_value=0, max_value=3000, step=100,
-                                value=(
-                                    state_props['h']['min'],
-                                    state_props['h']['max']
-                                    ),
-                                format='%d kJ/kg',
-                                key='ph_xslider'
+                            xmin1, xmax1 = calc_limits(
+                                wf=ss.hp.wf1, property='h', padding_rel=0.25
                                 )
-                            ymin, ymax = st.slider(
-                                'Y-Achsen Begrenzung',
-                                min_value=-3, max_value=3,
-                                value=(
-                                    int(np.floor(np.log10(
-                                        state_props['p']['min']
-                                        ))),
-                                    int(np.ceil(np.log10(
-                                        state_props['p']['max']
-                                        )))
-                                    ),
-                                format='10^%d bar',
-                                key='ph_yslider'
+                            ymin1, ymax1 = calc_limits(
+                                wf=ss.hp.wf1, property='p', padding_rel=0.25,
+                                scale='log'
                                 )
-                            ymin, ymax = 10**ymin, 10**ymax
-                        elif hp_model['nr_refrigs'] == 2:
-                            xmin1, xmax1 = st.slider(
-                                'X-Achsen Begrenzung (Kreislauf 1)',
-                                min_value=0, max_value=3000, step=100,
-                                value=(
-                                    state_props1['h']['min'],
-                                    state_props1['h']['max']
-                                    ),
-                                format='%d kJ/kg',
-                                key='ph_x1slider'
+
+                            xmin2, xmax2 = calc_limits(
+                                wf=ss.hp.wf2, property='h', padding_rel=0.25
                                 )
-                            ymin1, ymax1 = st.slider(
-                                'Y-Achsen Begrenzung (Kreislauf 1)',
-                                min_value=-3, max_value=3,
-                                value=(
-                                    int(np.floor(np.log10(
-                                        state_props1['p']['min']
-                                        ))),
-                                    int(np.ceil(np.log10(
-                                        state_props1['p']['max']
-                                        )))
-                                    ),
-                                format='10^%d bar',
-                                key='ph_y1slider'
+                            ymin2, ymax2 = calc_limits(
+                                wf=ss.hp.wf2, property='p', padding_rel=0.25,
+                                scale='log'
                                 )
-                            ymin1, ymax1 = 10**ymin1, 10**ymax1
-                            xmin2, xmax2 = st.slider(
-                                'X-Achsen Begrenzung (Kreislauf 2)',
-                                min_value=0, max_value=3000, step=100,
-                                value=(
-                                    state_props2['h']['min'],
-                                    state_props2['h']['max']
-                                    ),
-                                format='%d kJ/kg',
-                                key='ph_x2slider'
-                                )
-                            ymin2, ymax2 = st.slider(
-                                'Y-Achsen Begrenzung (Kreislauf 2)',
-                                min_value=-3, max_value=3,
-                                value=(
-                                    int(np.floor(np.log10(
-                                        state_props2['p']['min']
-                                        ))),
-                                    int(np.ceil(np.log10(
-                                        state_props2['p']['max']
-                                        )))
-                                    ),
-                                    format='10^%d bar',
-                                key='ph_y2slider'
-                                )
-                            ymin2, ymax2 = 10**ymin2, 10**ymax2
 
                     with col_left:
                         if hp_model['nr_refrigs'] == 1:
@@ -866,71 +856,30 @@ if mode == 'Auslegung':
                         st.subheader('T-s-Diagramm')
                         if hp_model['nr_refrigs'] == 1:
                             diagram_placeholder = st.empty()
+
+                            xmin, xmax = calc_limits(
+                                wf=ss.hp.wf, property='s', padding_rel=0.25
+                                )
+                            ymin, ymax = calc_limits(
+                                wf=ss.hp.wf, property='T', padding_rel=0.25
+                                )
+
                         elif hp_model['nr_refrigs'] == 2:
                             diagram_placeholder1 = st.empty()
                             diagram_placeholder2 = st.empty()
 
-                    with slider_right:
-                        if hp_model['nr_refrigs'] == 1:
-                            xmin, xmax = st.slider(
-                                'X-Achsen Begrenzung',
-                                min_value=0, max_value=10000, step=100,
-                                value=(
-                                    state_props['s']['min'],
-                                    state_props['s']['max']
-                                    ),
-                                format='%d kJ/(kgK)',
-                                key='ts_xslider'
+                            xmin1, xmax1 = calc_limits(
+                                wf=ss.hp.wf1, property='s', padding_rel=0.25
                                 )
-                            ymin, ymax = st.slider(
-                                'Y-Achsen Begrenzung',
-                                min_value=-150, max_value=500,
-                                value=(
-                                    state_props['T']['min'],
-                                    state_props['T']['max']
-                                    ),
-                                format='%d °C', key='ts_yslider'
+                            ymin1, ymax1 = calc_limits(
+                                wf=ss.hp.wf1, property='T', padding_rel=0.25
                                 )
-                        elif hp_model['nr_refrigs'] == 2:
-                            xmin1, xmax1 = st.slider(
-                                'X-Achsen Begrenzung (Kreislauf 1)',
-                                min_value=0, max_value=3000, step=100,
-                                value=(
-                                    state_props1['s']['min'],
-                                    state_props1['s']['max']
-                                    ),
-                                format='%d kJ/kg',
-                                key='ts_x1slider'
+
+                            xmin2, xmax2 = calc_limits(
+                                wf=ss.hp.wf2, property='s', padding_rel=0.25
                                 )
-                            ymin1, ymax1 = st.slider(
-                                'Y-Achsen Begrenzung (Kreislauf 1)',
-                                min_value=-150, max_value=500,
-                                value=(
-                                    state_props1['T']['min'],
-                                    state_props1['T']['max']
-                                    ),
-                                format='%d °C',
-                                key='ts_y1slider'
-                                )
-                            xmin2, xmax2 = st.slider(
-                                'X-Achsen Begrenzung (Kreislauf 2)',
-                                min_value=0, max_value=3000, step=100,
-                                value=(
-                                    state_props2['s']['min'],
-                                    state_props2['s']['max']
-                                    ),
-                                format='%d kJ/kg',
-                                key='ts_x2slider'
-                                )
-                            ymin2, ymax2 = st.slider(
-                                'Y-Achsen Begrenzung (Kreislauf 2)',
-                                min_value=-150, max_value=500,
-                                value=(
-                                    state_props2['T']['min'],
-                                    state_props2['T']['max']
-                                    ),
-                                format='%d °C',
-                                key='ts_y2slider'
+                            ymin2, ymax2 = calc_limits(
+                                wf=ss.hp.wf2, property='T', padding_rel=0.25
                                 )
 
                     with col_right:
