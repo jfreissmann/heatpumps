@@ -801,8 +801,6 @@ if mode == 'Auslegung':
                         # %% Log(p)-h-Diagram
                         st.subheader('Log(p)-h-Diagramm')
                         if hp_model['nr_refrigs'] == 1:
-                            diagram_placeholder = st.empty()
-
                             xmin, xmax = calc_limits(
                                 wf=ss.hp.wf, property='h', padding_rel=0.25
                                 )
@@ -811,10 +809,15 @@ if mode == 'Auslegung':
                                 scale='log'
                                 )
 
-                        elif hp_model['nr_refrigs'] == 2:
-                            diagram_placeholder1 = st.empty()
-                            diagram_placeholder2 = st.empty()
+                            diagram = ss.hp.generate_state_diagram(
+                                diagram_type='logph',
+                                xlims=(xmin, xmax), ylims=(ymin, ymax),
+                                return_diagram=True, display_info=False,
+                                open_file=False, savefig=False
+                                )
+                            st.pyplot(diagram.fig)
 
+                        elif hp_model['nr_refrigs'] == 2:
                             xmin1, xmax1 = calc_limits(
                                 wf=ss.hp.wf1, property='h', padding_rel=0.25
                                 )
@@ -831,16 +834,6 @@ if mode == 'Auslegung':
                                 scale='log'
                                 )
 
-                    with col_left:
-                        if hp_model['nr_refrigs'] == 1:
-                            diagram = ss.hp.generate_state_diagram(
-                                diagram_type='logph',
-                                xlims=(xmin, xmax), ylims=(ymin, ymax),
-                                return_diagram=True, display_info=False,
-                                open_file=False, savefig=False
-                                )
-                            diagram_placeholder.pyplot(diagram.fig)
-                        elif hp_model['nr_refrigs'] == 2:
                             diagram1, diagram2 = ss.hp.generate_state_diagram(
                                 diagram_type='logph',
                                 xlims=((xmin1, xmax1), (xmin2, xmax2)),
@@ -848,15 +841,13 @@ if mode == 'Auslegung':
                                 return_diagram=True, display_info=False,
                                 savefig=False, open_file=False
                                 )
-                            diagram_placeholder1.pyplot(diagram1.fig)
-                            diagram_placeholder2.pyplot(diagram2.fig)
+                            st.pyplot(diagram1.fig)
+                            st.pyplot(diagram2.fig)
 
                     with col_right:
                         # %% T-s-Diagram
                         st.subheader('T-s-Diagramm')
                         if hp_model['nr_refrigs'] == 1:
-                            diagram_placeholder = st.empty()
-
                             xmin, xmax = calc_limits(
                                 wf=ss.hp.wf, property='s', padding_rel=0.25
                                 )
@@ -864,10 +855,15 @@ if mode == 'Auslegung':
                                 wf=ss.hp.wf, property='T', padding_rel=0.25
                                 )
 
-                        elif hp_model['nr_refrigs'] == 2:
-                            diagram_placeholder1 = st.empty()
-                            diagram_placeholder2 = st.empty()
+                            diagram = ss.hp.generate_state_diagram(
+                                diagram_type='Ts',
+                                xlims=(xmin, xmax), ylims=(ymin, ymax),
+                                return_diagram=True, display_info=False,
+                                open_file=False, savefig=False
+                                )
+                            st.pyplot(diagram.fig)
 
+                        elif hp_model['nr_refrigs'] == 2:
                             xmin1, xmax1 = calc_limits(
                                 wf=ss.hp.wf1, property='s', padding_rel=0.25
                                 )
@@ -882,16 +878,6 @@ if mode == 'Auslegung':
                                 wf=ss.hp.wf2, property='T', padding_rel=0.25
                                 )
 
-                    with col_right:
-                        if hp_model['nr_refrigs'] == 1:
-                            diagram = ss.hp.generate_state_diagram(
-                                diagram_type='Ts',
-                                xlims=(xmin, xmax), ylims=(ymin, ymax),
-                                return_diagram=True, display_info=False,
-                                open_file=False, savefig=False
-                                )
-                            diagram_placeholder.pyplot(diagram.fig)
-                        elif hp_model['nr_refrigs'] == 2:
                             diagram1, diagram2 = ss.hp.generate_state_diagram(
                                 diagram_type='Ts',
                                 xlims=((xmin1, xmax1), (xmin2, xmax2)),
@@ -899,8 +885,8 @@ if mode == 'Auslegung':
                                 return_diagram=True, display_info=False,
                                 savefig=False, open_file=False
                                 )
-                            diagram_placeholder1.pyplot(diagram1.fig)
-                            diagram_placeholder2.pyplot(diagram2.fig)
+                            st.pyplot(diagram1.fig)
+                            st.pyplot(diagram2.fig)
 
                 with st.expander('Zustandsgrößen'):
                     # %% State Quantities
