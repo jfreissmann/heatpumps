@@ -397,20 +397,21 @@ class HeatPumpBase:
         # Draw heat pump process over fluid property diagram
         for i, key in enumerate(result_dict.keys()):
             datapoints = result_dict[key]['datapoints']
-            ax.plot(
-                datapoints[var['x']][:], datapoints[var['y']][:],
-                color='#EC6707'
-                )
-            ax.scatter(
-                datapoints[var['x']][0], datapoints[var['y']][0],
-                color='#B54036',
-                label=f'$\\bf{i+1:.0f}$: {key}', s=100, alpha=0.5
-                )
-            ax.annotate(
-                f'{i+1:.0f}',
-                (datapoints[var['x']][0], datapoints[var['y']][0]),
-                ha='center', va='center', color='w'
-                )
+            if len(datapoints[var['x']]) > 0 or len(datapoints[var['y']]) > 0:
+                ax.plot(
+                    datapoints[var['x']][:], datapoints[var['y']][:],
+                    color='#EC6707'
+                    )
+                ax.scatter(
+                    datapoints[var['x']][0], datapoints[var['y']][0],
+                    color='#B54036',
+                    label=f'$\\bf{i+1:.0f}$: {key}', s=100, alpha=0.5
+                    )
+                ax.annotate(
+                    f'{i+1:.0f}',
+                    (datapoints[var['x']][0], datapoints[var['y']][0]),
+                    ha='center', va='center', color='w'
+                    )
 
         # Additional plotting parameters
         if diagram_type == 'logph':
