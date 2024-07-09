@@ -397,7 +397,9 @@ class HeatPumpBase:
         # Draw heat pump process over fluid property diagram
         for i, key in enumerate(result_dict.keys()):
             datapoints = result_dict[key]['datapoints']
-            if len(datapoints[var['x']]) > 0 or len(datapoints[var['y']]) > 0:
+            has_xvals = len(datapoints[var['x']]) > 0
+            has_yvals = len(datapoints[var['y']]) > 0
+            if has_xvals and has_yvals:
                 ax.plot(
                     datapoints[var['x']][:], datapoints[var['y']][:],
                     color='#EC6707'
@@ -411,6 +413,17 @@ class HeatPumpBase:
                     f'{i+1:.0f}',
                     (datapoints[var['x']][0], datapoints[var['y']][0]),
                     ha='center', va='center', color='w'
+                    )
+            else:
+                ax.scatter(
+                    0, 0,
+                    color='#FFFFFF', s=0, alpha=1.0,
+                    label=f'$\\bf{i+1:.0f}$: {key}'
+                    )
+                ax.annotate(
+                    'Error\nMissing Plotting Data', (0.5, 0.5),
+                    xycoords='axes fraction', ha='center', va='center',
+                    fontsize=60, color='#B54036'
                     )
 
         # Additional plotting parameters
