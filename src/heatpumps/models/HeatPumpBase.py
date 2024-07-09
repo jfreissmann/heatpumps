@@ -331,23 +331,23 @@ class HeatPumpBase:
             os.path.dirname(__file__), 'input', 'diagrams', f"{refrig}.json"
         ))
 
+        # Generate isolines
+        path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 'input', 'state_diagram_config.json'
+            ))
+        with open(path, 'r', encoding='utf-8') as file:
+            config = json.load(file)
+
+        if refrig in config:
+            state_props = config[refrig]
+        else:
+            state_props = config['MISC']
+
         if os.path.isfile(diagram_data_path):
             diagram = FluidPropertyDiagram.from_json(diagram_data_path)
         else:
             diagram = FluidPropertyDiagram(refrig)
             diagram.set_unit_system(T='°C', p='bar', h='kJ/kg')
-
-            # Generate isolines
-            path = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'input', 'state_diagram_config.json'
-                ))
-            with open(path, 'r', encoding='utf-8') as file:
-                config = json.load(file)
-
-            if refrig in config:
-                state_props = config[refrig]
-            else:
-                state_props = config['MISC']
 
             iso1 = np.arange(
                 state_props[var['isolines'][0]]['isorange_low'],
