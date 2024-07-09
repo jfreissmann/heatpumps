@@ -518,7 +518,8 @@ class HeatPumpCascade(HeatPumpBase):
         return data
 
     def generate_state_diagram(self, refrig='', diagram_type='logph',
-                               legend=True, return_diagram=False, savefig=True,
+                               legend=True, legend_loc='upper left',
+                               return_diagram=False, savefig=True,
                                open_file=True, **kwargs):
         kwargs1 = {}
         kwargs2 = {}
@@ -532,12 +533,14 @@ class HeatPumpCascade(HeatPumpBase):
             diagram1 = super().generate_state_diagram(
                 refrig=self.params['setup']['refrig1'],
                 diagram_type=diagram_type, legend=legend,
+                legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
                 open_file=open_file, cycle=1, **kwargs1
                 )
             diagram2 = super().generate_state_diagram(
                 refrig=self.params['setup']['refrig2'],
                 diagram_type=diagram_type, legend=legend,
+                legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
                 open_file=open_file, cycle=2, **kwargs2
                 )
@@ -546,12 +549,14 @@ class HeatPumpCascade(HeatPumpBase):
             super().generate_state_diagram(
                 refrig=self.params['setup']['refrig1'],
                 diagram_type=diagram_type, legend=legend,
+                legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
                 open_file=open_file, cycle=1, **kwargs1
                 )
             super().generate_state_diagram(
                 refrig=self.params['setup']['refrig2'],
                 diagram_type=diagram_type, legend=legend,
+                legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
                 open_file=open_file, cycle=2, **kwargs2
                 )

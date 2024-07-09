@@ -298,8 +298,8 @@ class HeatPumpBase:
 
     def generate_state_diagram(self, refrig='', diagram_type='logph',
                                figsize=(16, 10), legend=True,
-                               return_diagram=False, savefig=True,
-                               open_file=True, **kwargs):
+                               legend_loc='upper left', return_diagram=False,
+                               savefig=True, open_file=True, **kwargs):
         """Generate log(p)-h-diagram of heat pump process."""
         if not refrig:
             refrig = self.params['setup']['refrig']
@@ -435,7 +435,7 @@ class HeatPumpBase:
             ax.set_ylabel('Temperatur in $°C$')
 
         if legend:
-            ax.legend()
+            ax.legend(loc=legend_loc)
 
         if savefig:
             filename = (

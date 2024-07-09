@@ -6,8 +6,9 @@ import numpy as np
 import pandas as pd
 from CoolProp.CoolProp import PropsSI as PSI
 from tespy.components import (Compressor, Condenser, CycleCloser,
-                              HeatExchanger, SimpleHeatExchanger, Pump, Sink,
-                              Source, Valve, DropletSeparator, Splitter, Merge)
+                              DropletSeparator, HeatExchanger, Merge, Pump,
+                              SimpleHeatExchanger, Sink, Source, Splitter,
+                              Valve)
 from tespy.connections import Bus, Connection, Ref
 from tespy.networks import Network
 from tespy.tools.characteristics import CharLine
@@ -553,7 +554,8 @@ class HeatPumpCascadeEconIHXTrans(HeatPumpBase):
         return data
 
     def generate_state_diagram(self, refrig='', diagram_type='logph',
-                               legend=True, return_diagram=False, savefig=True,
+                               legend=True, legend_loc='upper left',
+                               return_diagram=False, savefig=True,
                                open_file=True, **kwargs):
         kwargs1 = {}
         kwargs2 = {}
@@ -567,12 +569,14 @@ class HeatPumpCascadeEconIHXTrans(HeatPumpBase):
             diagram1 = super().generate_state_diagram(
                 refrig=self.params['setup']['refrig1'],
                 diagram_type=diagram_type, legend=legend,
+                legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
                 open_file=open_file, cycle=1, **kwargs1
                 )
             diagram2 = super().generate_state_diagram(
                 refrig=self.params['setup']['refrig2'],
                 diagram_type=diagram_type, legend=legend,
+                legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
                 open_file=open_file, cycle=2, **kwargs2
                 )
@@ -581,12 +585,14 @@ class HeatPumpCascadeEconIHXTrans(HeatPumpBase):
             super().generate_state_diagram(
                 refrig=self.params['setup']['refrig1'],
                 diagram_type=diagram_type, legend=legend,
+                legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
                 open_file=open_file, cycle=1, **kwargs1
                 )
             super().generate_state_diagram(
                 refrig=self.params['setup']['refrig2'],
                 diagram_type=diagram_type, legend=legend,
+                legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
                 open_file=open_file, cycle=2, **kwargs2
                 )
