@@ -948,10 +948,10 @@ if mode == 'Auslegung':
                         )
 
                     col1, col2 = st.columns(2)
-                    invest_total = sum(ss.hp.cost.values())
+                    invest_total = ss.hp.cost_total
                     col1.metric(
                         'Gesamtinvestitionskosten',
-                        f'{invest_total:,.2f} €'
+                        f'{invest_total:,.0f} €'
                         )
                     inv_sepc = (
                         invest_total
@@ -959,7 +959,7 @@ if mode == 'Auslegung':
                         )
                     col2.metric(
                         'Spez. Investitionskosten',
-                        f'{inv_sepc:,.2f} €/MW'
+                        f'{inv_sepc:,.0f} €/MW'
                         )
                     costdata = pd.DataFrame({
                         k: [round(v, 2)]
