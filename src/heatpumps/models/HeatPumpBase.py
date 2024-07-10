@@ -242,9 +242,10 @@ class HeatPumpBase:
                         (self.nw.conns['source'].apply(lambda x: x.label) == complabel)
                         & (self.nw.conns['source_id'] == 'out2')].index
                 )[0]
+                fluid = list(self.nw.get_conn(conn_vapor).fluid.val.keys())[0]
                 p_flash = self.nw.get_conn(conn_vapor).p.val
-                dens_liquid = PSI('D', 'Q', 0, 'P', p_flash*1e5, self.wf)
-                dens_vapor = PSI('D', 'Q', 1, 'P', p_flash*1e5, self.wf)
+                dens_liquid = PSI('D', 'Q', 0, 'P', p_flash*1e5, fluid)
+                dens_vapor = PSI('D', 'Q', 1, 'P', p_flash*1e5, fluid)
                 V_flash = (
                     (self.nw.get_conn(conn_liquid).m.val  / dens_liquid
                      + self.nw.get_conn(conn_vapor).m.val / dens_vapor)
