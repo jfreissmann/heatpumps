@@ -2,6 +2,7 @@ import json
 import os
 
 import darkdetect
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -45,7 +46,7 @@ def info_df(label, refrigs):
     return df_refrig
 
 
-def calc_limits(wf, property, padding_rel, scale='lin'):
+def calc_limits(wf, prop, padding_rel, scale='lin'):
     """
     Calculate states diagram limits of given property.
 
@@ -55,7 +56,7 @@ def calc_limits(wf, property, padding_rel, scale='lin'):
     wf : str
         Working fluid for which to filter heat pump simulation results.
     
-    property : str
+    prop : str
         Fluid property to calculate limits for.
 
     padding_rel : float
@@ -74,8 +75,8 @@ def calc_limits(wf, property, padding_rel, scale='lin'):
 
     wfmask = ss.hp.nw.results['Connection'][wf] == 1.0
 
-    min_val = ss.hp.nw.results['Connection'].loc[wfmask, property].min()
-    max_val = ss.hp.nw.results['Connection'].loc[wfmask, property].max()
+    min_val = ss.hp.nw.results['Connection'].loc[wfmask, prop].min()
+    max_val = ss.hp.nw.results['Connection'].loc[wfmask, prop].max()
     if scale == 'lin':
         delta_val = max_val - min_val
         ax_min_val = min_val - padding_rel * delta_val
@@ -102,6 +103,9 @@ st.set_page_config(
     )
 
 is_dark = darkdetect.isDark()
+
+if is_dark:
+    plt.style.use('dark_background')
 
 # %% MARK: Sidebar
 with st.sidebar:
@@ -802,10 +806,10 @@ if mode == 'Auslegung':
                         st.subheader('Log(p)-h-Diagramm')
                         if hp_model['nr_refrigs'] == 1:
                             xmin, xmax = calc_limits(
-                                wf=ss.hp.wf, property='h', padding_rel=0.25
+                                wf=ss.hp.wf, prop='h', padding_rel=0.25
                                 )
                             ymin, ymax = calc_limits(
-                                wf=ss.hp.wf, property='p', padding_rel=0.25,
+                                wf=ss.hp.wf, prop='p', padding_rel=0.25,
                                 scale='log'
                                 )
 
@@ -819,18 +823,18 @@ if mode == 'Auslegung':
 
                         elif hp_model['nr_refrigs'] == 2:
                             xmin1, xmax1 = calc_limits(
-                                wf=ss.hp.wf1, property='h', padding_rel=0.25
+                                wf=ss.hp.wf1, prop='h', padding_rel=0.25
                                 )
                             ymin1, ymax1 = calc_limits(
-                                wf=ss.hp.wf1, property='p', padding_rel=0.25,
+                                wf=ss.hp.wf1, prop='p', padding_rel=0.25,
                                 scale='log'
                                 )
 
                             xmin2, xmax2 = calc_limits(
-                                wf=ss.hp.wf2, property='h', padding_rel=0.25
+                                wf=ss.hp.wf2, prop='h', padding_rel=0.25
                                 )
                             ymin2, ymax2 = calc_limits(
-                                wf=ss.hp.wf2, property='p', padding_rel=0.25,
+                                wf=ss.hp.wf2, prop='p', padding_rel=0.25,
                                 scale='log'
                                 )
 
@@ -849,10 +853,10 @@ if mode == 'Auslegung':
                         st.subheader('T-s-Diagramm')
                         if hp_model['nr_refrigs'] == 1:
                             xmin, xmax = calc_limits(
-                                wf=ss.hp.wf, property='s', padding_rel=0.25
+                                wf=ss.hp.wf, prop='s', padding_rel=0.25
                                 )
                             ymin, ymax = calc_limits(
-                                wf=ss.hp.wf, property='T', padding_rel=0.25
+                                wf=ss.hp.wf, prop='T', padding_rel=0.25
                                 )
 
                             diagram = ss.hp.generate_state_diagram(
@@ -865,17 +869,17 @@ if mode == 'Auslegung':
 
                         elif hp_model['nr_refrigs'] == 2:
                             xmin1, xmax1 = calc_limits(
-                                wf=ss.hp.wf1, property='s', padding_rel=0.25
+                                wf=ss.hp.wf1, prop='s', padding_rel=0.25
                                 )
                             ymin1, ymax1 = calc_limits(
-                                wf=ss.hp.wf1, property='T', padding_rel=0.25
+                                wf=ss.hp.wf1, prop='T', padding_rel=0.25
                                 )
 
                             xmin2, xmax2 = calc_limits(
-                                wf=ss.hp.wf2, property='s', padding_rel=0.25
+                                wf=ss.hp.wf2, prop='s', padding_rel=0.25
                                 )
                             ymin2, ymax2 = calc_limits(
-                                wf=ss.hp.wf2, property='T', padding_rel=0.25
+                                wf=ss.hp.wf2, prop='T', padding_rel=0.25
                                 )
 
                             diagram1, diagram2 = ss.hp.generate_state_diagram(
