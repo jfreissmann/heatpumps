@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as file:
 
 setup(
     name='heatpumps',
-    version='1.2.0',
+    version='1.3.0',
     author='Jonas Freißmann, Malte Fritz',
     author_email='jonas.freissmann@web.de',
     description='Collection of TESPy heat pump models and additional Streamlit dashboard.',
@@ -36,7 +36,7 @@ setup(
         'scipy>=1.10.0',
         'scikit-learn>=1.2.1',
         'matplotlib>=3.6.3',
-        'fluprodia>=3.2',
+        'fluprodia>=3.3',
         'coolprop>=6.4.1',
         'darkdetect>=0.8.0',
         'plotly>=5.20.0',
