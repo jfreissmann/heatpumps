@@ -402,8 +402,12 @@ class HeatPumpFlash(HeatPumpBase):
              self.comps['valve2'].get_plotting_data()[1]}
         )
         data.update(
-            {self.comps['flash'].label:
-                self.comps['flash'].get_plotting_data()[1]}
+            {'Flash Liquid':
+             self.comps['flash'].get_plotting_data()[2]}
+        )
+        data.update(
+            {'Flash Gas':
+             self.comps['flash'].get_plotting_data()[3]}
         )
         data.update(
             {self.comps['valve1'].label:
@@ -416,6 +420,10 @@ class HeatPumpFlash(HeatPumpBase):
         data.update(
             {self.comps['comp1'].label:
              self.comps['comp1'].get_plotting_data()[1]}
+        )
+        data.update(
+            {'Gas Injection':
+             self.comps['flash'].get_plotting_data()[5]}
         )
         data.update(
             {self.comps['comp2'].label:
