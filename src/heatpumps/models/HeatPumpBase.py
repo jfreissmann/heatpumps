@@ -1,5 +1,7 @@
 import json
 import os
+from datetime import datetime
+from time import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,6 +13,8 @@ from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
 from tespy.networks import Network
 from tespy.tools import ExergyAnalysis
+from tespy.tools.characteristics import CharLine
+from tespy.tools.characteristics import load_default_char as ldc
 
 
 class HeatPumpBase:
@@ -983,3 +987,83 @@ class HeatPumpBase:
     def check_consistency(self):
         """Perform all necessary checks to protect consistency of parameters."""
         pass
+
+    def offdesign_parametrization(self):
+        """Perform offdesign parametrization."""
+
+        kA_char1_default = ldc(
+            'heat exchanger', 'kA_char1', 'DEFAULT', CharLine
+        )
+        kA_char1_cond = ldc(
+            'heat exchanger', 'kA_char1', 'CONDENSING FLUID', CharLine
+        )
+        kA_char2_evap = ldc(
+            'heat exchanger', 'kA_char2', 'EVAPORATING FLUID', CharLine
+        )
+        kA_char2_default = ldc(
+            'heat exchanger', 'kA_char2', 'DEFAULT', CharLine
+        )
+
+        tespy_components = ['Condenser', 'HeatExchanger', 'Compressor', 'Pump', 'SimpleHeatExchanger']
+
+        # Extract the label of the above necessary tespy components.
+        # And then extracts the object of the components for parametrization
+        for comp in tespy_components:
+            df = self.nw.comps
+            labels = df[df['comp_type'] == comp].index.tolist()
+            for label in labels:
+                object = self.nw.get_comp(label)
+
+                if comp == 'Compressor':
+                    object.set_attr(
+                        design=['eta_s'], offdesign=['eta_s_char']
+                    )
+                elif comp == 'Pump':
+                    object.set_attr(
+                        design=['eta_s'], offdesign=['eta_s_char']
+                    )
+                elif comp == 'HeatExchanger':
+                    # for models with internal heat exchanger
+                    if 'Internal Heat Exchanger' in label:
+                        object.set_attr(
+                            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
+                            design=['pr1', 'pr2'], offdesign=['zeta1', 'zeta2']
+                        )
+
+                    # For models with Transcritical heat exchanger
+                    elif 'Transcritical' in label:
+                        object.set_attr(
+                            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
+                            design=['pr2', 'ttd_l'], offdesign=['zeta2', 'kA_char']
+                        )
+
+                    # For cascade model's Intermediate heat exchanger
+                    elif 'Intermediate Heat Exchanger' in label:
+                        object.set_attr(
+                            kA_char1=kA_char1_cond, kA_char2=kA_char2_evap,
+                            design=['pr1', 'ttd_u'], offdesign=['zeta1', 'kA_char']
+                        )
+                    else:
+                        # For models with evaporator and economizer
+                        object.set_attr(
+                            kA_char1=kA_char1_default, kA_char2=kA_char2_evap,
+                            design=['pr1', 'ttd_l'], offdesign=['zeta1', 'kA_char']
+                        )
+                elif comp == 'Condenser':
+                    object.set_attr(
+                        kA_char1=kA_char1_cond, kA_char2=kA_char2_default,
+                        design=['pr2', 'ttd_u'], offdesign=['zeta2', 'kA_char']
+                    )
+                elif comp == 'SimpleHeatExchanger':
+                    object.set_attr(
+                        design=['pr'], offdesign=['zeta']
+                    )
+                else:
+                    raise ValueError(
+                        f'Check wheather offdesign parametrization is given to the component {comp}'
+                        + f' in the heat pump base class.'
+                    )
+
+
+        self.conns['B1'].set_attr(offdesign=['v'])
+        self.conns['B2'].set_attr(design=['T'])
