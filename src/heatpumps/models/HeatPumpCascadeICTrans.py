@@ -224,7 +224,7 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
 
         # Starting values
         p_evap1, p_cond1, p_mid1, p_evap2, h_trans_out, p_mid2 = self.get_pressure_levels(
-            T_mid=self.T_mid
+            T_evap=self.params['B2']['T'], T_mid=self.T_mid
         )
         self.p_evap1 = p_evap1
         self.p_evap2 = p_evap2
@@ -315,51 +315,7 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
             )
 
         # Parametrization
-        self.comps['lp_comp1'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-        self.comps['lp_comp2'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-        self.comps['hs_pump'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-        self.comps['cons_pump'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-
-        self.conns['B1'].set_attr(offdesign=['v'])
-        self.conns['B2'].set_attr(design=['T'])
-
-        kA_char1_default = ldc(
-            'heat exchanger', 'kA_char1', 'DEFAULT', CharLine
-        )
-        kA_char1_cond = ldc(
-            'heat exchanger', 'kA_char1', 'CONDENSING FLUID', CharLine
-        )
-        kA_char2_evap = ldc(
-            'heat exchanger', 'kA_char2', 'EVAPORATING FLUID', CharLine
-        )
-        kA_char2_default = ldc(
-            'heat exchanger', 'kA_char2', 'DEFAULT', CharLine
-        )
-
-        self.comps['trans'].set_attr(
-            kA_char1=kA_char1_cond, kA_char2=kA_char2_default,
-            design=['pr2', 'ttd_u'], offdesign=['zeta2', 'kA_char']
-        )
-
-        self.comps['cons'].set_attr(design=['pr'], offdesign=['zeta'])
-
-        self.comps['evap'].set_attr(
-            kA_char1=kA_char1_default, kA_char2=kA_char2_evap,
-            design=['pr1', 'ttd_l'], offdesign=['zeta1', 'kA_char']
-        )
-
-        self.comps['inter'].set_attr(
-            kA_char1=kA_char1_cond, kA_char2=kA_char2_evap,
-            design=['pr1', 'ttd_u'], offdesign=['zeta1', 'kA_char']
-        )
+        self.offdesign_parametrization()
 
         # Simulation
         print('Using improved offdesign simulation method.')
@@ -389,10 +345,16 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
             for T_cons_ff in self.T_cons_ff_stablerange:
                 self.conns['C3'].set_attr(T=T_cons_ff)
 
-                self.T_mid = ((T_hs_ff - deltaT_hs) + T_cons_ff) / 2
+                self.T_mid = ((T_hs_ff - deltaT_hs) + T_cons_ff) / 4
                 self.conns['A3'].set_attr(
                     T=self.T_mid - self.params['inter']['ttd_u'] / 2
                 )
+                _, _, p_mid1, _, _, p_mid2 = self.get_pressure_levels(
+                    T_evap=T_hs_ff, T_mid=self.T_mid
+                )
+                self.conns['A5'].set_attr(p=p_mid2)
+                self.conns['D5'].set_attr(p=p_mid1)
+
                 for pl in self.pl_stablerange[::-1]:
                     print(
                         f'### Temp. HS = {T_hs_ff} °C, Temp. Cons = '
@@ -502,12 +464,12 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
 
         self.df_to_array(results_offdesign)
 
-    def get_pressure_levels(self, T_mid):
+    def get_pressure_levels(self, T_evap, T_mid):
         """Calculate evaporation, condensation amd intermediate pressure in bar
         for both cycles and heat sink outlet enthalpy (hot side)."""
         p_evap1 = PSI(
             'P', 'Q', 1,
-            'T', self.params['B2']['T'] - self.params['evap']['ttd_l'] + 273.15,
+            'T', T_evap - self.params['evap']['ttd_l'] + 273.15,
             self.wf1
         ) * 1e-5
         p_cond1 = PSI(

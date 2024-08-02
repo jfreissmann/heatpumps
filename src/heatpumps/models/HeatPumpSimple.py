@@ -189,61 +189,25 @@ class HeatPumpSimple(HeatPumpBase):
                 )
 
         # Parametrization
-        self.comps['comp'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-            )
-        self.comps['hs_pump'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-            )
-        self.comps['cons_pump'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-            )
-
-        self.conns['B1'].set_attr(offdesign=['v'])
-        self.conns['B2'].set_attr(design=['T'])
-
-        kA_char1_default = ldc(
-            'heat exchanger', 'kA_char1', 'DEFAULT', CharLine
-            )
-        kA_char1_cond = ldc(
-            'heat exchanger', 'kA_char1', 'CONDENSING FLUID', CharLine
-            )
-        kA_char2_evap = ldc(
-            'heat exchanger', 'kA_char2', 'EVAPORATING FLUID', CharLine
-            )
-        kA_char2_default = ldc(
-            'heat exchanger', 'kA_char2', 'DEFAULT', CharLine
-            )
-
-        self.comps['cond'].set_attr(
-            kA_char1=kA_char1_cond, kA_char2=kA_char2_default,
-            design=['pr2', 'ttd_u'], offdesign=['zeta2', 'kA_char']
-            )
-
-        self.comps['cons'].set_attr(design=['pr'], offdesign=['zeta'])
-
-        self.comps['evap'].set_attr(
-            kA_char1=kA_char1_default, kA_char2=kA_char2_evap,
-            design=['pr1', 'ttd_l'], offdesign=['zeta1', 'kA_char']
-            )
+        self.offdesign_parametrization()
 
         # Simulation
         print('Using improved offdesign simulation method.')
         self.create_ranges()
 
         deltaT_hs = (
-            self.params['B1']['T']
-            - self.params['B2']['T']
-            )
+                self.params['B1']['T']
+                - self.params['B2']['T']
+        )
 
         multiindex = pd.MultiIndex.from_product(
             [self.T_hs_ff_range, self.T_cons_ff_range, self.pl_range],
             names=['T_hs_ff', 'T_cons_ff', 'pl']
-            )
+        )
 
         results_offdesign = pd.DataFrame(
             index=multiindex, columns=['Q', 'P', 'COP', 'epsilon', 'residual']
-            )
+        )
 
         for T_hs_ff in self.T_hs_ff_stablerange:
             self.conns['B1'].set_attr(T=T_hs_ff)

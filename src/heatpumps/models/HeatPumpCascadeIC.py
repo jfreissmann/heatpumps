@@ -316,51 +316,7 @@ class HeatPumpCascadeIC(HeatPumpBase):
             )
 
         # Parametrization
-        self.comps['lp_comp1'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-        self.comps['lp_comp2'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-        self.comps['hs_pump'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-        self.comps['cons_pump'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-
-        self.conns['B1'].set_attr(offdesign=['v'])
-        self.conns['B2'].set_attr(design=['T'])
-
-        kA_char1_default = ldc(
-            'heat exchanger', 'kA_char1', 'DEFAULT', CharLine
-        )
-        kA_char1_cond = ldc(
-            'heat exchanger', 'kA_char1', 'CONDENSING FLUID', CharLine
-        )
-        kA_char2_evap = ldc(
-            'heat exchanger', 'kA_char2', 'EVAPORATING FLUID', CharLine
-        )
-        kA_char2_default = ldc(
-            'heat exchanger', 'kA_char2', 'DEFAULT', CharLine
-        )
-
-        self.comps['cond'].set_attr(
-            kA_char1=kA_char1_cond, kA_char2=kA_char2_default,
-            design=['pr2', 'ttd_u'], offdesign=['zeta2', 'kA_char']
-        )
-
-        self.comps['cons'].set_attr(design=['pr'], offdesign=['zeta'])
-
-        self.comps['evap'].set_attr(
-            kA_char1=kA_char1_default, kA_char2=kA_char2_evap,
-            design=['pr1', 'ttd_l'], offdesign=['zeta1', 'kA_char']
-        )
-
-        self.comps['inter'].set_attr(
-            kA_char1=kA_char1_cond, kA_char2=kA_char2_evap,
-            design=['pr1', 'ttd_u'], offdesign=['zeta1', 'kA_char']
-        )
+        self.offdesign_parametrization()
 
         # Simulation
         print('Using improved offdesign simulation method.')
@@ -394,6 +350,12 @@ class HeatPumpCascadeIC(HeatPumpBase):
                 self.conns['A3'].set_attr(
                     T=self.T_mid - self.params['inter']['ttd_u'] / 2
                 )
+                _, _, p_mid1, _, _, p_mid2 = self.get_pressure_levels(
+                    T_evap=T_hs_ff, T_mid=self.T_mid, T_cond=T_cons_ff
+                )
+                self.conns['A5'].set_attr(p=p_mid2)
+                self.conns['D5'].set_attr(p=p_mid1)
+
                 for pl in self.pl_stablerange[::-1]:
                     print(
                         f'### Temp. HS = {T_hs_ff} °C, Temp. Cons = '
