@@ -301,61 +301,7 @@ class HeatPumpCascade2IHXTrans(HeatPumpBase):
             )
 
         # Parametrization
-        self.comps['comp1'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-        self.comps['comp2'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-        self.comps['hs_pump'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-        self.comps['cons_pump'].set_attr(
-            design=['eta_s'], offdesign=['eta_s_char']
-        )
-
-        self.conns['B1'].set_attr(offdesign=['v'])
-        self.conns['B2'].set_attr(design=['T'])
-
-        kA_char1_default = ldc(
-            'heat exchanger', 'kA_char1', 'DEFAULT', CharLine
-        )
-        kA_char1_cond = ldc(
-            'heat exchanger', 'kA_char1', 'CONDENSING FLUID', CharLine
-        )
-        kA_char2_evap = ldc(
-            'heat exchanger', 'kA_char2', 'EVAPORATING FLUID', CharLine
-        )
-        kA_char2_default = ldc(
-            'heat exchanger', 'kA_char2', 'DEFAULT', CharLine
-        )
-
-        self.comps['trans'].set_attr(
-            kA_char1=kA_char1_cond, kA_char2=kA_char2_default,
-            design=['pr2', 'ttd_u'], offdesign=['zeta2', 'kA_char']
-        )
-
-        self.comps['cons'].set_attr(design=['pr'], offdesign=['zeta'])
-
-        self.comps['evap'].set_attr(
-            kA_char1=kA_char1_default, kA_char2=kA_char2_evap,
-            design=['pr1', 'ttd_l'], offdesign=['zeta1', 'kA_char']
-        )
-
-        self.comps['inter'].set_attr(
-            kA_char1=kA_char1_cond, kA_char2=kA_char2_evap,
-            design=['pr1', 'ttd_u'], offdesign=['zeta1', 'kA_char']
-        )
-
-        self.comps['ihx1'].set_attr(
-            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
-            design=['pr1', 'pr2'], offdesign=['zeta1', 'zeta2']
-        )
-
-        self.comps['ihx2'].set_attr(
-            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
-            design=['pr1', 'pr2'], offdesign=['zeta1', 'zeta2']
-        )
+        self.offdesign_parametrization()
 
         # Simulation
         print('Using improved offdesign simulation method.')
@@ -385,10 +331,11 @@ class HeatPumpCascade2IHXTrans(HeatPumpBase):
             for T_cons_ff in self.T_cons_ff_stablerange:
                 self.conns['C3'].set_attr(T=T_cons_ff)
 
-                self.T_mid = ((T_hs_ff - deltaT_hs) + T_cons_ff) / 2
+                self.T_mid = ((T_hs_ff - deltaT_hs) + T_cons_ff) / 4
                 self.conns['A4'].set_attr(
                     T=self.T_mid - self.params['inter']['ttd_u'] / 2
                 )
+
                 for pl in self.pl_stablerange[::-1]:
                     print(
                         f'### Temp. HS = {T_hs_ff} °C, Temp. Cons = '
