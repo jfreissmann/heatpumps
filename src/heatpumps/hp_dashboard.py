@@ -1165,7 +1165,7 @@ if mode == 'Teillast':
                                 )
                         pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
 
-                    st.markdown("---")
+                with st.expander('Exergieanalyse Teillast', expanded=True):
 
                     col_left_1, col_right_1 = st.columns(2)
 
