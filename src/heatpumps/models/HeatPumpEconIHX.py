@@ -453,6 +453,13 @@ class HeatPumpEconIHX(HeatPumpBase):
 
         self.df_to_array(results_offdesign)
 
+    def intermediate_states_offdesign(self, T_hs_ff, T_cons_ff, deltaT_hs):
+        """Calculates intermediate states during part-load simulation"""
+        _, _, p_mid = self.get_pressure_levels(
+            T_evap=T_hs_ff, T_cond=T_cons_ff
+        )
+        self.conns['A11'].set_attr(p=p_mid)
+
     def get_plotting_states(self, **kwargs):
         """Generate data of states to plot in state diagram."""
         data = {}

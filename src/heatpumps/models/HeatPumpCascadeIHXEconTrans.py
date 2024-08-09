@@ -414,163 +414,17 @@ class HeatPumpCascadeIHXEconTrans(HeatPumpBase):
                 / self.buses['power input'].P.val
             )
 
-    def offdesign_simulation(self, log_simulations=False):
-        """Perform offdesign parametrization and simulation."""
-        if not self.solved_design:
-            raise RuntimeError(
-                'Heat pump has not been designed via the "design_simulation" '
-                + 'method. Therefore the offdesign simulation will fail.'
-            )
-
-        # Parametrization
-        self.offdesign_parametrization()
-
-        # Simulation
-        print('Using improved offdesign simulation method.')
-        self.create_ranges()
-
-        deltaT_hs = (
-                self.params['B1']['T']
-                - self.params['B2']['T']
+    def intermediate_states_offdesign(self, T_hs_ff, T_cons_ff, deltaT_hs):
+        """Calculates intermediate states during part-load simulation"""
+        self.T_mid = ((T_hs_ff - deltaT_hs) + T_cons_ff) / 4
+        self.conns['A6'].set_attr(
+            T=self.T_mid - self.params['inter']['ttd_u'] / 2
         )
-
-        multiindex = pd.MultiIndex.from_product(
-            [self.T_hs_ff_range, self.T_cons_ff_range, self.pl_range],
-            names=['T_hs_ff', 'T_cons_ff', 'pl']
+        _, _, p_mid1, _, _, p_mid2 = self.get_pressure_levels(
+            T_evap=T_hs_ff, T_mid=self.T_mid
         )
-
-        results_offdesign = pd.DataFrame(
-            index=multiindex, columns=['Q', 'P', 'COP', 'epsilon', 'residual']
-        )
-
-        for T_hs_ff in self.T_hs_ff_stablerange:
-            self.conns['B1'].set_attr(T=T_hs_ff)
-            if T_hs_ff <= 7:
-                self.conns['B2'].set_attr(T=2)
-            else:
-                self.conns['B2'].set_attr(T=T_hs_ff - deltaT_hs)
-
-            for T_cons_ff in self.T_cons_ff_stablerange:
-                self.conns['C3'].set_attr(T=T_cons_ff)
-
-                self.T_mid = ((T_hs_ff - deltaT_hs) + T_cons_ff) / 4
-                self.conns['A6'].set_attr(
-                    T=self.T_mid - self.params['inter']['ttd_u'] / 2
-                )
-                _, _, p_mid1, _, _, p_mid2 = self.get_pressure_levels(
-                    T_evap=T_hs_ff, T_mid=self.T_mid
-                )
-                self.conns['A11'].set_attr(p=p_mid2)
-                self.conns['D11'].set_attr(p=p_mid1)
-
-                for pl in self.pl_stablerange[::-1]:
-                    print(
-                        f'### Temp. HS = {T_hs_ff} °C, Temp. Cons = '
-                        + f'{T_cons_ff} °C, Partload = {pl * 100} % ###'
-                    )
-                    self.init_path = None
-                    no_init_path = (
-                            (T_cons_ff != self.T_cons_ff_range[0])
-                            and (pl == self.pl_range[-1])
-                    )
-                    if no_init_path:
-                        self.init_path = os.path.abspath(os.path.join(
-                            os.path.dirname(__file__), 'stable',
-                            f'{self.subdirname}_init'
-                        ))
-
-                    self.comps['cons'].set_attr(Q=None)
-                    self.conns['A0'].set_attr(m=pl * self.m_design_2)
-
-                    try:
-                        self.nw.solve(
-                            'offdesign', design_path=self.design_path
-                        )
-                        self.perform_exergy_analysis()
-                        failed = False
-                    except ValueError:
-                        failed = True
-
-                    # Logging simulation
-                    if log_simulations:
-                        logdirpath = os.path.abspath(os.path.join(
-                            os.path.dirname(__file__), 'output', 'logging'
-                        ))
-                        if not os.path.exists(logdirpath):
-                            os.mkdir(logdirpath)
-                        logpath = os.path.abspath(os.path.join(
-                            logdirpath, f'{self.subdirname}_offdesign_log.csv'
-                        ))
-                        timestamp = datetime.fromtimestamp(time()).strftime(
-                            '%H:%M:%S'
-                        )
-                        log_entry = (
-                                f'{timestamp};{(self.nw.residual[-1] < 1e-3)};'
-                                + f'{T_hs_ff:.2f};{T_cons_ff:.2f};{pl:.1f};'
-                                + f'{self.nw.residual[-1]:.2e}\n'
-                        )
-                        if not os.path.exists(logpath):
-                            with open(logpath, 'w', encoding='utf-8') as file:
-                                file.write(
-                                    'Time;converged;Temp HS;Temp Cons;Partload;'
-                                    + 'Residual\n'
-                                )
-                                file.write(log_entry)
-                        else:
-                            with open(logpath, 'a', encoding='utf-8') as file:
-                                file.write(log_entry)
-
-                    if pl == self.pl_range[-1] and self.nw.residual[-1] < 1e-3:
-                        self.nw.save(os.path.abspath(os.path.join(
-                            os.path.dirname(__file__), 'stable',
-                            f'{self.subdirname}_init'
-                        )))
-
-                    inranges = (
-                            (T_hs_ff in self.T_hs_ff_range)
-                            & (T_cons_ff in self.T_cons_ff_range)
-                            & (pl in self.pl_range)
-                    )
-                    idx = (T_hs_ff, T_cons_ff, pl)
-                    if inranges:
-                        empty_or_worse = (
-                                pd.isnull(results_offdesign.loc[idx, 'Q'])
-                                or (self.nw.residual[-1]
-                                    < results_offdesign.loc[idx, 'residual']
-                                    )
-                        )
-                        if empty_or_worse:
-                            if failed:
-                                results_offdesign.loc[idx, 'Q'] = np.nan
-                                results_offdesign.loc[idx, 'P'] = np.nan
-                                results_offdesign.loc[idx, 'epsilon'] = np.nan
-                            else:
-                                results_offdesign.loc[idx, 'Q'] = abs(
-                                    self.buses['heat output'].P.val * 1e-6
-                                )
-                                results_offdesign.loc[idx, 'P'] = (
-                                        self.buses['power input'].P.val * 1e-6
-                                )
-                                results_offdesign.loc[idx, 'epsilon'] = round(
-                                    self.ean.network_data['epsilon'], 3
-                                )
-
-                            results_offdesign.loc[idx, 'COP'] = (
-                                    results_offdesign.loc[idx, 'Q']
-                                    / results_offdesign.loc[idx, 'P']
-                            )
-                            results_offdesign.loc[idx, 'residual'] = (
-                                self.nw.residual[-1]
-                            )
-
-        if self.params['offdesign']['save_results']:
-            resultpath = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'output',
-                f'{self.subdirname}_partload.csv'
-            ))
-            results_offdesign.to_csv(resultpath, sep=';')
-
-        self.df_to_array(results_offdesign)
+        self.conns['A11'].set_attr(p=p_mid2)
+        self.conns['D11'].set_attr(p=p_mid1)
 
     def get_pressure_levels(self, T_evap, T_mid):
         """Calculate evaporation, condensation amd intermediate pressure in bar
