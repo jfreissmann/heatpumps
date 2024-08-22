@@ -359,9 +359,9 @@ with st.sidebar:
                 )
 
             costcalcparams['residence_time'] = st.slider(
-                'Aufenthaltsdauer Flashtank',
+                'Verweildauer Flashtank',
                 min_value=0, max_value=60, step=1,
-                value=10, format='%d min', key='residence_time'
+                value=10, format='%d s', key='residence_time'
                 )
 
         ss.hp_params = params
