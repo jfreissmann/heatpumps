@@ -198,6 +198,23 @@ with st.sidebar:
                 df_refrig = info_df(refrig_label, refrigerants)
 
             elif hp_model['nr_refrigs'] == 2:
+                refrig2_index = None
+                for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
+                    if rlabel == params['setup']['refrig2']:
+                        refrig2_index = ridx
+                        break
+                    elif rdata['CP'] == params['setup']['refrig2']:
+                        refrig2_index = ridx
+                        break
+
+                refrig2_label = st.selectbox(
+                    'Kältemittel (Hochtemperaturkreis)', refrigerants.keys(),
+                    index=refrig2_index, key='refrigerant2'
+                    )
+                params['setup']['refrig2'] = refrigerants[refrig2_label]['CP']
+                params['fluids']['wf2'] = refrigerants[refrig2_label]['CP']
+                df_refrig2 = info_df(refrig2_label, refrigerants)
+
                 refrig1_index = None
                 for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
                     if rlabel == params['setup']['refrig1']:
@@ -215,23 +232,6 @@ with st.sidebar:
                 params['fluids']['wf1'] = refrigerants[refrig1_label]['CP']
                 df_refrig1 = info_df(refrig1_label, refrigerants)
 
-                refrig2_index = None
-                for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
-                    if rlabel == params['setup']['refrig2']:
-                        refrig2_index = ridx
-                        break
-                    elif rdata['CP'] == params['setup']['refrig2']:
-                        refrig2_index = ridx
-                        break
-
-
-                refrig2_label = st.selectbox(
-                    'Kältemittel (Hochtemperaturkreis)', refrigerants.keys(),
-                    index=refrig2_index, key='refrigerant2'
-                    )
-                params['setup']['refrig2'] = refrigerants[refrig2_label]['CP']
-                params['fluids']['wf2'] = refrigerants[refrig2_label]['CP']
-                df_refrig2 = info_df(refrig2_label, refrigerants)
 
         if hp_model['nr_refrigs'] == 1:
             T_crit = int(np.floor(refrigerants[refrig_label]['T_crit']))
