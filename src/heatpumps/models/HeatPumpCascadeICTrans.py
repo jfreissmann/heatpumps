@@ -70,17 +70,17 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
         self.comps['cc2'] = CycleCloser('Main Cycle Closer 2')
         self.comps['valve2'] = Valve('Valve 2')
         self.comps['inter'] = Condenser('Intermediate Heat Exchanger')
-        self.comps['lp_comp2'] = Compressor('Low Pressure Compressor 2')
+        self.comps['HT_comp1'] = Compressor('High Temperature Compressor 1')
         self.comps['ic2'] = SimpleHeatExchanger('Intercooler 2')
-        self.comps['hp_comp2'] = Compressor('High Pressure Compressor 2')
+        self.comps['HT_comp2'] = Compressor('High Temperature Compressor 2')
 
         # Lower cycle
         self.comps['cc1'] = CycleCloser('Main Cycle Closer 1')
         self.comps['valve1'] = Valve('Valve 1')
         self.comps['evap'] = HeatExchanger('Evaporator')
-        self.comps['lp_comp1'] = Compressor('Low Pressure Compressor 1')
+        self.comps['LT_comp1'] = Compressor('Low Temperature Compressor 1')
         self.comps['ic1'] = SimpleHeatExchanger('Intercooler 1')
-        self.comps['hp_comp1'] = Compressor('High Pressure Compressor 1')
+        self.comps['LT_comp2'] = Compressor('Low Temperature Compressor 2')
 
     def generate_connections(self):
         """Initialize and add connections and buses to network."""
@@ -95,16 +95,16 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
             self.comps['valve2'], 'out1', self.comps['inter'], 'in2', 'A2'
         )
         self.conns['A3'] = Connection(
-            self.comps['inter'], 'out2', self.comps['lp_comp2'], 'in1', 'A3'
+            self.comps['inter'], 'out2', self.comps['HT_comp1'], 'in1', 'A3'
         )
         self.conns['A4'] = Connection(
-            self.comps['lp_comp2'], 'out1', self.comps['ic2'], 'in1', 'A4'
+            self.comps['HT_comp1'], 'out1', self.comps['ic2'], 'in1', 'A4'
         )
         self.conns['A5'] = Connection(
-            self.comps['ic2'], 'out1', self.comps['hp_comp2'], 'in1', 'A5'
+            self.comps['ic2'], 'out1', self.comps['HT_comp2'], 'in1', 'A5'
         )
         self.conns['A6'] = Connection(
-            self.comps['hp_comp2'], 'out1', self.comps['trans'], 'in1', 'A6'
+            self.comps['HT_comp2'], 'out1', self.comps['trans'], 'in1', 'A6'
         )
 
         # Lower cycle connections
@@ -118,16 +118,16 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
             self.comps['valve1'], 'out1', self.comps['evap'], 'in2', 'D2'
         )
         self.conns['D3'] = Connection(
-            self.comps['evap'], 'out2', self.comps['lp_comp1'], 'in1', 'D3'
+            self.comps['evap'], 'out2', self.comps['LT_comp1'], 'in1', 'D3'
         )
         self.conns['D4'] = Connection(
-            self.comps['lp_comp1'], 'out1', self.comps['ic1'], 'in1', 'D4'
+            self.comps['LT_comp1'], 'out1', self.comps['ic1'], 'in1', 'D4'
         )
         self.conns['D5'] = Connection(
-            self.comps['ic1'], 'out1', self.comps['hp_comp1'], 'in1', 'D5'
+            self.comps['ic1'], 'out1', self.comps['LT_comp2'], 'in1', 'D5'
         )
         self.conns['D6'] = Connection(
-            self.comps['hp_comp1'], 'out1', self.comps['inter'], 'in1', 'D6'
+            self.comps['LT_comp2'], 'out1', self.comps['inter'], 'in1', 'D6'
         )
 
         self.conns['B1'] = Connection(
@@ -170,10 +170,10 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
         mot = CharLine(x=mot_x, y=mot_y)
         self.buses['power input'] = Bus('power input')
         self.buses['power input'].add_comps(
-            {'comp': self.comps['lp_comp1'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['lp_comp2'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['hp_comp1'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['hp_comp2'], 'char': mot, 'base': 'bus'},
+            {'comp': self.comps['LT_comp1'], 'char': mot, 'base': 'bus'},
+            {'comp': self.comps['HT_comp1'], 'char': mot, 'base': 'bus'},
+            {'comp': self.comps['LT_comp2'], 'char': mot, 'base': 'bus'},
+            {'comp': self.comps['HT_comp2'], 'char': mot, 'base': 'bus'},
             {'comp': self.comps['hs_pump'], 'char': mot, 'base': 'bus'},
             {'comp': self.comps['cons_pump'], 'char': mot, 'base': 'bus'}
         )
@@ -194,10 +194,10 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
         # Components
-        self.comps['lp_comp1'].set_attr(eta_s=self.params['lp_comp1']['eta_s'])
-        self.comps['hp_comp1'].set_attr(eta_s=self.params['hp_comp1']['eta_s'])
-        self.comps['lp_comp2'].set_attr(eta_s=self.params['lp_comp2']['eta_s'])
-        self.comps['hp_comp2'].set_attr(eta_s=self.params['hp_comp2']['eta_s'])
+        self.comps['LT_comp1'].set_attr(eta_s=self.params['LT_comp1']['eta_s'])
+        self.comps['LT_comp2'].set_attr(eta_s=self.params['LT_comp2']['eta_s'])
+        self.comps['HT_comp1'].set_attr(eta_s=self.params['HT_comp1']['eta_s'])
+        self.comps['HT_comp2'].set_attr(eta_s=self.params['HT_comp2']['eta_s'])
         self.comps['hs_pump'].set_attr(eta_s=self.params['hs_pump']['eta_s'])
         self.comps['cons_pump'].set_attr(
             eta_s=self.params['cons_pump']['eta_s']
@@ -315,10 +315,10 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
             )
 
         # Parametrization
-        self.comps['lp_comp1'].set_attr(
+        self.comps['LT_comp1'].set_attr(
             design=['eta_s'], offdesign=['eta_s_char']
         )
-        self.comps['lp_comp2'].set_attr(
+        self.comps['HT_comp1'].set_attr(
             design=['eta_s'], offdesign=['eta_s_char']
         )
         self.comps['hs_pump'].set_attr(
@@ -547,16 +547,16 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
                      self.comps['evap'].get_plotting_data()[2]}
             )
             data.update(
-                {self.comps['lp_comp1'].label:
-                     self.comps['lp_comp1'].get_plotting_data()[1]}
+                {self.comps['LT_comp1'].label:
+                     self.comps['LT_comp1'].get_plotting_data()[1]}
             )
             data.update(
                 {self.comps['ic1'].label:
                      self.comps['ic1'].get_plotting_data()[1]}
             )
             data.update(
-                {self.comps['hp_comp1'].label:
-                     self.comps['hp_comp1'].get_plotting_data()[1]}
+                {self.comps['LT_comp2'].label:
+                     self.comps['LT_comp2'].get_plotting_data()[1]}
             )
         elif kwargs['cycle'] == 2:
             data.update(
@@ -572,16 +572,16 @@ class HeatPumpCascadeICTrans(HeatPumpBase):
                      self.comps['inter'].get_plotting_data()[2]}
             )
             data.update(
-                {self.comps['lp_comp2'].label:
-                     self.comps['lp_comp2'].get_plotting_data()[1]}
+                {self.comps['HT_comp1'].label:
+                     self.comps['HT_comp1'].get_plotting_data()[1]}
             )
             data.update(
                 {self.comps['ic2'].label:
                      self.comps['ic2'].get_plotting_data()[1]}
             )
             data.update(
-                {self.comps['hp_comp2'].label:
-                     self.comps['hp_comp2'].get_plotting_data()[1]}
+                {self.comps['HT_comp2'].label:
+                     self.comps['HT_comp2'].get_plotting_data()[1]}
             )
         else:
             raise ValueError(

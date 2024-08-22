@@ -73,8 +73,8 @@ class HeatPumpCascade2IHX(HeatPumpBase):
         self.comps['valve2'] = Valve('Valve 2')
         self.comps['inter'] = Condenser('Intermediate Heat Exchanger')
         self.comps['evap'] = HeatExchanger('Evaporator')
-        self.comps['comp1'] = Compressor('Compressor 1')
-        self.comps['comp2'] = Compressor('Compressor 2')
+        self.comps['LT_comp'] = Compressor('Low Temperature Compressor')
+        self.comps['HT_comp'] = Compressor('High Temperature Compressor')
         self.comps['ihx1'] = HeatExchanger('Internal Heat Exchanger 1')
         self.comps['ihx2'] = HeatExchanger('Internal Heat Exchanger 2')
 
@@ -97,10 +97,10 @@ class HeatPumpCascade2IHX(HeatPumpBase):
             self.comps['inter'], 'out2', self.comps['ihx2'], 'in2', 'A4'
             )
         self.conns['A5'] = Connection(
-            self.comps['ihx2'], 'out2', self.comps['comp2'], 'in1', 'A5'
+            self.comps['ihx2'], 'out2', self.comps['HT_comp'], 'in1', 'A5'
             )
         self.conns['A6'] = Connection(
-            self.comps['comp2'], 'out1', self.comps['cond'], 'in1', 'A6'
+            self.comps['HT_comp'], 'out1', self.comps['cond'], 'in1', 'A6'
             )
         
         self.conns['D0'] = Connection(
@@ -119,10 +119,10 @@ class HeatPumpCascade2IHX(HeatPumpBase):
             self.comps['evap'], 'out2', self.comps['ihx1'], 'in2', 'D4'
             )
         self.conns['D5'] = Connection(
-            self.comps['ihx1'], 'out2', self.comps['comp1'], 'in1', 'D5'
+            self.comps['ihx1'], 'out2', self.comps['LT_comp'], 'in1', 'D5'
             )
         self.conns['D6'] = Connection(
-            self.comps['comp1'], 'out1', self.comps['inter'], 'in1', 'D6'
+            self.comps['LT_comp'], 'out1', self.comps['inter'], 'in1', 'D6'
             )
 
         self.conns['B1'] = Connection(
@@ -165,8 +165,8 @@ class HeatPumpCascade2IHX(HeatPumpBase):
         mot = CharLine(x=mot_x, y=mot_y)
         self.buses['power input'] = Bus('power input')
         self.buses['power input'].add_comps(
-            {'comp': self.comps['comp1'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['comp2'], 'char': mot, 'base': 'bus'},
+            {'comp': self.comps['LT_comp'], 'char': mot, 'base': 'bus'},
+            {'comp': self.comps['HT_comp'], 'char': mot, 'base': 'bus'},
             {'comp': self.comps['hs_pump'], 'char': mot, 'base': 'bus'},
             {'comp': self.comps['cons_pump'], 'char': mot, 'base': 'bus'}
             )
@@ -187,8 +187,8 @@ class HeatPumpCascade2IHX(HeatPumpBase):
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
         # Components
-        self.comps['comp1'].set_attr(eta_s=self.params['comp1']['eta_s'])
-        self.comps['comp2'].set_attr(eta_s=self.params['comp2']['eta_s'])
+        self.comps['LT_comp'].set_attr(eta_s=self.params['LT_comp']['eta_s'])
+        self.comps['HT_comp'].set_attr(eta_s=self.params['HT_comp']['eta_s'])
         self.comps['hs_pump'].set_attr(eta_s=self.params['hs_pump']['eta_s'])
         self.comps['cons_pump'].set_attr(
             eta_s=self.params['cons_pump']['eta_s']
@@ -300,10 +300,10 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                 )
 
         # Parametrization
-        self.comps['comp1'].set_attr(
+        self.comps['LT_comp'].set_attr(
             design=['eta_s'], offdesign=['eta_s_char']
             )
-        self.comps['comp2'].set_attr(
+        self.comps['HT_comp'].set_attr(
             design=['eta_s'], offdesign=['eta_s_char']
             )
         self.comps['hs_pump'].set_attr(
@@ -547,8 +547,8 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                 self.comps['ihx1'].get_plotting_data()[2]}
             )
             data.update(
-                {self.comps['comp1'].label:
-                self.comps['comp1'].get_plotting_data()[1]}
+                {self.comps['LT_comp'].label:
+                self.comps['LT_comp'].get_plotting_data()[1]}
             )
         elif kwargs['cycle'] == 2:
             data.update(
@@ -572,8 +572,8 @@ class HeatPumpCascade2IHX(HeatPumpBase):
                 self.comps['ihx2'].get_plotting_data()[2]}
             )
             data.update(
-                {self.comps['comp2'].label:
-                self.comps['comp2'].get_plotting_data()[1]}
+                {self.comps['HT_comp'].label:
+                self.comps['HT_comp'].get_plotting_data()[1]}
             )
         else:
             raise ValueError(
