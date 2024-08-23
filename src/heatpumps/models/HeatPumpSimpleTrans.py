@@ -181,10 +181,6 @@ class HeatPumpSimpleTrans(HeatPumpBase):
             / self.buses['power input'].P.val
             )
 
-    def intermediate_states_offdesign(self, T_hs_ff, T_cons_ff, deltaT_hs):
-        """Calculates intermediate states during part-load simulation"""
-        pass
-
     def get_pressure_levels(self, wf=None):
         """
         Calculate evaporation pressure in bar and heat sink outlet enthalpy
