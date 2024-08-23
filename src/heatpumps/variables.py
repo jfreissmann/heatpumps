@@ -358,7 +358,7 @@ hp_models = {
         'display_name': 'Allgemein',
         'nr_ihx': 0,
         'econ_type': None,
-        'comp_var': 'series',
+        'comp_var': None,
         'nr_refrigs': 2,
         'process_type': 'subcritical'
         },
@@ -367,7 +367,7 @@ hp_models = {
         'display_name': 'Allgemein | Transkritisch',
         'nr_ihx': 0,
         'econ_type': None,
-        'comp_var': 'series',
+        'comp_var': None,
         'nr_refrigs': 2,
         'process_type': 'transcritical'
         },
@@ -376,7 +376,7 @@ hp_models = {
         'display_name': 'Doppelte interne WÜT',
         'nr_ihx': 2,
         'econ_type': None,
-        'comp_var': 'series',
+        'comp_var': None,
         'nr_refrigs': 2,
         'process_type': 'subcritical'
         },
@@ -385,7 +385,7 @@ hp_models = {
         'display_name': 'Doppelte interne WÜT | Transkritisch',
         'nr_ihx': 2,
         'econ_type': None,
-        'comp_var': 'series',
+        'comp_var': None,
         'nr_refrigs': 2,
         'process_type': 'transcritical'
         },

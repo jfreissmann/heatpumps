@@ -198,6 +198,23 @@ with st.sidebar:
                 df_refrig = info_df(refrig_label, refrigerants)
 
             elif hp_model['nr_refrigs'] == 2:
+                refrig2_index = None
+                for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
+                    if rlabel == params['setup']['refrig2']:
+                        refrig2_index = ridx
+                        break
+                    elif rdata['CP'] == params['setup']['refrig2']:
+                        refrig2_index = ridx
+                        break
+
+                refrig2_label = st.selectbox(
+                    'Kältemittel (Hochtemperaturkreis)', refrigerants.keys(),
+                    index=refrig2_index, key='refrigerant2'
+                    )
+                params['setup']['refrig2'] = refrigerants[refrig2_label]['CP']
+                params['fluids']['wf2'] = refrigerants[refrig2_label]['CP']
+                df_refrig2 = info_df(refrig2_label, refrigerants)
+
                 refrig1_index = None
                 for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
                     if rlabel == params['setup']['refrig1']:
@@ -215,23 +232,6 @@ with st.sidebar:
                 params['fluids']['wf1'] = refrigerants[refrig1_label]['CP']
                 df_refrig1 = info_df(refrig1_label, refrigerants)
 
-                refrig2_index = None
-                for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
-                    if rlabel == params['setup']['refrig2']:
-                        refrig2_index = ridx
-                        break
-                    elif rdata['CP'] == params['setup']['refrig2']:
-                        refrig2_index = ridx
-                        break
-
-
-                refrig2_label = st.selectbox(
-                    'Kältemittel (Hochtemperaturkreis)', refrigerants.keys(),
-                    index=refrig2_index, key='refrigerant2'
-                    )
-                params['setup']['refrig2'] = refrigerants[refrig2_label]['CP']
-                params['fluids']['wf2'] = refrigerants[refrig2_label]['CP']
-                df_refrig2 = info_df(refrig2_label, refrigerants)
 
         if hp_model['nr_refrigs'] == 1:
             T_crit = int(np.floor(refrigerants[refrig_label]['T_crit']))
@@ -321,6 +321,48 @@ with st.sidebar:
                 key='p_consumer_ff'
                 )
 
+        with st.expander('Verdichter'):
+            if hp_model['comp_var'] is None and hp_model['nr_refrigs'] == 1:
+                params['comp']['eta_s'] = st.slider(
+                    'Wirkungsgrad $\eta_s$', min_value=0, max_value=100, step=1,
+                    value=int(params['comp']['eta_s']*100), format='%d%%'
+                    ) / 100
+            elif hp_model['comp_var'] is not None and hp_model['nr_refrigs'] == 1:
+                params['comp1']['eta_s'] = st.slider(
+                    'Wirkungsgrad $\eta_{s,1}$', min_value=0, max_value=100, step=1,
+                    value=int(params['comp1']['eta_s']*100), format='%d%%'
+                    ) / 100
+                params['comp2']['eta_s'] = st.slider(
+                    'Wirkungsgrad $\eta_{s,2}$', min_value=0, max_value=100, step=1,
+                    value=int(params['comp2']['eta_s']*100), format='%d%%'
+                    ) / 100
+            elif hp_model['comp_var'] is None and hp_model['nr_refrigs'] == 2:
+                params['HT_comp']['eta_s'] = st.slider(
+                    'Wirkungsgrad $\eta_{s,HTK}$', min_value=0, max_value=100, step=1,
+                    value=int(params['HT_comp']['eta_s']*100), format='%d%%'
+                    ) / 100
+                params['LT_comp']['eta_s'] = st.slider(
+                    'Wirkungsgrad $\eta_{s,NTK}$', min_value=0, max_value=100, step=1,
+                    value=int(params['LT_comp']['eta_s']*100), format='%d%%'
+                    ) / 100
+            elif hp_model['comp_var'] is not None and hp_model['nr_refrigs'] == 2:
+                params['HT_comp1']['eta_s'] = st.slider(
+                    'Wirkungsgrad $\eta_{s,HTK,1}$', min_value=0, max_value=100, step=1,
+                    value=int(params['HT_comp1']['eta_s']*100), format='%d%%'
+                    ) / 100
+                params['HT_comp2']['eta_s'] = st.slider(
+                    'Wirkungsgrad $\eta_{s,HTK,2}$', min_value=0, max_value=100, step=1,
+                    value=int(params['HT_comp2']['eta_s']*100), format='%d%%'
+                    ) / 100
+                params['LT_comp1']['eta_s'] = st.slider(
+                    'Wirkungsgrad $\eta_{s,NTK,1}$', min_value=0, max_value=100, step=1,
+                    value=int(params['LT_comp1']['eta_s']*100), format='%d%%'
+                    ) / 100
+                params['LT_comp2']['eta_s'] = st.slider(
+                    'Wirkungsgrad $\eta_{s,NTK,2}$', min_value=0, max_value=100, step=1,
+                    value=int(params['LT_comp2']['eta_s']*100), format='%d%%'
+                    ) / 100
+
         with st.expander('Umgebungsbedingungen (Exergie)'):
             params['ambient']['T'] = st.slider(
                 'Temperatur', min_value=1, max_value=45, step=1,
@@ -359,9 +401,9 @@ with st.sidebar:
                 )
 
             costcalcparams['residence_time'] = st.slider(
-                'Aufenthaltsdauer Flashtank',
+                'Verweildauer Flashtank',
                 min_value=0, max_value=60, step=1,
-                value=10, format='%d min', key='residence_time'
+                value=10, format='%d s', key='residence_time'
                 )
 
         ss.hp_params = params
