@@ -189,7 +189,7 @@ class HeatPumpBase:
             $\frac{W}{m^2\cdotK}$
 
         residence_time : int or float
-            Time of residence in minutes of the refrigerant in flash tanks.
+            Time of residence in seconds of the refrigerant in flash tanks.
         """
         cepcipath = os.path.abspath(os.path.join(
             os.path.dirname(__file__), 'input', 'CEPCI.json'

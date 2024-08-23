@@ -50,10 +50,10 @@
         "pr": 0.98,
         "Q": -10e6
     },
-    "comp1": {
+    "LT_comp": {
         "eta_s": 0.75
     },
-    "comp2": {
+    "HT_comp": {
         "eta_s": 0.75
     },
     "hs_pump": {
