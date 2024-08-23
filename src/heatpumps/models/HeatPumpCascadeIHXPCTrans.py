@@ -403,8 +403,7 @@ class HeatPumpCascadeIHXPCTrans(HeatPumpBase):
 
         self._solve_model(**kwargs)
 
-        self.m_design_2 = self.conns['A0'].m.val
-        self.m_design_1 = self.conns['D0'].m.val
+        self.m_design = self.conns['A0'].m.val
 
         self.cop = (
                 abs(self.buses['heat output'].P.val)

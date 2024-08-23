@@ -1121,12 +1121,7 @@ class HeatPumpBase:
                         ))
 
                     self.comps['cons'].set_attr(Q=None)
-                    if 'wf' in dir(self):
-                        self.conns['A0'].set_attr(m=pl * self.m_design)
-                    elif 'wf1' and 'wf2' in dir(self):
-                        self.conns['A0'].set_attr(m=pl * self.m_design_2)
-                    else:
-                        ValueError('Working fluid not specified for off-design simulation')
+                    self.conns['A0'].set_attr(m=pl * self.m_design)
 
                     try:
                         self.nw.solve(
