@@ -137,11 +137,20 @@ with st.sidebar:
             models = []
             for model, mdata in var.hp_models.items():
                 if mdata['base_topology'] == base_topology:
-                    models.append(mdata['display_name'])
+                    if mdata['process_type'] != 'transcritical':
+                        models.append(mdata['display_name'])
 
             model_name = st.selectbox(
                 'Wärmepumpenmodell', models, index=0, key='model'
             )
+
+            process_type = st.radio(
+                'Prozessart', options=('subkritisch', 'transkritisch'),
+                horizontal=True
+            )
+
+            if process_type == 'transkritisch':
+                model_name = f'{model_name} | Transkritisch'
 
             for model, mdata in var.hp_models.items():
                 correct_base = mdata['base_topology'] == base_topology
