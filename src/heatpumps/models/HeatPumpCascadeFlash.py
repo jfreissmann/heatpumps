@@ -285,15 +285,24 @@ class HeatPumpCascadeFlash(HeatPumpBase):
 
         self._solve_model(**kwargs)
 
-        self.m_design_2 = self.conns['A0'].m.val
-        self.m_design_1 = self.conns['D0'].m.val
+        self.m_design = self.conns['A0'].m.val
 
         self.cop = (
                 abs(self.buses['heat output'].P.val)
                 / self.buses['power input'].P.val
             )
 
-    # TODO - offdesing function
+    def intermediate_states_offdesign(self, T_hs_ff, T_cons_ff, deltaT_hs):
+        """Calculates intermediate states during part-load simulation"""
+        self.T_mid = ((T_hs_ff - deltaT_hs) + T_cons_ff) / 2
+        self.conns['A5'].set_attr(
+            T=self.T_mid - self.params['inter']['ttd_u'] / 2
+        )
+        _, _, p_mid1, _, _, p_mid2 = self.get_pressure_levels(
+            T_evap=T_hs_ff, T_mid=self.T_mid, T_cond=T_cons_ff
+        )
+        self.conns['A7'].set_attr(p=p_mid2)
+        self.conns['D7'].set_attr(p=p_mid1)
 
     def get_pressure_levels(self, T_evap, T_mid, T_cond):
         """Calculate evaporation, condensation and intermediate pressure in bar for both cycles."""

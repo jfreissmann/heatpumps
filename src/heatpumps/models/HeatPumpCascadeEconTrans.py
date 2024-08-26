@@ -297,7 +297,7 @@ class HeatPumpCascadeEconTrans(HeatPumpBase):
 
         # Starting values
         p_evap1, p_cond1, p_mid1, p_evap2, h_trans_out, p_mid2 = self.get_pressure_levels(
-            T_mid=self.T_mid
+            T_evap=self.params['B2']['T'], T_mid=self.T_mid
         )
         self.p_evap1 = p_evap1
         self.p_evap2 = p_evap2
@@ -359,23 +359,31 @@ class HeatPumpCascadeEconTrans(HeatPumpBase):
 
         self._solve_model(**kwargs)
 
-        self.m_design_2 = self.conns['A0'].m.val
-        self.m_design_1 = self.conns['D0'].m.val
+        self.m_design = self.conns['A0'].m.val
 
         self.cop = (
                 abs(self.buses['heat output'].P.val)
                 / self.buses['power input'].P.val
             )
 
-    # TODO - offdesing function
+    def intermediate_states_offdesign(self, T_hs_ff, T_cons_ff, deltaT_hs):
+        """Calculates intermediate states during part-load simulation"""
+        self.T_mid = ((T_hs_ff - deltaT_hs) + T_cons_ff) / 4
+        self.conns['A5'].set_attr(
+            T=self.T_mid - self.params['inter']['ttd_u'] / 2
+        )
+        _, _, p_mid1, _, _, p_mid2 = self.get_pressure_levels(
+            T_evap=T_hs_ff, T_mid=self.T_mid
+        )
+        self.conns['A9'].set_attr(p=p_mid2)
+        self.conns['D9'].set_attr(p=p_mid1)
 
-
-    def get_pressure_levels(self, T_mid):
+    def get_pressure_levels(self, T_evap, T_mid):
         """Calculate evaporation, condensation amd intermediate pressure in bar
         for both cycles and heat sink outlet enthalpy (hot side)."""
         p_evap1 = PSI(
             'P', 'Q', 1,
-            'T', self.params['B2']['T']-self.params['evap']['ttd_l'] + 273.15,
+            'T', T_evap-self.params['evap']['ttd_l'] + 273.15,
             self.wf1
             ) * 1e-5
         p_cond1 = PSI(
