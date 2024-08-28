@@ -49,7 +49,7 @@ class HeatPumpIHXPCIHX(HeatPumpBase):
         self.comps['ihx2'] = HeatExchanger('Internal Heat Exchanger 2')
         self.comps['comp1'] = Compressor('Compressor 1')
         self.comps['comp2'] = Compressor('Compressor 2')
-        self.comps['merge'] = Merge('Compressor Merge')
+        self.comps['merge'] = Merge('Economizer Injection')
 
         if self.econ_type.lower() == 'closed':
             self.comps['split'] = Splitter('Condensate Splitter')
