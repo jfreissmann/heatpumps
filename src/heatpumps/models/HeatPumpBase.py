@@ -1216,3 +1216,20 @@ class HeatPumpBase:
     def intermediate_states_offdesign(self, T_hs_ff, T_cons_ff, deltaT_hs):
         """Calculates intermediate states during part-load simulation"""
         pass
+
+    def get_compressor_results(self):
+        """Return key results for each compressor used in the heat pump."""
+        results = {}
+        for c in self.comps.values():
+            if 'Compressor' in c.label:
+                comp = c.label
+                results[comp] = {}
+
+                results[comp]['V_dot'] = c.inl[0].vol.val_SI * 3600
+                results[comp]['p_in'] = c.inl[0].p.val
+                results[comp]['p_out'] = c.outl[0].p.val
+                results[comp]['PI'] = c.outl[0].p.val / c.inl[0].p.val
+                results[comp]['T_in'] = c.inl[0].T.val
+                results[comp]['T_out'] = c.outl[0].T.val
+
+        return results
