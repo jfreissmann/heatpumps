@@ -473,7 +473,8 @@ class HeatPumpBase:
 
         return fig
 
-    def generate_waterfall_diagram(self, figsize=(16, 10)):
+    def generate_waterfall_diagram(self, figsize=(16, 10),
+                                   return_fig_ax=False, show_epsilon=True):
         """Generates waterfall diagram of exergy analysis"""
         comps = ['Fuel Exergy']
         E_F = self.ean.network_data.E_F
@@ -509,13 +510,14 @@ class HeatPumpBase:
             )
 
         ax.legend()
-        ax.annotate(
-            f'$\epsilon_{{tot}} = ${self.ean.network_data.epsilon:.3f}',
-            (0.96, 0.06),
-            xycoords='axes fraction',
-            ha='right', va='center', color='k',
-            bbox=dict(boxstyle='round,pad=0.3', fc='white')
-        )
+        if show_epsilon:
+            ax.annotate(
+                f'$\epsilon_{{tot}} = ${self.ean.network_data.epsilon:.3f}',
+                (0.96, 0.06),
+                xycoords='axes fraction',
+                ha='right', va='center', color='k',
+                bbox=dict(boxstyle='round,pad=0.3', fc='white')
+            )
 
         ax.set_xlabel('Exergy in kW')
         ax.set_yticks(np.arange(len(comps)))
@@ -527,6 +529,9 @@ class HeatPumpBase:
         ax.invert_yaxis()
         ax.grid(axis='x')
         ax.set_axisbelow(True)
+
+        if return_fig_ax:
+            return fig, ax
 
     def calc_partload_char(self, **kwargs):
         """
