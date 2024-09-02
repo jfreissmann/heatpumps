@@ -473,7 +473,7 @@ class HeatPumpBase:
 
         return fig
 
-    def generate_waterfall_diagram(self, figsize=(16, 10),
+    def generate_waterfall_diagram(self, figsize=(16, 10), legend=True,
                                    return_fig_ax=False, show_epsilon=True):
         """Generates waterfall diagram of exergy analysis"""
         comps = ['Fuel Exergy']
@@ -509,7 +509,9 @@ class HeatPumpBase:
             align='center', left=E_P, label='E_D', color='#EC6707'
             )
 
-        ax.legend()
+        if legend:
+            ax.legend()
+
         if show_epsilon:
             ax.annotate(
                 f'$\epsilon_{{tot}} = ${self.ean.network_data.epsilon:.3f}',
