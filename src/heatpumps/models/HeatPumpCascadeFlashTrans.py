@@ -234,7 +234,7 @@ class HeatPumpCascadeFlashTrans(HeatPumpBase):
             )
 
         # Connections
-        self.T_mid = (self.params['B2']['T'] + self.params['C3']['T']) / 4
+        self.T_mid = (self.params['B2']['T'] + self.params['C1']['T']) / 2
 
         # Starting values
         p_evap1, p_cond1, p_mid1, p_evap2, h_trans_out, p_mid2 = self.get_pressure_levels(
