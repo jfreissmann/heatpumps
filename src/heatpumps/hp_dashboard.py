@@ -951,25 +951,25 @@ if mode == 'Auslegung':
                     state_quantities = state_quantities.loc[:, ~state_quantities.columns.str.contains('_unit', case=False, regex=False)]
                     try:
                         state_quantities['water'] = (
-                            state_quantities['water'].apply(bool)
+                            state_quantities['water'] == 1.0
                             )
                     except KeyError:
                         state_quantities['H2O'] = (
-                            state_quantities['H2O'].apply(bool)
+                            state_quantities['H2O'] == 1.0
                             )
                     if hp_model['nr_refrigs'] == 1:
                         refrig = ss.hp.params['setup']['refrig']
                         state_quantities[refrig] = (
-                            state_quantities[refrig].apply(bool)
+                            state_quantities[refrig] == 1.0
                             )
                     elif hp_model['nr_refrigs'] == 2:
                         refrig1 = ss.hp.params['setup']['refrig1']
                         state_quantities[refrig1] = (
-                            state_quantities[refrig1].apply(bool)
+                            state_quantities[refrig1] == 1.0
                             )
                         refrig2 = ss.hp.params['setup']['refrig2']
                         state_quantities[refrig2] = (
-                            state_quantities[refrig2].apply(bool)
+                            state_quantities[refrig2] == 1.0
                             )
                     if 'Td_bp' in state_quantities.columns:
                         del state_quantities['Td_bp']
