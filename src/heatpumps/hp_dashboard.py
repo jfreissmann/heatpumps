@@ -104,9 +104,6 @@ st.set_page_config(
 
 is_dark = darkdetect.isDark()
 
-if is_dark:
-    plt.style.use('dark_background')
-
 # %% MARK: Sidebar
 with st.sidebar:
     if is_dark:
@@ -852,6 +849,11 @@ if mode == 'Auslegung':
                         st.columns([0.5, 8, 1, 8, 0.5])
                         )
 
+                    if is_dark:
+                        state_diagram_style = 'dark'
+                    else:
+                        state_diagram_style = 'light'
+
                     with col_left:
                         # %% Log(p)-h-Diagram
                         st.subheader('Log(p)-h-Diagramm')
@@ -867,6 +869,7 @@ if mode == 'Auslegung':
                             diagram = ss.hp.generate_state_diagram(
                                 diagram_type='logph',
                                 xlims=(xmin, xmax), ylims=(ymin, ymax),
+                                style=state_diagram_style,
                                 return_diagram=True, display_info=False,
                                 open_file=False, savefig=False
                                 )
@@ -893,6 +896,7 @@ if mode == 'Auslegung':
                                 diagram_type='logph',
                                 xlims=((xmin1, xmax1), (xmin2, xmax2)),
                                 ylims=((ymin1, ymax1), (ymin2, ymax2)),
+                                style=state_diagram_style,
                                 return_diagram=True, display_info=False,
                                 savefig=False, open_file=False
                                 )
@@ -913,6 +917,7 @@ if mode == 'Auslegung':
                             diagram = ss.hp.generate_state_diagram(
                                 diagram_type='Ts',
                                 xlims=(xmin, xmax), ylims=(ymin, ymax),
+                                style=state_diagram_style,
                                 return_diagram=True, display_info=False,
                                 open_file=False, savefig=False
                                 )
@@ -937,6 +942,7 @@ if mode == 'Auslegung':
                                 diagram_type='Ts',
                                 xlims=((xmin1, xmax1), (xmin2, xmax2)),
                                 ylims=((ymin1, ymax1), (ymin2, ymax2)),
+                                style=state_diagram_style,
                                 return_diagram=True, display_info=False,
                                 savefig=False, open_file=False
                                 )

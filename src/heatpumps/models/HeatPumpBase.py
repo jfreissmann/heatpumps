@@ -302,10 +302,54 @@ class HeatPumpBase:
         return {}
 
     def generate_state_diagram(self, refrig='', diagram_type='logph',
-                               figsize=(16, 10), legend=True,
+                               style='light', figsize=(16, 10), legend=True,
                                legend_loc='upper left', return_diagram=False,
                                savefig=True, open_file=True, **kwargs):
-        """Generate log(p)-h-diagram of heat pump process."""
+        """
+        Generate log(p)-h-diagram of heat pump process.
+
+        Parameters
+        ----------
+
+        refrig : str
+            Name of refrigerant to use for plot. Can be left as an empty string
+            in single cycle heat pumps.
+
+        diagram_type : str
+            Fluid property diagram type. Either 'logph' or 'Ts'. Default is
+            'logph'.
+
+        style : str
+            Diagram style to chose. Either 'light' or 'dark'. Default is
+            'light'.
+
+        figsize : tuple/list of numbers
+            Size of matplotlib figure in inches. Default is (16, 10), so the
+            figure is 16 inches wide and 10 inches tall.
+
+        legend : bool
+            Flag to set if legend should be shown. Default is `True`.
+
+        legend_loc : str
+            Location to place legend to. Accepts options as matplotlib allows.
+            Default is 'upper left'. Is only used if 'legend' parameter is set
+            to `True`.
+
+        return_diagram : bool
+            Flag to set if diagram object should be returned by method. Default
+            is False.
+
+        savefig : bool
+            Flag to set if diagram should be saved to disk. Default is `True`.
+
+        open_file : bool
+            Flag to set if saved file should be opend by the os. Default is
+            `True`.
+
+        **kwargs
+            Additional keyword arguments to pass through to the
+            `get_plotting_states` method of the heat pump class.
+        """
         if not refrig:
             refrig = self.params['setup']['refrig']
         # Define axis and isoline state variables
@@ -394,9 +438,25 @@ class HeatPumpBase:
             ylims = (
                 state_props[var['y']]['min'], state_props[var['y']]['max']
                 )
+
+        if style == 'light':
+            plt.style.use('default')
+            isoline_data = None
+        elif style == 'dark':
+            plt.style.use('dark_background')
+            isoline_data = {
+                'T': {'style': {'color': 'dimgrey'}},
+                'v': {'style': {'color': 'dimgrey'}},
+                'Q': {'style': {'color': '#FFFFFF'}},
+                'h': {'style': {'color': 'dimgrey'}},
+                'p': {'style': {'color': 'dimgrey'}},
+                's': {'style': {'color': 'dimgrey'}}
+            }
+
         diagram.draw_isolines(
             diagram_type=diagram_type, fig=fig, ax=ax,
-            x_min=xlims[0], x_max=xlims[1], y_min=ylims[0], y_max=ylims[1]
+            x_min=xlims[0], x_max=xlims[1], y_min=ylims[0], y_max=ylims[1],
+            isoline_data=isoline_data
             )
 
         # Draw heat pump process over fluid property diagram
