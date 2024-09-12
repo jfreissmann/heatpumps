@@ -518,18 +518,26 @@ class HeatPumpBase:
         if return_diagram:
             return diagram
 
-    def generate_sankey_diagram(self):
+    def generate_sankey_diagram(self, width=None, height=None):
         """Sankey Diagram of Heat Pump model"""
         links, nodes = self.ean.generate_plotly_sankey_input()
-        fig = go.Figure(go.Sankey(
-            arrangement='snap',
-            node={
-                'label': nodes,
-                'pad': 15,
-                'color': 'orange'
-                },
-            link=links
-        ))
+        fig = go.Figure(
+            go.Sankey(
+                arrangement='snap',
+                node={
+                    'label': nodes,
+                    'pad': 15,
+                    'color': 'orange'
+                    },
+                link=links
+            )
+        )
+
+        if width is not None:
+            fig.update_layout(width=width)
+
+        if height is not None:
+            fig.update_layout(width=height)
 
         return fig
 
