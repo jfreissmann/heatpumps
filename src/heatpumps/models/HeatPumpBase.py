@@ -500,7 +500,11 @@ class HeatPumpBase:
             ax.set_ylabel('Temperatur in $°C$')
 
         if legend:
-            ax.legend(loc=legend_loc)
+            ax.legend(
+                loc=legend_loc,
+                prop={'size': 10 * (1 - 0.02 * len(result_dict))},
+                markerscale=(1 - 0.02 * len(result_dict))
+                )
 
         if savefig:
             filename = (
