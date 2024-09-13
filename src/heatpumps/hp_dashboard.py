@@ -859,7 +859,7 @@ if mode == 'Auslegung':
                         st.subheader('Log(p)-h-Diagramm')
                         if hp_model['nr_refrigs'] == 1:
                             xmin, xmax = calc_limits(
-                                wf=ss.hp.wf, prop='h', padding_rel=0.25
+                                wf=ss.hp.wf, prop='h', padding_rel=0.35
                                 )
                             ymin, ymax = calc_limits(
                                 wf=ss.hp.wf, prop='p', padding_rel=0.25,
@@ -868,6 +868,7 @@ if mode == 'Auslegung':
 
                             diagram = ss.hp.generate_state_diagram(
                                 diagram_type='logph',
+                                figsize=(12, 7.5),
                                 xlims=(xmin, xmax), ylims=(ymin, ymax),
                                 style=state_diagram_style,
                                 return_diagram=True, display_info=False,
@@ -877,7 +878,7 @@ if mode == 'Auslegung':
 
                         elif hp_model['nr_refrigs'] == 2:
                             xmin1, xmax1 = calc_limits(
-                                wf=ss.hp.wf1, prop='h', padding_rel=0.25
+                                wf=ss.hp.wf1, prop='h', padding_rel=0.35
                                 )
                             ymin1, ymax1 = calc_limits(
                                 wf=ss.hp.wf1, prop='p', padding_rel=0.25,
@@ -885,7 +886,7 @@ if mode == 'Auslegung':
                                 )
 
                             xmin2, xmax2 = calc_limits(
-                                wf=ss.hp.wf2, prop='h', padding_rel=0.25
+                                wf=ss.hp.wf2, prop='h', padding_rel=0.35
                                 )
                             ymin2, ymax2 = calc_limits(
                                 wf=ss.hp.wf2, prop='p', padding_rel=0.25,
@@ -894,6 +895,7 @@ if mode == 'Auslegung':
 
                             diagram1, diagram2 = ss.hp.generate_state_diagram(
                                 diagram_type='logph',
+                                figsize=(12, 7.5),
                                 xlims=((xmin1, xmax1), (xmin2, xmax2)),
                                 ylims=((ymin1, ymax1), (ymin2, ymax2)),
                                 style=state_diagram_style,
@@ -908,7 +910,7 @@ if mode == 'Auslegung':
                         st.subheader('T-s-Diagramm')
                         if hp_model['nr_refrigs'] == 1:
                             xmin, xmax = calc_limits(
-                                wf=ss.hp.wf, prop='s', padding_rel=0.25
+                                wf=ss.hp.wf, prop='s', padding_rel=0.35
                                 )
                             ymin, ymax = calc_limits(
                                 wf=ss.hp.wf, prop='T', padding_rel=0.25
@@ -916,6 +918,7 @@ if mode == 'Auslegung':
 
                             diagram = ss.hp.generate_state_diagram(
                                 diagram_type='Ts',
+                                figsize=(12, 7.5),
                                 xlims=(xmin, xmax), ylims=(ymin, ymax),
                                 style=state_diagram_style,
                                 return_diagram=True, display_info=False,
@@ -925,14 +928,14 @@ if mode == 'Auslegung':
 
                         elif hp_model['nr_refrigs'] == 2:
                             xmin1, xmax1 = calc_limits(
-                                wf=ss.hp.wf1, prop='s', padding_rel=0.25
+                                wf=ss.hp.wf1, prop='s', padding_rel=0.35
                                 )
                             ymin1, ymax1 = calc_limits(
                                 wf=ss.hp.wf1, prop='T', padding_rel=0.25
                                 )
 
                             xmin2, xmax2 = calc_limits(
-                                wf=ss.hp.wf2, prop='s', padding_rel=0.25
+                                wf=ss.hp.wf2, prop='s', padding_rel=0.35
                                 )
                             ymin2, ymax2 = calc_limits(
                                 wf=ss.hp.wf2, prop='T', padding_rel=0.25
@@ -940,6 +943,7 @@ if mode == 'Auslegung':
 
                             diagram1, diagram2 = ss.hp.generate_state_diagram(
                                 diagram_type='Ts',
+                                figsize=(12, 7.5),
                                 xlims=((xmin1, xmax1), (xmin2, xmax2)),
                                 ylims=((ymin1, ymax1), (ymin2, ymax2)),
                                 style=state_diagram_style,
