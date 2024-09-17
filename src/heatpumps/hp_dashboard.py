@@ -530,13 +530,13 @@ with st.sidebar:
         run_pl_sim = st.button('🧮 Teillast simulieren')
 
 # %% MARK: Main Content
-st.title('Wärmepumpensimulator')
+st.title('*heatpumps*')
 
 if mode == 'Start':
     # %% MARK: Landing Page
     st.write(
         """
-        Der Wärmepumpensimulator ist eine leistungsfähige Simulationssoftware
+        Der Wärmepumpensimulator *heatpumps* ist eine leistungsfähige Simulationssoftware
         zur Analyse und Bewertung von Wärmepumpen.
 
         Mit diesem Dashboard lassen sich eine Vielzahl komplexer
