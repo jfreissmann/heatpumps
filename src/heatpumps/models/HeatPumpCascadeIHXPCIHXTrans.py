@@ -332,11 +332,11 @@ class HeatPumpCascadeIHXPCIHXTrans(HeatPumpBase):
             )
 
         # Connections
-        self.T_mid = (self.params['B2']['T'] + self.params['C3']['T']) / 2
+        self.T_mid = (self.params['B2']['T'] + self.params['C1']['T']) / 2
 
         # Starting values
         p_evap1, p_cond1, p_mid1, p_evap2, h_trans_out, p_mid2 = self.get_pressure_levels(
-            T_mid=self.T_mid
+            T_evap=self.params['B2']['T'], T_mid=self.T_mid
         )
         self.p_evap1 = p_evap1
         self.p_evap2 = p_evap2
@@ -447,22 +447,31 @@ class HeatPumpCascadeIHXPCIHXTrans(HeatPumpBase):
 
         self._solve_model(**kwargs)
 
-        self.m_design_2 = self.conns['A0'].m.val
-        self.m_design_1 = self.conns['D0'].m.val
+        self.m_design = self.conns['A0'].m.val
 
         self.cop = (
                 abs(self.buses['heat output'].P.val)
                 / self.buses['power input'].P.val
         )
 
-    # TODO - offdesing function
+    def intermediate_states_offdesign(self, T_hs_ff, T_cons_ff, deltaT_hs):
+        """Calculates intermediate states during part-load simulation"""
+        self.T_mid = ((T_hs_ff - deltaT_hs) + T_cons_ff) / 2
+        self.conns['A7'].set_attr(
+            T=self.T_mid - self.params['inter']['ttd_u'] / 2
+        )
+        _, _, p_mid1, _, _, p_mid2 = self.get_pressure_levels(
+            T_evap=T_hs_ff, T_mid=self.T_mid
+        )
+        self.conns['A11'].set_attr(p=p_mid2)
+        self.conns['D11'].set_attr(p=p_mid1)
 
-    def get_pressure_levels(self, T_mid):
+    def get_pressure_levels(self, T_evap, T_mid):
         """Calculate evaporation, condensation amd intermediate pressure in bar
         for both cycles and heat sink outlet enthalpy (hot side)."""
         p_evap1 = PSI(
             'P', 'Q', 1,
-            'T', self.params['B2']['T'] - self.params['evap']['ttd_l'] + 273.15,
+            'T', T_evap - self.params['evap']['ttd_l'] + 273.15,
             self.wf1
         ) * 1e-5
         p_cond1 = PSI(
@@ -611,6 +620,7 @@ class HeatPumpCascadeIHXPCIHXTrans(HeatPumpBase):
         return data
 
     def generate_state_diagram(self, refrig='', diagram_type='logph',
+                               style='light', figsize=(16, 10),
                                legend=True, legend_loc='upper left',
                                return_diagram=False, savefig=True,
                                open_file=True, **kwargs):
@@ -625,6 +635,7 @@ class HeatPumpCascadeIHXPCIHXTrans(HeatPumpBase):
         if return_diagram:
             diagram1 = super().generate_state_diagram(
                 refrig=self.params['setup']['refrig1'],
+                style=style, figsize=figsize,
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
@@ -632,6 +643,7 @@ class HeatPumpCascadeIHXPCIHXTrans(HeatPumpBase):
             )
             diagram2 = super().generate_state_diagram(
                 refrig=self.params['setup']['refrig2'],
+                style=style, figsize=figsize,
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
@@ -641,6 +653,7 @@ class HeatPumpCascadeIHXPCIHXTrans(HeatPumpBase):
         else:
             super().generate_state_diagram(
                 refrig=self.params['setup']['refrig1'],
+                style=style, figsize=figsize,
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
@@ -648,6 +661,7 @@ class HeatPumpCascadeIHXPCIHXTrans(HeatPumpBase):
             )
             super().generate_state_diagram(
                 refrig=self.params['setup']['refrig2'],
+                style=style, figsize=figsize,
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,

@@ -104,9 +104,6 @@ st.set_page_config(
 
 is_dark = darkdetect.isDark()
 
-if is_dark:
-    plt.style.use('dark_background')
-
 # %% MARK: Sidebar
 with st.sidebar:
     if is_dark:
@@ -137,11 +134,20 @@ with st.sidebar:
             models = []
             for model, mdata in var.hp_models.items():
                 if mdata['base_topology'] == base_topology:
-                    models.append(mdata['display_name'])
+                    if mdata['process_type'] != 'transcritical':
+                        models.append(mdata['display_name'])
 
             model_name = st.selectbox(
                 'Wärmepumpenmodell', models, index=0, key='model'
             )
+
+            process_type = st.radio(
+                'Prozessart', options=('subkritisch', 'transkritisch'),
+                horizontal=True
+            )
+
+            if process_type == 'transkritisch':
+                model_name = f'{model_name} | Transkritisch'
 
             for model, mdata in var.hp_models.items():
                 correct_base = mdata['base_topology'] == base_topology
@@ -843,12 +849,17 @@ if mode == 'Auslegung':
                         st.columns([0.5, 8, 1, 8, 0.5])
                         )
 
+                    if is_dark:
+                        state_diagram_style = 'dark'
+                    else:
+                        state_diagram_style = 'light'
+
                     with col_left:
                         # %% Log(p)-h-Diagram
                         st.subheader('Log(p)-h-Diagramm')
                         if hp_model['nr_refrigs'] == 1:
                             xmin, xmax = calc_limits(
-                                wf=ss.hp.wf, prop='h', padding_rel=0.25
+                                wf=ss.hp.wf, prop='h', padding_rel=0.35
                                 )
                             ymin, ymax = calc_limits(
                                 wf=ss.hp.wf, prop='p', padding_rel=0.25,
@@ -857,7 +868,9 @@ if mode == 'Auslegung':
 
                             diagram = ss.hp.generate_state_diagram(
                                 diagram_type='logph',
+                                figsize=(12, 7.5),
                                 xlims=(xmin, xmax), ylims=(ymin, ymax),
+                                style=state_diagram_style,
                                 return_diagram=True, display_info=False,
                                 open_file=False, savefig=False
                                 )
@@ -865,7 +878,7 @@ if mode == 'Auslegung':
 
                         elif hp_model['nr_refrigs'] == 2:
                             xmin1, xmax1 = calc_limits(
-                                wf=ss.hp.wf1, prop='h', padding_rel=0.25
+                                wf=ss.hp.wf1, prop='h', padding_rel=0.35
                                 )
                             ymin1, ymax1 = calc_limits(
                                 wf=ss.hp.wf1, prop='p', padding_rel=0.25,
@@ -873,7 +886,7 @@ if mode == 'Auslegung':
                                 )
 
                             xmin2, xmax2 = calc_limits(
-                                wf=ss.hp.wf2, prop='h', padding_rel=0.25
+                                wf=ss.hp.wf2, prop='h', padding_rel=0.35
                                 )
                             ymin2, ymax2 = calc_limits(
                                 wf=ss.hp.wf2, prop='p', padding_rel=0.25,
@@ -882,8 +895,10 @@ if mode == 'Auslegung':
 
                             diagram1, diagram2 = ss.hp.generate_state_diagram(
                                 diagram_type='logph',
+                                figsize=(12, 7.5),
                                 xlims=((xmin1, xmax1), (xmin2, xmax2)),
                                 ylims=((ymin1, ymax1), (ymin2, ymax2)),
+                                style=state_diagram_style,
                                 return_diagram=True, display_info=False,
                                 savefig=False, open_file=False
                                 )
@@ -895,7 +910,7 @@ if mode == 'Auslegung':
                         st.subheader('T-s-Diagramm')
                         if hp_model['nr_refrigs'] == 1:
                             xmin, xmax = calc_limits(
-                                wf=ss.hp.wf, prop='s', padding_rel=0.25
+                                wf=ss.hp.wf, prop='s', padding_rel=0.35
                                 )
                             ymin, ymax = calc_limits(
                                 wf=ss.hp.wf, prop='T', padding_rel=0.25
@@ -903,7 +918,9 @@ if mode == 'Auslegung':
 
                             diagram = ss.hp.generate_state_diagram(
                                 diagram_type='Ts',
+                                figsize=(12, 7.5),
                                 xlims=(xmin, xmax), ylims=(ymin, ymax),
+                                style=state_diagram_style,
                                 return_diagram=True, display_info=False,
                                 open_file=False, savefig=False
                                 )
@@ -911,14 +928,14 @@ if mode == 'Auslegung':
 
                         elif hp_model['nr_refrigs'] == 2:
                             xmin1, xmax1 = calc_limits(
-                                wf=ss.hp.wf1, prop='s', padding_rel=0.25
+                                wf=ss.hp.wf1, prop='s', padding_rel=0.35
                                 )
                             ymin1, ymax1 = calc_limits(
                                 wf=ss.hp.wf1, prop='T', padding_rel=0.25
                                 )
 
                             xmin2, xmax2 = calc_limits(
-                                wf=ss.hp.wf2, prop='s', padding_rel=0.25
+                                wf=ss.hp.wf2, prop='s', padding_rel=0.35
                                 )
                             ymin2, ymax2 = calc_limits(
                                 wf=ss.hp.wf2, prop='T', padding_rel=0.25
@@ -926,8 +943,10 @@ if mode == 'Auslegung':
 
                             diagram1, diagram2 = ss.hp.generate_state_diagram(
                                 diagram_type='Ts',
+                                figsize=(12, 7.5),
                                 xlims=((xmin1, xmax1), (xmin2, xmax2)),
                                 ylims=((ymin1, ymax1), (ymin2, ymax2)),
+                                style=state_diagram_style,
                                 return_diagram=True, display_info=False,
                                 savefig=False, open_file=False
                                 )
@@ -942,25 +961,25 @@ if mode == 'Auslegung':
                     state_quantities = state_quantities.loc[:, ~state_quantities.columns.str.contains('_unit', case=False, regex=False)]
                     try:
                         state_quantities['water'] = (
-                            state_quantities['water'].apply(bool)
+                            state_quantities['water'] == 1.0
                             )
                     except KeyError:
                         state_quantities['H2O'] = (
-                            state_quantities['H2O'].apply(bool)
+                            state_quantities['H2O'] == 1.0
                             )
                     if hp_model['nr_refrigs'] == 1:
                         refrig = ss.hp.params['setup']['refrig']
                         state_quantities[refrig] = (
-                            state_quantities[refrig].apply(bool)
+                            state_quantities[refrig] == 1.0
                             )
                     elif hp_model['nr_refrigs'] == 2:
                         refrig1 = ss.hp.params['setup']['refrig1']
                         state_quantities[refrig1] = (
-                            state_quantities[refrig1].apply(bool)
+                            state_quantities[refrig1] == 1.0
                             )
                         refrig2 = ss.hp.params['setup']['refrig2']
                         state_quantities[refrig2] = (
-                            state_quantities[refrig2].apply(bool)
+                            state_quantities[refrig2] == 1.0
                             )
                     if 'Td_bp' in state_quantities.columns:
                         del state_quantities['Td_bp']

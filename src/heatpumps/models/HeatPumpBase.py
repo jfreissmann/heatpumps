@@ -1,5 +1,7 @@
 import json
 import os
+from datetime import datetime
+from time import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,6 +13,8 @@ from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
 from tespy.networks import Network
 from tespy.tools import ExergyAnalysis
+from tespy.tools.characteristics import CharLine
+from tespy.tools.characteristics import load_default_char as ldc
 
 
 class HeatPumpBase:
@@ -298,10 +302,54 @@ class HeatPumpBase:
         return {}
 
     def generate_state_diagram(self, refrig='', diagram_type='logph',
-                               figsize=(16, 10), legend=True,
+                               style='light', figsize=(16, 10), legend=True,
                                legend_loc='upper left', return_diagram=False,
                                savefig=True, open_file=True, **kwargs):
-        """Generate log(p)-h-diagram of heat pump process."""
+        """
+        Generate log(p)-h-diagram of heat pump process.
+
+        Parameters
+        ----------
+
+        refrig : str
+            Name of refrigerant to use for plot. Can be left as an empty string
+            in single cycle heat pumps.
+
+        diagram_type : str
+            Fluid property diagram type. Either 'logph' or 'Ts'. Default is
+            'logph'.
+
+        style : str
+            Diagram style to chose. Either 'light' or 'dark'. Default is
+            'light'.
+
+        figsize : tuple/list of numbers
+            Size of matplotlib figure in inches. Default is (16, 10), so the
+            figure is 16 inches wide and 10 inches tall.
+
+        legend : bool
+            Flag to set if legend should be shown. Default is `True`.
+
+        legend_loc : str
+            Location to place legend to. Accepts options as matplotlib allows.
+            Default is 'upper left'. Is only used if 'legend' parameter is set
+            to `True`.
+
+        return_diagram : bool
+            Flag to set if diagram object should be returned by method. Default
+            is False.
+
+        savefig : bool
+            Flag to set if diagram should be saved to disk. Default is `True`.
+
+        open_file : bool
+            Flag to set if saved file should be opend by the os. Default is
+            `True`.
+
+        **kwargs
+            Additional keyword arguments to pass through to the
+            `get_plotting_states` method of the heat pump class.
+        """
         if not refrig:
             refrig = self.params['setup']['refrig']
         # Define axis and isoline state variables
@@ -390,9 +438,25 @@ class HeatPumpBase:
             ylims = (
                 state_props[var['y']]['min'], state_props[var['y']]['max']
                 )
+
+        if style == 'light':
+            plt.style.use('default')
+            isoline_data = None
+        elif style == 'dark':
+            plt.style.use('dark_background')
+            isoline_data = {
+                'T': {'style': {'color': 'dimgrey'}},
+                'v': {'style': {'color': 'dimgrey'}},
+                'Q': {'style': {'color': '#FFFFFF'}},
+                'h': {'style': {'color': 'dimgrey'}},
+                'p': {'style': {'color': 'dimgrey'}},
+                's': {'style': {'color': 'dimgrey'}}
+            }
+
         diagram.draw_isolines(
             diagram_type=diagram_type, fig=fig, ax=ax,
-            x_min=xlims[0], x_max=xlims[1], y_min=ylims[0], y_max=ylims[1]
+            x_min=xlims[0], x_max=xlims[1], y_min=ylims[0], y_max=ylims[1],
+            isoline_data=isoline_data
             )
 
         # Draw heat pump process over fluid property diagram
@@ -436,7 +500,11 @@ class HeatPumpBase:
             ax.set_ylabel('Temperatur in $°C$')
 
         if legend:
-            ax.legend(loc=legend_loc)
+            ax.legend(
+                loc=legend_loc,
+                prop={'size': 10 * (1 - 0.02 * len(result_dict))},
+                markerscale=(1 - 0.02 * len(result_dict))
+                )
 
         if savefig:
             filename = (
@@ -454,22 +522,31 @@ class HeatPumpBase:
         if return_diagram:
             return diagram
 
-    def generate_sankey_diagram(self):
+    def generate_sankey_diagram(self, width=None, height=None):
         """Sankey Diagram of Heat Pump model"""
         links, nodes = self.ean.generate_plotly_sankey_input()
-        fig = go.Figure(go.Sankey(
-            arrangement='snap',
-            node={
-                'label': nodes,
-                'pad': 15,
-                'color': 'orange'
-                },
-            link=links
-        ))
+        fig = go.Figure(
+            go.Sankey(
+                arrangement='snap',
+                node={
+                    'label': nodes,
+                    'pad': 15,
+                    'color': 'orange'
+                    },
+                link=links
+            )
+        )
+
+        if width is not None:
+            fig.update_layout(width=width)
+
+        if height is not None:
+            fig.update_layout(width=height)
 
         return fig
 
-    def generate_waterfall_diagram(self, figsize=(16, 10)):
+    def generate_waterfall_diagram(self, figsize=(16, 10), legend=True,
+                                   return_fig_ax=False, show_epsilon=True):
         """Generates waterfall diagram of exergy analysis"""
         comps = ['Fuel Exergy']
         E_F = self.ean.network_data.E_F
@@ -504,14 +581,17 @@ class HeatPumpBase:
             align='center', left=E_P, label='E_D', color='#EC6707'
             )
 
-        ax.legend()
-        ax.annotate(
-            f'$\epsilon_{{tot}} = ${self.ean.network_data.epsilon:.3f}',
-            (0.96, 0.06),
-            xycoords='axes fraction',
-            ha='right', va='center', color='k',
-            bbox=dict(boxstyle='round,pad=0.3', fc='white')
-        )
+        if legend:
+            ax.legend()
+
+        if show_epsilon:
+            ax.annotate(
+                f'$\epsilon_{{tot}} = ${self.ean.network_data.epsilon:.3f}',
+                (0.96, 0.06),
+                xycoords='axes fraction',
+                ha='right', va='center', color='k',
+                bbox=dict(boxstyle='round,pad=0.3', fc='white')
+            )
 
         ax.set_xlabel('Exergy in kW')
         ax.set_yticks(np.arange(len(comps)))
@@ -523,6 +603,9 @@ class HeatPumpBase:
         ax.invert_yaxis()
         ax.grid(axis='x')
         ax.set_axisbelow(True)
+
+        if return_fig_ax:
+            return fig, ax
 
     def calc_partload_char(self, **kwargs):
         """
@@ -983,3 +1066,249 @@ class HeatPumpBase:
     def check_consistency(self):
         """Perform all necessary checks to protect consistency of parameters."""
         pass
+
+    def offdesign_simulation(self, log_simulations=False):
+        """Perform offdesign parametrization and simulation."""
+        if not self.solved_design:
+            raise RuntimeError(
+                'Heat pump has not been designed via the "design_simulation" '
+                + 'method. Therefore the offdesign simulation will fail.'
+            )
+
+        # Parametrization
+        kA_char1_default = ldc(
+            'heat exchanger', 'kA_char1', 'DEFAULT', CharLine
+        )
+        kA_char1_cond = ldc(
+            'heat exchanger', 'kA_char1', 'CONDENSING FLUID', CharLine
+        )
+        kA_char2_evap = ldc(
+            'heat exchanger', 'kA_char2', 'EVAPORATING FLUID', CharLine
+        )
+        kA_char2_default = ldc(
+            'heat exchanger', 'kA_char2', 'DEFAULT', CharLine
+        )
+
+        tespy_components = ['Condenser', 'HeatExchanger', 'Compressor', 'Pump', 'SimpleHeatExchanger']
+
+        # Extract the label of the above necessary tespy components.
+        # And then extracts the object of the components for parametrization
+        for comp in tespy_components:
+            df = self.nw.comps
+            labels = df[df['comp_type'] == comp].index.tolist()
+            for label in labels:
+                object = self.nw.get_comp(label)
+
+                if comp == 'Compressor':
+                    object.set_attr(
+                        design=['eta_s'], offdesign=['eta_s_char']
+                    )
+                elif comp == 'Pump':
+                    object.set_attr(
+                        design=['eta_s'], offdesign=['eta_s_char']
+                    )
+                elif comp == 'HeatExchanger':
+                    # for models with internal heat exchanger
+                    if 'Internal Heat Exchanger' in label:
+                        object.set_attr(
+                            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
+                            design=['pr1', 'pr2'], offdesign=['zeta1', 'zeta2']
+                        )
+
+                    # For models with Transcritical heat exchanger
+                    elif 'Transcritical' in label:
+                        object.set_attr(
+                            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
+                            design=['pr2', 'ttd_l'], offdesign=['zeta2', 'kA_char']
+                        )
+
+                    # For cascade model's Intermediate heat exchanger
+                    elif 'Intermediate Heat Exchanger' in label:
+                        object.set_attr(
+                            kA_char1=kA_char1_cond, kA_char2=kA_char2_evap,
+                            design=['pr1', 'ttd_u'], offdesign=['zeta1', 'kA_char']
+                        )
+                    else:
+                        # For models with evaporator and economizer
+                        object.set_attr(
+                            kA_char1=kA_char1_default, kA_char2=kA_char2_evap,
+                            design=['pr1', 'ttd_l'], offdesign=['zeta1', 'kA_char']
+                        )
+                elif comp == 'Condenser':
+                    object.set_attr(
+                        kA_char1=kA_char1_cond, kA_char2=kA_char2_default,
+                        design=['pr2', 'ttd_u'], offdesign=['zeta2', 'kA_char']
+                    )
+                elif comp == 'SimpleHeatExchanger':
+                    object.set_attr(
+                        design=['pr'], offdesign=['zeta']
+                    )
+                else:
+                    raise ValueError(
+                        f'Check wheather offdesign parametrization is given to the component {comp}'
+                        + f' in the heat pump base class.'
+                    )
+
+
+        self.conns['B1'].set_attr(offdesign=['v'])
+        self.conns['B2'].set_attr(design=['T'])
+
+        # Simulation
+        print('Using improved offdesign simulation method.')
+        self.create_ranges()
+
+        deltaT_hs = (
+                self.params['B1']['T']
+                - self.params['B2']['T']
+        )
+
+        multiindex = pd.MultiIndex.from_product(
+            [self.T_hs_ff_range, self.T_cons_ff_range, self.pl_range],
+            names=['T_hs_ff', 'T_cons_ff', 'pl']
+        )
+
+        results_offdesign = pd.DataFrame(
+            index=multiindex, columns=['Q', 'P', 'COP', 'epsilon', 'residual']
+        )
+
+        for T_hs_ff in self.T_hs_ff_stablerange:
+            self.conns['B1'].set_attr(T=T_hs_ff)
+            if T_hs_ff <= 7:
+                self.conns['B2'].set_attr(T=2)
+            else:
+                self.conns['B2'].set_attr(T=T_hs_ff - deltaT_hs)
+
+            for T_cons_ff in self.T_cons_ff_stablerange:
+                self.conns['C3'].set_attr(T=T_cons_ff)
+
+                self.intermediate_states_offdesign(T_hs_ff, T_cons_ff, deltaT_hs)
+
+                for pl in self.pl_stablerange[::-1]:
+                    print(
+                        f'### Temp. HS = {T_hs_ff} °C, Temp. Cons = '
+                        + f'{T_cons_ff} °C, Partload = {pl * 100} % ###'
+                    )
+                    self.init_path = None
+                    no_init_path = (
+                            (T_cons_ff != self.T_cons_ff_range[0])
+                            and (pl == self.pl_range[-1])
+                    )
+                    if no_init_path:
+                        self.init_path = os.path.abspath(os.path.join(
+                            os.path.dirname(__file__), 'stable',
+                            f'{self.subdirname}_init'
+                        ))
+
+                    self.comps['cons'].set_attr(Q=None)
+                    self.conns['A0'].set_attr(m=pl * self.m_design)
+
+                    try:
+                        self.nw.solve(
+                            'offdesign', design_path=self.design_path
+                        )
+                        self.perform_exergy_analysis()
+                        failed = False
+                    except ValueError:
+                        failed = True
+
+                    # Logging simulation
+                    if log_simulations:
+                        logdirpath = os.path.abspath(os.path.join(
+                            os.path.dirname(__file__), 'output', 'logging'
+                        ))
+                        if not os.path.exists(logdirpath):
+                            os.mkdir(logdirpath)
+                        logpath = os.path.join(
+                            logdirpath, f'{self.subdirname}_offdesign_log.csv'
+                        )
+                        timestamp = datetime.fromtimestamp(time()).strftime(
+                            '%H:%M:%S'
+                        )
+                        log_entry = (
+                                f'{timestamp};{(self.nw.residual[-1] < 1e-3)};'
+                                + f'{T_hs_ff:.2f};{T_cons_ff:.2f};{pl:.1f};'
+                                + f'{self.nw.residual[-1]:.2e}\n'
+                        )
+                        if not os.path.exists(logpath):
+                            with open(logpath, 'w', encoding='utf-8') as file:
+                                file.write(
+                                    'Time;converged;Temp HS;Temp Cons;Partload;'
+                                    + 'Residual\n'
+                                )
+                                file.write(log_entry)
+                        else:
+                            with open(logpath, 'a', encoding='utf-8') as file:
+                                file.write(log_entry)
+
+                    if pl == self.pl_range[-1] and self.nw.residual[-1] < 1e-3:
+                        self.nw.save(os.path.abspath(os.path.join(
+                            os.path.dirname(__file__), 'stable',
+                            f'{self.subdirname}_init'
+                        )))
+
+                    inranges = (
+                            (T_hs_ff in self.T_hs_ff_range)
+                            & (T_cons_ff in self.T_cons_ff_range)
+                            & (pl in self.pl_range)
+                    )
+                    idx = (T_hs_ff, T_cons_ff, pl)
+                    if inranges:
+                        empty_or_worse = (
+                                pd.isnull(results_offdesign.loc[idx, 'Q'])
+                                or (self.nw.residual[-1]
+                                    < results_offdesign.loc[idx, 'residual']
+                                    )
+                        )
+                        if empty_or_worse:
+                            if failed:
+                                results_offdesign.loc[idx, 'Q'] = np.nan
+                                results_offdesign.loc[idx, 'P'] = np.nan
+                                results_offdesign.loc[idx, 'epsilon'] = np.nan
+                            else:
+                                results_offdesign.loc[idx, 'Q'] = abs(
+                                    self.buses['heat output'].P.val * 1e-6
+                                )
+                                results_offdesign.loc[idx, 'P'] = (
+                                        self.buses['power input'].P.val * 1e-6
+                                )
+                                results_offdesign.loc[idx, 'epsilon'] = round(
+                                    self.ean.network_data['epsilon'], 3
+                                )
+
+                            results_offdesign.loc[idx, 'COP'] = (
+                                    results_offdesign.loc[idx, 'Q']
+                                    / results_offdesign.loc[idx, 'P']
+                            )
+                            results_offdesign.loc[idx, 'residual'] = (
+                                self.nw.residual[-1]
+                            )
+
+        if self.params['offdesign']['save_results']:
+            resultpath = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), 'output',
+                f'{self.subdirname}_partload.csv'
+            ))
+            results_offdesign.to_csv(resultpath, sep=';')
+
+        self.df_to_array(results_offdesign)
+
+    def intermediate_states_offdesign(self, T_hs_ff, T_cons_ff, deltaT_hs):
+        """Calculates intermediate states during part-load simulation"""
+        pass
+
+    def get_compressor_results(self):
+        """Return key results for each compressor used in the heat pump."""
+        results = {}
+        for c in self.comps.values():
+            if 'Compressor' in c.label:
+                comp = c.label
+                results[comp] = {}
+
+                results[comp]['V_dot'] = c.inl[0].vol.val_SI * 3600
+                results[comp]['p_in'] = c.inl[0].p.val
+                results[comp]['p_out'] = c.outl[0].p.val
+                results[comp]['PI'] = c.outl[0].p.val / c.inl[0].p.val
+                results[comp]['T_in'] = c.inl[0].T.val
+                results[comp]['T_out'] = c.outl[0].T.val
+
+        return results
