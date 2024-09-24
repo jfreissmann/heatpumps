@@ -278,11 +278,6 @@ with st.sidebar:
                     'Die Rücklauftemperatur muss niedriger sein, als die '
                     + 'Vorlauftemperatur.'
                     )
-            params['B1']['p'] = st.slider(
-                'Druck', min_value=1.0, max_value=20.0,
-                value=float(params['B1']['p']), step=0.1, format='%f bar',
-                key='p_heatsource_ff'
-                )
 
         # TODO: Aktuell wird T_mid im Modell als Mittelwert zwischen von Ver-
         #       dampfungs- und Kondensationstemperatur gebildet. An sich wäre
@@ -320,11 +315,6 @@ with st.sidebar:
                 st.error(
                     'Die Temperatur der Wärmesenke muss höher sein, als die '
                     + 'der Wärmequelle.'
-                )
-            params['C3']['p'] = st.slider(
-                'Druck', min_value=1.0, max_value=20.0,
-                value=float(params['C3']['p']), step=0.1, format='%f bar',
-                key='p_consumer_ff'
                 )
 
         with st.expander('Verdichter'):
@@ -529,7 +519,7 @@ with st.sidebar:
                 params['offdesign']['T_cons_ff_steps'] = int(np.ceil(
                     (params['offdesign']['T_cons_ff_end']
                      - params['offdesign']['T_cons_ff_start'])
-                    / 3
+                    / 1
                     ) + 1)
 
         ss.hp_params = params
