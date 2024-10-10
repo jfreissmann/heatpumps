@@ -66,7 +66,7 @@ params['C1']['T'] = 50  # return flow temperature of heat sink
 hp = HeatPumpSimple(params=params)
 
 hp.run_model()
-hp.generate_state_diagram(diagram_type='logph')
+hp.generate_state_diagram(diagram_type='logph', savefig=True, open_file=True)
 
 # Serial compression with closed economizer and internal heat exchanger
 econ_type = 'closed'
