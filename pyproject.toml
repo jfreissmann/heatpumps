@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "heatpumps"
+description = "Collection of TESPy heat pump models and additional Streamlit dashboard."
+version="1.3.0"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    { name = "Jonas Freißmann", email = "jonas.freissmann@web.de" },
+    { name = "Malte Fritz" },
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "coolprop>=6.4.1",
+    "darkdetect>=0.8.0",
+    "fluprodia>=3.3",
+    "matplotlib>=3.6.3",
+    "numpy>=1.24.0",
+    "pandas>=1.5.3",
+    "plotly>=5.20.0",
+    "scikit-learn>=1.2.1",
+    "scipy>=1.10.0",
+    "streamlit>=1.32.0",
+    "tespy>=0.7.5",
+]
+
+[project.scripts]
+heatpumps-dashboard = "heatpumps.run_dashboard:main"
+
+[project.urls]
+Homepage = "https://github.com/jfreissmann/heatpumps"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+]
