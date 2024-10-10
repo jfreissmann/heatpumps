@@ -304,7 +304,8 @@ class HeatPumpBase:
     def generate_state_diagram(self, refrig='', diagram_type='logph',
                                style='light', figsize=(16, 10), legend=True,
                                legend_loc='upper left', return_diagram=False,
-                               savefig=True, open_file=True, **kwargs):
+                               savefig=False, open_file=False, filepath=None,
+                               **kwargs):
         """
         Generate log(p)-h-diagram of heat pump process.
 
@@ -340,11 +341,16 @@ class HeatPumpBase:
             is False.
 
         savefig : bool
-            Flag to set if diagram should be saved to disk. Default is `True`.
+            Flag to set if diagram should be saved to disk. Default is `False`.
+
+        filepath : str
+            Path to save the file to. If `None` and `savefig` is `True`, a
+            default name is given and saved to the current working directory.
+            Default is `None`.
 
         open_file : bool
             Flag to set if saved file should be opend by the os. Default is
-            `True`.
+            `False`.
 
         **kwargs
             Additional keyword arguments to pass through to the
@@ -507,12 +513,14 @@ class HeatPumpBase:
                 )
 
         if savefig:
-            filename = (
-                f'logph_{self.params["setup"]["type"]}_{refrig}.pdf'
-                )
-            filepath = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'output', diagram_type, filename
-                ))
+            if filepath is None:
+                filename = (
+                    f'logph_{self.params["setup"]["type"]}_{refrig}.pdf'
+                    )
+                filepath = os.path.abspath(os.path.join(
+                    os.getcwd(), filename
+                    ))
+
             plt.tight_layout()
             plt.savefig(filepath, dpi=300)
 
@@ -546,7 +554,6 @@ class HeatPumpBase:
                 link=links
             )
         )
-
 
         if width is not None:
             fig.update_layout(width=width)
