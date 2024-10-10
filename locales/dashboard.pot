@@ -1,0 +1,658 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2024-09-27 11:07+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: src/heatpumps/hp_dashboard.py:23 src/heatpumps/hp_dashboard.py:36
+#: src/heatpumps/hp_dashboard.py:124 src/heatpumps/hp_dashboard.py:132
+msgid "Design"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:28 src/heatpumps/hp_dashboard.py:124
+msgid "Partload"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:77
+msgid "Parameter 'scale' must be either 'lin' or 'log'."
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:79
+msgid "is not allowed."
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:107
+msgid "Heat Pump Dashboard"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:123
+msgid "Select Mode"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:124
+msgid "Start"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:134
+msgid "Design of the Heat Pump"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:136
+msgid "Setup"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:138
+msgid "Base Topology"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:148
+msgid "Heat Pump Model"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:152
+msgid "Process Type"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:153
+msgid "subcritical"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:153 src/heatpumps/hp_dashboard.py:157
+msgid "transcritical"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:158
+msgid "Transcritical"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:183 src/heatpumps/hp_dashboard.py:193
+msgid "Internal Heat Exchange"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:185
+msgid "Superheating/Subcooling"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:197
+msgid "No. {i}: Superheating/Subcooling"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:206 src/heatpumps/hp_dashboard.py:848
+#: src/heatpumps/hp_dashboard.py:981
+msgid "Refrigerant"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:235
+msgid "Refrigerant (High Temperature Circuit)"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:254
+msgid "Refrigerant (Low Temperature Circuit)"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:274
+msgid "Transcritical Pressure"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:276
+msgid "Value in bar"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:285
+msgid "Thermal Nominal Power"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:287
+msgid "Value in MW"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:294 src/heatpumps/hp_dashboard.py:583
+msgid "Heat Source"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:296 src/heatpumps/hp_dashboard.py:336
+msgid "Forward Temperature"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:304 src/heatpumps/hp_dashboard.py:344
+msgid "Return Temperature"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:315 src/heatpumps/hp_dashboard.py:355
+msgid "The return temperature must be lower than the forward temperature."
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:330 src/heatpumps/hp_dashboard.py:636
+msgid "Heat Sink"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:362
+msgid "The temperature of the heat sink must be higher than the heat source."
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:367
+msgid "Compressor"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:371
+msgid "Efficiency $\\eta_s$"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:383
+msgid "Efficiency $\\eta_{s,1}$"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:394
+msgid "Efficiency $\\eta_{s,2}$"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:406
+msgid "Efficiency $\\eta_{s,HTK}$"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:417
+msgid "Efficiency $\\eta_{s,NTK}$"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:429
+msgid "Efficiency $\\eta_{s,HTK,1}$"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:440
+msgid "Efficiency $\\eta_{s,HTK,2}$"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:451
+msgid "Efficiency $\\eta_{s,NTK,1}$"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:462
+msgid "Efficiency $\\eta_{s,NTK,2}$"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:473
+msgid "Ambient Conditions (Exergy)"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:475 src/heatpumps/hp_dashboard.py:599
+#: src/heatpumps/hp_dashboard.py:652
+msgid "Temperature"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:484
+msgid "Pressure in bar"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:491
+msgid "Parameters for Cost Calculation"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:494
+msgid "Heat Transfer Coefficient (Evaporation)"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:504
+msgid "Heat Transfer Coefficient (Condensation)"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:515
+msgid "Heat Transfer Coefficient (Transcritical)"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:525
+msgid "Heat Transfer Coefficient (Miscellaneous)"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:535
+msgid "Residence Time Flash Tank"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:546
+msgid "🧮 Execute Design"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:551 src/heatpumps/hp_dashboard.py:555
+msgid "Part Load"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:553
+msgid "Part Load Simulation of the Heat Pump"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:560
+msgid "Relative to Nominal Mass Flow"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:586 src/heatpumps/hp_dashboard.py:591
+#: src/heatpumps/hp_dashboard.py:639 src/heatpumps/hp_dashboard.py:644
+msgid "Constant"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:586 src/heatpumps/hp_dashboard.py:605
+#: src/heatpumps/hp_dashboard.py:639 src/heatpumps/hp_dashboard.py:658
+msgid "Variable"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:607 src/heatpumps/hp_dashboard.py:660
+msgid "Start Temperature"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:616 src/heatpumps/hp_dashboard.py:669
+msgid "End Temperature"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:689
+msgid "🧮 Simulate Part Load"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:692
+msgid "*heatpumps*"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:697
+msgid ""
+"\n"
+"            The heat pump simulator *heatpumps* is a powerful simulation software\n"
+"            for analyzing and evaluating heat pumps.\n"
+"\n"
+"            This dashboard allows you to control a variety of complex\n"
+"            thermodynamic plant models using numerical methods via a\n"
+"            simple interface, without requiring expert knowledge.\n"
+"            This includes both the design of heat pumps\n"
+"            as well as the simulation of their steady-state part load operation. The\n"
+"            simulation results provide insights into the pump's behavior, COP,\n"
+"            state variables, and costs of individual components as well as\n"
+"            total investment costs. This enables access to complex questions\n"
+"            that frequently arise in the design and planning of heat pumps.\n"
+"\n"
+"            ### Key Features\n"
+"\n"
+"            - Steady-state design and part load simulation based on [TESPy](https://github.com/oemof/tespy)\n"
+"            - Parameterization and result visualization via a [Streamlit](https://github.com/streamlit/streamlit) dashboard\n"
+"            - Common circuit topologies used in industry, research, and development\n"
+"            - Subcritical and transcritical processes\n"
+"            - Large selection of working fluids thanks to [CoolProp](https://github.com/CoolProp/CoolProp) integration\n"
+"            "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:723
+msgid "Start Design"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:727
+msgid "Used Software"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:729
+msgid ""
+"\n"
+"                #### Used Software:\n"
+"\n"
+"                The open-source software TESPy is used for modeling and simulating the systems.\n"
+"                Additionally, a number of other Python packages are used for data processing,\n"
+"                preparation, and visualization.\n"
+"\n"
+"                ---\n"
+"\n"
+"                #### TESPy:\n"
+"\n"
+"                TESPy (Thermal Engineering Systems in Python) is a powerful\n"
+"                simulation tool for thermal process engineering, such as power plants,\n"
+"                district heating systems, or heat pumps. The TESPy package allows for\n"
+"                system design and steady-state operation simulation. After that,\n"
+"                part load behavior can be determined based on the characteristics of\n"
+"                each component of the system. The component-based structure combined\n"
+"                with the solution method offers great flexibility regarding the\n"
+"                system topology and parameterization. More information on TESPy can\n"
+"                be found in its [online documentation](https://tespy.readthedocs.io) (in English).\n"
+"\n"
+"                #### Other Packages:\n"
+"\n"
+"                - [Streamlit](https://docs.streamlit.io) (Graphical User Interface)\n"
+"                - [NumPy](https://numpy.org) (Data Processing)\n"
+"                - [pandas](https://pandas.pydata.org) (Data Processing)\n"
+"                - [SciPy](https://scipy.org/) (Interpolation)\n"
+"                - [scikit-learn](https://scikit-learn.org) (Regression)\n"
+"                - [Matplotlib](https://matplotlib.org) (Data Visualization)\n"
+"                - [FluProDia](https://fluprodia.readthedocs.io) (Data Visualization)\n"
+"                - [CoolProp](http://www.coolprop.org) (Fluid Properties)\n"
+"                "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:765
+msgid "Disclaimer"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:767
+msgid ""
+"\n"
+"                #### Simulation Results:\n"
+"\n"
+"                Numerical simulations are calculations performed using appropriate\n"
+"                iterative methods based on the specified boundary conditions and parameters.\n"
+"                In some cases, it is not possible to account for all possible influences,\n"
+"                so deviations from real-world experience may occur and should be taken into\n"
+"                account when evaluating the results. The results provide sufficient to exact\n"
+"                insights into the heat pump's general behavior, COP, and state variables in\n"
+"                each component. Nevertheless, all information and results are provided\n"
+"                without guarantee.\n"
+"                "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:783
+msgid "Copyright"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:785
+msgid ""
+"\n"
+"                #### Software License\n"
+"                MIT License\n"
+"\n"
+"                Copyright © 2023 Jonas Freißmann and Malte Fritz\n"
+"\n"
+"                Permission is hereby granted, free of charge, to any person obtaining a copy\n"
+"                of this software and associated documentation files (the \"Software\"), to deal\n"
+"                in the Software without restriction, including without limitation the rights\n"
+"                to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n"
+"                copies of the Software, and to permit persons to whom the Software is\n"
+"                furnished to do so, subject to the following conditions:\n"
+"\n"
+"                The above copyright notice and this permission notice shall be included in all\n"
+"                copies or substantial portions of the Software.\n"
+"\n"
+"                THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n"
+"                IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n"
+"                FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n"
+"                AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n"
+"                LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n"
+"                OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n"
+"                SOFTWARE.\n"
+"                "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:821 src/heatpumps/hp_dashboard.py:960
+msgid "Topology"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:853 src/heatpumps/hp_dashboard.py:986
+msgid "#### High-Temperature Circuit"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:855 src/heatpumps/hp_dashboard.py:988
+msgid "#### Low-Temperature Circuit"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:859
+msgid ""
+"\n"
+"                    All substance data and classifications from\n"
+"                    [CoolProp](http://www.coolprop.org) or\n"
+"                    [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)\n"
+"                    "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:868
+msgid "Instructions"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:870
+msgid ""
+"\n"
+"                    #### Instructions\n"
+"\n"
+"                    You are now on the design simulation interface\n"
+"                    for your heat pump. In the left sidebar, next to the\n"
+"                    dimensioning and the choice of refrigerant, several central parameters\n"
+"                    for the cycle process must be specified.\n"
+"\n"
+"                    These include, for example, the temperatures of the heat source and sink,\n"
+"                    but also the associated network pressures. Additionally, an internal\n"
+"                    heat exchanger can be optionally added. The resulting superheat of the\n"
+"                    evaporated refrigerant must also be specified.\n"
+"\n"
+"                    Once the design simulation is successfully completed, the\n"
+"                    generated results are processed graphically in state diagrams\n"
+"                    and quantified. Key metrics such as the coefficient of performance (COP),\n"
+"                    as well as relevant heat flows and power outputs, will be shown.\n"
+"                    Furthermore, thermodynamic state variables at each process step will\n"
+"                    be listed in a table.\n"
+"\n"
+"                    After the design simulation, a button will appear allowing you to switch\n"
+"                    to the partial load interface. This can also be done via the\n"
+"                    dropdown menu in the sidebar. Information on how to perform\n"
+"                    partial load simulations is available on the start page of this interface.\n"
+"                    "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:901
+msgid "Running simulation..."
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:905
+msgid "The heat pump design simulation was successful."
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:910
+msgid ""
+"An error occurred during the heat pump simulation. Please correct the input parameters and try again.\n"
+"\n"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:919
+msgid "Visualizing results..."
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:945
+msgid "Design Results"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:955
+msgid "Topology & Refrigerant"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:992
+msgid ""
+"\n"
+"                                All substance data and classifications from\n"
+"                                [CoolProp](http://www.coolprop.org) or\n"
+"                                [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)\n"
+"                                "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1001
+msgid "State Diagrams"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1013
+msgid "Log(p)-h Diagram"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1066
+msgid "T-s Diagram"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1117
+msgid "State Quantities"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1150
+msgid "m in kg/s"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1151
+msgid "p in bar"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1152
+msgid "h in kJ/kg"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1153
+msgid "T in °C"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1154
+msgid "v in m³/kg"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1155
+msgid "vol in m³/s"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1156
+msgid "s in kJ/(kgK)"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1162
+msgid "Economic Assessment"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1170
+msgid "Total Investment Costs"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1172
+msgid "Specific Investment Costs"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1179
+msgid ""
+"\n"
+"                            Methodology for cost calculation analogous to\n"
+"                            [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488),\n"
+"                            based on [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).\n"
+"                            "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1188
+msgid "Exergy Assessment"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1190
+msgid "Results of the Exergy Analysis"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1194
+msgid "Epsilon"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1196
+msgid "E_F"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1197
+msgid "E_P"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1198
+msgid "E_D"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1199
+msgid "E_L"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1201
+msgid "Results by Component"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1217
+msgid "E_F in W"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1218
+msgid "E_P in W"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1219
+msgid "E_D in W"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1227
+msgid "Grassmann Diagram"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1236
+msgid "Waterfall Diagram"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1245
+msgid ""
+"\n"
+"                            Definitions and methodology of the exergy analysis based on\n"
+"                            [Morosuk and Tsatsaronis (2019)](https://doi.org/10.1016/j.energy.2018.10.090),\n"
+"                            its implementation in TESPy described in [Witte and Hofmann et al. (2022)](https://doi.org/10.3390/en15114087)\n"
+"                            and pedagogically prepared in [Witte, Freißmann and Fritz (2023)](https://fwitte.github.io/TESPy_teaching_exergy/).\n"
+"                            "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1256
+msgid "To calculate the partial load, click on \"Simulate Partial Load\"."
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1261
+msgid "Simulate Partial Load"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1266
+msgid "Operating Characteristics"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1270
+msgid ""
+"\n"
+"                To perform a partial load simulation, a heat pump must first be\n"
+"                designed. Please switch to the \"Design\" mode first.\n"
+"                "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1281
+msgid ""
+"\n"
+"                    Parameterization of the partial load calculation:\n"
+"                    + Percentage share of partial load\n"
+"                    + Range of source temperature\n"
+"                    + Range of sink temperature\n"
+"                    "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1294
+msgid "Partial load simulation is running... This may take a while."
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1301
+msgid "The simulation of the heat pump characteristics was successful."
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1306
+msgid "Results are being visualized..."
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1307
+msgid "Diagrams"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1325 src/heatpumps/hp_dashboard.py:1350
+#: src/heatpumps/hp_dashboard.py:1379
+msgid "Source Temperature"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1359
+msgid "Exergy Analysis Partial Load"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1389
+msgid "Design New Heat Pump"
+msgstr ""

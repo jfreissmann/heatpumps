@@ -1,0 +1,795 @@
+# Heatpump dashboard.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2024-09-27 11:07+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: src/heatpumps/hp_dashboard.py:23 src/heatpumps/hp_dashboard.py:36
+#: src/heatpumps/hp_dashboard.py:124 src/heatpumps/hp_dashboard.py:132
+msgid "Design"
+msgstr "Auslegung"
+
+#: src/heatpumps/hp_dashboard.py:28 src/heatpumps/hp_dashboard.py:124
+msgid "Partload"
+msgstr "Teillast"
+
+#: src/heatpumps/hp_dashboard.py:77
+msgid "Parameter 'scale' must be either 'lin' or 'log'."
+msgstr "Der Parameter 'scale' muss entweder 'lin' oder 'log' sein."
+
+#: src/heatpumps/hp_dashboard.py:79
+msgid "is not allowed."
+msgstr "ist nicht erlaubt."
+
+#: src/heatpumps/hp_dashboard.py:107
+msgid "Heat Pump Dashboard"
+msgstr "Wärmepumpen Dashboard"
+
+#: src/heatpumps/hp_dashboard.py:123
+msgid "Select Mode"
+msgstr "Auslegung der Wärmepumpe"
+
+#: src/heatpumps/hp_dashboard.py:124
+msgid "Start"
+msgstr "Start"
+
+#: src/heatpumps/hp_dashboard.py:134
+msgid "Design of the Heat Pump"
+msgstr "Auslegung der Wärmepumpe"
+
+#: src/heatpumps/hp_dashboard.py:136
+msgid "Setup"
+msgstr "Setup"
+
+#: src/heatpumps/hp_dashboard.py:138
+msgid "Base Topology"
+msgstr "Grundtopologie"
+
+#: src/heatpumps/hp_dashboard.py:148
+msgid "Heat Pump Model"
+msgstr "Wärmepumpenmodell"
+
+#: src/heatpumps/hp_dashboard.py:152
+msgid "Process Type"
+msgstr "Prozessart"
+
+#: src/heatpumps/hp_dashboard.py:153
+msgid "subcritical"
+msgstr "subkritisch"
+
+#: src/heatpumps/hp_dashboard.py:153 src/heatpumps/hp_dashboard.py:157
+msgid "transcritical"
+msgstr "transkritisch"
+
+#: src/heatpumps/hp_dashboard.py:158
+msgid "Transcritical"
+msgstr "Transkritisch"
+
+#: src/heatpumps/hp_dashboard.py:183 src/heatpumps/hp_dashboard.py:193
+msgid "Internal Heat Exchange"
+msgstr "Interne Wärmerübertragung"
+
+#: src/heatpumps/hp_dashboard.py:185
+msgid "Superheating/Subcooling"
+msgstr "Überhitzung/Unterkühlung"
+
+#: src/heatpumps/hp_dashboard.py:197
+msgid "No. {i}: Superheating/Subcooling"
+msgstr "Nr. {i}: Überhitzung/Unterkühlung"
+
+#: src/heatpumps/hp_dashboard.py:206 src/heatpumps/hp_dashboard.py:848
+#: src/heatpumps/hp_dashboard.py:981
+msgid "Refrigerant"
+msgstr "Kältemittel"
+
+#: src/heatpumps/hp_dashboard.py:235
+msgid "Refrigerant (High Temperature Circuit)"
+msgstr "Kältemittel (Hochtemperaturkreis)"
+
+#: src/heatpumps/hp_dashboard.py:254
+msgid "Refrigerant (Low Temperature Circuit)"
+msgstr "Kältemittel (Niedertemperaturkreis)"
+
+#: src/heatpumps/hp_dashboard.py:274
+msgid "Transcritical Pressure"
+msgstr "Traskritischer Druck"
+
+#: src/heatpumps/hp_dashboard.py:276
+msgid "Value in bar"
+msgstr "Wert in bar"
+
+#: src/heatpumps/hp_dashboard.py:285
+msgid "Thermal Nominal Power"
+msgstr "Wärmequelle"
+
+#: src/heatpumps/hp_dashboard.py:287
+msgid "Value in MW"
+msgstr "Wert in MW"
+
+#: src/heatpumps/hp_dashboard.py:294 src/heatpumps/hp_dashboard.py:583
+msgid "Heat Source"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:296 src/heatpumps/hp_dashboard.py:336
+msgid "Forward Temperature"
+msgstr "Temperatur Vorlauf"
+
+#: src/heatpumps/hp_dashboard.py:304 src/heatpumps/hp_dashboard.py:344
+msgid "Return Temperature"
+msgstr "Temperatur Rücklauf"
+
+#: src/heatpumps/hp_dashboard.py:315 src/heatpumps/hp_dashboard.py:355
+msgid "The return temperature must be lower than the forward temperature."
+msgstr "Die Rücklauftemperatur muss niedriger sein, als die Vorlauftemperatur"
+
+#: src/heatpumps/hp_dashboard.py:330 src/heatpumps/hp_dashboard.py:636
+msgid "Heat Sink"
+msgstr "Wärmesenke"
+
+#: src/heatpumps/hp_dashboard.py:362
+msgid "The temperature of the heat sink must be higher than the heat source."
+msgstr "Die Temperatur der Wärmesenke muss höher sein, als die der Wärmequelle."
+
+#: src/heatpumps/hp_dashboard.py:367
+msgid "Compressor"
+msgstr "Verdichter"
+
+#: src/heatpumps/hp_dashboard.py:371
+msgid "Efficiency $\\eta_s$"
+msgstr "Wirkungsgrad $\\eta_s$"
+
+#: src/heatpumps/hp_dashboard.py:383
+msgid "Efficiency $\\eta_{s,1}$"
+msgstr "Wirkungsgrad $\\eta_{s,1}$"
+
+#: src/heatpumps/hp_dashboard.py:394
+msgid "Efficiency $\\eta_{s,2}$"
+msgstr "Wirkungsgrad $\\eta_{s,2}"
+
+#: src/heatpumps/hp_dashboard.py:406
+msgid "Efficiency $\\eta_{s,HTK}$"
+msgstr "Wirkungsgrad $\\eta_{s,HTK}$"
+
+#: src/heatpumps/hp_dashboard.py:417
+msgid "Efficiency $\\eta_{s,NTK}$"
+msgstr "Wirkungsgrad $\\eta_{s,NTK}$"
+
+#: src/heatpumps/hp_dashboard.py:429
+msgid "Efficiency $\\eta_{s,HTK,1}$"
+msgstr "Wirkungsgrad $\\eta_{s,HTK,1}$"
+
+#: src/heatpumps/hp_dashboard.py:440
+msgid "Efficiency $\\eta_{s,HTK,2}$"
+msgstr "Wirkungsgrad $\\eta_{s,HTK,2}$"
+
+#: src/heatpumps/hp_dashboard.py:451
+msgid "Efficiency $\\eta_{s,NTK,1}$"
+msgstr "Wirkungsgrad $\\eta_{s,NTK,1}$"
+
+#: src/heatpumps/hp_dashboard.py:462
+msgid "Efficiency $\\eta_{s,NTK,2}$"
+msgstr "Wirkungsgrad $\\eta_{s,NTK,2}$"
+
+#: src/heatpumps/hp_dashboard.py:473
+msgid "Ambient Conditions (Exergy)"
+msgstr "Umgebungsbedingungen (Exergie)"
+
+#: src/heatpumps/hp_dashboard.py:475 src/heatpumps/hp_dashboard.py:599
+#: src/heatpumps/hp_dashboard.py:652
+msgid "Temperature"
+msgstr "Temperatur"
+
+#: src/heatpumps/hp_dashboard.py:484
+msgid "Pressure in bar"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:491
+msgid "Parameters for Cost Calculation"
+msgstr "Parameter zur Kostenkalkulation"
+
+#: src/heatpumps/hp_dashboard.py:494
+msgid "Heat Transfer Coefficient (Evaporation)"
+msgstr "Wärmedurchgangskoeffizient (Verdampfung)"
+
+#: src/heatpumps/hp_dashboard.py:504
+msgid "Heat Transfer Coefficient (Condensation)"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:515
+msgid "Heat Transfer Coefficient (Transcritical)"
+msgstr "Wärmedurchgangskoeffizient (Transkritisch)"
+
+#: src/heatpumps/hp_dashboard.py:525
+msgid "Heat Transfer Coefficient (Miscellaneous)"
+msgstr "Wärmedurchgangskoeffizient (Sonstige)"
+
+#: src/heatpumps/hp_dashboard.py:535
+msgid "Residence Time Flash Tank"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:546
+msgid "🧮 Execute Design"
+msgstr "🧮 Auslegung ausführen"
+
+#: src/heatpumps/hp_dashboard.py:551 src/heatpumps/hp_dashboard.py:555
+msgid "Part Load"
+msgstr "Teillast"
+
+#: src/heatpumps/hp_dashboard.py:553
+msgid "Part Load Simulation of the Heat Pump"
+msgstr "Teillastsimulation der Wärmepumpe"
+
+#: src/heatpumps/hp_dashboard.py:560
+msgid "Relative to Nominal Mass Flow"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:586 src/heatpumps/hp_dashboard.py:591
+#: src/heatpumps/hp_dashboard.py:639 src/heatpumps/hp_dashboard.py:644
+msgid "Constant"
+msgstr "Konstant"
+
+#: src/heatpumps/hp_dashboard.py:586 src/heatpumps/hp_dashboard.py:605
+#: src/heatpumps/hp_dashboard.py:639 src/heatpumps/hp_dashboard.py:658
+msgid "Variable"
+msgstr "Variabel"
+
+#: src/heatpumps/hp_dashboard.py:607 src/heatpumps/hp_dashboard.py:660
+msgid "Start Temperature"
+msgstr "Starttemperatur"
+
+#: src/heatpumps/hp_dashboard.py:616 src/heatpumps/hp_dashboard.py:669
+msgid "End Temperature"
+msgstr "Endtemperatur"
+
+#: src/heatpumps/hp_dashboard.py:689
+msgid "🧮 Simulate Part Load"
+msgstr "🧮 Teillast simulieren"
+
+#: src/heatpumps/hp_dashboard.py:692
+msgid "*heatpumps*"
+msgstr "*Wärmepumpe*"
+
+#: src/heatpumps/hp_dashboard.py:697
+msgid ""
+"\n"
+"            The heat pump simulator *heatpumps* is a powerful simulation software\n"
+"            for analyzing and evaluating heat pumps.\n"
+"\n"
+"            This dashboard allows you to control a variety of complex\n"
+"            thermodynamic plant models using numerical methods via a\n"
+"            simple interface, without requiring expert knowledge.\n"
+"            This includes both the design of heat pumps\n"
+"            as well as the simulation of their steady-state part load operation. The\n"
+"            simulation results provide insights into the pump's behavior, COP,\n"
+"            state variables, and costs of individual components as well as\n"
+"            total investment costs. This enables access to complex questions\n"
+"            that frequently arise in the design and planning of heat pumps.\n"
+"\n"
+"            ### Key Features\n"
+"\n"
+"            - Steady-state design and part load simulation based on [TESPy](https://github.com/oemof/tespy)\n"
+"            - Parameterization and result visualization via a [Streamlit](https://github.com/streamlit/streamlit) dashboard\n"
+"            - Common circuit topologies used in industry, research, and development\n"
+"            - Subcritical and transcritical processes\n"
+"            - Large selection of working fluids thanks to [CoolProp](https://github.com/CoolProp/CoolProp) integration\n"
+"            "
+msgstr ""
+"\n"
+"            Der Wärmepumpensimulator *heatpumps* ist eine leistungsfähige Simulationssoftware\n"
+"            zur Analyse und Bewertung von Wärmepumpen.\n"
+"\n"
+"            Mit diesem Dashboard lassen sich eine Vielzahl komplexer\n"
+"            thermodynamischer Anlagenmodelle mithilfe numerischer Methoden über eine\n"
+"            einfache Oberfläche steuern, ohne Fachkenntnisse über diese\n"
+"            vorauszusetzen. Dies beinhaltet sowohl die Auslegung von Wärmepumpen,\n"
+"            als auch die Simulation ihres stationären Teillastbetriebs. Dabei geben\n"
+"            die Ergebnisse der Simulationen Aufschluss über das prinzipielle\n"
+"            Verhalten, den COP, Zustandsgrößen und Kosten der einzelnen Komponenten\n"
+"            sowie Gesamtinvestitionskosten der betrachteten Wärmepumpe. Damit\n"
+"            wird Zugang zu komplexen Fragestellungen ermöglicht, die regelmäßig in\n"
+"            der Konzeption und Planung von Wärmepumpen aufkommen.\n"
+"\n"
+"            ### Key Features\n"
+"\n"
+"            - Stationäre Auslegungs- und Teillastsimulation basierend auf [TESPy](https://github.com/oemof/tespy)\n"
+"            - Parametrisierung and Ergebnisvisualisierung mithilfe eines [Streamlit](https://github.com/streamlit/streamlit) Dashboards\n"
+"            - In der Industrie, Forschung und Entwicklung gängige Schaltungstopologien\n"
+"            - Sub- und transkritische Prozesse\n"
+"            - Große Auswahl an Arbeitsmedien aufgrund der Integration von [CoolProp](https://github.com/CoolProp/CoolProp)\n"
+"                "
+
+#: src/heatpumps/hp_dashboard.py:723
+msgid "Start Design"
+msgstr "Auslegung starten"
+
+#: src/heatpumps/hp_dashboard.py:727
+msgid "Used Software"
+msgstr "Verwendete Software"
+
+#: src/heatpumps/hp_dashboard.py:729
+msgid ""
+"\n"
+"                #### Used Software:\n"
+"\n"
+"                The open-source software TESPy is used for modeling and simulating the systems.\n"
+"                Additionally, a number of other Python packages are used for data processing,\n"
+"                preparation, and visualization.\n"
+"\n"
+"                ---\n"
+"\n"
+"                #### TESPy:\n"
+"\n"
+"                TESPy (Thermal Engineering Systems in Python) is a powerful\n"
+"                simulation tool for thermal process engineering, such as power plants,\n"
+"                district heating systems, or heat pumps. The TESPy package allows for\n"
+"                system design and steady-state operation simulation. After that,\n"
+"                part load behavior can be determined based on the characteristics of\n"
+"                each component of the system. The component-based structure combined\n"
+"                with the solution method offers great flexibility regarding the\n"
+"                system topology and parameterization. More information on TESPy can\n"
+"                be found in its [online documentation](https://tespy.readthedocs.io) (in English).\n"
+"\n"
+"                #### Other Packages:\n"
+"\n"
+"                - [Streamlit](https://docs.streamlit.io) (Graphical User Interface)\n"
+"                - [NumPy](https://numpy.org) (Data Processing)\n"
+"                - [pandas](https://pandas.pydata.org) (Data Processing)\n"
+"                - [SciPy](https://scipy.org/) (Interpolation)\n"
+"                - [scikit-learn](https://scikit-learn.org) (Regression)\n"
+"                - [Matplotlib](https://matplotlib.org) (Data Visualization)\n"
+"                - [FluProDia](https://fluprodia.readthedocs.io) (Data Visualization)\n"
+"                - [CoolProp](http://www.coolprop.org) (Fluid Properties)\n"
+"                "
+msgstr ""
+"\n"
+"                #### Verwendete Software:\n"
+"\n"
+"                Zur Modellerstellung und Berechnung der Simulationen wird die\n"
+"                Open Source Software TESPy verwendet. Des Weiteren werden\n"
+"                eine Reihe weiterer Pythonpakete zur Datenverarbeitung,\n"
+"                -aufbereitung und -visualisierung genutzt.\n"
+"\n"
+"                ---\n"
+"\n"
+"                #### TESPy:\n"
+"\n"
+"                TESPy (Thermal Engineering Systems in Python) ist ein\n"
+"                leistungsfähiges Simulationswerkzeug für thermische\n"
+"                Verfahrenstechnik, zum Beispiel für Kraftwerke,\n"
+"                Fernwärmesysteme oder Wärmepumpen. Mit dem TESPy-Paket ist es\n"
+"                möglich, Anlagen auszulegen und den stationären Betrieb zu\n"
+"                simulieren. Danach kann das Teillastverhalten anhand der\n"
+"                zugrundeliegenden Charakteristiken für jede Komponente der\n"
+"                Anlage ermittelt werden. Die komponentenbasierte Struktur in\n"
+"                Kombination mit der Lösungsmethode bieten eine sehr hohe\n"
+"                Flexibilität hinsichtlich der Anlagentopologie und der\n"
+"                Parametrisierung. Weitere Informationen zu TESPy sind in dessen\n"
+"                [Onlinedokumentation](https://tespy.readthedocs.io) in\n"
+"                englischer Sprache zu finden.\n"
+"\n"
+"                #### Weitere Pakete:\n"
+"\n"
+"                - [Streamlit](https://docs.streamlit.io) (Graphische Oberfläche)\n"
+"                - [NumPy](https://numpy.org) (Datenverarbeitung)\n"
+"                - [pandas](https://pandas.pydata.org) (Datenverarbeitung)\n"
+"                - [SciPy](https://scipy.org/) (Interpolation)\n"
+"                - [scikit-learn](https://scikit-learn.org) (Regression)\n"
+"                - [Matplotlib](https://matplotlib.org) (Datenvisualisierung)\n"
+"                - [FluProDia](https://fluprodia.readthedocs.io) (Datenvisualisierung)\n"
+"                - [CoolProp](http://www.coolprop.org) (Stoffdaten)\n"
+"                "
+#: src/heatpumps/hp_dashboard.py:765
+msgid "Disclaimer"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:767
+msgid ""
+"\n"
+"                #### Simulation Results:\n"
+"\n"
+"                Numerical simulations are calculations performed using appropriate\n"
+"                iterative methods based on the specified boundary conditions and parameters.\n"
+"                In some cases, it is not possible to account for all possible influences,\n"
+"                so deviations from real-world experience may occur and should be taken into\n"
+"                account when evaluating the results. The results provide sufficient to exact\n"
+"                insights into the heat pump's general behavior, COP, and state variables in\n"
+"                each component. Nevertheless, all information and results are provided\n"
+"                without guarantee.\n"
+"                "
+msgstr ""
+"\n"
+"                #### Simulationsergebnisse:\n"
+"\n"
+"                Numerische Simulationen sind Berechnungen mittels geeigneter\n"
+"                Iterationsverfahren in Bezug auf die vorgegebenen und gesetzten\n"
+"                Randbedingungen und Parameter. Eine Berücksichtigung aller\n"
+"                möglichen Einflüsse ist in Einzelfällen nicht möglich, so dass\n"
+"                Abweichungen zu Erfahrungswerten aus Praxisanwendungen\n"
+"                entstehen können und bei der Bewertung berücksichtigt werden\n"
+"                müssen. Die Ergebnisse geben hinreichenden bis genauen\n"
+"                Aufschluss über das prinzipielle Verhalten, den COP und\n"
+"                Zustandsgrößen in den einzelnen Komponenten der Wärmepumpe.\n"
+"                Dennoch sind alle Angaben und Ergebnisse ohne Gewähr.\n"
+"                "
+
+#: src/heatpumps/hp_dashboard.py:783
+msgid "Copyright"
+msgstr "Urheberrecht"
+
+#: src/heatpumps/hp_dashboard.py:785
+msgid ""
+"\n"
+"                #### Software License\n"
+"                MIT License\n"
+"\n"
+"                Copyright © 2023 Jonas Freißmann and Malte Fritz\n"
+"\n"
+"                Permission is hereby granted, free of charge, to any person obtaining a copy\n"
+"                of this software and associated documentation files (the \"Software\"), to deal\n"
+"                in the Software without restriction, including without limitation the rights\n"
+"                to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n"
+"                copies of the Software, and to permit persons to whom the Software is\n"
+"                furnished to do so, subject to the following conditions:\n"
+"\n"
+"                The above copyright notice and this permission notice shall be included in all\n"
+"                copies or substantial portions of the Software.\n"
+"\n"
+"                THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n"
+"                IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n"
+"                FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n"
+"                AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n"
+"                LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n"
+"                OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n"
+"                SOFTWARE.\n"
+"                "
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:821 src/heatpumps/hp_dashboard.py:960
+msgid "Topology"
+msgstr "Topologie"
+
+#: src/heatpumps/hp_dashboard.py:853 src/heatpumps/hp_dashboard.py:986
+msgid "#### High-Temperature Circuit"
+msgstr "#### Hochtemperaturkreis"
+
+#: src/heatpumps/hp_dashboard.py:855 src/heatpumps/hp_dashboard.py:988
+msgid "#### Low-Temperature Circuit"
+msgstr "#### Niedertemperaturkreis"
+
+#: src/heatpumps/hp_dashboard.py:859
+msgid ""
+"\n"
+"                    All substance data and classifications from\n"
+"                    [CoolProp](http://www.coolprop.org) or\n"
+"                    [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)\n"
+"                    "
+msgstr ""
+"\n"
+"                    Alle Stoffdaten und Klassifikationen aus\n"
+"                    [CoolProp](http://www.coolprop.org) oder\n"
+"                    [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)\n"
+"                    "
+
+#: src/heatpumps/hp_dashboard.py:868
+msgid "Instructions"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:870
+msgid ""
+"\n"
+"                    #### Instructions\n"
+"\n"
+"                    You are now on the design simulation interface\n"
+"                    for your heat pump. In the left sidebar, next to the\n"
+"                    dimensioning and the choice of refrigerant, several central parameters\n"
+"                    for the cycle process must be specified.\n"
+"\n"
+"                    These include, for example, the temperatures of the heat source and sink,\n"
+"                    but also the associated network pressures. Additionally, an internal\n"
+"                    heat exchanger can be optionally added. The resulting superheat of the\n"
+"                    evaporated refrigerant must also be specified.\n"
+"\n"
+"                    Once the design simulation is successfully completed, the\n"
+"                    generated results are processed graphically in state diagrams\n"
+"                    and quantified. Key metrics such as the coefficient of performance (COP),\n"
+"                    as well as relevant heat flows and power outputs, will be shown.\n"
+"                    Furthermore, thermodynamic state variables at each process step will\n"
+"                    be listed in a table.\n"
+"\n"
+"                    After the design simulation, a button will appear allowing you to switch\n"
+"                    to the partial load interface. This can also be done via the\n"
+"                    dropdown menu in the sidebar. Information on how to perform\n"
+"                    partial load simulations is available on the start page of this interface.\n"
+"                    "
+msgstr ""
+"\n"
+"                #### Anleitung\n"
+"\n"
+"                Sie befinden sich auf der Oberfläche zur Auslegungssimulation\n"
+"                Ihrer Wärmepumpe. Dazu sind links in der Sidebar neben der\n"
+"                Dimensionierung und der Wahl des zu verwendenden Kältemittels\n"
+"                verschiedene zentrale Parameter des Kreisprozesse vorzugeben.\n"
+"\n"
+"                Dies sind zum Beispiel die Temperaturen der Wärmequelle und -senke,\n"
+"                aber auch die dazugehörigen Netzdrücke. Darüber hinaus kann\n"
+"                optional ein interner Wärmeübertrager hinzugefügt werden. Dazu ist\n"
+"                weiterhin die resultierende Überhitzung des verdampften\n"
+"                Kältemittels vorzugeben.\n"
+"\n"
+"                Ist die Auslegungssimulation erfolgreich abgeschlossen, werden die\n"
+"                generierten Ergebnisse graphisch in Zustandsdiagrammen\n"
+"                aufgearbeitet und quantifiziert. Die zentralen Größen wie die\n"
+"                Leistungszahl (COP) sowie die relevanten Wärmeströme und Leistung\n"
+"                werden aufgeführt. Darüber hinaus werden die thermodynamischen\n"
+"                Zustandsgrößen in allen Prozessschritten tabellarisch aufgelistet.\n"
+"\n"
+"                Im Anschluss an die Auslegungsimulation erscheint ein Knopf zum\n"
+"                Wechseln in die Teillastoberfläche. Dies kann ebenfalls über das\n"
+"                Dropdownmenü in der Sidebar erfolgen. Informationen zur\n"
+"                Durchführung der Teillastsimulationen befindet sich auf der\n"
+"                Startseite dieser Oberfläche.\n"
+"                    "
+
+#: src/heatpumps/hp_dashboard.py:901
+msgid "Running simulation..."
+msgstr "Simulation wird durchgeführt..."
+
+#: src/heatpumps/hp_dashboard.py:905
+msgid "The heat pump design simulation was successful."
+msgstr "Die Simulation der Wärmepumpenauslegung war erfolgreich."
+
+#: src/heatpumps/hp_dashboard.py:910
+msgid ""
+"An error occurred during the heat pump simulation. Please correct the input parameters and try again.\n"
+"\n"
+msgstr ""
+"Bei der Simulation der Wärmepumpe ist der nachfolgende Fehler aufgetreten. Bitte korrigieren Sie die Eingangsparameter und versuchen es erneut.\n\n"
+"\n"
+
+#: src/heatpumps/hp_dashboard.py:919
+msgid "Visualizing results..."
+msgstr "Ergebnisse werden visualisiert..."
+
+#: src/heatpumps/hp_dashboard.py:945
+msgid "Design Results"
+msgstr "Ergebnisse der Auslegung"
+
+#: src/heatpumps/hp_dashboard.py:955
+msgid "Topology & Refrigerant"
+msgstr "Topologie & Kältemittel"
+
+#: src/heatpumps/hp_dashboard.py:992
+msgid ""
+"\n"
+"                                All substance data and classifications from\n"
+"                                [CoolProp](http://www.coolprop.org) or\n"
+"                                [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)\n"
+"                                "
+msgstr ""
+"\n"
+"                                Alle Stoffdaten und Klassifikationen aus\n"
+"                                [CoolProp](http://www.coolprop.org) oder\n"
+"                                [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)\n"
+"                                "
+
+#: src/heatpumps/hp_dashboard.py:1001
+msgid "State Diagrams"
+msgstr "Zustandsdiagramme"
+
+#: src/heatpumps/hp_dashboard.py:1013
+msgid "Log(p)-h Diagram"
+msgstr "Log(p)-h Diagramm"
+
+#: src/heatpumps/hp_dashboard.py:1066
+msgid "T-s Diagram"
+msgstr "T-s Diagramm"
+
+#: src/heatpumps/hp_dashboard.py:1117
+msgid "State Quantities"
+msgstr "Zustandsgrößen"
+
+#: src/heatpumps/hp_dashboard.py:1150
+msgid "m in kg/s"
+msgstr "m in kg/s"
+
+#: src/heatpumps/hp_dashboard.py:1151
+msgid "p in bar"
+msgstr "p in bar"
+
+#: src/heatpumps/hp_dashboard.py:1152
+msgid "h in kJ/kg"
+msgstr "h in kJ/kg"
+
+#: src/heatpumps/hp_dashboard.py:1153
+msgid "T in °C"
+msgstr "T in °C"
+
+#: src/heatpumps/hp_dashboard.py:1154
+msgid "v in m³/kg"
+msgstr "v in m³/kg"
+
+#: src/heatpumps/hp_dashboard.py:1155
+msgid "vol in m³/s"
+msgstr "vol in m³/s"
+
+#: src/heatpumps/hp_dashboard.py:1156
+msgid "s in kJ/(kgK)"
+msgstr "s in kJ/(kgK)"
+
+#: src/heatpumps/hp_dashboard.py:1162
+msgid "Economic Assessment"
+msgstr "Ökonomische Bewertung"
+
+#: src/heatpumps/hp_dashboard.py:1170
+msgid "Total Investment Costs"
+msgstr "Gesamtinvestitionskosten"
+
+#: src/heatpumps/hp_dashboard.py:1172
+msgid "Specific Investment Costs"
+msgstr "Spez. Investitionskosten"
+
+#: src/heatpumps/hp_dashboard.py:1179
+msgid ""
+"\n"
+"                            Methodology for cost calculation analogous to\n"
+"                            [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488),\n"
+"                            based on [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).\n"
+"                            "
+msgstr ""
+"\n"
+"                            Methodik zur Berechnung der Kosten analog zu\n"
+"                            [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488),\n"
+"                            basierend auf [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).\n"
+"                            "
+
+
+#: src/heatpumps/hp_dashboard.py:1188
+msgid "Exergy Assessment"
+msgstr "Exergiebewertung"
+
+#: src/heatpumps/hp_dashboard.py:1190
+msgid "Results of the Exergy Analysis"
+msgstr "Ergebnisse der Exergieanalyse"
+
+#: src/heatpumps/hp_dashboard.py:1194
+msgid "Epsilon"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1196
+msgid "E_F"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1197
+msgid "E_P"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1198
+msgid "E_D"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1199
+msgid "E_L"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1201
+msgid "Results by Component"
+msgstr "Ergebnisse nach Komponente"
+
+#: src/heatpumps/hp_dashboard.py:1217
+msgid "E_F in W"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1218
+msgid "E_P in W"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1219
+msgid "E_D in W"
+msgstr ""
+
+#: src/heatpumps/hp_dashboard.py:1227
+msgid "Grassmann Diagram"
+msgstr "Grassmann Diagramm"
+
+#: src/heatpumps/hp_dashboard.py:1236
+msgid "Waterfall Diagram"
+msgstr "Wasserfall Diagramm"
+
+#: src/heatpumps/hp_dashboard.py:1245
+msgid ""
+"\n"
+"                            Definitions and methodology of the exergy analysis based on\n"
+"                            [Morosuk and Tsatsaronis (2019)](https://doi.org/10.1016/j.energy.2018.10.090),\n"
+"                            its implementation in TESPy described in [Witte and Hofmann et al. (2022)](https://doi.org/10.3390/en15114087)\n"
+"                            and pedagogically prepared in [Witte, Freißmann and Fritz (2023)](https://fwitte.github.io/TESPy_teaching_exergy/).\n"
+"                            "
+msgstr ""
+"\n"
+"                            Definitionen und Methodik der Exergieanalyse basierend auf\n"
+"                            [Morosuk und Tsatsaronis (2019)](https://doi.org/10.1016/j.energy.2018.10.090),\n"
+"                            dessen Implementation in TESPy beschrieben in [Witte und Hofmann et al. (2022)](https://doi.org/10.3390/en15114087)\n"
+"                            und didaktisch aufbereitet in [Witte, Freißmann und Fritz (2023)](https://fwitte.github.io/TESPy_teaching_exergy/).\n"
+"                            "
+
+
+
+#: src/heatpumps/hp_dashboard.py:1256
+msgid "To calculate the partial load, click on \"Simulate Partial Load\"."
+msgstr "Um die Teillast zu berechnen, drücke auf \"Teillast simulieren\"."
+
+#: src/heatpumps/hp_dashboard.py:1261
+msgid "Simulate Partial Load"
+msgstr "Teillast simulieren"
+
+#: src/heatpumps/hp_dashboard.py:1266
+msgid "Operating Characteristics"
+msgstr "Betriebscharakteristik"
+
+#: src/heatpumps/hp_dashboard.py:1270
+msgid ""
+"\n"
+"                To perform a partial load simulation, a heat pump must first be\n"
+"                designed. Please switch to the \"Design\" mode first.\n"
+"                "
+msgstr ""
+"\n"
+"                Um eine Teillastsimulation durchzuführen, muss zunächst eine\n"
+"                Wärmepumpe ausgelegt werden. Wechseln Sie bitte zunächst in den\n"
+"                Modus \"Auslegung\".\n"
+"                "
+
+#: src/heatpumps/hp_dashboard.py:1281
+msgid ""
+"\n"
+"                    Parameterization of the partial load calculation:\n"
+"                    + Percentage share of partial load\n"
+"                    + Range of source temperature\n"
+"                    + Range of sink temperature\n"
+"                    "
+msgstr ""
+"\n"
+"                    Parametrisierung der Teillastberechnung:\n"
+"                    + Prozentualer Anteil Teillast\n"
+"                    + Bereich der Quelltemperatur\n"
+"                    + Bereich der Senkentemperatur\n"
+"                    "
+
+
+#: src/heatpumps/hp_dashboard.py:1294
+msgid "Partial load simulation is running... This may take a while."
+msgstr "Teillastsimulation wird durchgeführt... Dies kann eine Weile dauern."
+
+#: src/heatpumps/hp_dashboard.py:1301
+msgid "The simulation of the heat pump characteristics was successful."
+msgstr "Die Simulation der Wärmepumpencharakteristika war erfolgreich."
+
+#: src/heatpumps/hp_dashboard.py:1306
+msgid "Results are being visualized..."
+msgstr "Ergebnisse werden visualisiert..."
+
+#: src/heatpumps/hp_dashboard.py:1307
+msgid "Diagrams"
+msgstr "Diagramme"
+
+#: src/heatpumps/hp_dashboard.py:1325 src/heatpumps/hp_dashboard.py:1350
+#: src/heatpumps/hp_dashboard.py:1379
+msgid "Source Temperature"
+msgstr "Quellentemperatur"
+
+#: src/heatpumps/hp_dashboard.py:1359
+msgid "Exergy Analysis Partial Load"
+msgstr "Exergieanalyse Teillast"
+
+#: src/heatpumps/hp_dashboard.py:1389
+msgid "Design New Heat Pump"
+msgstr "Neue Wärmepumpe auslegen"
+

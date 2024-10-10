@@ -1,0 +1,70 @@
+# Heatpump dashboard.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2024-09-27 11:07+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+msgid "Simple cycle"
+msgstr ""
+
+msgid "Intercooler"
+msgstr ""
+
+msgid "Economizer"
+msgstr ""
+
+msgid "Flashtank"
+msgstr ""
+
+msgid "Cascade cycle"
+msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "Closed"
+msgstr ""
+
+msgid "Double Internal Heat Exchanger"
+msgstr ""
+
+msgid "Internal Heat Exchanger"
+msgstr ""
+
+msgid "Internal Heat Exchanger (Variant A)"
+msgstr ""
+
+msgid "Internal Heat Exchanger (Variant B)"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "Parallel Connection"
+msgstr ""
+
+msgid "Serial Connection"
+msgstr ""
+
+msgid "Transcritical"
+msgstr ""
+
+msgid "open"
+msgstr ""
+
+msgid "closed"
+msgstr ""
+
+msgid "series"
+msgstr ""
+
+msgid "parallel"
+msgstr ""
