@@ -55,7 +55,7 @@ def calc_limits(wf, prop, padding_rel, scale='lin'):
 
     wf : str
         Working fluid for which to filter heat pump simulation results.
-    
+
     prop : str
         Fluid property to calculate limits for.
 
@@ -133,6 +133,7 @@ with st.sidebar:
 
             models = []
             for model, mdata in var.hp_models.items():
+                mdata = mdata['setup']
                 if mdata['base_topology'] == base_topology:
                     if mdata['process_type'] != 'transcritical':
                         models.append(mdata['display_name'])
@@ -150,6 +151,7 @@ with st.sidebar:
                 model_name = f'{model_name} | Transkritisch'
 
             for model, mdata in var.hp_models.items():
+                mdata = mdata['setup']
                 correct_base = mdata['base_topology'] == base_topology
                 correct_model_name = mdata['display_name'] == model_name
                 if correct_base and correct_model_name:
@@ -161,12 +163,8 @@ with st.sidebar:
                         hp_model_name_topology = hp_model_name
                     break
 
-            parampath = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'models', 'input',
-                f'params_hp_{hp_model_name}.json'
-                ))
-            with open(parampath, 'r', encoding='utf-8') as file:
-                params = json.load(file)
+            params = var.hp_models[model]
+
         if hp_model['nr_ihx'] == 1:
             with st.expander('Interne Wärmerübertragung'):
                 params['ihx']['dT_sh'] = st.slider(
@@ -730,7 +728,7 @@ if mode == 'Auslegung':
         # %% Run Design Simulation
         with st.spinner('Simulation wird durchgeführt...'):
             try:
-                ss.hp = run_design(hp_model_name, params)
+                ss.hp = run_design(params)
                 sim_succeded = True
                 st.success(
                     'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
@@ -1128,8 +1126,8 @@ if mode == 'Teillast':
     if 'hp' not in ss:
         st.warning(
             '''
-            Um eine Teillastsimulation durchzuführen, muss zunächst eine 
-            Wärmepumpe ausgelegt werden. Wechseln Sie bitte zunächst in den 
+            Um eine Teillastsimulation durchzuführen, muss zunächst eine
+            Wärmepumpe ausgelegt werden. Wechseln Sie bitte zunächst in den
             Modus "Auslegung".
             '''
         )
