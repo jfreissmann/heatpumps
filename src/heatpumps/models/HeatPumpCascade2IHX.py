@@ -14,12 +14,12 @@ from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
 
 if __name__ == '__main__':
-    from HeatPumpBase import HeatPumpBase
+    from TwoWorkingFluidHeatPump import TwoWorkingFluidHeatPump
 else:
-    from .HeatPumpBase import HeatPumpBase
+    from .TwoWorkingFluidHeatPump import TwoWorkingFluidHeatPump
 
 
-class HeatPumpCascade2IHX(HeatPumpBase):
+class HeatPumpCascade2IHX(TwoWorkingFluidHeatPump):
     """Two stage cascading heat pump with two refrigerants."""
 
     def __init__(self, params):
@@ -102,7 +102,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
         self.conns['A6'] = Connection(
             self.comps['HT_comp'], 'out1', self.comps['cond'], 'in1', 'A6'
             )
-        
+
         self.conns['D0'] = Connection(
             self.comps['inter'], 'out1', self.comps['cc1'], 'in1', 'D0'
             )
