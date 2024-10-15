@@ -1,7 +1,7 @@
 import json
 import os
 
-__model_names = {
+__models_parameter_names__ = {
     'HeatPumpSimple': 'simple',
     'HeatPumpSimpleTrans': 'simple_trans',
     'HeatPumpIHX': 'ihx',
@@ -78,10 +78,10 @@ __model_names = {
 
 def get_params(heat_pump_model, econ_type=None):
     """Get params dict for heat pump model class.
-    
+
     Parameters
     ----------
-    
+
     heat_pump_model : str
         Name of heat pump model class (e.g. 'HeatPumpEconIHX')
 
@@ -92,13 +92,10 @@ def get_params(heat_pump_model, econ_type=None):
     if econ_type is not None and econ_type.lower() not in ['closed', 'open']:
         raise ValueError(
             f"Parameter '{econ_type}' is not a valid econ_type. "
-            + "Supported values are 'open' and 'closed'."
+            "Supported values are 'open' and 'closed'."
             )
 
-    if econ_type is not None:
-        hpfilename = __model_names[f'{heat_pump_model}_{econ_type.lower()}']
-    else:
-        hpfilename = __model_names[heat_pump_model]
+    hpfilename = __models_parameter_names__[heat_pump_model]
     parampath = os.path.abspath(
         os.path.join(
             os.path.dirname(__file__), 'models', 'input',
