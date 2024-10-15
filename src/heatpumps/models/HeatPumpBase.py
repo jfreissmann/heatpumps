@@ -23,9 +23,6 @@ class HeatPumpBase:
     def __init__(self, params):
         """Initialize model and set necessary attributes."""
         self.params = params
-        self.wf = self.params['fluids']['wf']
-        self.si = self.params['fluids']['si']
-        self.so = self.params['fluids']['so']
 
         self.comps = dict()
         self.conns = dict()
@@ -39,6 +36,7 @@ class HeatPumpBase:
         self.epsilon = np.nan
 
         self.solved_design = False
+
         self.subdirname = (
             f"{self.params['setup']['type']}_"
             + f"{self.params['setup']['refrig']}"
@@ -47,6 +45,10 @@ class HeatPumpBase:
             os.path.dirname(__file__), 'stable', f'{self.subdirname}_design'
             ))
         self.validate_dir()
+
+        self.wf = self.params['fluids']['wf']
+        self.si = self.params['fluids']['si']
+        self.so = self.params['fluids']['so']
 
     def generate_components(self):
         """Initialize components of heat pump."""
