@@ -3,7 +3,14 @@
         "name": "two stage cascade with open economizer and internal heat exchanger Variant B",
         "type": "HeatPumpCascadeEconIHX",
         "refrig1": "R1234yf",
-        "refrig2": "R717"
+        "refrig2": "R717",
+        "base_topology": "Kaskadierter Kreis",
+        "display_name": "Offen | Reihenschaltung | interne W\u00dcT (Variante B)",
+        "nr_ihx": 2,
+        "econ_type": "open",
+        "comp_var": "series",
+        "nr_refrigs": 2,
+        "process_type": "subcritical"
     },
     "ambient": {
         "p": 1,

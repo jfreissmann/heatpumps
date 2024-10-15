@@ -2,7 +2,14 @@
     "setup": {
         "name": "parallel compression with open economizer and internal heat exchanger",
         "type": "HeatPumpPCIHX",
-        "refrig": "R1234yf"
+        "refrig": "R1234yf",
+        "base_topology": "Economizer",
+        "display_name": "Offen | Parallelschaltung | interne W\u00dcT (Variante B)",
+        "nr_ihx": 1,
+        "econ_type": "open",
+        "comp_var": "parallel",
+        "nr_refrigs": 1,
+        "process_type": "subcritical"
     },
     "ambient": {
         "p": 1,

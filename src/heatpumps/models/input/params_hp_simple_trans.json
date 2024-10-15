@@ -2,7 +2,14 @@
     "setup": {
         "name": "simple trans",
         "type": "HeatPumpSimpleTrans",
-        "refrig": "R717"
+        "refrig": "R717",
+        "base_topology": "Einfacher Kreis",
+        "display_name": "Allgemein | Transkritisch",
+        "nr_ihx": 0,
+        "econ_type": null,
+        "comp_var": null,
+        "nr_refrigs": 1,
+        "process_type": "transcritical"
     },
     "ambient": {
         "p": 1,

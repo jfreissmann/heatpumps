@@ -2,7 +2,14 @@
     "setup": {
         "name": "parallel compression with open economizer and two internal heat exchangers",
         "type": "HeatPumpIHXPCIHXTrans",
-        "refrig": "R717"
+        "refrig": "R717",
+        "base_topology": "Economizer",
+        "display_name": "Offen | Parallelschaltung | doppelte interne W\u00dcT | Transkritisch",
+        "nr_ihx": 2,
+        "econ_type": "open",
+        "comp_var": "parallel",
+        "nr_refrigs": 1,
+        "process_type": "transcritical"
     },
     "ambient": {
         "p": 1,

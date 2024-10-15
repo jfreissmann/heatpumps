@@ -2,7 +2,14 @@
     "setup": {
         "name": "closed economizer",
         "type": "HeatPumpEcon",
-        "refrig": "R717"
+        "refrig": "R717",
+        "base_topology": "Economizer",
+        "display_name": "Geschlossen | Reihenschaltung",
+        "nr_ihx": 0,
+        "econ_type": "closed",
+        "comp_var": "series",
+        "nr_refrigs": 1,
+        "process_type": "subcritical"
     },
     "ambient": {
         "p": 1,

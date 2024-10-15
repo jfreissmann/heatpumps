@@ -2,7 +2,14 @@
     "setup": {
         "name": "Internal heat exchanger",
         "type": "HeatPumpIHXTrans",
-        "refrig": "R717"
+        "refrig": "R717",
+        "base_topology": "Einfacher Kreis",
+        "display_name": "Interne W\u00dcT | Transkritisch",
+        "nr_ihx": 1,
+        "econ_type": null,
+        "comp_var": null,
+        "nr_refrigs": 1,
+        "process_type": "transcritical"
     },
     "ambient": {
         "p": 1,

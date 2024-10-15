@@ -2,7 +2,14 @@
     "setup": {
         "name": "open economizer",
         "type": "HeatPumpEconTrans",
-        "refrig": "R717"
+        "refrig": "R717",
+        "base_topology": "Economizer",
+        "display_name": "Offen | Reihenschaltung | Transkritisch",
+        "nr_ihx": 0,
+        "econ_type": "open",
+        "comp_var": "series",
+        "nr_refrigs": 1,
+        "process_type": "transcritical"
     },
     "ambient": {
         "p": 1,

@@ -2,7 +2,14 @@
     "setup": {
         "name": "flash tank",
         "type": "HeatPumpFlash",
-        "refrig": "R1234yf"
+        "refrig": "R1234yf",
+        "base_topology": "Flashtank",
+        "display_name": "Allgemein",
+        "nr_ihx": 0,
+        "econ_type": null,
+        "comp_var": "series",
+        "nr_refrigs": 1,
+        "process_type": "subcritical"
     },
     "ambient": {
         "p": 1,

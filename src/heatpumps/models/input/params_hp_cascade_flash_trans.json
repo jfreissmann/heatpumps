@@ -3,7 +3,14 @@
         "name": "two stage cascade with flash tank at intermediate pressure",
         "type": "HeatPumpCascadeFlashTrans",
         "refrig1": "R1234yf",
-        "refrig2": "R717"
+        "refrig2": "R717",
+        "base_topology": "Kaskadierter Kreis",
+        "display_name": "Flashtank | Transkritisch",
+        "nr_ihx": 0,
+        "econ_type": null,
+        "comp_var": "series",
+        "nr_refrigs": 2,
+        "process_type": "transcritical"
     },
     "ambient": {
         "p": 1,

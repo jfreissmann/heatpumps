@@ -3,7 +3,14 @@
         "name": "two stage cascade with parallel compression, internal heat exchanger and closed economizer",
         "type": "HeatPumpCascadePCIHX",
         "refrig1": "R1234yf",
-        "refrig2": "R717"
+        "refrig2": "R717",
+        "base_topology": "Kaskadierter Kreis",
+        "display_name": "Geschlossen | Parallelschaltung | interne W\u00dcT (Variante B)",
+        "nr_ihx": 2,
+        "econ_type": "closed",
+        "comp_var": "parallel",
+        "nr_refrigs": 2,
+        "process_type": "subcritical"
     },
     "ambient": {
         "p": 1,

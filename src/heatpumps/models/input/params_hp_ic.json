@@ -2,7 +2,14 @@
     "setup": {
         "name": "intercooler",
         "type": "HeatPumpIC",
-        "refrig": "R717"
+        "refrig": "R717",
+        "base_topology": "Zwischenk\u00fchlung",
+        "display_name": "Allgemein",
+        "nr_ihx": 0,
+        "econ_type": null,
+        "comp_var": "series",
+        "nr_refrigs": 1,
+        "process_type": "subcritical"
     },
     "ambient": {
         "p": 1,

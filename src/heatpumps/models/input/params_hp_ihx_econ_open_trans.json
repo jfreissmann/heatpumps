@@ -2,7 +2,14 @@
     "setup": {
         "name": "internal heat exchanger with open economizer",
         "type": "HeatPumpIHXEconTrans",
-        "refrig": "R1234yf"
+        "refrig": "R1234yf",
+        "base_topology": "Economizer",
+        "display_name": "Offen | Reihenschaltung | interne W\u00dcT (Variante A) | Transkritisch",
+        "nr_ihx": 1,
+        "econ_type": "open",
+        "comp_var": "series",
+        "nr_refrigs": 1,
+        "process_type": "transcritical"
     },
     "ambient": {
         "p": 1,

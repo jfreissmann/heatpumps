@@ -2,7 +2,14 @@
     "setup": {
         "name": "internal heat exchanger with closed economizer",
         "type": "HeatPumpIHXEcon",
-        "refrig": "R1234yf"
+        "refrig": "R1234yf",
+        "base_topology": "Economizer",
+        "display_name": "Geschlossen | Reihenschaltung | interne W\u00dcT (Variante A)",
+        "nr_ihx": 1,
+        "econ_type": "closed",
+        "comp_var": "series",
+        "nr_refrigs": 1,
+        "process_type": "subcritical"
     },
     "ambient": {
         "p": 1,
