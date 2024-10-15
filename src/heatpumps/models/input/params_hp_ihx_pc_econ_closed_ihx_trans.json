@@ -1,7 +1,7 @@
 {
     "setup": {
         "name": "parallel compression with closed economizer and two internal heat exchangers",
-        "type": "HeatPumpIHXPCEconClosedIHXTrans",
+        "type": "HeatPumpIHXPCIHXTrans",
         "refrig": "R717"
     },
     "ambient": {
@@ -16,10 +16,10 @@
     "logph": {
         "x_min": 250,
         "x_max": 2250,
-        "y_min": 1e0,
-        "y_max": 3e2
+        "y_min": 1.0,
+        "y_max": 300.0
     },
-    "trans" : {
+    "trans": {
         "pr1": 0.98,
         "pr2": 0.98,
         "ttd_l": 2
@@ -29,9 +29,9 @@
         "pr2": 0.98,
         "ttd_l": 2
     },
-    "cons" : {
+    "cons": {
         "pr": 0.98,
-        "Q": -10e6
+        "Q": -10000000.0
     },
     "ihx1": {
         "pr1": 0.98,
@@ -46,7 +46,7 @@
     "econ": {
         "pr1": 0.98,
         "pr2": 0.98,
-	    "ttd_l": 2
+        "ttd_l": 2
     },
     "comp1": {
         "eta_s": 0.75
