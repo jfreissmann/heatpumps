@@ -17,6 +17,15 @@ from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
 
 
+def model_registry(type):
+    model_registry.items[type.__name__] = type
+    return type
+
+
+model_registry.items = {}
+
+
+@model_registry
 class HeatPumpBase:
     """Super class of all concrete heat pump models."""
 

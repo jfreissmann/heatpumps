@@ -17,8 +17,10 @@ if __name__ == '__main__':
     from HeatPumpBase import HeatPumpBase
 else:
     from .HeatPumpBase import HeatPumpBase
+    from .HeatPumpBase import model_registry
 
 
+@model_registry
 class HeatPumpIHXEcon(HeatPumpBase):
     """Heat pump with open or closed economizer and ihx in front of it."""
 

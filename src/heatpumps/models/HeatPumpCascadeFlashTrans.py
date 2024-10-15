@@ -18,8 +18,10 @@ if __name__ == '__main__':
     from HeatPumpBase import HeatPumpBase
 else:
     from .HeatPumpBase import HeatPumpBase
+    from .HeatPumpBase import model_registry
 
 
+@model_registry
 class HeatPumpCascadeFlashTrans(HeatPumpBase):
     """Two stage transcritical cascade heat pump with two stage compression with flash tank at
     intermediate pressure."""
