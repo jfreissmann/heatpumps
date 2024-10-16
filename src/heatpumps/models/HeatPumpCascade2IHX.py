@@ -17,8 +17,10 @@ if __name__ == '__main__':
     from HeatPumpBase import HeatPumpBase
 else:
     from .HeatPumpBase import HeatPumpBase
+    from .HeatPumpBase import model_registry
 
 
+@model_registry
 class HeatPumpCascade2IHX(HeatPumpBase):
     """Two stage cascading heat pump with two refrigerants."""
 
@@ -102,7 +104,7 @@ class HeatPumpCascade2IHX(HeatPumpBase):
         self.conns['A6'] = Connection(
             self.comps['HT_comp'], 'out1', self.comps['cond'], 'in1', 'A6'
             )
-        
+
         self.conns['D0'] = Connection(
             self.comps['inter'], 'out1', self.comps['cc1'], 'in1', 'D0'
             )

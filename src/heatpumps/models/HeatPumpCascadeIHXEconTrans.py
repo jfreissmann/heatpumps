@@ -18,8 +18,10 @@ if __name__ == '__main__':
     from HeatPumpBase import HeatPumpBase
 else:
     from .HeatPumpBase import HeatPumpBase
+    from .HeatPumpBase import model_registry
 
 
+@model_registry
 class HeatPumpCascadeIHXEconTrans(HeatPumpBase):
     """Two stage transcritical cascading heat pump with two refrigerants + internal heat exchanger and
     open or closed economizer pro cycle."""

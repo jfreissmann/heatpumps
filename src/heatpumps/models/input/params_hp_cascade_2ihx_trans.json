@@ -3,7 +3,14 @@
         "name": "two stage cascade with two ihx",
         "type": "HeatPumpCascade2IHXTrans",
         "refrig1": "R717",
-        "refrig2": "R245fa"
+        "refrig2": "R245fa",
+        "base_topology": "Kaskadierter Kreis",
+        "display_name": "Doppelte interne W\u00dcT | Transkritisch",
+        "nr_ihx": 2,
+        "econ_type": null,
+        "comp_var": null,
+        "nr_refrigs": 2,
+        "process_type": "transcritical"
     },
     "ambient": {
         "p": 1,
@@ -18,10 +25,10 @@
     "logph": {
         "x_min": 250,
         "x_max": 2250,
-        "y_min": 1e0,
-        "y_max": 3e2
+        "y_min": 1.0,
+        "y_max": 300.0
     },
-    "trans" : {
+    "trans": {
         "pr1": 0.98,
         "pr2": 0.98,
         "ttd_l": 2
@@ -46,9 +53,9 @@
         "pr2": 0.98,
         "dT_sh": 5
     },
-    "cons" : {
+    "cons": {
         "pr": 0.98,
-        "Q": -10e6
+        "Q": -10000000.0
     },
     "LT_comp": {
         "eta_s": 0.75
@@ -63,7 +70,7 @@
         "eta_s": 0.8
     },
     "A0": {
-	"p": 40
+        "p": 40
     },
     "A4": {
         "x": 1

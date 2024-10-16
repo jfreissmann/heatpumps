@@ -1,8 +1,15 @@
 {
     "setup": {
         "name": "internal heat exchanger with closed economizer",
-        "type": "HeatPumpIHXEconClosedTrans",
-        "refrig": "R1234yf"
+        "type": "HeatPumpIHXEconTrans",
+        "refrig": "R1234yf",
+        "base_topology": "Economizer",
+        "display_name": "Geschlossen | Reihenschaltung | interne W\u00dcT (Variante A) | Transkritisch",
+        "nr_ihx": 1,
+        "econ_type": "closed",
+        "comp_var": "series",
+        "nr_refrigs": 1,
+        "process_type": "transcritical"
     },
     "ambient": {
         "p": 1,
@@ -16,10 +23,10 @@
     "logph": {
         "x_min": 250,
         "x_max": 2250,
-        "y_min": 1e0,
-        "y_max": 3e2
+        "y_min": 1.0,
+        "y_max": 300.0
     },
-    "trans" : {
+    "trans": {
         "pr1": 0.98,
         "pr2": 0.98,
         "ttd_l": 2
@@ -29,9 +36,9 @@
         "pr2": 0.98,
         "ttd_l": 2
     },
-    "cons" : {
+    "cons": {
         "pr": 0.98,
-        "Q": -10e6
+        "Q": -10000000.0
     },
     "ihx": {
         "pr1": 0.98,
@@ -56,7 +63,7 @@
         "eta_s": 0.8
     },
     "A0": {
-	"p": 40
+        "p": 40
     },
     "A6": {
         "x": 1
