@@ -1,5 +1,8 @@
-import json
-import os
+if __name__ == "__main__":
+    from variables import hp_models
+else:
+    from .variables import hp_models
+
 
 __models_parameter_names__ = {
     'HeatPumpSimple': 'simple',
@@ -8,34 +11,34 @@ __models_parameter_names__ = {
     'HeatPumpIHXTrans': 'ihx_trans',
     'HeatPumpIC': 'ic',
     'HeatPumpICTrans': 'ic_trans',
-    'HeatPumpEcon_closed': 'econ_closed',
-    'HeatPumpEconTrans_closed': 'econ_closed_trans',
-    'HeatPumpEconIHX_closed': 'econ_closed_ihx',
-    'HeatPumpEconIHXTrans_closed': 'econ_closed_ihx_trans',
-    'HeatPumpIHXEcon_closed': 'ihx_econ_closed',
-    'HeatPumpIHXEconTrans_closed': 'ihx_econ_closed_trans',
-    'HeatPumpEcon_open': 'econ_open',
-    'HeatPumpEconTrans_open': 'econ_open_trans',
-    'HeatPumpEconIHX_open': 'econ_open_ihx',
-    'HeatPumpEconIHXTrans_open': 'econ_open_ihx_trans',
-    'HeatPumpIHXEcon_open': 'ihx_econ_open',
-    'HeatPumpIHXEconTrans_open': 'ihx_econ_open_trans',
-    'HeatPumpPC_closed': 'pc_econ_closed',
-    'HeatPumpPCTrans_closed': 'pc_econ_closed_trans',
-    'HeatPumpIHXPC_closed': 'ihx_pc_econ_closed',
-    'HeatPumpIHXPCTrans_closed': 'ihx_pc_econ_closed_trans',
-    'HeatPumpPCIHX_closed': 'pc_econ_closed_ihx',
-    'HeatPumpPCIHXTrans_closed': 'pc_econ_closed_ihx_trans',
-    'HeatPumpIHXPCIHX_closed': 'ihx_pc_econ_closed_ihx',
-    'HeatPumpIHXPCIHXTrans_closed': 'ihx_pc_econ_closed_ihx_trans',
-    'HeatPumpPC_open': 'pc_econ_open',
-    'HeatPumpPCTrans_open': 'pc_econ_open_trans',
-    'HeatPumpIHXPC_open': 'ihx_pc_econ_open',
-    'HeatPumpIHXPCTrans_open': 'ihx_pc_econ_open_trans',
-    'HeatPumpPCIHX_open': 'pc_econ_open_ihx',
-    'HeatPumpPCIHXTrans_open': 'pc_econ_open_ihx_trans',
-    'HeatPumpIHXPCIHX_open': 'ihx_pc_econ_open_ihx',
-    'HeatPumpIHXPCIHXTrans_open': 'ihx_pc_econ_open_ihx_trans',
+    'HeatPumpEconClosed': 'econ_closed',
+    'HeatPumpEconTransClosed': 'econ_closed_trans',
+    'HeatPumpEconIHXClosed': 'econ_closed_ihx',
+    'HeatPumpEconIHXTransClosed': 'econ_closed_ihx_trans',
+    'HeatPumpIHXEconClosed': 'ihx_econ_closed',
+    'HeatPumpIHXEconTransClosed': 'ihx_econ_closed_trans',
+    'HeatPumpEconOpen': 'econ_open',
+    'HeatPumpEconTransOpen': 'econ_open_trans',
+    'HeatPumpEconIHXOpen': 'econ_open_ihx',
+    'HeatPumpEconIHXTransOpen': 'econ_open_ihx_trans',
+    'HeatPumpIHXEconOpen': 'ihx_econ_open',
+    'HeatPumpIHXEconTransOpen': 'ihx_econ_open_trans',
+    'HeatPumpPCClosed': 'pc_econ_closed',
+    'HeatPumpPCTransClosed': 'pc_econ_closed_trans',
+    'HeatPumpIHXPCClosed': 'ihx_pc_econ_closed',
+    'HeatPumpIHXPCTransClosed': 'ihx_pc_econ_closed_trans',
+    'HeatPumpPCIHXClosed': 'pc_econ_closed_ihx',
+    'HeatPumpPCIHXTransClosed': 'pc_econ_closed_ihx_trans',
+    'HeatPumpIHXPCIHXClosed': 'ihx_pc_econ_closed_ihx',
+    'HeatPumpIHXPCIHXTransClosed': 'ihx_pc_econ_closed_ihx_trans',
+    'HeatPumpPCOpen': 'pc_econ_open',
+    'HeatPumpPCTransOpen': 'pc_econ_open_trans',
+    'HeatPumpIHXPCOpen': 'ihx_pc_econ_open',
+    'HeatPumpIHXPCTransOpen': 'ihx_pc_econ_open_trans',
+    'HeatPumpPCIHXOpen': 'pc_econ_open_ihx',
+    'HeatPumpPCIHXTransOpen': 'pc_econ_open_ihx_trans',
+    'HeatPumpIHXPCIHXOpen': 'ihx_pc_econ_open_ihx',
+    'HeatPumpIHXPCIHXTransOpen': 'ihx_pc_econ_open_ihx_trans',
     'HeatPumpFlash': 'flash',
     'HeatPumpFlashTrans': 'flash_trans',
     'HeatPumpCascade': 'cascade',
@@ -44,39 +47,39 @@ __models_parameter_names__ = {
     'HeatPumpCascade2IHXTrans': 'cascade_2ihx_trans',
     'HeatPumpCascadeIC': 'cascade_ic',
     'HeatPumpCascadeICTrans': 'cascade_ic_trans',
-    'HeatPumpCascadeEcon_closed': 'cascade_econ_closed',
-    'HeatPumpCascadeEconTrans_closed': 'cascade_econ_closed_trans',
-    'HeatPumpCascadeIHXEcon_closed': 'cascade_ihx_econ_closed',
-    'HeatPumpCascadeIHXEconTrans_closed': 'cascade_ihx_econ_closed_trans',
-    'HeatPumpCascadeEconIHX_closed': 'cascade_econ_closed_ihx',
-    'HeatPumpCascadeEconIHXTrans_closed': 'cascade_econ_closed_ihx_trans',
-    'HeatPumpCascadeEcon_open': 'cascade_econ_open',
-    'HeatPumpCascadeEconTrans_open': 'cascade_econ_open_trans',
-    'HeatPumpCascadeIHXEcon_open': 'cascade_ihx_econ_open',
-    'HeatPumpCascadeIHXEconTrans_open': 'cascade_ihx_econ_open_trans',
-    'HeatPumpCascadeEconIHX_open': 'cascade_econ_open_ihx',
-    'HeatPumpCascadeEconIHXTrans_open': 'cascade_econ_open_ihx_trans',
-    'HeatPumpCascadePC_closed': 'cascade_pc_econ_closed',
-    'HeatPumpCascadePCTrans_closed': 'cascade_pc_econ_closed_trans',
-    'HeatPumpCascadeIHXPC_closed': 'cascade_ihx_pc_econ_closed',
-    'HeatPumpCascadeIHXPCTrans_closed': 'cascade_ihx_pc_econ_closed_trans',
-    'HeatPumpCascadePCIHX_closed': 'cascade_pc_econ_closed_ihx',
-    'HeatPumpCascadePCIHXTrans_closed': 'cascade_pc_econ_closed_ihx_trans',
-    'HeatPumpCascadeIHXPCIHX_closed': 'cascade_ihx_pc_econ_closed_ihx',
-    'HeatPumpCascadeIHXPCIHXTrans_closed': 'cascade_ihx_pc_econ_closed_ihx_trans',
-    'HeatPumpCascadePC_open': 'cascade_pc_econ_open',
-    'HeatPumpCascadePCTrans_open': 'cascade_pc_econ_open_trans',
-    'HeatPumpCascadeIHXPC_open': 'cascade_ihx_pc_econ_open',
-    'HeatPumpCascadeIHXPCTrans_open': 'cascade_ihx_pc_econ_open_trans',
-    'HeatPumpCascadePCIHX_open': 'cascade_pc_econ_open_ihx',
-    'HeatPumpCascadePCIHXTrans_open': 'cascade_pc_econ_open_ihx_trans',
-    'HeatPumpCascadeIHXPCIHX_open': 'cascade_ihx_pc_econ_open_ihx',
-    'HeatPumpCascadeIHXPCIHXTrans_open': 'cascade_ihx_pc_econ_open_ihx_trans',
+    'HeatPumpCascadeEconClosed': 'cascade_econ_closed',
+    'HeatPumpCascadeEconTransClosed': 'cascade_econ_closed_trans',
+    'HeatPumpCascadeIHXEconClosed': 'cascade_ihx_econ_closed',
+    'HeatPumpCascadeIHXEconTransClosed': 'cascade_ihx_econ_closed_trans',
+    'HeatPumpCascadeEconIHXClosed': 'cascade_econ_closed_ihx',
+    'HeatPumpCascadeEconIHXTransClosed': 'cascade_econ_closed_ihx_trans',
+    'HeatPumpCascadeEconOpen': 'cascade_econ_open',
+    'HeatPumpCascadeEconTransOpen': 'cascade_econ_open_trans',
+    'HeatPumpCascadeIHXEconOpen': 'cascade_ihx_econ_open',
+    'HeatPumpCascadeIHXEconTransOpen': 'cascade_ihx_econ_open_trans',
+    'HeatPumpCascadeEconIHXOpen': 'cascade_econ_open_ihx',
+    'HeatPumpCascadeEconIHXTransOpen': 'cascade_econ_open_ihx_trans',
+    'HeatPumpCascadePCClosed': 'cascade_pc_econ_closed',
+    'HeatPumpCascadePCTransClosed': 'cascade_pc_econ_closed_trans',
+    'HeatPumpCascadeIHXPCClosed': 'cascade_ihx_pc_econ_closed',
+    'HeatPumpCascadeIHXPCTransClosed': 'cascade_ihx_pc_econ_closed_trans',
+    'HeatPumpCascadePCIHXClosed': 'cascade_pc_econ_closed_ihx',
+    'HeatPumpCascadePCIHXTransClosed': 'cascade_pc_econ_closed_ihx_trans',
+    'HeatPumpCascadeIHXPCIHXClosed': 'cascade_ihx_pc_econ_closed_ihx',
+    'HeatPumpCascadeIHXPCIHXTransClosed': 'cascade_ihx_pc_econ_closed_ihx_trans',
+    'HeatPumpCascadePCOpen': 'cascade_pc_econ_open',
+    'HeatPumpCascadePCTransOpen': 'cascade_pc_econ_open_trans',
+    'HeatPumpCascadeIHXPCPpen': 'cascade_ihx_pc_econ_open',
+    'HeatPumpCascadeIHXPCTransOpen': 'cascade_ihx_pc_econ_open_trans',
+    'HeatPumpCascadePCIHXOpen': 'cascade_pc_econ_open_ihx',
+    'HeatPumpCascadePCIHXTransOpen': 'cascade_pc_econ_open_ihx_trans',
+    'HeatPumpCascadeIHXPCIHXOpen': 'cascade_ihx_pc_econ_open_ihx',
+    'HeatPumpCascadeIHXPCIHXTransOpen': 'cascade_ihx_pc_econ_open_ihx_trans',
     'HeatPumpCascadeFlash': 'cascade_flash',
     'HeatPumpCascadeFlashTrans': 'cascade_flash_trans'
 }
 
-def get_params(heat_pump_model, econ_type=None):
+def get_params(heat_pump_model):
     """Get params dict for heat pump model class.
 
     Parameters
@@ -84,25 +87,5 @@ def get_params(heat_pump_model, econ_type=None):
 
     heat_pump_model : str
         Name of heat pump model class (e.g. 'HeatPumpEconIHX')
-
-    econ_type : str or None
-        If heat pump model class has an economizer, the econ_type has to be
-        set. Either 'closed' or 'open'. Default is `None`.
     """
-    if econ_type is not None and econ_type.lower() not in ['closed', 'open']:
-        raise ValueError(
-            f"Parameter '{econ_type}' is not a valid econ_type. "
-            "Supported values are 'open' and 'closed'."
-            )
-
-    hpfilename = __models_parameter_names__[heat_pump_model]
-    parampath = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__), 'models', 'input',
-            f'params_hp_{hpfilename}.json'
-        )
-    )
-    with open(parampath, 'r', encoding='utf-8') as file:
-        params = json.load(file)
-
-    return params
+    return hp_models[__models_parameter_names__[heat_pump_model]]
