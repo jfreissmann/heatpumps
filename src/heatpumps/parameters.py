@@ -1,7 +1,9 @@
 if __name__ == "__main__":
     from variables import hp_models
+    from models.HeatPumpBase import model_registry
 else:
     from .variables import hp_models
+    from .models.HeatPumpBase import model_registry
 
 
 __models_parameter_names__ = {
@@ -89,3 +91,10 @@ def get_params(heat_pump_model):
         Name of heat pump model class (e.g. 'HeatPumpEconIHX')
     """
     return hp_models[__models_parameter_names__[heat_pump_model]]
+
+
+def get_model(params):
+    if "econ_type" in params["setup"]:
+        return model_registry.items[params["setup"]["type"]](params, econ_type=params["setup"]["econ_type"])
+    else:
+        return model_registry.items[params["setup"]["type"]](params)
