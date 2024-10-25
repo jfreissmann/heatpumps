@@ -180,8 +180,12 @@ class HeatPumpIHXEconTrans(HeatPumpBase):
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
         # Components
-        self.comps['comp1'].set_attr(eta_s=self.params['comp1']['eta_s'])
-        self.comps['comp2'].set_attr(eta_s=self.params['comp2']['eta_s'])
+        self.conns['A8'].set_attr(
+            h=Ref(self.conns['A7'], self._init_vals['dh_rel_comp'], 0)
+            )
+        self.conns['A10'].set_attr(
+            h=Ref(self.conns['A9'], self._init_vals['dh_rel_comp'], 0)
+            )
         self.comps['hs_pump'].set_attr(eta_s=self.params['hs_pump']['eta_s'])
         self.comps['cons_pump'].set_attr(
             eta_s=self.params['cons_pump']['eta_s']
@@ -257,9 +261,13 @@ class HeatPumpIHXEconTrans(HeatPumpBase):
         self.conns['A6'].set_attr(p=None)
         self.conns['A0'].set_attr(h=None)
         self.conns['A7'].set_attr(h=None)
+        self.conns['A8'].set_attr(h=None)
+        self.conns['A10'].set_attr(h=None)
 
     def design_simulation(self, **kwargs):
         """Perform final parametrization and design simulation."""
+        self.comps['comp1'].set_attr(eta_s=self.params['comp1']['eta_s'])
+        self.comps['comp2'].set_attr(eta_s=self.params['comp2']['eta_s'])
         self.comps['evap'].set_attr(ttd_l=self.params['evap']['ttd_l'])
         self.comps['trans'].set_attr(ttd_l=self.params['trans']['ttd_l'])
         if self.econ_type == 'closed':
