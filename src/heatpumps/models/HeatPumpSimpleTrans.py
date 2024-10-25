@@ -7,7 +7,7 @@ import pandas as pd
 from CoolProp.CoolProp import PropsSI as PSI
 from tespy.components import (Compressor, CycleCloser, HeatExchanger, Pump,
                               SimpleHeatExchanger, Sink, Source, Valve)
-from tespy.connections import Bus, Connection
+from tespy.connections import Bus, Connection, Ref
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
 
@@ -119,7 +119,9 @@ class HeatPumpSimpleTrans(HeatPumpBase):
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
         # Components
-        self.comps['comp'].set_attr(eta_s=self.params['comp']['eta_s'])
+        self.conns['A4'].set_attr(
+            h=Ref(self.conns['A3'], self._init_vals['dh_rel_comp'], 0)
+            )
         self.comps['hs_pump'].set_attr(eta_s=self.params['hs_pump']['eta_s'])
         self.comps['cons_pump'].set_attr(
             eta_s=self.params['cons_pump']['eta_s']
@@ -166,9 +168,11 @@ class HeatPumpSimpleTrans(HeatPumpBase):
 
         self.conns['A3'].set_attr(p=None)
         self.conns['A0'].set_attr(h=None)
+        self.conns['A4'].set_attr(h=None)
 
     def design_simulation(self, **kwargs):
         """Perform final parametrization and design simulation."""
+        self.comps['comp'].set_attr(eta_s=self.params['comp']['eta_s'])
         self.comps['evap'].set_attr(ttd_l=self.params['evap']['ttd_l'])
         self.comps['trans'].set_attr(ttd_l=self.params['trans']['ttd_l'])
 
