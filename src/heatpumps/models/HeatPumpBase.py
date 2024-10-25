@@ -38,6 +38,11 @@ class HeatPumpBase:
         self.cop = np.nan
         self.epsilon = np.nan
 
+        self._init_vals = {
+            'm_dot_rel_econ_closed': 0.9,
+            'dh_rel_comp': 1.15
+            }
+
         self.solved_design = False
         self.subdirname = (
             f"{self.params['setup']['type']}_"
