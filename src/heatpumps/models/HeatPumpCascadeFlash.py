@@ -43,6 +43,11 @@ class HeatPumpCascadeFlash(HeatPumpBase):
         self.cop = np.nan
         self.epsilon = np.nan
 
+        self._init_vals = {
+            'm_dot_rel_econ_closed': 0.9,
+            'dh_rel_comp': 1.15
+            }
+
         self.solved_design = False
         self.subdirname = (
             f"{self.params['setup']['type']}_"
@@ -209,10 +214,18 @@ class HeatPumpCascadeFlash(HeatPumpBase):
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
         # Components
-        self.comps['HT_comp1'].set_attr(eta_s=self.params['HT_comp1']['eta_s'])
-        self.comps['HT_comp2'].set_attr(eta_s=self.params['HT_comp2']['eta_s'])
-        self.comps['LT_comp1'].set_attr(eta_s=self.params['LT_comp1']['eta_s'])
-        self.comps['LT_comp2'].set_attr(eta_s=self.params['LT_comp2']['eta_s'])
+        self.conns['A6'].set_attr(
+            h=Ref(self.conns['A5'], self._init_vals['dh_rel_comp'], 0)
+            )
+        self.conns['A8'].set_attr(
+            h=Ref(self.conns['A7'], self._init_vals['dh_rel_comp'], 0)
+            )
+        self.conns['D6'].set_attr(
+            h=Ref(self.conns['D5'], self._init_vals['dh_rel_comp'], 0)
+            )
+        self.conns['D8'].set_attr(
+            h=Ref(self.conns['D7'], self._init_vals['dh_rel_comp'], 0)
+            )
         self.comps['hs_pump'].set_attr(eta_s=self.params['hs_pump']['eta_s'])
         self.comps['cons_pump'].set_attr(
             eta_s=self.params['cons_pump']['eta_s']
@@ -275,9 +288,17 @@ class HeatPumpCascadeFlash(HeatPumpBase):
         self.conns['A5'].set_attr(p=None)
         self.conns['D0'].set_attr(p=None)
         self.conns['D5'].set_attr(p=None)
+        self.conns['A6'].set_attr(h=None)
+        self.conns['A8'].set_attr(h=None)
+        self.conns['D6'].set_attr(h=None)
+        self.conns['D8'].set_attr(h=None)
 
     def design_simulation(self, **kwargs):
         """Perform final parametrization and design simulation."""
+        self.comps['HT_comp1'].set_attr(eta_s=self.params['HT_comp1']['eta_s'])
+        self.comps['HT_comp2'].set_attr(eta_s=self.params['HT_comp2']['eta_s'])
+        self.comps['LT_comp1'].set_attr(eta_s=self.params['LT_comp1']['eta_s'])
+        self.comps['LT_comp2'].set_attr(eta_s=self.params['LT_comp2']['eta_s'])
         self.comps['evap'].set_attr(ttd_l=self.params['evap']['ttd_l'])
         self.comps['cond'].set_attr(ttd_u=self.params['cond']['ttd_u'])
         self.comps['inter'].set_attr(ttd_u=self.params['inter']['ttd_u'])
