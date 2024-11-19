@@ -384,6 +384,20 @@ class HeatPumpBase:
                 )
             return
 
+        if style == 'light':
+            plt.style.use('default')
+            isoline_data = None
+        elif style == 'dark':
+            plt.style.use('dark_background')
+            isoline_data = {
+                'T': {'style': {'color': 'dimgrey'}},
+                'v': {'style': {'color': 'dimgrey'}},
+                'Q': {'style': {'color': '#FFFFFF'}},
+                'h': {'style': {'color': 'dimgrey'}},
+                'p': {'style': {'color': 'dimgrey'}},
+                's': {'style': {'color': 'dimgrey'}}
+            }
+
         # Initialize fluid property diagram
         fig, ax = plt.subplots(figsize=figsize)
 
@@ -449,20 +463,6 @@ class HeatPumpBase:
             ylims = (
                 state_props[var['y']]['min'], state_props[var['y']]['max']
                 )
-
-        if style == 'light':
-            plt.style.use('default')
-            isoline_data = None
-        elif style == 'dark':
-            plt.style.use('dark_background')
-            isoline_data = {
-                'T': {'style': {'color': 'dimgrey'}},
-                'v': {'style': {'color': 'dimgrey'}},
-                'Q': {'style': {'color': '#FFFFFF'}},
-                'h': {'style': {'color': 'dimgrey'}},
-                'p': {'style': {'color': 'dimgrey'}},
-                's': {'style': {'color': 'dimgrey'}}
-            }
 
         diagram.draw_isolines(
             diagram_type=diagram_type, fig=fig, ax=ax,
