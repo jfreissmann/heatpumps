@@ -366,8 +366,12 @@ class HeatPumpCascadeFlashTrans(HeatPumpBase):
                 self.comps['mid_valve1'].get_plotting_data()[1]}
             )
             data.update(
-                {self.comps['flash1'].label + ' (hot)':
-                 self.comps['flash1'].get_plotting_data()[1]}
+                {'Flash Liquid 1':
+                     self.comps['flash1'].get_plotting_data()[2]}
+            )
+            data.update(
+                {'Flash Gas 1':
+                     self.comps['flash1'].get_plotting_data()[3]}
             )
             data.update(
                 {self.comps['evap_valve1'].label:
@@ -381,10 +385,10 @@ class HeatPumpCascadeFlashTrans(HeatPumpBase):
                 {self.comps['LT_comp1'].label:
                 self.comps['LT_comp1'].get_plotting_data()[1]}
             )
-            # data.update(
-            #     {self.comps['flash1'].label + ' (cold)':
-            #          self.comps['flash1'].get_plotting_data()[2]}
-            # )
+            data.update(
+                {'Gas Injection 1':
+                     self.comps['flash1'].get_plotting_data()[5]}
+            )
             data.update(
                 {self.comps['LT_comp2'].label:
                 self.comps['LT_comp2'].get_plotting_data()[1]}
@@ -399,8 +403,12 @@ class HeatPumpCascadeFlashTrans(HeatPumpBase):
                 self.comps['mid_valve2'].get_plotting_data()[1]}
             )
             data.update(
-                {self.comps['flash2'].label + ' (hot)':
-                self.comps['flash2'].get_plotting_data()[1]}
+                {'Flash Liquid 2':
+                     self.comps['flash2'].get_plotting_data()[2]}
+            )
+            data.update(
+                {'Flash Gas 2':
+                     self.comps['flash2'].get_plotting_data()[3]}
             )
             data.update(
                 {self.comps['evap_valve2'].label:
@@ -414,10 +422,10 @@ class HeatPumpCascadeFlashTrans(HeatPumpBase):
                 {self.comps['HT_comp1'].label:
                 self.comps['HT_comp1'].get_plotting_data()[1]}
             )
-            # data.update(
-            #     {self.comps['flash2'].label + ' (cold)':
-            #          self.comps['flash2'].get_plotting_data()[2]}
-            # )
+            data.update(
+                {'Gas Injection 2':
+                     self.comps['flash2'].get_plotting_data()[5]}
+            )
             data.update(
                 {self.comps['HT_comp2'].label:
                 self.comps['HT_comp2'].get_plotting_data()[1]}
