@@ -2,7 +2,14 @@
     "setup": {
         "name": "intercooler",
         "type": "HeatPumpICTrans",
-        "refrig": "R717"
+        "refrig": "R717",
+        "base_topology": "Zwischenk\u00fchlung",
+        "display_name": "Allgemein | Transkritisch",
+        "nr_ihx": 0,
+        "econ_type": null,
+        "comp_var": "series",
+        "nr_refrigs": 1,
+        "process_type": "transcritical"
     },
     "ambient": {
         "p": 1,
@@ -16,10 +23,10 @@
     "logph": {
         "x_min": 250,
         "x_max": 2250,
-        "y_min": 1e0,
-        "y_max": 3e2
+        "y_min": 1.0,
+        "y_max": 300.0
     },
-    "trans" : {
+    "trans": {
         "pr1": 0.98,
         "pr2": 0.98,
         "ttd_l": 2
@@ -29,11 +36,11 @@
         "pr2": 0.98,
         "ttd_l": 2
     },
-    "cons" : {
+    "cons": {
         "pr": 0.98,
-        "Q": -10e6
+        "Q": -10000000.0
     },
-    "ic" : {
+    "ic": {
         "pr": 0.98,
         "dT_ic": -10
     },
@@ -50,7 +57,7 @@
         "eta_s": 0.8
     },
     "A0": {
-	"p": 120
+        "p": 120
     },
     "A3": {
         "x": 1

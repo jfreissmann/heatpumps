@@ -16,8 +16,10 @@ if __name__ == '__main__':
     from HeatPumpBase import HeatPumpBase
 else:
     from .HeatPumpBase import HeatPumpBase
+    from .HeatPumpBase import model_registry
 
 
+@model_registry
 class HeatPumpIHXTrans(HeatPumpBase):
     """Heat pump with internal heat exchanger between condesate and vapor."""
 
