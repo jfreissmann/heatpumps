@@ -371,6 +371,19 @@ with st.sidebar:
 
         with st.expander('Parameter zur Kostenkalkulation'):
             costcalcparams = {}
+
+            cepcipath = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), 'models', 'input', 'CEPCI.json'
+                ))
+            with open(cepcipath, 'r', encoding='utf-8') as file:
+                cepci = json.load(file)
+
+            costcalcparams['current_year'] = st.selectbox(
+                'Jahr der Kostenkalkulation',
+                options=sorted(list(cepci.keys()), reverse=True),
+                key='current_year'
+            )
+
             costcalcparams['k_evap'] = st.slider(
                 'Wärmedurchgangskoeffizient (Verdampfung)',
                 min_value=0, max_value=5000, step=10,
@@ -999,7 +1012,7 @@ if mode == 'Auslegung':
                 with st.expander('Ökonomische Bewertung'):
                     # %% Eco Results
                     ss.hp.calc_cost(
-                        ref_year='2013', current_year='2019', **costcalcparams
+                        ref_year='2013', **costcalcparams
                         )
 
                     col1, col2 = st.columns(2)
