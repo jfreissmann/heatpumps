@@ -1,14 +1,15 @@
-import variables as var
+if __name__ == "__main__":
+    from .models.HeatPumpBase import model_registry
+else:
+    from models.HeatPumpBase import model_registry
 
 
-def run_design(hp_model_name, params):
+def run_design(params):
     """Run TESPy design simulation of heat pump."""
-    if 'econ' in hp_model_name:
-        hp = var.hp_model_classes[hp_model_name](
-            params, econ_type=var.hp_models[hp_model_name]['econ_type']
-            )
+    if 'econ' in params["setup"]:
+        hp = model_registry.items[params["setup"]["type"]](params, params["setup"]["econ"])
     else:
-        hp = var.hp_model_classes[hp_model_name](params)
+        hp = model_registry.items[params["setup"]["type"]](params)
 
     hp.run_model()
 

@@ -1,9 +1,16 @@
 {
     "setup": {
         "name": "two stage cascade with parallel compression and closed economizer",
-        "type": "HeatPumpCascadePC",
+        "type": "HeatPumpCascadePCTrans",
         "refrig1": "R1234yf",
-        "refrig2": "R717"
+        "refrig2": "R717",
+        "base_topology": "Kaskadierter Kreis",
+        "display_name": "Geschlossen | Parallelschaltung | Transkritisch",
+        "nr_ihx": 0,
+        "econ_type": "closed",
+        "comp_var": "parallel",
+        "nr_refrigs": 2,
+        "process_type": "transcritical"
     },
     "ambient": {
         "p": 1,
@@ -18,10 +25,10 @@
     "logph": {
         "x_min": 250,
         "x_max": 2250,
-        "y_min": 1e0,
-        "y_max": 3e2
+        "y_min": 1.0,
+        "y_max": 300.0
     },
-    "trans" : {
+    "trans": {
         "pr1": 0.98,
         "pr2": 0.98,
         "ttd_l": 2
@@ -36,9 +43,9 @@
         "pr2": 0.98,
         "ttd_u": 2
     },
-    "cons" : {
+    "cons": {
         "pr": 0.98,
-        "Q": -10e6
+        "Q": -10000000.0
     },
     "econ1": {
         "pr1": 0.98,
@@ -69,7 +76,7 @@
         "eta_s": 0.8
     },
     "A0": {
-	"p": 120
+        "p": 120
     },
     "A5": {
         "x": 1

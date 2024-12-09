@@ -3,7 +3,14 @@
         "name": "two stage cascade",
         "type": "HeatPumpCascade",
         "refrig1": "R717",
-        "refrig2": "R245fa"
+        "refrig2": "R245fa",
+        "base_topology": "Kaskadierter Kreis",
+        "display_name": "Allgemein",
+        "nr_ihx": 0,
+        "econ_type": null,
+        "comp_var": null,
+        "nr_refrigs": 2,
+        "process_type": "subcritical"
     },
     "ambient": {
         "p": 1,
@@ -18,10 +25,10 @@
     "logph": {
         "x_min": 250,
         "x_max": 2250,
-        "y_min": 1e0,
-        "y_max": 3e2
+        "y_min": 1.0,
+        "y_max": 300.0
     },
-    "cond" : {
+    "cond": {
         "pr1": 0.98,
         "pr2": 0.98,
         "ttd_u": 2
@@ -36,9 +43,9 @@
         "pr2": 0.98,
         "ttd_u": 2
     },
-    "cons" : {
+    "cons": {
         "pr": 0.98,
-        "Q": -10e6
+        "Q": -10000000.0
     },
     "LT_comp": {
         "eta_s": 0.75

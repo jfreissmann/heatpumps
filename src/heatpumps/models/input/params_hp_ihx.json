@@ -2,7 +2,14 @@
     "setup": {
         "name": "internal heat exchanger",
         "type": "HeatPumpIHX",
-        "refrig": "R717"
+        "refrig": "R717",
+        "base_topology": "Einfacher Kreis",
+        "display_name": "Interne W\u00dcT",
+        "nr_ihx": 1,
+        "econ_type": null,
+        "comp_var": null,
+        "nr_refrigs": 1,
+        "process_type": "subcritical"
     },
     "ambient": {
         "p": 1,
@@ -16,10 +23,10 @@
     "logph": {
         "x_min": 250,
         "x_max": 2250,
-        "y_min": 1e0,
-        "y_max": 3e2
+        "y_min": 1.0,
+        "y_max": 300.0
     },
-    "cond" : {
+    "cond": {
         "pr1": 0.98,
         "pr2": 0.98,
         "ttd_u": 2
@@ -29,9 +36,9 @@
         "pr2": 0.98,
         "ttd_l": 2
     },
-    "cons" : {
+    "cons": {
         "pr": 0.98,
-        "Q": -10e6
+        "Q": -10000000.0
     },
     "ihx": {
         "pr1": 0.98,

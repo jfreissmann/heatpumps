@@ -3,7 +3,14 @@
         "name": "two stage cascade with closed economizer and internal heat exchanger Variant A",
         "type": "HeatPumpCascadeIHXEcon",
         "refrig1": "R1234yf",
-        "refrig2": "R717"
+        "refrig2": "R717",
+        "base_topology": "Kaskadierter Kreis",
+        "display_name": "Geschlossen | Reihenschaltung | interne W\u00dcT (Variante A)",
+        "nr_ihx": 2,
+        "econ_type": "closed",
+        "comp_var": "series",
+        "nr_refrigs": 2,
+        "process_type": "subcritical"
     },
     "ambient": {
         "p": 1,
@@ -18,10 +25,10 @@
     "logph": {
         "x_min": 250,
         "x_max": 2250,
-        "y_min": 1e0,
-        "y_max": 3e2
+        "y_min": 1.0,
+        "y_max": 300.0
     },
-    "cond" : {
+    "cond": {
         "pr1": 0.98,
         "pr2": 0.98,
         "ttd_u": 2
@@ -36,9 +43,9 @@
         "pr2": 0.98,
         "ttd_u": 2
     },
-    "cons" : {
+    "cons": {
         "pr": 0.98,
-        "Q": -10e6
+        "Q": -10000000.0
     },
     "econ1": {
         "pr1": 0.98,
@@ -53,12 +60,12 @@
     "ihx1": {
         "pr1": 0.98,
         "pr2": 0.98,
-	"dT_sh": 5
+        "dT_sh": 5
     },
     "ihx2": {
         "pr1": 0.98,
         "pr2": 0.98,
-	"dT_sh": 5
+        "dT_sh": 5
     },
     "LT_comp1": {
         "eta_s": 0.75

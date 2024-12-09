@@ -1,8 +1,15 @@
 {
     "setup": {
         "name": "open economizer",
-        "type": "HeatPumpEconOpen",
-        "refrig": "R717"
+        "type": "HeatPumpEcon",
+        "refrig": "R717",
+        "base_topology": "Economizer",
+        "display_name": "Offen | Reihenschaltung",
+        "nr_ihx": 0,
+        "econ_type": "open",
+        "comp_var": "series",
+        "nr_refrigs": 1,
+        "process_type": "subcritical"
     },
     "ambient": {
         "p": 1,
@@ -16,10 +23,10 @@
     "logph": {
         "x_min": 250,
         "x_max": 2250,
-        "y_min": 1e0,
-        "y_max": 3e2
+        "y_min": 1.0,
+        "y_max": 300.0
     },
-    "cond" : {
+    "cond": {
         "pr1": 0.98,
         "pr2": 0.98,
         "ttd_u": 2
@@ -29,9 +36,9 @@
         "pr2": 0.98,
         "ttd_l": 2
     },
-    "cons" : {
+    "cons": {
         "pr": 0.98,
-        "Q": -10e6
+        "Q": -10000000.0
     },
     "econ": {
         "pr1": 0.98,
