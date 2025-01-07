@@ -82,14 +82,15 @@ class HeatPumpBase:
             self.solved_design = True
             self.nw.save(self.design_path)
 
-    def run_model(self, print_cop=False, **kwargs):
+    def run_model(self, print_cop=False, exergy_analysis=True, **kwargs):
         """Run the initialization and design simulation routine."""
         self.generate_components()
         self.generate_connections()
         self.init_simulation(**kwargs)
         self.design_simulation(**kwargs)
         self.check_consistency()
-        self.perform_exergy_analysis(**kwargs)
+        if exergy_analysis:
+            self.perform_exergy_analysis(**kwargs)
         if print_cop:
             print(f'COP = {self.cop:.3f}')
 
