@@ -23,35 +23,33 @@ class HeatPumpBase:
     def __init__(self, params):
         """Initialize model and set necessary attributes."""
         self.params = params
-        self.wf = self.params['fluids']['wf']
-        self.si = self.params['fluids']['si']
-        self.so = self.params['fluids']['so']
-
-        self.comps = dict()
-        self.conns = dict()
-        self.buses = dict()
 
         self.nw = Network(
             T_unit='C', p_unit='bar', h_unit='kJ / kg', m_unit='kg / s'
             )
 
+        self._init_fluids()
+
+        self.comps = dict()
+        self.conns = dict()
+        self.buses = dict()
+
         self.cop = np.nan
         self.epsilon = np.nan
+        self.solved_design = False
 
         self._init_vals = {
             'm_dot_rel_econ_closed': 0.9,
             'dh_rel_comp': 1.15
             }
 
-        self.solved_design = False
-        self.subdirname = (
-            f"{self.params['setup']['type']}_"
-            + f"{self.params['setup']['refrig']}"
-            )
-        self.design_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 'stable', f'{self.subdirname}_design'
-            ))
-        self.validate_dir()
+        self._init_dir_paths()
+
+    def _init_fluids(self):
+        """Initialize fluid attributes."""
+        self.wf = self.params['fluids']['wf']
+        self.si = self.params['fluids']['si']
+        self.so = self.params['fluids']['so']
 
     def generate_components(self):
         """Initialize components of heat pump."""
@@ -1073,6 +1071,17 @@ class HeatPumpBase:
             return figs, axes
         else:
             plt.show()
+
+    def _init_dir_paths(self):
+        """Initialize paths and directories."""
+        self.subdirname = (
+            f"{self.params['setup']['type']}_"
+            + f"{self.params['setup']['refrig']}"
+            )
+        self.design_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 'stable', f'{self.subdirname}_design'
+            ))
+        self.validate_dir()
 
     def validate_dir(self):
         """Check for a 'stable' directory and create it if necessary."""
