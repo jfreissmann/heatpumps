@@ -502,6 +502,7 @@ class HeatPumpBase:
                     )
 
         # Additional plotting parameters
+        ax.set_title(refrig)
         if diagram_type == 'logph':
             ax.set_xlabel('Spezifische Enthalpie in $kJ/kg$')
             ax.set_ylabel('Druck in $bar$')
