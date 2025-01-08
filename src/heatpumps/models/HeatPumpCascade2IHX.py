@@ -14,49 +14,13 @@ from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
 
 if __name__ == '__main__':
-    from HeatPumpBase import HeatPumpBase
+    from HeatPumpCascadeBase import HeatPumpCascadeBase
 else:
-    from .HeatPumpBase import HeatPumpBase
+    from .HeatPumpCascadeBase import HeatPumpCascadeBase
 
 
-class HeatPumpCascade2IHX(HeatPumpBase):
+class HeatPumpCascade2IHX(HeatPumpCascadeBase):
     """Two stage cascading heat pump with two refrigerants."""
-
-    def __init__(self, params):
-        """Initialize model and set necessary attributes."""
-        self.params = params
-
-        self.wf1 = self.params['fluids']['wf1']
-        self.wf2 = self.params['fluids']['wf2']
-        self.si = self.params['fluids']['si']
-        self.so = self.params['fluids']['so']
-
-        self.comps = dict()
-        self.conns = dict()
-        self.buses = dict()
-
-        self.nw = Network(
-            T_unit='C', p_unit='bar', h_unit='kJ / kg', m_unit='kg / s'
-            )
-
-        self.cop = np.nan
-        self.epsilon = np.nan
-
-        self._init_vals = {
-            'm_dot_rel_econ_closed': 0.9,
-            'dh_rel_comp': 1.15
-            }
-
-        self.solved_design = False
-        self.subdirname = (
-            f"{self.params['setup']['type']}_"
-            + f"{self.params['setup']['refrig1']}_"
-            + f"{self.params['setup']['refrig2']}"
-            )
-        self.design_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 'stable', f'{self.subdirname}_design'
-            ))
-        self.validate_dir()
 
     def generate_components(self):
         """Initialize components of heat pump."""
