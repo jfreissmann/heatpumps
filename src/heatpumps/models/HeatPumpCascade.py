@@ -273,8 +273,8 @@ class HeatPumpCascade(HeatPumpCascadeBase):
                 self.comps['evap'].get_plotting_data()[2]}
             )
             data.update(
-                {self.comps['comp1'].label:
-                self.comps['comp1'].get_plotting_data()[1]}
+                {self.comps['LT_comp'].label:
+                self.comps['LT_comp'].get_plotting_data()[1]}
             )
         elif kwargs['cycle'] == 2:
             data.update(
@@ -290,8 +290,8 @@ class HeatPumpCascade(HeatPumpCascadeBase):
                 self.comps['inter'].get_plotting_data()[2]}
             )
             data.update(
-                {self.comps['comp2'].label:
-                self.comps['comp2'].get_plotting_data()[1]}
+                {self.comps['HT_comp'].label:
+                self.comps['HT_comp'].get_plotting_data()[1]}
             )
         else:
             raise ValueError(
