@@ -30,6 +30,18 @@ dependencies = [
     "tespy>=0.7.5"
 ]
 
+[project.optional-dependencies]
+dev = [
+    "build",
+    "flit",
+    "furo",
+    "pytest",
+    "sphinx>=7.2.2",
+    "sphinx-copybutton",
+    "sphinx-design",
+    "sphinxcontrib.bibtex",
+]
+
 [project.scripts]
 heatpumps-dashboard = "heatpumps.run_dashboard:main"
 
@@ -42,4 +54,7 @@ include = [
     'static/img/*',
     'static/img/topologies/*',
     'models/input/*'
+]
+exclude = [
+    "docs/_build"
 ]
