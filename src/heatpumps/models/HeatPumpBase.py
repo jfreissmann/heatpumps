@@ -2,6 +2,7 @@ import json
 import os
 from datetime import datetime
 from time import time
+from tkinter import font
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -306,10 +307,10 @@ class HeatPumpBase:
         return {}
 
     def generate_state_diagram(self, refrig='', diagram_type='logph',
-                               style='light', figsize=(16, 10), legend=True,
-                               legend_loc='upper left', return_diagram=False,
-                               savefig=False, open_file=False, filepath=None,
-                               **kwargs):
+                               style='light', figsize=(16, 10), fontsize=10,
+                               legend=True, legend_loc='upper left',
+                               return_diagram=False, savefig=False,
+                               open_file=False, filepath=None, **kwargs):
         """
         Generate log(p)-h-diagram of heat pump process.
 
@@ -331,6 +332,10 @@ class HeatPumpBase:
         figsize : tuple/list of numbers
             Size of matplotlib figure in inches. Default is (16, 10), so the
             figure is 16 inches wide and 10 inches tall.
+
+        fontsize : int/float
+            Size of main fonts in points. Title is 20% larger and tick labels
+            as well as state annotations are 10% smaller. Default is 10pts.
 
         legend : bool
             Flag to set if legend should be shown. Default is `True`.
@@ -482,12 +487,14 @@ class HeatPumpBase:
                 ax.scatter(
                     datapoints[var['x']][0], datapoints[var['y']][0],
                     color='#B54036',
-                    label=f'$\\bf{i+1:.0f}$: {key}', s=100, alpha=0.5
+                    label=f'$\\bf{i+1:.0f}$: {key}',
+                    s=14*int(fontsize*0.9), alpha=0.5
                     )
                 ax.annotate(
                     f'{i+1:.0f}',
                     (datapoints[var['x']][0], datapoints[var['y']][0]),
-                    ha='center', va='center', color='w'
+                    ha='center', va='center', color='w',
+                    fontsize=int(fontsize*0.9)
                     )
             else:
                 ax.scatter(
@@ -502,18 +509,20 @@ class HeatPumpBase:
                     )
 
         # Additional plotting parameters
-        ax.set_title(refrig)
+        ax.set_title(refrig, fontsize=int(fontsize*1.2))
         if diagram_type == 'logph':
-            ax.set_xlabel('Spezifische Enthalpie in $kJ/kg$')
-            ax.set_ylabel('Druck in $bar$')
+            ax.set_xlabel('Spezifische Enthalpie in $kJ/kg$', fontsize=fontsize)
+            ax.set_ylabel('Druck in $bar$', fontsize=fontsize)
         elif diagram_type == 'Ts':
-            ax.set_xlabel('Spezifische Entropie in $kJ/(kg \\cdot K)$')
-            ax.set_ylabel('Temperatur in $°C$')
+            ax.set_xlabel('Spezifische Entropie in $kJ/(kg \\cdot K)$', fontsize=fontsize)
+            ax.set_ylabel('Temperatur in $°C$', fontsize=fontsize)
+
+        ax.tick_params(axis='both', labelsize=int(fontsize*0.9))
 
         if legend:
             ax.legend(
                 loc=legend_loc,
-                prop={'size': 10 * (1 - 0.02 * len(result_dict))},
+                prop={'size': fontsize * (1 - 0.02 * len(result_dict))},
                 markerscale=(1 - 0.02 * len(result_dict))
                 )
 
