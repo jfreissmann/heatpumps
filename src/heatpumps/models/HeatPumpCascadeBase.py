@@ -28,10 +28,64 @@ class HeatPumpCascadeBase(HeatPumpBase):
         self.validate_dir()
 
     def generate_state_diagram(self, refrig='', diagram_type='logph',
-                               style='light', figsize=(16, 10),
+                               style='light', figsize=(16, 10), fontsize=10,
                                legend=True, legend_loc='upper left',
                                return_diagram=False, savefig=True,
                                open_file=True, **kwargs):
+        """
+        Generate log(p)-h-diagram of heat pump process.
+
+        Parameters
+        ----------
+
+        refrig : str
+            Name of refrigerant to use for plot. Can be left as an empty string
+            in single cycle heat pumps.
+
+        diagram_type : str
+            Fluid property diagram type. Either 'logph' or 'Ts'. Default is
+            'logph'.
+
+        style : str
+            Diagram style to chose. Either 'light' or 'dark'. Default is
+            'light'.
+
+        figsize : tuple/list of numbers
+            Size of matplotlib figure in inches. Default is (16, 10), so the
+            figure is 16 inches wide and 10 inches tall.
+
+        fontsize : int/float
+            Size of main fonts in points. Title is 20% larger and tick labels
+            as well as state annotations are 10% smaller. Default is 10pts.
+
+        legend : bool
+            Flag to set if legend should be shown. Default is `True`.
+
+        legend_loc : str
+            Location to place legend to. Accepts options as matplotlib allows.
+            Default is 'upper left'. Is only used if 'legend' parameter is set
+            to `True`.
+
+        return_diagram : bool
+            Flag to set if diagram object should be returned by method. Default
+            is False.
+
+        savefig : bool
+            Flag to set if diagram should be saved to disk. Default is `False`.
+
+        filepath : str
+            Path to save the file to. If `None` and `savefig` is `True`, a
+            default name is given and saved to the current working directory.
+            Default is `None`.
+
+        open_file : bool
+            Flag to set if saved file should be opend by the os. Default is
+            `False`.
+
+        **kwargs
+            Additional keyword arguments to pass through to the
+            `get_plotting_states` method of the heat pump class.
+        """
         kwargs1 = {}
         kwargs2 = {}
         if 'xlims' in kwargs:
@@ -43,7 +97,7 @@ class HeatPumpCascadeBase(HeatPumpBase):
         if return_diagram:
             diagram1 = super().generate_state_diagram(
                 refrig=self.params['setup']['refrig1'],
-                style=style, figsize=figsize,
+                style=style, figsize=figsize, fontsize=fontsize,
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
@@ -51,7 +105,7 @@ class HeatPumpCascadeBase(HeatPumpBase):
             )
             diagram2 = super().generate_state_diagram(
                 refrig=self.params['setup']['refrig2'],
-                style=style, figsize=figsize,
+                style=style, figsize=figsize, fontsize=fontsize,
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
@@ -61,7 +115,7 @@ class HeatPumpCascadeBase(HeatPumpBase):
         else:
             super().generate_state_diagram(
                 refrig=self.params['setup']['refrig1'],
-                style=style, figsize=figsize,
+                style=style, figsize=figsize, fontsize=fontsize,
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
@@ -69,7 +123,7 @@ class HeatPumpCascadeBase(HeatPumpBase):
             )
             super().generate_state_diagram(
                 refrig=self.params['setup']['refrig2'],
-                style=style, figsize=figsize,
+                style=style, figsize=figsize, fontsize=fontsize,
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
