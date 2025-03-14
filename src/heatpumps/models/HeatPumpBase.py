@@ -130,6 +130,10 @@ class HeatPumpBase:
             self.perform_exergy_analysis(**kwargs)
         if print_cop:
             print(f'COP = {self.cop:.3f}')
+            print(f'Lorenz COP = {self.cop_lorenz:.3f}')
+            print(f'Lorenz \\eta = {self.eta_lorenz:.3f}')
+            print(f'Carnot COP = {self.cop_carnot:.3f}')
+            print(f'Carnot \\eta = {self.eta_carnot:.3f}')
 
     def create_ranges(self):
         """Create stable and base ranges for T_hs_ff, T_cons_ff and pl."""
