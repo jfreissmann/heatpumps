@@ -36,6 +36,10 @@ class HeatPumpBase:
         self.buses = dict()
 
         self.cop = np.nan
+        self.cop_lorenz = np.nan
+        self.eta_lorenz = np.nan
+        self.cop_carnot = np.nan
+        self.eta_carnot = np.nan
         self.epsilon = np.nan
         self.solved_design = False
 
@@ -69,10 +73,7 @@ class HeatPumpBase:
         if 'iterinfo' in kwargs:
             self.nw.set_attr(iterinfo=kwargs['iterinfo'])
         self.nw.solve('design')
-        self.cop = (
-            abs(self.buses['heat output'].P.val)
-            / self.buses['power input'].P.val
-            )
+        self.calc_efficiencies()
 
         if 'print_results' in kwargs:
             if kwargs['print_results']:
@@ -80,6 +81,43 @@ class HeatPumpBase:
         if self.nw.residual[-1] < 1e-3:
             self.solved_design = True
             self.nw.save(self.design_path)
+
+    def calc_efficiencies(self):
+        """Calculate ideal and simulated cycle efficiencies."""
+        # Simulated net Coefficient of Performance
+        self.cop = (
+            abs(self.buses['heat output'].P.val)
+            / self.buses['power input'].P.val
+            )
+
+        # Ideal Coefficient of Performance of the equivalent Lorenz cycle
+        T_ln_source = (
+            (self.params['B2']['T'] - self.params['B1']['T'])
+            / (np.log(self.params['B2']['T']+273.15)
+               - np.log(self.params['B1']['T']+273.15))
+            )
+        T_ln_sink = (
+            (self.params['C3']['T'] - self.params['C1']['T'])
+            / (np.log(self.params['C3']['T']+273.15)
+               - np.log(self.params['C1']['T']+273.15))
+            )
+        self.cop_lorenz = (
+            T_ln_sink / (T_ln_sink - T_ln_source)
+            )
+        if self.cop_lorenz != 0:
+            self.eta_lorenz = self.cop / self.cop_lorenz
+
+        # Ideal Coefficient of Performance of the equivalent Carnot cycle
+        if not 'trans' in self.params['setup']['type'].lower():
+            T_cond = (
+                self.params['C3']['T'] + self.params['cond']['ttd_u'] + 273.15
+                )
+            T_evap = (
+                self.params['B2']['T'] - self.params['evap']['ttd_l'] + 273.15
+                )
+            self.cop_carnot = T_cond / (T_cond - T_evap)
+            if self.cop_carnot != 0:
+                self.eta_carnot = self.cop / self.cop_carnot
 
     def run_model(self, print_cop=False, exergy_analysis=True, **kwargs):
         """Run the initialization and design simulation routine."""
