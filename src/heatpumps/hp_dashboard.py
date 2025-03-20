@@ -16,10 +16,20 @@ def switch2design():
     """Switch to design simulation tab."""
     ss.select = 'Auslegung'
 
-
+@st.dialog('Teillastsimulation nicht verfügbar.')
 def switch2partload():
     """Switch to partload simulation tab."""
-    ss.select = 'Teillast'
+    st.markdown(
+        'In der Streamlit Community Cloud Version von *heatpumps* ist die '
+        + 'Teillastsimulation nicht möglich.'
+    )
+
+    st.markdown(
+        'Um die Teillast der Wärmepumpe zu simulieren, ist es aktuell nötig, '
+        + '*heatpumps* lokal zu installieren. Eine Installationsanweisung '
+        + 'dazu befindet sich in der Beschreibung des '
+        + '[GitHub Repositories](https://github.com/jfreissmann/heatpumps).'
+    )
 
 
 def reset2design():
@@ -113,7 +123,7 @@ with st.sidebar:
     st.image(logo, use_container_width=True)
 
     mode = st.selectbox(
-        'Auswahl Modus', ['Start', 'Auslegung', 'Teillast'],
+        'Auswahl Modus', ['Start', 'Auslegung'],
         key='select', label_visibility='hidden'
         )
 
