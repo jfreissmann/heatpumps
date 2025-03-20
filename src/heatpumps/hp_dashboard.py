@@ -110,7 +110,7 @@ with st.sidebar:
         logo = os.path.join(src_path, 'img', 'Logo_ZNES_mitUnisV2_dark.svg')
     else:
         logo = os.path.join(src_path, 'img', 'Logo_ZNES_mitUnisV2.svg')
-    st.image(logo, use_column_width=True)
+    st.image(logo, use_container_width=True)
 
     mode = st.selectbox(
         'Auswahl Modus', ['Start', 'Auslegung', 'Teillast'],
