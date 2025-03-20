@@ -26,7 +26,7 @@ dependencies = [
     "plotly>=5.20.0",
     "scikit-learn>=1.2.1",
     "scipy>=1.10.0",
-    "streamlit>=1.32.0, <=1.35.0",
+    "streamlit==1.40.2",
     "tespy>=0.7.5"
 ]
 
