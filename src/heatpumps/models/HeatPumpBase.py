@@ -72,7 +72,6 @@ class HeatPumpBase:
         if 'iterinfo' in kwargs:
             self.nw.set_attr(iterinfo=kwargs['iterinfo'])
         self.nw.solve('design')
-        self.calc_efficiencies()
 
         if 'print_results' in kwargs:
             if kwargs['print_results']:
@@ -125,6 +124,7 @@ class HeatPumpBase:
         self.init_simulation(**kwargs)
         self.design_simulation(**kwargs)
         self.check_consistency()
+        self.calc_efficiencies()
         if exergy_analysis:
             self.perform_exergy_analysis(**kwargs)
         if print_cop:
