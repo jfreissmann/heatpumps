@@ -395,6 +395,7 @@ class HeatPumpIHXPCIHXTrans(HeatPumpBase):
 
     def check_consistency(self):
         """Perform all necessary checks to protect consistency of parameters."""
+        super().check_consistency()
         self.check_expansion_into_vapor_liquid_region(
             conn='A5', p=self.p_evap, wf=self.wf
         )

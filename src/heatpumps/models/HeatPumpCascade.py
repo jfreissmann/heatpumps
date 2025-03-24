@@ -175,6 +175,8 @@ class HeatPumpCascade(HeatPumpCascadeBase):
             T_evap=self.params['B2']['T'], T_mid=self.T_mid,
             T_cond=self.params['C3']['T']
             )
+        self.p_evap2 = p_evap2
+        self.p_evap1 = p_evap1
 
         # Main cycle
         self.conns['A3'].set_attr(x=self.params['A3']['x'], p=p_evap2)
@@ -304,3 +306,14 @@ class HeatPumpCascade(HeatPumpCascadeBase):
                 data[comp]['starting_point_value'] *= 0.999999
 
         return data
+
+    def check_consistency(self):
+        """Perform all necessary checks to protect consistency of parameters."""
+        super().check_consistency()
+        self.check_expansion_into_vapor_liquid_region(
+            conn='A1', p=self.p_evap2, wf=self.wf2
+        )
+        self.check_expansion_into_vapor_liquid_region(
+            conn='D1', p=self.p_evap1, wf=self.wf1
+        )
+        self.check_mid_temperature(wf=self.wf1)

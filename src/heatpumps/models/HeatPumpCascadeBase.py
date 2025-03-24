@@ -1,5 +1,7 @@
 import os
 
+from CoolProp.CoolProp import PropsSI as PSI
+
 if __name__ == '__main__':
     from HeatPumpBase import HeatPumpBase
 else:
@@ -128,4 +130,30 @@ class HeatPumpCascadeBase(HeatPumpBase):
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
                 open_file=open_file, cycle=2, **kwargs2
+            )
+
+    def check_mid_temperature(self, wf):
+        """Check if the intermediate pressure is below the critical pressure."""
+        T_crit = PSI('T_critical', wf) - 273.15
+        if self.T_mid > T_crit:
+            raise ValueError(
+                f'Intermediate temperature of {self.T_mid:1f} °C must be below '
+                + f'the critical temperature of {wf} of {T_crit:.1f} °C.'
+            )
+
+    def check_expansion_into_vapor_liquid_region(self, conn, p, wf):
+        T = self.conns[conn].T.val
+
+        T_sat = PSI('T', 'Q', 0, 'P', p * 1e5, wf) - 273.15
+        if 'econ_type' in self.__dict__.keys():
+            if self.econ_type == 'closed':
+                T_sat = PSI(
+                    'T', 'Q', 0, 'P', p * 1e5 / self.params['econ']['pr2'],
+                    wf) - 273.15
+
+        if T < T_sat:
+            raise ValueError(
+                f'The temperature of {T:.1f} °C at connection {conn} is lower '
+                + f'than the saturation temperature {T_sat} °C at {p:2f} bar. '
+                + 'Therefore, the vapor-liquid region can not be reached.'
             )
