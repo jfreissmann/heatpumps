@@ -634,20 +634,3 @@ class HeatPumpCascadeIHXPCIHX(HeatPumpCascadeBase):
                 )
 
         self.check_mid_temperature(wf=self.wf1)
-
-    def check_expansion_into_vapor_liquid_region(self, conn, p, wf, pr):
-        T = self.conns[conn].T.val
-
-        T_sat = PSI('T', 'Q', 0, 'P', p * 1e5, wf) - 273.15
-        if 'econ_type' in self.__dict__.keys():
-            if self.econ_type == 'closed':
-                T_sat = PSI(
-                    'T', 'Q', 0, 'P', p * 1e5 / pr,
-                    wf) - 273.15
-
-        if T < T_sat:
-            raise ValueError(
-                f'The temperature of {T:.1f} °C at connection {conn} is lower '
-                + f'than the saturation temperature {T_sat:.1f} °C at {p:2f} bar. '
-                + 'Therefore, the vapor-liquid region can not be reached.'
-            )
