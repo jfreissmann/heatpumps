@@ -328,15 +328,6 @@ class HeatPumpCascadeTrans(HeatPumpCascadeBase):
                 + f'critical pressure of {wf} of {p_crit:.2f} bar'
                 )
 
-    def check_mid_temperature(self, wf):
-        """Check if the intermediate pressure is below the critical pressure."""
-        T_crit = PSI('T_critical', wf) - 273.15
-        if self.T_mid > T_crit:
-            raise ValueError(
-                f'Intermediate temperature of {self.T_mid:1f} °C must be below '
-                + f'the  critical temperature of {wf} of {T_crit:.1f} °C'
-                )
-
     def check_expansion_into_vapor_liquid_region(self, conn, p, wf):
         T = self.conns[conn].T.val
 
