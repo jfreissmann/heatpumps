@@ -1113,9 +1113,11 @@ if mode == 'Auslegung':
                         st.subheader('Wasserfall Diagramm')
                         diagram_placeholder_waterfall = st.empty()
 
-                        diagram_waterfall = ss.hp.generate_waterfall_diagram()
+                        dia_wf_fig, dia_wf_ax = ss.hp.generate_waterfall_diagram(
+                            return_fig_ax=True
+                            )
                         diagram_placeholder_waterfall.pyplot(
-                            diagram_waterfall, use_container_width=True
+                            dia_wf_fig, use_container_width=True
                             )
 
                     st.write(
