@@ -1149,7 +1149,43 @@ class HeatPumpBase:
 
     def check_consistency(self):
         """Perform all necessary checks to protect consistency of parameters."""
-        pass
+        self.check_thermodynamic_results()
+
+    def check_thermodynamic_results(self):
+        """Perform thermodynamic checks of the main cycle components."""
+        inconsistencies = []
+        if 'HeatExchanger' in self.nw.results:
+            inconsistencies += [
+                any(self.nw.results['HeatExchanger']['Q'] > 0)
+            ]
+            inconsistencies += [
+                any(self.nw.results['HeatExchanger']['ttd_u'] <= 0)
+            ]
+            inconsistencies += [
+                any(self.nw.results['HeatExchanger']['ttd_l'] <= 0)
+            ]
+        if 'Condenser' in self.nw.results:
+            inconsistencies += [
+                any(self.nw.results['Condenser']['Q'] > 0)
+            ]
+            inconsistencies += [
+                any(self.nw.results['Condenser']['ttd_u'] <= 0)
+            ]
+            inconsistencies += [
+                any(self.nw.results['Condenser']['ttd_l'] <= 0)
+            ]
+        if 'Compressor' in self.nw.results:
+            inconsistencies += [
+                any(self.nw.results['Compressor']['P'] < 0)
+            ]
+            inconsistencies += [
+                any(self.nw.results['Compressor']['pr'] <= 0)
+            ]
+
+        if any(inconsistencies):
+            raise ValueError(
+                'Results of simulation are thermodynamically inconsistent.'
+                )
 
     def offdesign_simulation(self, log_simulations=False):
         """Perform offdesign parametrization and simulation."""
