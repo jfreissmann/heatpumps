@@ -138,7 +138,7 @@ class HeatPumpCascadeBase(HeatPumpBase):
         if self.T_mid > T_crit:
             raise ValueError(
                 f'Intermediate temperature of {self.T_mid:1f} °C must be below '
-                + f'the  critical temperature of {wf} of {T_crit:.1f} °C'
+                + f'the critical temperature of {wf} of {T_crit:.1f} °C.'
             )
 
     def check_expansion_into_vapor_liquid_region(self, conn, p, wf):
