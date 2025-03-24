@@ -195,6 +195,8 @@ class HeatPumpCascade2IHX(HeatPumpCascadeBase):
             T_evap=self.params['B2']['T'], T_mid=self.T_mid,
             T_cond=self.params['C3']['T']
             )
+        self.p_evap2 = p_evap2
+        self.p_evap1 = p_evap1
         h_superheat1 = PSI(
             'H', 'P', p_evap1*1e5,
             'T', (
