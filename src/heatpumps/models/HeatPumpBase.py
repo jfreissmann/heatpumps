@@ -106,7 +106,7 @@ class HeatPumpBase:
             self.eta_lorenz = self.cop / self.cop_lorenz
 
         # Ideal Coefficient of Performance of the equivalent Carnot cycle
-        if not 'trans' in self.params['setup']['type'].lower():
+        if 'cond' in self.params.keys():
             T_cond = (
                 self.params['C3']['T'] + self.params['cond']['ttd_u'] + 273.15
                 )
