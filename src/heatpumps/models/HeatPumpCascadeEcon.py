@@ -491,26 +491,4 @@ class HeatPumpCascadeEcon(HeatPumpCascadeBase):
     def check_consistency(self):
         """Perform all necessary checks to protect consistency of parameters."""
         super().check_consistency()
-        self.check_expansion_into_vapor_liquid_region(
-            conn='A3', p=self.p_evap2, wf=self.wf2, pr=self.params['econ2']['pr2']
-        )
-        self.check_expansion_into_vapor_liquid_region(
-            conn='D3', p=self.p_evap1, wf=self.wf1, pr=self.params['econ1']['pr2']
-        )
-
-        if 'econ_type' in self.__dict__.keys():
-            if self.econ_type == 'closed':
-                self.check_expansion_into_vapor_liquid_region(
-                    conn='A10', p=self.p_mid2, wf=self.wf2, pr=self.params['econ2']['pr2']
-                )
-                self.check_expansion_into_vapor_liquid_region(
-                    conn='D10', p=self.p_mid1, wf=self.wf1, pr=self.params['econ1']['pr2']
-                )
-            elif self.econ_type == 'open':
-                self.check_expansion_into_vapor_liquid_region(
-                    conn='A1', p=self.p_mid2, wf=self.wf2, pr=self.params['econ2']['pr2']
-                )
-                self.check_expansion_into_vapor_liquid_region(
-                    conn='D1', p=self.p_mid1, wf=self.wf1, pr=self.params['econ1']['pr2']
-                )
         self.check_mid_temperature(wf=self.wf1)

@@ -399,11 +399,5 @@ class HeatPumpCascadeIC(HeatPumpCascadeBase):
     def check_consistency(self):
         """Perform all necessary checks to protect consistency of parameters."""
         super().check_consistency()
-        self.check_expansion_into_vapor_liquid_region(
-            conn='A1', p=self.p_evap2, wf=self.wf2, pr=1
-        )
-        self.check_expansion_into_vapor_liquid_region(
-            conn='D1', p=self.p_evap1, wf=self.wf1, pr=1
-        )
 
         self.check_mid_temperature(wf=self.wf1)
