@@ -1153,38 +1153,141 @@ class HeatPumpBase:
 
     def check_thermodynamic_results(self):
         """Perform thermodynamic checks of the main cycle components."""
-        inconsistencies = []
-        if 'HeatExchanger' in self.nw.results:
-            inconsistencies += [
-                any(self.nw.results['HeatExchanger']['Q'] > 0)
-            ]
-            inconsistencies += [
-                any(self.nw.results['HeatExchanger']['ttd_u'] <= 0)
-            ]
-            inconsistencies += [
-                any(self.nw.results['HeatExchanger']['ttd_l'] <= 0)
-            ]
-        if 'Condenser' in self.nw.results:
-            inconsistencies += [
-                any(self.nw.results['Condenser']['Q'] > 0)
-            ]
-            inconsistencies += [
-                any(self.nw.results['Condenser']['ttd_u'] <= 0)
-            ]
-            inconsistencies += [
-                any(self.nw.results['Condenser']['ttd_l'] <= 0)
-            ]
-        if 'Compressor' in self.nw.results:
-            inconsistencies += [
-                any(self.nw.results['Compressor']['P'] < 0)
-            ]
-            inconsistencies += [
-                any(self.nw.results['Compressor']['pr'] <= 0)
-            ]
+        user_help_prompt = (
+            'Please check the heat pump parameters and model for thermodynamic'
+            + ' plausibility.'
+        )
 
-        if any(inconsistencies):
+        mask_neg_m_dot = self.nw.results['Connection']['m'] < 0
+        if any(mask_neg_m_dot):
+            conns_neg_m_dot = [
+                idx for idx
+                in self.nw.results['Connection'].loc[mask_neg_m_dot, 'm'].index
+            ]
             raise ValueError(
-                'Results of simulation are thermodynamically inconsistent.'
+                f'Mass flow in connection(s) {conns_neg_m_dot} is negative. '
+                + user_help_prompt
+            )
+
+        if 'HeatExchanger' in self.nw.results:
+            mask_heatex_pos_Q_dot = self.nw.results['HeatExchanger']['Q'] > 0
+            if any(mask_heatex_pos_Q_dot):
+                heatex_pos_Q_dot = [
+                    idx for idx
+                    in self.nw.results['HeatExchanger'].loc[
+                        mask_heatex_pos_Q_dot, 'Q'
+                    ].index
+                ]
+                raise ValueError(
+                    f'Heat flow in HeatExchanger(s) {heatex_pos_Q_dot} is '
+                    + f'positive, indicating flow form cold to hot side. '
+                    + user_help_prompt
+                )
+
+            mask_heatex_neg_ttd_u = (
+                self.nw.results['HeatExchanger']['ttd_u'] <= 0
+            )
+            if any(mask_heatex_neg_ttd_u):
+                heatex_neg_ttd_u = [
+                    idx for idx
+                    in self.nw.results['HeatExchanger'].loc[
+                        mask_heatex_neg_ttd_u, 'ttd_u'
+                    ].index
+                ]
+                raise ValueError(
+                    'Upper terminal temperature difference in HeatExchanger(s)'
+                    + f' {heatex_neg_ttd_u} is not positive. '
+                    + user_help_prompt
+                )
+
+            mask_heatex_neg_ttd_l = (
+                self.nw.results['HeatExchanger']['ttd_l'] <= 0
+            )
+            if any(mask_heatex_neg_ttd_u):
+                heatex_neg_ttd_l = [
+                    idx for idx
+                    in self.nw.results['HeatExchanger'].loc[
+                        mask_heatex_neg_ttd_l, 'ttd_l'
+                    ].index
+                ]
+                raise ValueError(
+                    'Lower terminal temperature difference in HeatExchanger(s)'
+                    + f' {heatex_neg_ttd_l} is not positive. '
+                    + user_help_prompt
+                )
+
+        if 'Condenser' in self.nw.results:
+            mask_cond_pos_Q_dot = self.nw.results['Condenser']['Q'] > 0
+            if any(mask_cond_pos_Q_dot):
+                cond_pos_Q_dot = [
+                    idx for idx
+                    in self.nw.results['Condenser'].loc[
+                        mask_cond_pos_Q_dot, 'Q'
+                    ].index
+                ]
+                raise ValueError(
+                    f'Heat flow in Condenser(s) {cond_pos_Q_dot} is '
+                    + 'positive, indicating flow form cold to hot side. '
+                    + user_help_prompt
+                )
+
+            mask_cond_neg_ttd_u = (
+                self.nw.results['Condenser']['ttd_u'] <= 0
+            )
+            if any(mask_cond_neg_ttd_u):
+                cond_neg_ttd_u = [
+                    idx for idx
+                    in self.nw.results['Condenser'].loc[
+                        mask_cond_neg_ttd_u, 'ttd_u'
+                    ].index
+                ]
+                raise ValueError(
+                    'Upper terminal temperature difference in Condenser(s)'
+                    + f' {cond_neg_ttd_u} is not positive. {user_help_prompt}'
+                )
+
+            mask_cond_neg_ttd_l = (
+                self.nw.results['Condenser']['ttd_l'] <= 0
+            )
+            if any(mask_cond_neg_ttd_u):
+                cond_neg_ttd_l = [
+                    idx for idx
+                    in self.nw.results['Condenser'].loc[
+                        mask_cond_neg_ttd_l, 'ttd_l'
+                    ].index
+                ]
+                raise ValueError(
+                    'Lower terminal temperature difference in Condenser(s)'
+                    + f' {cond_neg_ttd_l} is not positive. {user_help_prompt}'
+                )
+
+        if 'Compressor' in self.nw.results:
+            mask_comp_neg_P = self.nw.results['Compressor']['P'] < 0
+            if any(mask_comp_neg_P):
+                comp_neg_P = [
+                    idx for idx
+                    in self.nw.results['Compressor'].loc[
+                        mask_comp_neg_P, 'Q'
+                    ].index
+                ]
+                raise ValueError(
+                    f'Power input in Compressor(s) {comp_neg_P} is negative. '
+                    + user_help_prompt
+                )
+
+            mask_comp_neg_pr = (
+                self.nw.results['Compressor']['pr'] <= 0
+            )
+            if any(mask_comp_neg_pr):
+                comp_neg_pr = [
+                    idx for idx
+                    in self.nw.results['Compressor'].loc[
+                        mask_comp_neg_pr, 'pr'
+                    ].index
+                ]
+                raise ValueError(
+                    f'Pressure ratio in Compressor(s) {comp_neg_pr} is '
+                    + f'not positive. {user_help_prompt}'
                 )
 
     def offdesign_simulation(self, log_simulations=False):
