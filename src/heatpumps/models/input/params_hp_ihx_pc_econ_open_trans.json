@@ -1,7 +1,7 @@
 {
     "setup": {
         "name": "parallel compression with open economizer and internal heat exchanger",
-        "type": "HeatPumpIHXPCEconOpen",
+        "type": "HeatPumpIHXPCEconOpenTrans",
         "refrig": "R1234yf"
     },
     "ambient": {
