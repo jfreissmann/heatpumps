@@ -98,7 +98,7 @@ with open(refrigpath, 'r', encoding='utf-8') as file:
 
 st.set_page_config(
     layout='wide',
-    page_title='Wärmepumpen Dashboard',
+    page_title='heatpumps',
     page_icon=os.path.join(src_path, 'img', 'page_icon_ZNES.png')
     )
 
@@ -571,7 +571,7 @@ if mode == 'Start':
 
     st.button('Auslegung starten', on_click=switch2design)
 
-    st.markdown("""---""")
+    st.divider()
 
     with st.expander('Verwendete Software'):
         st.info(
