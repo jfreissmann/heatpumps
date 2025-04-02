@@ -1,7 +1,7 @@
 {
     "setup": {
         "name": "two stage cascade with parallel compression and open economizer",
-        "type": "HeatPumpCascadePC",
+        "type": "HeatPumpCascadePCTrans",
         "refrig1": "R1234yf",
         "refrig2": "R717"
     },

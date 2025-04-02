@@ -542,28 +542,7 @@ class HeatPumpCascadeIHXPCTrans(HeatPumpCascadeBase):
 
     def check_consistency(self):
         """Perform all necessary checks to protect consistency of parameters."""
-        self.check_expansion_into_vapor_liquid_region(
-            conn='A4', p=self.p_evap2, wf=self.wf2, pr=self.params['econ2']['pr2']
-        )
-        self.check_expansion_into_vapor_liquid_region(
-            conn='D4', p=self.p_evap1, wf=self.wf1, pr=self.params['econ1']['pr2']
-        )
-
-        if 'econ_type' in self.__dict__.keys():
-            if self.econ_type == 'closed':
-                self.check_expansion_into_vapor_liquid_region(
-                    conn='A12', p=self.p_mid2, wf=self.wf2, pr=self.params['econ2']['pr2']
-                )
-                self.check_expansion_into_vapor_liquid_region(
-                    conn='D12', p=self.p_mid1, wf=self.wf1, pr=self.params['econ1']['pr2']
-                )
-            elif self.econ_type == 'open':
-                self.check_expansion_into_vapor_liquid_region(
-                    conn='A2', p=self.p_mid2, wf=self.wf2, pr=self.params['econ2']['pr2']
-                )
-                self.check_expansion_into_vapor_liquid_region(
-                    conn='D2', p=self.p_mid1, wf=self.wf1, pr=self.params['econ1']['pr2']
-                )
+        super().check_consistency()
 
         self.check_mid_pressure(p_mid=self.p_mid2, wf=self.wf2)
         self.check_mid_temperature(wf=self.wf1)
@@ -575,30 +554,4 @@ class HeatPumpCascadeIHXPCTrans(HeatPumpCascadeBase):
             raise ValueError(
                 f'Intermediate pressure of {p_mid:2f} bar must be below the '
                 + f'critical pressure of {wf} of {p_crit:.2f} bar'
-            )
-
-    def check_mid_temperature(self, wf):
-        """Check if the intermediate pressure is below the critical pressure."""
-        T_crit = PSI('T_critical', wf) - 273.15
-        if self.T_mid > T_crit:
-            raise ValueError(
-                f'Intermediate temperature of {self.T_mid:1f} °C must be below '
-                + f'the  critical temperature of {wf} of {T_crit:.1f} °C'
-            )
-
-    def check_expansion_into_vapor_liquid_region(self, conn, p, wf, pr):
-        T = self.conns[conn].T.val
-
-        T_sat = PSI('T', 'Q', 0, 'P', p * 1e5, wf) - 273.15
-        if 'econ_type' in self.__dict__.keys():
-            if self.econ_type == 'closed':
-                T_sat = PSI(
-                    'T', 'Q', 0, 'P', p * 1e5 / pr,
-                    wf) - 273.15
-
-        if T < T_sat:
-            raise ValueError(
-                f'The temperature of {T:.1f} °C at connection {conn} is lower '
-                + f'than the saturation temperature {T_sat:.1f} °C at {p:2f} bar. '
-                + 'Therefore, the vapor-liquid region can not be reached.'
             )

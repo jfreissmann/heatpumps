@@ -2,7 +2,6 @@ import json
 import os
 from datetime import datetime
 from time import time
-from tkinter import font
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -36,6 +35,10 @@ class HeatPumpBase:
         self.buses = dict()
 
         self.cop = np.nan
+        self.cop_lorenz = np.nan
+        self.eta_lorenz = np.nan
+        self.cop_carnot = np.nan
+        self.eta_carnot = np.nan
         self.epsilon = np.nan
         self.solved_design = False
 
@@ -69,10 +72,6 @@ class HeatPumpBase:
         if 'iterinfo' in kwargs:
             self.nw.set_attr(iterinfo=kwargs['iterinfo'])
         self.nw.solve('design')
-        self.cop = (
-            abs(self.buses['heat output'].P.val)
-            / self.buses['power input'].P.val
-            )
 
         if 'print_results' in kwargs:
             if kwargs['print_results']:
@@ -81,6 +80,43 @@ class HeatPumpBase:
             self.solved_design = True
             self.nw.save(self.design_path)
 
+    def calc_efficiencies(self):
+        """Calculate ideal and simulated cycle efficiencies."""
+        # Simulated net Coefficient of Performance
+        self.cop = (
+            abs(self.buses['heat output'].P.val)
+            / self.buses['power input'].P.val
+            )
+
+        # Ideal Coefficient of Performance of the equivalent Lorenz cycle
+        T_ln_source = (
+            (self.params['B2']['T'] - self.params['B1']['T'])
+            / (np.log(self.params['B2']['T']+273.15)
+               - np.log(self.params['B1']['T']+273.15))
+            )
+        T_ln_sink = (
+            (self.params['C3']['T'] - self.params['C1']['T'])
+            / (np.log(self.params['C3']['T']+273.15)
+               - np.log(self.params['C1']['T']+273.15))
+            )
+        self.cop_lorenz = (
+            T_ln_sink / (T_ln_sink - T_ln_source)
+            )
+        if self.cop_lorenz != 0:
+            self.eta_lorenz = self.cop / self.cop_lorenz
+
+        # Ideal Coefficient of Performance of the equivalent Carnot cycle
+        if 'cond' in self.params.keys():
+            T_cond = (
+                self.params['C3']['T'] + self.params['cond']['ttd_u'] + 273.15
+                )
+            T_evap = (
+                self.params['B2']['T'] - self.params['evap']['ttd_l'] + 273.15
+                )
+            self.cop_carnot = T_cond / (T_cond - T_evap)
+            if self.cop_carnot != 0:
+                self.eta_carnot = self.cop / self.cop_carnot
+
     def run_model(self, print_cop=False, exergy_analysis=True, **kwargs):
         """Run the initialization and design simulation routine."""
         self.generate_components()
@@ -88,10 +124,15 @@ class HeatPumpBase:
         self.init_simulation(**kwargs)
         self.design_simulation(**kwargs)
         self.check_consistency()
+        self.calc_efficiencies()
         if exergy_analysis:
             self.perform_exergy_analysis(**kwargs)
         if print_cop:
             print(f'COP = {self.cop:.3f}')
+            print(f'Lorenz COP = {self.cop_lorenz:.3f}')
+            print(f'Lorenz \\eta = {self.eta_lorenz:.3f}')
+            print(f'Carnot COP = {self.cop_carnot:.3f}')
+            print(f'Carnot \\eta = {self.eta_carnot:.3f}')
 
     def create_ranges(self):
         """Create stable and base ranges for T_hs_ff, T_cons_ff and pl."""
@@ -1108,7 +1149,146 @@ class HeatPumpBase:
 
     def check_consistency(self):
         """Perform all necessary checks to protect consistency of parameters."""
-        pass
+        self.check_thermodynamic_results()
+
+    def check_thermodynamic_results(self):
+        """Perform thermodynamic checks of the main cycle components."""
+        user_help_prompt = (
+            'Please check the heat pump parameters and model for thermodynamic'
+            + ' plausibility.'
+        )
+
+        mask_neg_m_dot = self.nw.results['Connection']['m'] < 0
+        if any(mask_neg_m_dot):
+            conns_neg_m_dot = [
+                idx for idx
+                in self.nw.results['Connection'].loc[mask_neg_m_dot, 'm'].index
+            ]
+            raise ValueError(
+                f'Mass flow in connection(s) {conns_neg_m_dot} is negative. '
+                + user_help_prompt
+            )
+
+        if 'HeatExchanger' in self.nw.results:
+            mask_heatex_pos_Q_dot = self.nw.results['HeatExchanger']['Q'] > 0
+            if any(mask_heatex_pos_Q_dot):
+                heatex_pos_Q_dot = [
+                    idx for idx
+                    in self.nw.results['HeatExchanger'].loc[
+                        mask_heatex_pos_Q_dot, 'Q'
+                    ].index
+                ]
+                raise ValueError(
+                    f'Heat flow in HeatExchanger(s) {heatex_pos_Q_dot} is '
+                    + f'positive, indicating flow form cold to hot side. '
+                    + user_help_prompt
+                )
+
+            mask_heatex_neg_ttd_u = (
+                self.nw.results['HeatExchanger']['ttd_u'] <= 0
+            )
+            if any(mask_heatex_neg_ttd_u):
+                heatex_neg_ttd_u = [
+                    idx for idx
+                    in self.nw.results['HeatExchanger'].loc[
+                        mask_heatex_neg_ttd_u, 'ttd_u'
+                    ].index
+                ]
+                raise ValueError(
+                    'Upper terminal temperature difference in HeatExchanger(s)'
+                    + f' {heatex_neg_ttd_u} is not positive. '
+                    + user_help_prompt
+                )
+
+            mask_heatex_neg_ttd_l = (
+                self.nw.results['HeatExchanger']['ttd_l'] <= 0
+            )
+            if any(mask_heatex_neg_ttd_u):
+                heatex_neg_ttd_l = [
+                    idx for idx
+                    in self.nw.results['HeatExchanger'].loc[
+                        mask_heatex_neg_ttd_l, 'ttd_l'
+                    ].index
+                ]
+                raise ValueError(
+                    'Lower terminal temperature difference in HeatExchanger(s)'
+                    + f' {heatex_neg_ttd_l} is not positive. '
+                    + user_help_prompt
+                )
+
+        if 'Condenser' in self.nw.results:
+            mask_cond_pos_Q_dot = self.nw.results['Condenser']['Q'] > 0
+            if any(mask_cond_pos_Q_dot):
+                cond_pos_Q_dot = [
+                    idx for idx
+                    in self.nw.results['Condenser'].loc[
+                        mask_cond_pos_Q_dot, 'Q'
+                    ].index
+                ]
+                raise ValueError(
+                    f'Heat flow in Condenser(s) {cond_pos_Q_dot} is '
+                    + 'positive, indicating flow form cold to hot side. '
+                    + user_help_prompt
+                )
+
+            mask_cond_neg_ttd_u = (
+                self.nw.results['Condenser']['ttd_u'] <= 0
+            )
+            if any(mask_cond_neg_ttd_u):
+                cond_neg_ttd_u = [
+                    idx for idx
+                    in self.nw.results['Condenser'].loc[
+                        mask_cond_neg_ttd_u, 'ttd_u'
+                    ].index
+                ]
+                raise ValueError(
+                    'Upper terminal temperature difference in Condenser(s)'
+                    + f' {cond_neg_ttd_u} is not positive. {user_help_prompt}'
+                )
+
+            mask_cond_neg_ttd_l = (
+                self.nw.results['Condenser']['ttd_l'] <= 0
+            )
+            if any(mask_cond_neg_ttd_u):
+                cond_neg_ttd_l = [
+                    idx for idx
+                    in self.nw.results['Condenser'].loc[
+                        mask_cond_neg_ttd_l, 'ttd_l'
+                    ].index
+                ]
+                raise ValueError(
+                    'Lower terminal temperature difference in Condenser(s)'
+                    + f' {cond_neg_ttd_l} is not positive. {user_help_prompt}'
+                )
+
+        if 'Compressor' in self.nw.results:
+            mask_comp_neg_P = self.nw.results['Compressor']['P'] < 0
+            if any(mask_comp_neg_P):
+                comp_neg_P = [
+                    idx for idx
+                    in self.nw.results['Compressor'].loc[
+                        mask_comp_neg_P, 'Q'
+                    ].index
+                ]
+                raise ValueError(
+                    f'Power input in Compressor(s) {comp_neg_P} is negative. '
+                    + user_help_prompt
+                )
+
+            mask_comp_neg_pr = (
+                self.nw.results['Compressor']['pr'] <= 0
+            )
+            if any(mask_comp_neg_pr):
+                comp_neg_pr = [
+                    idx for idx
+                    in self.nw.results['Compressor'].loc[
+                        mask_comp_neg_pr, 'pr'
+                    ].index
+                ]
+                raise ValueError(
+                    f'Pressure ratio in Compressor(s) {comp_neg_pr} is '
+                    + f'not positive. {user_help_prompt}'
+                )
 
     def offdesign_simulation(self, log_simulations=False):
         """Perform offdesign parametrization and simulation."""

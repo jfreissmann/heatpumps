@@ -110,7 +110,7 @@ with st.sidebar:
         logo = os.path.join(src_path, 'img', 'Logo_ZNES_mitUnisV2_dark.svg')
     else:
         logo = os.path.join(src_path, 'img', 'Logo_ZNES_mitUnisV2.svg')
-    st.image(logo, use_column_width=True)
+    st.image(logo, use_container_width=True)
 
     mode = st.selectbox(
         'Auswahl Modus', ['Start', 'Auslegung', 'Teillast'],
@@ -1113,9 +1113,11 @@ if mode == 'Auslegung':
                         st.subheader('Wasserfall Diagramm')
                         diagram_placeholder_waterfall = st.empty()
 
-                        diagram_waterfall = ss.hp.generate_waterfall_diagram()
+                        dia_wf_fig, dia_wf_ax = ss.hp.generate_waterfall_diagram(
+                            return_fig_ax=True
+                            )
                         diagram_placeholder_waterfall.pyplot(
-                            diagram_waterfall, use_container_width=True
+                            dia_wf_fig, use_container_width=True
                             )
 
                     st.write(

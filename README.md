@@ -1,3 +1,5 @@
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://heatpumps.streamlit.app)
+
 # heatpumps
 
 Steady-state simulation of design and partload operation of a wide collection of heat pump topologies.

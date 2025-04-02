@@ -1,5 +1,7 @@
 import os
 
+from CoolProp.CoolProp import PropsSI as PSI
+
 if __name__ == '__main__':
     from HeatPumpBase import HeatPumpBase
 else:
@@ -128,4 +130,13 @@ class HeatPumpCascadeBase(HeatPumpBase):
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
                 open_file=open_file, cycle=2, **kwargs2
+            )
+
+    def check_mid_temperature(self, wf):
+        """Check if the intermediate pressure is below the critical pressure."""
+        T_crit = PSI('T_critical', wf) - 273.15
+        if self.T_mid > T_crit:
+            raise ValueError(
+                f'Intermediate temperature of {self.T_mid:1f} °C must be below '
+                + f'the critical temperature of {wf} of {T_crit:.1f} °C.'
             )
