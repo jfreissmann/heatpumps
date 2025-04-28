@@ -169,6 +169,16 @@
         "T_NBP": 18.3,
         "GWP100": 77.0
     },
+    "Propane": {
+        "CP": "R290",
+        "type": "HC",
+        "T_crit": 96.4,
+        "p_crit": 42.5,
+        "ASHRAE34": "A3",
+        "ODP": 0.0,
+        "T_NBP": -42.1,
+        "GWP100": 3.0
+    },
     "Pentane": {
         "CP": "R601",
         "type": "HC",

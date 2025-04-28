@@ -1267,7 +1267,7 @@ class HeatPumpBase:
                 comp_neg_P = [
                     idx for idx
                     in self.nw.results['Compressor'].loc[
-                        mask_comp_neg_P, 'Q'
+                        mask_comp_neg_P, 'P'
                     ].index
                 ]
                 raise ValueError(
