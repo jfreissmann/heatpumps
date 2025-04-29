@@ -138,6 +138,9 @@ def footer():
             <a href="https://github.com/maltefritz" target="_blank" style="text-decoration: none;">
                 <img src="data:image/svg+xml;base64,{github64}" width="30" style="margin: 0 10px;">
             </a>
+            <a href="https://www.linkedin.com/in/malte-fritz-515259100" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{linkedin64}" width="35" style="margin: 0 10px;">
+            </a>
         </div><br>
         """, unsafe_allow_html=True)
 
@@ -1368,12 +1371,12 @@ pad_left, col_bot, pad_right = st.columns(3)
 mail_path = os.path.join(icon_path, 'mail_icon_bw.svg')
 orcid_path = os.path.join(icon_path, 'orcid_icon_bw.svg')
 github_path = os.path.join(icon_path, 'github_icon_bw.svg')
-# linkedin_path = os.path.join(icon_path, 'linkedin_icon_bw.png')
+linkedin_path = os.path.join(icon_path, 'linkedin_icon_bw.svg')
 
 mail64 = img_to_base64(mail_path)
 orcid64 = img_to_base64(orcid_path)
 github64 = img_to_base64(github_path)
-# linkedin64 = img_to_base64(linkedin_path)
+linkedin64 = img_to_base64(linkedin_path)
 
 if col_bot.button(
     '© Jonas Freißmann & Malte Fritz :material/open_in_new:', type='tertiary',
