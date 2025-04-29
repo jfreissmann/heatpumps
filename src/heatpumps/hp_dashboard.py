@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 
@@ -99,7 +100,53 @@ def calc_limits(wf, prop, padding_rel, scale='lin'):
     return ax_min_val, ax_max_val
 
 
+def img_to_base64(image_path):
+    with open(image_path, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+
+@st.dialog("Kontaktdaten")
+def footer():
+    st.markdown(f"""
+        <div style='font-size: 1.0em;'>
+            <div style='margin-bottom: 0.5em;'>
+                <strong>Jonas Freißmann</strong>
+                <img src="https://avatars.githubusercontent.com/u/57762052?v=4" width="32" style="margin: 0 10px;"><br>
+            </div>
+            <p style="margin-bottom: 0.3em;">jonas.freissmann@web.de</p>
+            <a href="mailto:jonas.freissmann@web.de" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{mail64}" width="32" style="margin: 10px 10px 10px 0;">
+            </a>
+            <a href="https://orcid.org/0009-0007-6432-5479" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{orcid64}" width="29" style="margin: 0 10px;">
+            </a>
+            <a href="https://github.com/jfreissmann" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{github64}" width="30" style="margin: 0 10px;">
+            </a><br><br><br>
+            <div style='margin-bottom: 0.5em;'>
+                <strong>Malte Fritz</strong>
+                <img src="https://avatars.githubusercontent.com/u/35224977?v=4" width="32" style="margin: 0 10px;"><br>
+            </div>
+            <p style="margin-bottom: 0.3em;">malte.fritz@web.de</p>
+            <a href="mailto:malte.fritz@web.de" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{mail64}" width="32" style="margin: 10px 10px 10px 0;">
+            </a>
+            <a href="https://orcid.org/my-orcid?orcid=0009-0001-5843-0973" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{orcid64}" width="29" style="margin: 0 10px;">
+            </a>
+            <a href="https://github.com/maltefritz" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{github64}" width="30" style="margin: 0 10px;">
+            </a>
+            <a href="https://www.linkedin.com/in/malte-fritz-515259100" target="_blank" style="text-decoration: none;">
+                <img src="data:image/png;base64,{linkedin64}" width="25" style="margin: 0 10px;">
+            </a>
+        </div><br>
+        """, unsafe_allow_html=True)
+
+
 src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
+icon_path = os.path.join(src_path, 'img', 'icons')
 
 # %% MARK: Initialisation
 refrigpath = os.path.join(src_path, 'refrigerants.json')
@@ -109,7 +156,7 @@ with open(refrigpath, 'r', encoding='utf-8') as file:
 st.set_page_config(
     layout='wide',
     page_title='heatpumps',
-    page_icon=os.path.join(src_path, 'img', 'page_icon_ZNES.png')
+    page_icon=os.path.join(icon_path, 'page_icon_ZNES.png')
     )
 
 is_dark = darkdetect.isDark()
@@ -1315,3 +1362,23 @@ if mode == 'Teillast':
                         pl_epsilon_placeholder.pyplot(figs[T_select_epsilon])
 
                 st.button('Neue Wärmepumpe auslegen', on_click=reset2design)
+
+# %% MARK: Footer
+st.markdown("<br><br>", unsafe_allow_html=True)
+
+pad_left, col_bot, pad_right = st.columns(3)
+
+mail_path = os.path.join(icon_path, 'mail_icon_bw.svg')
+orcid_path = os.path.join(icon_path, 'orcid_icon_bw.svg')
+github_path = os.path.join(icon_path, 'github_icon_bw.svg')
+linkedin_path = os.path.join(icon_path, 'linkedin_icon_bw.png')
+
+mail64 = img_to_base64(mail_path)
+orcid64 = img_to_base64(orcid_path)
+github64 = img_to_base64(github_path)
+linkedin64 = img_to_base64(linkedin_path)
+
+if col_bot.button(
+    '© Jonas Freißmann & Malte Fritz :material/open_in_new:', type='tertiary',
+    use_container_width=True):
+    footer()
