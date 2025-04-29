@@ -2,14 +2,14 @@
     "setup": {
         "name": "internal heat exchanger with closed economizer",
         "type": "HeatPumpIHXEconClosedTrans",
-        "refrig": "R1234yf"
+        "refrig": "R717"
     },
     "ambient": {
         "p": 1,
         "T": 25
     },
     "fluids": {
-        "wf": "R1234yf",
+        "wf": "R717",
         "si": "H2O",
         "so": "H2O"
     },
@@ -56,7 +56,7 @@
         "eta_s": 0.8
     },
     "A0": {
-	"p": 40
+        "p": 120
     },
     "A6": {
         "x": 1
@@ -69,10 +69,10 @@
         "T": 5
     },
     "C1": {
-        "T": 80
+        "T": 90
     },
     "C3": {
-        "T": 90,
+        "T": 100,
         "p": 10
     },
     "offdesign": {

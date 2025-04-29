@@ -2,16 +2,16 @@
     "setup": {
         "name": "two stage transcritical cascade heatpump with closed economizer and internal heat exchanger Variant A ",
         "type": "HeatPumpCascadeIHXEconTrans",
-        "refrig1": "R1234yf",
-        "refrig2": "R717"
+        "refrig1": "R717",
+        "refrig2": "R1234yf"
     },
     "ambient": {
         "p": 1,
         "T": 25
     },
     "fluids": {
-        "wf1": "R1234yf",
-        "wf2": "R717",
+        "wf1": "R717",
+        "wf2": "R1234yf",
         "si": "H2O",
         "so": "H2O"
     },
@@ -53,12 +53,12 @@
     "ihx1": {
         "pr1": 0.98,
         "pr2": 0.98,
-	"dT_sh": 5
+        "dT_sh": 5
     },
     "ihx2": {
         "pr1": 0.98,
         "pr2": 0.98,
-	"dT_sh": 5
+        "dT_sh": 5
     },
     "LT_comp1": {
         "eta_s": 0.75
@@ -98,7 +98,7 @@
         "T": 90
     },
     "C3": {
-        "T": 110,
+        "T": 100,
         "p": 10
     },
     "offdesign": {
