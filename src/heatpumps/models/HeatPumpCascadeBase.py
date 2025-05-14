@@ -21,8 +21,8 @@ class HeatPumpCascadeBase(HeatPumpBase):
         """Initialize paths and directories."""
         self.subdirname = (
             f"{self.params['setup']['type']}_"
-            + f"{self.params['setup']['refrig1']}_"
-            + f"{self.params['setup']['refrig2']}"
+            + f"{self.params['setup']['refrig1'].replace('::', '_')}_"
+            + f"{self.params['setup']['refrig2'].replace('::', '_')}"
             )
         self.design_path = os.path.abspath(os.path.join(
             os.path.dirname(__file__), 'stable', f'{self.subdirname}_design'
