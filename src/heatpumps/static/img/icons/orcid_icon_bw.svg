@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="256"
+   height="256"
+   viewBox="0 0 256 256"
+   sodipodi:docname="orcid_icon_bw.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="7.1757812"
+     inkscape:cx="128"
+     inkscape:cy="128"
+     inkscape:window-width="3840"
+     inkscape:window-height="2054"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1">
+    <inkscape:page
+       x="0"
+       y="0"
+       inkscape:label="1"
+       id="page1"
+       width="256"
+       height="256"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <g
+     id="g1"
+     inkscape:groupmode="layer"
+     inkscape:label="1">
+    <path
+       id="path1"
+       style="fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="M 96.000002 0 C 42.977161 -7.1054062e-15 -2.8421682e-14 42.977161 0 96.000002 C -7.1054062e-15 149.02285 42.977161 192 96.000002 192 C 149.02285 192 192 149.02285 192 96.000002 C 192 42.977161 149.02285 -2.8421682e-14 96.000002 0 z M 58.949709 35.02295 C 63.148704 35.02295 66.522951 38.477056 66.522951 42.602052 C 66.522951 46.727048 63.148704 50.175294 58.949709 50.175294 C 54.750713 50.175294 51.375001 46.727048 51.375001 42.602052 C 51.375001 38.398056 54.750713 35.02295 58.949709 35.02295 z M 53.175294 59.324709 L 64.727052 59.324709 L 64.727052 139.64795 L 53.175294 139.64795 L 53.175294 59.324709 z M 81.675295 59.324709 L 112.875 59.324709 C 142.57391 59.324709 155.625 80.551009 155.625 99.522952 C 155.625 120.14789 139.49989 139.72705 113.02295 139.72705 L 81.675295 139.72705 L 81.675295 59.324709 z M 93.227053 69.750002 L 93.227053 129.3003 L 111.60205 129.3003 C 137.77299 129.3003 143.77295 109.42592 143.77295 99.522952 C 143.77295 83.398 133.49994 69.750002 111 69.750002 L 93.227053 69.750002 z "
+       transform="scale(1.3333333)" />
+  </g>
+</svg>

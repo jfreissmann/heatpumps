@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 
@@ -89,7 +90,53 @@ def calc_limits(wf, prop, padding_rel, scale='lin'):
     return ax_min_val, ax_max_val
 
 
+def img_to_base64(image_path):
+    with open(image_path, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+
+@st.dialog("Kontaktdaten")
+def footer():
+    st.markdown(f"""
+        <div style='font-size: 1.0em;'>
+            <div style='margin-bottom: 0.5em;'>
+                <strong>Jonas Freißmann</strong>
+                <img src="https://avatars.githubusercontent.com/u/57762052?v=4" width="32" style="margin: 0 10px;"><br>
+            </div>
+            <p style="margin-bottom: 0.3em;">jonas.freissmann@web.de</p>
+            <a href="mailto:jonas.freissmann@web.de" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{mail64}" width="32" style="margin: 10px 10px 10px 0;">
+            </a>
+            <a href="https://orcid.org/0009-0007-6432-5479" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{orcid64}" width="29" style="margin: 0 10px;">
+            </a>
+            <a href="https://github.com/jfreissmann" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{github64}" width="30" style="margin: 0 10px;">
+            </a><br><br><br>
+            <div style='margin-bottom: 0.5em;'>
+                <strong>Malte Fritz</strong>
+                <img src="https://avatars.githubusercontent.com/u/35224977?v=4" width="32" style="margin: 0 10px;"><br>
+            </div>
+            <p style="margin-bottom: 0.3em;">malte.fritz@web.de</p>
+            <a href="mailto:malte.fritz@web.de" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{mail64}" width="32" style="margin: 10px 10px 10px 0;">
+            </a>
+            <a href="https://orcid.org/my-orcid?orcid=0009-0001-5843-0973" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{orcid64}" width="29" style="margin: 0 10px;">
+            </a>
+            <a href="https://github.com/maltefritz" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{github64}" width="30" style="margin: 0 10px;">
+            </a>
+            <a href="https://www.linkedin.com/in/malte-fritz-515259100" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{linkedin64}" width="35" style="margin: 0 10px;">
+            </a>
+        </div><br>
+        """, unsafe_allow_html=True)
+
+
 src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
+icon_path = os.path.join(src_path, 'img', 'icons')
 
 # %% MARK: Initialisation
 refrigpath = os.path.join(src_path, 'refrigerants.json')
@@ -99,7 +146,7 @@ with open(refrigpath, 'r', encoding='utf-8') as file:
 st.set_page_config(
     layout='wide',
     page_title='heatpumps',
-    page_icon=os.path.join(src_path, 'img', 'page_icon_ZNES.png')
+    page_icon=os.path.join(icon_path, 'page_icon_ZNES.png')
     )
 
 is_dark = darkdetect.isDark()
@@ -156,7 +203,9 @@ with st.sidebar:
                     hp_model = mdata
                     hp_model_name = model
                     if 'trans' in hp_model_name:
-                        hp_model_name_topology = hp_model_name.replace('_trans', '')
+                        hp_model_name_topology = hp_model_name.replace(
+                            '_trans', ''
+                            )
                     else:
                         hp_model_name_topology = hp_model_name
                     break
@@ -196,8 +245,8 @@ with st.sidebar:
                         break
 
                 refrig_label = st.selectbox(
-                    '', refrigerants.keys(), index=refrig_index,
-                    key='refrigerant'
+                    'Kältemittel', refrigerants.keys(), index=refrig_index,
+                    key='refrigerant', label_visibility='hidden'
                     )
                 params['setup']['refrig'] = refrigerants[refrig_label]['CP']
                 params['fluids']['wf'] = refrigerants[refrig_label]['CP']
@@ -251,9 +300,11 @@ with st.sidebar:
 
         if 'trans' in hp_model_name:
             with st.expander('Traskritischer Druck'):
-                params['A0']['p'] = st.slider('Wert in bar', min_value=ss.p_crit,
-                                        value=params['A0']['p'], max_value=300,
-                                        format='%d bar', key='p_trans_out')
+                params['A0']['p'] = st.slider(
+                    'Wert in bar', min_value=ss.p_crit,
+                    value=params['A0']['p'], max_value=300, format='%d bar',
+                    key='p_trans_out'
+                    )
 
         with st.expander('Thermische Nennleistung'):
             params['cons']['Q'] = st.number_input(
@@ -318,44 +369,54 @@ with st.sidebar:
                 )
 
         with st.expander('Verdichter'):
-            if hp_model['comp_var'] is None and hp_model['nr_refrigs'] == 1:
+            nr_refrigs = hp_model['nr_refrigs']
+            if hp_model['comp_var'] is None and nr_refrigs == 1:
                 params['comp']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_s$', min_value=0, max_value=100, step=1,
-                    value=int(params['comp']['eta_s']*100), format='%d%%'
+                    'Wirkungsgrad $\eta_s$', min_value=0, max_value=100,
+                    step=1, value=int(params['comp']['eta_s']*100),
+                    format='%d%%'
                     ) / 100
-            elif hp_model['comp_var'] is not None and hp_model['nr_refrigs'] == 1:
+            elif hp_model['comp_var'] is not None and nr_refrigs == 1:
                 params['comp1']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,1}$', min_value=0, max_value=100, step=1,
-                    value=int(params['comp1']['eta_s']*100), format='%d%%'
+                    'Wirkungsgrad $\eta_{s,1}$', min_value=0, max_value=100,
+                    step=1, value=int(params['comp1']['eta_s']*100),
+                    format='%d%%'
                     ) / 100
                 params['comp2']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,2}$', min_value=0, max_value=100, step=1,
-                    value=int(params['comp2']['eta_s']*100), format='%d%%'
+                    'Wirkungsgrad $\eta_{s,2}$', min_value=0, max_value=100,
+                    step=1, value=int(params['comp2']['eta_s']*100),
+                    format='%d%%'
                     ) / 100
-            elif hp_model['comp_var'] is None and hp_model['nr_refrigs'] == 2:
+            elif hp_model['comp_var'] is None and nr_refrigs == 2:
                 params['HT_comp']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,HTK}$', min_value=0, max_value=100, step=1,
-                    value=int(params['HT_comp']['eta_s']*100), format='%d%%'
+                    'Wirkungsgrad $\eta_{s,HTK}$', min_value=0, max_value=100,
+                    step=1, value=int(params['HT_comp']['eta_s']*100),
+                    format='%d%%'
                     ) / 100
                 params['LT_comp']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,NTK}$', min_value=0, max_value=100, step=1,
-                    value=int(params['LT_comp']['eta_s']*100), format='%d%%'
+                    'Wirkungsgrad $\eta_{s,NTK}$', min_value=0, max_value=100,
+                    step=1, value=int(params['LT_comp']['eta_s']*100),
+                    format='%d%%'
                     ) / 100
-            elif hp_model['comp_var'] is not None and hp_model['nr_refrigs'] == 2:
+            elif hp_model['comp_var'] is not None and nr_refrigs == 2:
                 params['HT_comp1']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,HTK,1}$', min_value=0, max_value=100, step=1,
+                    'Wirkungsgrad $\eta_{s,HTK,1}$', min_value=0,
+                    max_value=100, step=1, 
                     value=int(params['HT_comp1']['eta_s']*100), format='%d%%'
                     ) / 100
                 params['HT_comp2']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,HTK,2}$', min_value=0, max_value=100, step=1,
+                    'Wirkungsgrad $\eta_{s,HTK,2}$', min_value=0,
+                    max_value=100, step=1,
                     value=int(params['HT_comp2']['eta_s']*100), format='%d%%'
                     ) / 100
                 params['LT_comp1']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,NTK,1}$', min_value=0, max_value=100, step=1,
+                    'Wirkungsgrad $\eta_{s,NTK,1}$', min_value=0,
+                    max_value=100, step=1,
                     value=int(params['LT_comp1']['eta_s']*100), format='%d%%'
                     ) / 100
                 params['LT_comp2']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,NTK,2}$', min_value=0, max_value=100, step=1,
+                    'Wirkungsgrad $\eta_{s,NTK,2}$', min_value=0,
+                    max_value=100, step=1,
                     value=int(params['LT_comp2']['eta_s']*100), format='%d%%'
                     ) / 100
 
@@ -445,8 +506,8 @@ with st.sidebar:
 
         with st.expander('Wärmequelle'):
             type_hs = st.radio(
-                '', ('Konstant', 'Variabel'), index=1, horizontal=True,
-                key='temp_hs'
+                'Wärmequelle', ('Konstant', 'Variabel'), index=1,
+                horizontal=True, key='temp_hs', label_visibility='hidden'
                 )
             if type_hs == 'Konstant':
                 params['offdesign']['T_hs_ff_start'] = (
@@ -491,8 +552,8 @@ with st.sidebar:
 
         with st.expander('Wärmesenke'):
             type_cons = st.radio(
-                '', ('Konstant', 'Variabel'), index=1, horizontal=True,
-                key='temp_cons'
+                'Wärmesenke', ('Konstant', 'Variabel'), index=1,
+                horizontal=True, key='temp_cons', label_visibility='hidden'
                 )
             if type_cons == 'Konstant':
                 params['offdesign']['T_cons_ff_start'] = (
@@ -545,12 +606,12 @@ if mode == 'Start':
     # %% MARK: Landing Page
     st.write(
         """
-        Der Wärmepumpensimulator *heatpumps* ist eine leistungsfähige Simulationssoftware
-        zur Analyse und Bewertung von Wärmepumpen.
+        Der Wärmepumpensimulator *heatpumps* ist eine leistungsfähige
+        Simulationssoftware zur Analyse und Bewertung von Wärmepumpen.
 
         Mit diesem Dashboard lassen sich eine Vielzahl komplexer
-        thermodynamischer Anlagenmodelle mithilfe numerischer Methoden über eine
-        einfache Oberfläche steuern, ohne Fachkenntnisse über diese
+        thermodynamischer Anlagenmodelle mithilfe numerischer Methoden über
+        eine einfache Oberfläche steuern, ohne Fachkenntnisse über diese
         vorauszusetzen. Dies beinhaltet sowohl die Auslegung von Wärmepumpen,
         als auch die Simulation ihres stationären Teillastbetriebs. Dabei geben
         die Ergebnisse der Simulationen Aufschluss über das prinzipielle
@@ -561,11 +622,15 @@ if mode == 'Start':
 
         ### Key Features
 
-        - Stationäre Auslegungs- und Teillastsimulation basierend auf [TESPy](https://github.com/oemof/tespy)
-        - Parametrisierung and Ergebnisvisualisierung mithilfe eines [Streamlit](https://github.com/streamlit/streamlit) Dashboards
-        - In der Industrie, Forschung und Entwicklung gängige Schaltungstopologien
+        - Stationäre Auslegungs- und Teillastsimulation basierend auf
+        [TESPy](https://github.com/oemof/tespy)
+        - Parametrisierung and Ergebnisvisualisierung mithilfe eines
+        [Streamlit](https://github.com/streamlit/streamlit) Dashboards
+        - In der Industrie, Forschung und Entwicklung gängige
+        Schaltungstopologien
         - Sub- und transkritische Prozesse
-        - Große Auswahl an Arbeitsmedien aufgrund der Integration von [CoolProp](https://github.com/CoolProp/CoolProp)
+        - Große Auswahl an Arbeitsmedien aufgrund der Integration von
+        [CoolProp](https://github.com/CoolProp/CoolProp)
         """
         )
 
@@ -609,7 +674,8 @@ if mode == 'Start':
             - [SciPy](https://scipy.org/) (Interpolation)
             - [scikit-learn](https://scikit-learn.org) (Regression)
             - [Matplotlib](https://matplotlib.org) (Datenvisualisierung)
-            - [FluProDia](https://fluprodia.readthedocs.io) (Datenvisualisierung)
+            - [FluProDia](https://fluprodia.readthedocs.io)
+            (Datenvisualisierung)
             - [CoolProp](http://www.coolprop.org) (Stoffdaten)
             """
             )
@@ -641,22 +707,24 @@ if mode == 'Start':
 
             Copyright © 2023 Jonas Freißmann and Malte Fritz
 
-            Permission is hereby granted, free of charge, to any person obtaining a copy
-            of this software and associated documentation files (the "Software"), to deal
-            in the Software without restriction, including without limitation the rights
-            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-            copies of the Software, and to permit persons to whom the Software is
+            Permission is hereby granted, free of charge, to any person
+            obtaining a copy of this software and associated documentation
+            files (the "Software"), to deal in the Software without
+            restriction, including without limitation the rights to use, copy,
+            modify, merge, publish, distribute, sublicense, and/or sell copies
+            of the Software, and to permit persons to whom the Software is
             furnished to do so, subject to the following conditions:
 
-            The above copyright notice and this permission notice shall be included in all
-            copies or substantial portions of the Software.
+            The above copyright notice and this permission notice shall be
+            included in all copies or substantial portions of the Software.
 
-            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+            EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+            MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+            NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+            BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+            ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+            CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             SOFTWARE.
             """
         )
@@ -679,13 +747,15 @@ if mode == 'Auslegung':
                     st.image(top_file)
                 except:
                     top_file = os.path.join(
-                        src_path, 'img', 'topologies', f'hp_{hp_model_name_topology}.svg'
+                        src_path, 'img', 'topologies',
+                        f'hp_{hp_model_name_topology}.svg'
                         )
                     st.image(top_file)
 
             else:
                 top_file = os.path.join(
-                    src_path, 'img', 'topologies', f'hp_{hp_model_name_topology}.svg'
+                    src_path, 'img', 'topologies',
+                    f'hp_{hp_model_name_topology}.svg'
                     )
                 st.image(top_file)
 
@@ -718,22 +788,23 @@ if mode == 'Auslegung':
                 Dimensionierung und der Wahl des zu verwendenden Kältemittels
                 verschiedene zentrale Parameter des Kreisprozesse vorzugeben.
 
-                Dies sind zum Beispiel die Temperaturen der Wärmequelle und -senke,
-                aber auch die dazugehörigen Netzdrücke. Darüber hinaus kann
-                optional ein interner Wärmeübertrager hinzugefügt werden. Dazu ist
-                weiterhin die resultierende Überhitzung des verdampften
-                Kältemittels vorzugeben.
+                Dies sind zum Beispiel die Temperaturen der Wärmequelle und
+                -senke, aber auch die dazugehörigen Netzdrücke. Darüber hinaus
+                kann optional ein interner Wärmeübertrager hinzugefügt werden.
+                Dazu ist weiterhin die resultierende Überhitzung des
+                verdampften Kältemittels vorzugeben.
 
-                Ist die Auslegungssimulation erfolgreich abgeschlossen, werden die
-                generierten Ergebnisse graphisch in Zustandsdiagrammen
+                Ist die Auslegungssimulation erfolgreich abgeschlossen, werden
+                die generierten Ergebnisse graphisch in Zustandsdiagrammen
                 aufgearbeitet und quantifiziert. Die zentralen Größen wie die
-                Leistungszahl (COP) sowie die relevanten Wärmeströme und Leistung
-                werden aufgeführt. Darüber hinaus werden die thermodynamischen
-                Zustandsgrößen in allen Prozessschritten tabellarisch aufgelistet.
+                Leistungszahl (COP) sowie die relevanten Wärmeströme und
+                Leistung werden aufgeführt. Darüber hinaus werden die
+                thermodynamischen Zustandsgrößen in allen Prozessschritten
+                tabellarisch aufgelistet.
 
                 Im Anschluss an die Auslegungsimulation erscheint ein Knopf zum
-                Wechseln in die Teillastoberfläche. Dies kann ebenfalls über das
-                Dropdownmenü in der Sidebar erfolgen. Informationen zur
+                Wechseln in die Teillastoberfläche. Dies kann ebenfalls über
+                das Dropdownmenü in der Sidebar erfolgen. Informationen zur
                 Durchführung der Teillastsimulationen befindet sich auf der
                 Startseite dieser Oberfläche.
                 """
@@ -961,7 +1032,11 @@ if mode == 'Auslegung':
                     state_quantities = (
                         ss.hp.nw.results['Connection'].copy()
                         )
-                    state_quantities = state_quantities.loc[:, ~state_quantities.columns.str.contains('_unit', case=False, regex=False)]
+                    state_quantities = state_quantities.loc[
+                        :, ~state_quantities.columns.str.contains(
+                            '_unit', case=False, regex=False
+                            )
+                        ]
                     try:
                         state_quantities['water'] = (
                             state_quantities['water'] == 1.0
@@ -988,8 +1063,10 @@ if mode == 'Auslegung':
                         del state_quantities['Td_bp']
                     for col in state_quantities.columns:
                         if state_quantities[col].dtype == np.float64:
-                            state_quantities[col] = state_quantities[col].apply(
-                                lambda x: f'{x:.5}'
+                            state_quantities[col] = (
+                                state_quantities[col].apply(
+                                    lambda x: f'{x:.5}'
+                                    )
                                 )
                     state_quantities['x'] = state_quantities['x'].apply(
                         lambda x: '-' if float(x) < 0 else x
@@ -1079,7 +1156,9 @@ if mode == 'Auslegung':
                     exergy_component_result = exergy_component_result.drop(
                         'group', axis=1
                         )
-                    exergy_component_result.dropna(subset=['E_F'], inplace=True)
+                    exergy_component_result.dropna(
+                        subset=['E_F'], inplace=True
+                        )
                     for col in ['E_F', 'E_P', 'E_D']:
                         exergy_component_result[col] = (
                             exergy_component_result[col].round(2)
@@ -1113,8 +1192,10 @@ if mode == 'Auslegung':
                         st.subheader('Wasserfall Diagramm')
                         diagram_placeholder_waterfall = st.empty()
 
-                        dia_wf_fig, dia_wf_ax = ss.hp.generate_waterfall_diagram(
-                            return_fig_ax=True
+                        dia_wf_fig, dia_wf_ax = (
+                            ss.hp.generate_waterfall_diagram(
+                                return_fig_ax=True
+                                )
                             )
                         diagram_placeholder_waterfall.pyplot(
                             dia_wf_fig, use_container_width=True
@@ -1196,8 +1277,12 @@ if mode == 'Teillast':
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                                 )
                         elif type_hs == 'Variabel':
-                            T_hs_min = ss.hp.params['offdesign']['T_hs_ff_start']
-                            T_hs_max = ss.hp.params['offdesign']['T_hs_ff_end']
+                            T_hs_min = (
+                                ss.hp.params['offdesign']['T_hs_ff_start']
+                                )
+                            T_hs_max = (
+                                ss.hp.params['offdesign']['T_hs_ff_end']
+                                )
                             T_select_cop = st.slider(
                                 'Quellentemperatur',
                                 min_value=T_hs_min,
@@ -1229,7 +1314,9 @@ if mode == 'Teillast':
                                 format='%d °C',
                                 key='pl_T_cons_ff_slider'
                                 )
-                        pl_T_cons_ff_placeholder.pyplot(figs[T_select_T_cons_ff])
+                        pl_T_cons_ff_placeholder.pyplot(
+                            figs[T_select_T_cons_ff]
+                            )
 
                 with st.expander('Exergieanalyse Teillast', expanded=True):
 
@@ -1247,8 +1334,12 @@ if mode == 'Teillast':
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                             )
                         elif type_hs == 'Variabel':
-                            T_hs_min = ss.hp.params['offdesign']['T_hs_ff_start']
-                            T_hs_max = ss.hp.params['offdesign']['T_hs_ff_end']
+                            T_hs_min = (
+                                ss.hp.params['offdesign']['T_hs_ff_start']
+                                )
+                            T_hs_max = (
+                                ss.hp.params['offdesign']['T_hs_ff_end']
+                                )
                             T_select_epsilon = st.slider(
                                 'Quellentemperatur',
                                 min_value=T_hs_min,
@@ -1261,3 +1352,23 @@ if mode == 'Teillast':
                         pl_epsilon_placeholder.pyplot(figs[T_select_epsilon])
 
                 st.button('Neue Wärmepumpe auslegen', on_click=reset2design)
+
+# %% MARK: Footer
+st.markdown("<br><br>", unsafe_allow_html=True)
+
+pad_left, col_bot, pad_right = st.columns(3)
+
+mail_path = os.path.join(icon_path, 'mail_icon_bw.svg')
+orcid_path = os.path.join(icon_path, 'orcid_icon_bw.svg')
+github_path = os.path.join(icon_path, 'github_icon_bw.svg')
+linkedin_path = os.path.join(icon_path, 'linkedin_icon_bw.svg')
+
+mail64 = img_to_base64(mail_path)
+orcid64 = img_to_base64(orcid_path)
+github64 = img_to_base64(github_path)
+linkedin64 = img_to_base64(linkedin_path)
+
+if col_bot.button(
+    '© Jonas Freißmann & Malte Fritz :material/open_in_new:', type='tertiary',
+    use_container_width=True):
+    footer()
