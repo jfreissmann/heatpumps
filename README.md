@@ -1,4 +1,4 @@
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)]([https://owp-inno-nord.streamlit.app/](https://heatpumps.streamlit.app/))
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://heatpumps.streamlit.app/)
 
 # heatpumps
 
