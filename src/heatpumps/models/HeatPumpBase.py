@@ -1127,7 +1127,7 @@ class HeatPumpBase:
         """Initialize paths and directories."""
         self.subdirname = (
             f"{self.params['setup']['type']}_"
-            + f"{self.params['setup']['refrig']}"
+            + f"{self.params['setup']['refrig'].replace('::', '_')}"
             )
         self.design_path = os.path.abspath(os.path.join(
             os.path.dirname(__file__), 'stable', f'{self.subdirname}_design'

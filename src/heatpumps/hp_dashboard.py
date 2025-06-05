@@ -123,6 +123,9 @@ def footer():
             </a>
             <a href="https://github.com/jfreissmann" target="_blank" style="text-decoration: none;">
                 <img src="data:image/svg+xml;base64,{github64}" width="30" style="margin: 0 10px;">
+            </a>
+            <a href="https://www.linkedin.com/in/jonas-frei%C3%9Fmann-8a6401368/" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{linkedin64}" width="35" style="margin: 0 10px;">
             </a><br><br><br>
             <div style='margin-bottom: 0.5em;'>
                 <strong>Malte Fritz</strong>
