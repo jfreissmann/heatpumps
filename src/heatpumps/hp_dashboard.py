@@ -219,22 +219,6 @@ with st.sidebar:
                 ))
             with open(parampath, 'r', encoding='utf-8') as file:
                 params = json.load(file)
-        if hp_model['nr_ihx'] == 1:
-            with st.expander('Interne Wärmerübertragung'):
-                params['ihx']['dT_sh'] = st.slider(
-                    'Überhitzung/Unterkühlung', value=5,
-                    min_value=0, max_value=25, format='%d°C',
-                    key='dT_sh')
-        if hp_model['nr_ihx'] > 1:
-            with st.expander('Interne Wärmerübertragung'):
-                dT_ihx = {}
-                for i in range(1, hp_model['nr_ihx']+1):
-                     dT_ihx[i] = st.slider(
-                        f'Nr. {i}: Überhitzung/Unterkühlung', value=5,
-                        min_value=0, max_value=25, format='%d°C',
-                        key=f'dT_ihx{i}'
-                        )
-                     params[f'ihx{i}']['dT_sh'] = dT_ihx[i]
 
         with st.expander('Kältemittel'):
             if hp_model['nr_refrigs'] == 1:
@@ -370,6 +354,24 @@ with st.sidebar:
                     'Die Temperatur der Wärmesenke muss höher sein, als die '
                     + 'der Wärmequelle.'
                 )
+
+        if hp_model['nr_ihx'] != 0:
+            max_dT = int(round(params['C3']['T'] - params['B2']['T'], 0))
+            with st.expander('Interne Wärmerübertragung'):
+                if hp_model['nr_ihx'] == 1:
+                    params['ihx']['dT_sh'] = st.slider(
+                        'Überhitzung/Unterkühlung', value=5,
+                        min_value=0, max_value=max_dT, format='%d°C',
+                        key='dT_sh')
+                if hp_model['nr_ihx'] > 1:
+                    dT_ihx = {}
+                    for i in range(1, hp_model['nr_ihx']+1):
+                        dT_ihx[i] = st.slider(
+                            f'Nr. {i}: Überhitzung/Unterkühlung', value=5,
+                            min_value=0, max_value=max_dT, format='%d°C',
+                            key=f'dT_ihx{i}'
+                            )
+                        params[f'ihx{i}']['dT_sh'] = dT_ihx[i]
 
         with st.expander('Verdichter'):
             nr_refrigs = hp_model['nr_refrigs']
