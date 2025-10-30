@@ -286,7 +286,7 @@ with st.sidebar:
         ss.p_crit = p_crit
 
         if 'trans' in hp_model_name:
-            with st.expander('Traskritischer Druck'):
+            with st.expander('Transkritischer Druck'):
                 params['A0']['p'] = st.slider(
                     'Wert in bar', min_value=ss.p_crit,
                     value=params['A0']['p'], max_value=300, format='%d bar',
