@@ -123,7 +123,7 @@ html_theme_options = {
 # ]
 
 
-# html_favicon = './_static/images/logo_tespy_small.svg'
+html_favicon = './_static/images/logos/favicon_heatpumps.svg'
 
 napoleon_use_ivar = True
 napoleon_use_rtype = False
