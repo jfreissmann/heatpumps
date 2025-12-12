@@ -94,9 +94,9 @@ html_split_index = False
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-# html_css_files = [
-#     'css/custom.css',
-# ]
+html_css_files = [
+    'css/custom.css',
+]
 # html_additional_pages = {
 #     "index": "index.html"
 # }
@@ -113,10 +113,10 @@ html_static_path = ['_static']
 #     ],
 # }
 
-# html_theme_options = {
-#     "light_logo": "./images/logo_tespy_mid.svg",
-#     "dark_logo": "./images/logo_tespy_mid_darkmode.svg",
-# }
+html_theme_options = {
+    "light_logo": "./images/logos/logo_heatpumps_full.svg",
+    "dark_logo": "./images/logos/logo_heatpumps_full.svg",
+}
 
 # html_js_files = [
 #     'js/custom.js',
