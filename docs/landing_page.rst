@@ -18,6 +18,20 @@ Key Features
 - Sub- and transcritical processes
 - Wide variety of refrigerants due to the integration of `CoolProp <https://github.com/CoolProp/CoolProp>`__
 
+.. figure:: /_static/images/landing_page/screenshot_main_window.png
+    :align: center
+    :alt: Screenshot of a browser window using the heatpumps dashboard
+    :figclass: only-light
+
+    Screenshot of a design simulation using the heatpumps dashboard
+
+.. figure:: /_static/images/landing_page/screenshot_main_window_darkmode.png
+    :align: center
+    :alt: Screenshot of a browser window using the heatpumps dashboard
+    :figclass: only-dark
+
+    Screenshot of a design simulation using the heatpumps dashboard
+
 Structure
 =========
 
