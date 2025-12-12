@@ -113,10 +113,10 @@ html_static_path = ['_static']
 #     ],
 # }
 
-# html_theme_options = {
-#     "light_logo": "./images/logo_tespy_mid.svg",
-#     "dark_logo": "./images/logo_tespy_mid_darkmode.svg",
-# }
+html_theme_options = {
+    "light_logo": "./images/logos/logo_heatpumps_full.svg",
+    "dark_logo": "./images/logos/logo_heatpumps_full.svg",
+}
 
 # html_js_files = [
 #     'js/custom.js',
