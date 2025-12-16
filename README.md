@@ -14,7 +14,7 @@ Steady-state simulation of design and partload operation of a wide collection of
 
 ## Installation
 
-For now, only direct download from the [GitHub Repository](https://github.com/jfreissmann/heatpumps) is supported, so just clone it locally or download a ZIP file of the code.  If you are using [Miniforge](https://github.com/conda-forge/miniforge), you can create and activate a clean environment like this:
+For now, only direct download from the [GitHub Repository](https://github.com/jfreissmann/heatpumps) is supported, so just clone it locally or download a ZIP file of the code. If you are using [Miniforge](https://github.com/conda-forge/miniforge), you can create and activate a clean environment like this:
 
 ```
 conda create -n my_new_env python=3.11
@@ -24,20 +24,18 @@ conda create -n my_new_env python=3.11
 conda activate my_new_env
 ```
 
-If you want to build the package locally and install it, you should use these commands from the root directory of the repository:
+To use heatpumps, the necessary dependencies have to be installed. In a clean environment from the root directory the installation from this file could look like this:
 
 ```
-python setup.py sdist bdist_wheel
+python -m pip install "C:\path\to\the\package"
 ```
 
-```
-python -m pip install .
-```
+If you have already navigated your terminal (e.g. cmd) to the package directory, the path string in the command above simplifies to a single period character ("."), which means the current working directory.
 
-If you want to use an editable version of the package, e.g. if you want to contribute to the project and test your own changes, skip the commands above and use this one:
+If you want to use an editable version of the package, e.g. if you want to contribute to the project and test your own changes, skip the command above and use this one:
 
 ```
-python -m pip install -e "path/to/the/heatpumps/dir/"
+python -m pip install -e .
 ```
 
 ## Run the dashboard
