@@ -17,14 +17,14 @@ completed the steps described there and your virtual environment is activated,
 you can use the following command to start the heatpumps dashboard in a new
 browser tab:
 
-.. code-block:: bash
+.. code-block:: console
 
     heatpumps-dashboard
 
 This is a convenience short-cut that wraps the full streamlit command, that
 looks like this when executed from the root package directory:
 
-.. code-block:: bash
+.. code-block:: console
 
     streamlit run src\heatpumps\hp_dashboard.py
 
