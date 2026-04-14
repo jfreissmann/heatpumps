@@ -6,6 +6,7 @@ from time import time
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import platformdirs
 import plotly.graph_objects as go
 from CoolProp.CoolProp import PropsSI as PSI
 from fluprodia import FluidPropertyDiagram
@@ -572,9 +573,9 @@ class HeatPumpBase:
                 filename = (
                     f'logph_{self.params["setup"]["type"]}_{refrig}.pdf'
                     )
-                filepath = os.path.abspath(os.path.join(
-                    os.getcwd(), filename
-                    ))
+                cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
+                filepath = os.path.join(cache_dir, filename)
+                os.makedirs(cache_dir, exist_ok=True)
 
             plt.tight_layout()
             plt.savefig(filepath, dpi=300)
@@ -1109,9 +1110,9 @@ class HeatPumpBase:
                     + f'{self.params["setup"]["refrig1"]}_and_'
                     + f'{self.params["setup"]["refrig2"]}.pdf'
                     )
-            filepath = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'output', filename
-                ))
+            cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
+            filepath = os.path.join(cache_dir, 'output', filename)
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
             plt.tight_layout()
             plt.savefig(filepath, dpi=300)
 
@@ -1129,23 +1130,21 @@ class HeatPumpBase:
             f"{self.params['setup']['type']}_"
             + f"{self.params['setup']['refrig'].replace('::', '_')}"
             )
-        self.design_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 'stable', f'{self.subdirname}_design'
-            ))
+        cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
+        self.design_path = os.path.join(
+            cache_dir, 'stable', f'{self.subdirname}_design'
+            )
         self.validate_dir()
 
     def validate_dir(self):
-        """Check for a 'stable' directory and create it if necessary."""
-        stablepath = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 'stable'
-            ))
+        """Check for cache directories and create them if necessary."""
+        cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
+        stablepath = os.path.join(cache_dir, 'stable')
         if not os.path.exists(stablepath):
-            os.mkdir(stablepath)
-        outputpath = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 'output'
-            ))
+            os.makedirs(stablepath, exist_ok=True)
+        outputpath = os.path.join(cache_dir, 'output')
         if not os.path.exists(outputpath):
-            os.mkdir(outputpath)
+            os.makedirs(outputpath, exist_ok=True)
 
     def check_consistency(self):
         """Perform all necessary checks to protect consistency of parameters."""
@@ -1436,11 +1435,9 @@ class HeatPumpBase:
 
                     # Logging simulation
                     if log_simulations:
-                        logdirpath = os.path.abspath(os.path.join(
-                            os.path.dirname(__file__), 'output', 'logging'
-                        ))
-                        if not os.path.exists(logdirpath):
-                            os.mkdir(logdirpath)
+                        cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
+                        logdirpath = os.path.join(cache_dir, 'output', 'logging')
+                        os.makedirs(logdirpath, exist_ok=True)
                         logpath = os.path.join(
                             logdirpath, f'{self.subdirname}_offdesign_log.csv'
                         )
