@@ -1419,7 +1419,7 @@ class HeatPumpBase:
                     if no_init_path:
                         self.init_path = os.path.abspath(os.path.join(
                             os.path.dirname(__file__), 'stable',
-                            f'{self.subdirname}_init'
+                            f'{self.subdirname}_init.json'
                         ))
 
                     self.comps['cons'].set_attr(Q=None)
