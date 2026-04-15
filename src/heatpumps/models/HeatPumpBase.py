@@ -1133,7 +1133,7 @@ class HeatPumpBase:
             )
         cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
         self.design_path = os.path.join(
-            cache_dir, 'stable', f'{self.subdirname}_design'
+            cache_dir, 'stable', f'{self.subdirname}_design.json'
             )
         self.validate_dir()
 
@@ -1464,7 +1464,7 @@ class HeatPumpBase:
                     if pl == self.pl_range[-1] and self.nw.residual[-1] < 1e-3:
                         self.nw.save(os.path.abspath(os.path.join(
                             os.path.dirname(__file__), 'stable',
-                            f'{self.subdirname}_init'
+                            f'{self.subdirname}_init.json'
                         )))
 
                     inranges = (
