@@ -161,7 +161,7 @@ with st.sidebar:
         logo = os.path.join(src_path, 'img', 'Logo_ZNES_mitUnisV2_dark.svg')
     else:
         logo = os.path.join(src_path, 'img', 'Logo_ZNES_mitUnisV2.svg')
-    st.image(logo, use_container_width=True)
+    st.image(logo, width='stretch')
 
     mode = st.selectbox(
         'Auswahl Modus', ['Start', 'Auslegung', 'Teillast'],
@@ -788,12 +788,12 @@ if mode == 'Auslegung':
             st.subheader('Kältemittel')
 
             if hp_model['nr_refrigs'] == 1:
-                st.dataframe(df_refrig, use_container_width=True)
+                st.dataframe(df_refrig, width='stretch')
             elif hp_model['nr_refrigs'] == 2:
                 st.markdown('#### Hochtemperaturkreis')
-                st.dataframe(df_refrig2, use_container_width=True)
+                st.dataframe(df_refrig2, width='stretch')
                 st.markdown('#### Niedertemperaturkreis')
-                st.dataframe(df_refrig1, use_container_width=True)
+                st.dataframe(df_refrig1, width='stretch')
 
             st.write(
                 """
@@ -925,12 +925,12 @@ if mode == 'Auslegung':
                         st.subheader('Kältemittel')
 
                         if hp_model['nr_refrigs'] == 1:
-                            st.dataframe(df_refrig, use_container_width=True)
+                            st.dataframe(df_refrig, width='stretch')
                         elif hp_model['nr_refrigs'] == 2:
                             st.markdown('#### Hochtemperaturkreis')
-                            st.dataframe(df_refrig2, use_container_width=True)
+                            st.dataframe(df_refrig2, width='stretch')
                             st.markdown('#### Niedertemperaturkreis')
-                            st.dataframe(df_refrig1, use_container_width=True)
+                            st.dataframe(df_refrig1, width='stretch')
 
                         st.write(
                             """
@@ -1107,7 +1107,7 @@ if mode == 'Auslegung':
                             },
                         inplace=True)
                     st.dataframe(
-                        data=state_quantities, use_container_width=True
+                        data=state_quantities, width='stretch'
                         )
 
                 with st.expander('Ökonomische Bewertung'):
@@ -1135,7 +1135,7 @@ if mode == 'Auslegung':
                         for k, v in ss.hp.cost.items()
                         })
                     st.dataframe(
-                        costdata, use_container_width=True, hide_index=True
+                        costdata, width='stretch', hide_index=True
                         )
 
                     st.write(
@@ -1199,7 +1199,7 @@ if mode == 'Auslegung':
                         },
                         inplace=True)
                     st.dataframe(
-                        data=exergy_component_result, use_container_width=True
+                        data=exergy_component_result, width='stretch'
                         )
 
                     col6, _, col7 = st.columns([0.495, 0.01, 0.495])
@@ -1209,7 +1209,7 @@ if mode == 'Auslegung':
 
                         diagram_sankey = ss.hp.generate_sankey_diagram()
                         diagram_placeholder_sankey.plotly_chart(
-                            diagram_sankey, use_container_width=True
+                            diagram_sankey, width='stretch'
                             )
 
                     with col7:
@@ -1222,7 +1222,7 @@ if mode == 'Auslegung':
                                 )
                             )
                         diagram_placeholder_waterfall.pyplot(
-                            dia_wf_fig, use_container_width=True
+                            dia_wf_fig, width='stretch'
                             )
 
                     st.write(
@@ -1394,5 +1394,5 @@ linkedin64 = img_to_base64(linkedin_path)
 
 if col_bot.button(
     '© Jonas Freißmann & Malte Fritz :material/open_in_new:', type='tertiary',
-    use_container_width=True):
+    width='stretch'):
     footer()
