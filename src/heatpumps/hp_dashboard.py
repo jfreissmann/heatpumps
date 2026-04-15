@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+from importlib import resources
 
 import darkdetect
 import matplotlib.pyplot as plt
@@ -138,11 +139,11 @@ def footer():
         """, unsafe_allow_html=True)
 
 
-src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
+src_path = str(resources.files('heatpumps').joinpath('static'))
 icon_path = os.path.join(src_path, 'img', 'icons')
 
 # %% MARK: Initialisation
-refrigpath = os.path.join(src_path, 'refrigerants.json')
+refrigpath = str(resources.files('heatpumps').joinpath('static', 'refrigerants.json'))
 with open(refrigpath, 'r', encoding='utf-8') as file:
     refrigerants = json.load(file)
 
@@ -213,9 +214,8 @@ with st.sidebar:
                         hp_model_name_topology = hp_model_name
                     break
 
-            parampath = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'models', 'input',
-                f'params_hp_{hp_model_name}.json'
+            parampath = str(resources.files('heatpumps').joinpath(
+                'models', 'input', f'params_hp_{hp_model_name}.json'
                 ))
             with open(parampath, 'r', encoding='utf-8') as file:
                 params = json.load(file)
@@ -438,8 +438,8 @@ with st.sidebar:
         with st.expander('Parameter zur Kostenkalkulation'):
             costcalcparams = {}
 
-            cepcipath = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'models', 'input', 'CEPCI.json'
+            cepcipath = str(resources.files('heatpumps').joinpath(
+                'models', 'input', 'CEPCI.json'
                 ))
             with open(cepcipath, 'r', encoding='utf-8') as file:
                 cepci = json.load(file)
@@ -857,9 +857,8 @@ if mode == 'Auslegung':
         if sim_succeded:
             with st.spinner('Ergebnisse werden visualisiert...'):
 
-                stateconfigpath = os.path.abspath(os.path.join(
-                    os.path.dirname(__file__), 'models', 'input',
-                    'state_diagram_config.json'
+                stateconfigpath = str(resources.files('heatpumps').joinpath(
+                    'models', 'input', 'state_diagram_config.json'
                     ))
                 with open(stateconfigpath, 'r', encoding='utf-8') as file:
                     config = json.load(file)

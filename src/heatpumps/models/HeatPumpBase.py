@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime
+from importlib import resources
 from time import time
 
 import matplotlib.pyplot as plt
@@ -238,8 +239,8 @@ class HeatPumpBase:
         residence_time : int or float
             Time of residence in seconds of the refrigerant in flash tanks.
         """
-        cepcipath = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 'input', 'CEPCI.json'
+        cepcipath = str(resources.files('heatpumps').joinpath(
+            'models', 'input', 'CEPCI.json'
             ))
         with open(cepcipath, 'r', encoding='utf-8') as file:
             cepci = json.load(file)
@@ -447,13 +448,13 @@ class HeatPumpBase:
         # Initialize fluid property diagram
         fig, ax = plt.subplots(figsize=figsize)
 
-        diagram_data_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 'input', 'diagrams', f"{refrig}.json"
+        diagram_data_path = str(resources.files('heatpumps').joinpath(
+            'models', 'input', 'diagrams', f"{refrig}.json"
         ))
 
         # Generate isolines
-        path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 'input', 'state_diagram_config.json'
+        path = str(resources.files('heatpumps').joinpath(
+            'models', 'input', 'state_diagram_config.json'
             ))
         with open(path, 'r', encoding='utf-8') as file:
             config = json.load(file)
