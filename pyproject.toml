@@ -48,6 +48,9 @@ heatpumps-dashboard = "heatpumps.run_dashboard:main"
 
 [project.urls]
 Homepage = "https://github.com/jfreissmann/heatpumps"
+Repository = "https://github.com/jfreissmann/heatpumps"
+Issues = "https://github.com/jfreissmann/heatpumps/issues"
+Documentation = "https://heatpumps.readthedocs.io/"
 
 [tool.flit.sdist]
 include = [
