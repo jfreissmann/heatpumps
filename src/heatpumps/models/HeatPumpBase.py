@@ -80,6 +80,7 @@ class HeatPumpBase:
                 self.nw.print_results()
         if self.nw.residual[-1] < 1e-3:
             self.solved_design = True
+            os.makedirs(os.path.dirname(self.design_path), exist_ok=True)
             self.nw.save(self.design_path)
 
     def calc_efficiencies(self):
@@ -448,9 +449,10 @@ class HeatPumpBase:
         # Initialize fluid property diagram
         fig, ax = plt.subplots(figsize=figsize)
 
-        diagram_data_path = str(resources.files('heatpumps').joinpath(
-            'models', 'input', 'diagrams', f"{refrig}.json"
-        ))
+        cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
+        diagram_cache_path = os.path.join(
+            cache_dir, 'diagrams', f"{refrig}.json"
+        )
 
         # Generate isolines
         path = str(resources.files('heatpumps').joinpath(
@@ -464,8 +466,8 @@ class HeatPumpBase:
         else:
             state_props = config['MISC']
 
-        if os.path.isfile(diagram_data_path):
-            diagram = FluidPropertyDiagram.from_json(diagram_data_path)
+        if os.path.isfile(diagram_cache_path):
+            diagram = FluidPropertyDiagram.from_json(diagram_cache_path)
         else:
             diagram = FluidPropertyDiagram(refrig)
             diagram.set_unit_system(T='°C', p='bar', h='kJ/kg')
@@ -486,7 +488,8 @@ class HeatPumpBase:
                 var['isolines'][1]: iso2
                 })
             diagram.calc_isolines()
-            diagram.to_json(diagram_data_path)
+            os.makedirs(os.path.dirname(diagram_cache_path), exist_ok=True)
+            diagram.to_json(diagram_cache_path)
 
 
         # Calculate components process data
@@ -1141,10 +1144,18 @@ class HeatPumpBase:
         """Check for cache directories and create them if necessary."""
         cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
         stablepath = os.path.join(cache_dir, 'stable')
-        if not os.path.exists(stablepath):
+        if os.path.exists(stablepath):
+            if not os.path.isdir(stablepath):
+                os.remove(stablepath)
+                os.makedirs(stablepath, exist_ok=True)
+        else:
             os.makedirs(stablepath, exist_ok=True)
         outputpath = os.path.join(cache_dir, 'output')
-        if not os.path.exists(outputpath):
+        if os.path.exists(outputpath):
+            if not os.path.isdir(outputpath):
+                os.remove(outputpath)
+                os.makedirs(outputpath, exist_ok=True)
+        else:
             os.makedirs(outputpath, exist_ok=True)
 
     def check_consistency(self):
@@ -1417,10 +1428,13 @@ class HeatPumpBase:
                             and (pl == self.pl_range[-1])
                     )
                     if no_init_path:
-                        self.init_path = os.path.abspath(os.path.join(
-                            os.path.dirname(__file__), 'stable',
-                            f'{self.subdirname}_init.json'
-                        ))
+                        cache_dir = platformdirs.user_cache_dir(
+                            'heatpumps', 'heatpumps'
+                        )
+                        os.makedirs(cache_dir, exist_ok=True)
+                        self.init_path = os.path.join(
+                            cache_dir, 'stable', f'{self.subdirname}_init.json'
+                        )
 
                     self.comps['cons'].set_attr(Q=None)
                     self.conns['A0'].set_attr(m=pl * self.m_design)
@@ -1462,10 +1476,14 @@ class HeatPumpBase:
                                 file.write(log_entry)
 
                     if pl == self.pl_range[-1] and self.nw.residual[-1] < 1e-3:
-                        self.nw.save(os.path.abspath(os.path.join(
-                            os.path.dirname(__file__), 'stable',
-                            f'{self.subdirname}_init.json'
-                        )))
+                        cache_dir = platformdirs.user_cache_dir(
+                            'heatpumps', 'heatpumps'
+                        )
+                        os.makedirs(cache_dir, exist_ok=True)
+                        cache_init_path = os.path.join(
+                            cache_dir, 'stable', f'{self.subdirname}_init.json'
+                        )
+                        self.nw.save(cache_init_path)
 
                     inranges = (
                             (T_hs_ff in self.T_hs_ff_range)
@@ -1505,10 +1523,12 @@ class HeatPumpBase:
                             )
 
         if self.params['offdesign']['save_results']:
-            resultpath = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'output',
-                f'{self.subdirname}_partload.csv'
-            ))
+            cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
+            filepath = os.path.join(cache_dir, 'output')
+            os.makedirs(filepath, exist_ok=True)
+            resultpath = os.path.join(
+                filepath, f'{self.subdirname}_partload.csv'
+            )
             results_offdesign.to_csv(resultpath, sep=';')
 
         self.df_to_array(results_offdesign)

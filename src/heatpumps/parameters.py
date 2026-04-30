@@ -1,5 +1,6 @@
 import json
 import os
+from importlib import resources
 
 __model_names = {
     'HeatPumpSimple': 'simple',
@@ -99,11 +100,8 @@ def get_params(heat_pump_model, econ_type=None):
         hpfilename = __model_names[f'{heat_pump_model}_{econ_type.lower()}']
     else:
         hpfilename = __model_names[heat_pump_model]
-    parampath = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__), 'models', 'input',
-            f'params_hp_{hpfilename}.json'
-        )
+    parampath = resources.files('heatpumps').joinpath(
+        'models', 'input', f'params_hp_{hpfilename}.json'
     )
     with open(parampath, 'r', encoding='utf-8') as file:
         params = json.load(file)
