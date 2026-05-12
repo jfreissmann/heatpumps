@@ -2,6 +2,41 @@
 What's new?
 ~~~~~~~~~~~
 
+v1.4.0 -- Planetary Publication (May 12, 2026)
+==============================================
+
+New Features
+------------
+
+- heatpumps is now installable via pip
+- New refrigerant Propane (R290) was added
+- The `official online documentation <https://heatpumps.readthedocs.io/en/latest/>`__
+  is starting to take shape
+
+Improvements
+------------
+
+- Avoiding code duplication thanks to the ``HeatPumpCascadeBase`` class
+- Centralizing the offdesign simulation routine
+- Improving consistency checks
+- Using ``importlib`` and ``platformdirs`` for interaction with the file system
+- Minor imporvements of the dashboard GUI
+- Update ``streamlit`` version
+- Add Carnot and Lorenz COP calculation
+
+Fixes
+-----
+
+- Correcting some input files to work out of the box
+- Correcting some unit tests
+
+Contributors
+------------
+
+- `@jfreissmann <https://github.com/jfreissmann>`__
+- `@maltefritz <https://github.com/maltefritz>`__
+
+
 v1.3.0 -- Pacy Portrayal (Jul 15, 2024)
 =======================================
 
