@@ -52,7 +52,7 @@ New Features
 Tests
 -----
 
-- Basic framework for automated tests of models was created using `pytest`.
+- Basic framework for automated tests of models was created using ``pytest``.
 
 Contributors
 ------------
@@ -77,8 +77,8 @@ Contributors
 v1.1.1 -- Hotfix for v1.1.0 (Jun 19, 2024)
 ==========================================
 
-- Hotfix for v1.1.0 TESPy Update. Heat pump model class HeatPumpFlash was left
-  out in upgrading for TESPy v0.7.x and is fixed in this release.
+- Hotfix for v1.1.0 TESPy Update. Heat pump model class ``HeatPumpFlash`` was
+  left out in upgrading for TESPy v0.7.x and is fixed in this release.
 
 Contributors
 ------------
@@ -100,7 +100,7 @@ Contributors
 
 
 v1.0.0 -- Initial Release (Jun 18, 2024)
-=====================================
+========================================
 
 - Initial release of the heatpumps package.
 - It contains a comprehensive library of heat pump model classes, as well as a
