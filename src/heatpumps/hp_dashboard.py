@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+from importlib import resources
 
 import darkdetect
 import matplotlib.pyplot as plt
@@ -148,11 +149,11 @@ def footer():
         """, unsafe_allow_html=True)
 
 
-src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
+src_path = str(resources.files('heatpumps').joinpath('static'))
 icon_path = os.path.join(src_path, 'img', 'icons')
 
 # %% MARK: Initialisation
-refrigpath = os.path.join(src_path, 'refrigerants.json')
+refrigpath = str(resources.files('heatpumps').joinpath('static', 'refrigerants.json'))
 with open(refrigpath, 'r', encoding='utf-8') as file:
     refrigerants = json.load(file)
 
@@ -170,7 +171,7 @@ with st.sidebar:
         logo = os.path.join(src_path, 'img', 'Logo_ZNES_mitUnisV2_dark.svg')
     else:
         logo = os.path.join(src_path, 'img', 'Logo_ZNES_mitUnisV2.svg')
-    st.image(logo, use_container_width=True)
+    st.image(logo, width='stretch')
 
     mode = st.selectbox(
         'Auswahl Modus', ['Start', 'Auslegung'],
@@ -223,9 +224,8 @@ with st.sidebar:
                         hp_model_name_topology = hp_model_name
                     break
 
-            parampath = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'models', 'input',
-                f'params_hp_{hp_model_name}.json'
+            parampath = str(resources.files('heatpumps').joinpath(
+                'models', 'input', f'params_hp_{hp_model_name}.json'
                 ))
             with open(parampath, 'r', encoding='utf-8') as file:
                 params = json.load(file)
@@ -448,8 +448,8 @@ with st.sidebar:
         with st.expander('Parameter zur Kostenkalkulation'):
             costcalcparams = {}
 
-            cepcipath = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'models', 'input', 'CEPCI.json'
+            cepcipath = str(resources.files('heatpumps').joinpath(
+                'models', 'input', 'CEPCI.json'
                 ))
             with open(cepcipath, 'r', encoding='utf-8') as file:
                 cepci = json.load(file)
@@ -798,12 +798,12 @@ if mode == 'Auslegung':
             st.subheader('Kältemittel')
 
             if hp_model['nr_refrigs'] == 1:
-                st.dataframe(df_refrig, use_container_width=True)
+                st.dataframe(df_refrig, width='stretch')
             elif hp_model['nr_refrigs'] == 2:
                 st.markdown('#### Hochtemperaturkreis')
-                st.dataframe(df_refrig2, use_container_width=True)
+                st.dataframe(df_refrig2, width='stretch')
                 st.markdown('#### Niedertemperaturkreis')
-                st.dataframe(df_refrig1, use_container_width=True)
+                st.dataframe(df_refrig1, width='stretch')
 
             st.write(
                 """
@@ -867,9 +867,8 @@ if mode == 'Auslegung':
         if sim_succeded:
             with st.spinner('Ergebnisse werden visualisiert...'):
 
-                stateconfigpath = os.path.abspath(os.path.join(
-                    os.path.dirname(__file__), 'models', 'input',
-                    'state_diagram_config.json'
+                stateconfigpath = str(resources.files('heatpumps').joinpath(
+                    'models', 'input', 'state_diagram_config.json'
                     ))
                 with open(stateconfigpath, 'r', encoding='utf-8') as file:
                     config = json.load(file)
@@ -936,12 +935,12 @@ if mode == 'Auslegung':
                         st.subheader('Kältemittel')
 
                         if hp_model['nr_refrigs'] == 1:
-                            st.dataframe(df_refrig, use_container_width=True)
+                            st.dataframe(df_refrig, width='stretch')
                         elif hp_model['nr_refrigs'] == 2:
                             st.markdown('#### Hochtemperaturkreis')
-                            st.dataframe(df_refrig2, use_container_width=True)
+                            st.dataframe(df_refrig2, width='stretch')
                             st.markdown('#### Niedertemperaturkreis')
-                            st.dataframe(df_refrig1, use_container_width=True)
+                            st.dataframe(df_refrig1, width='stretch')
 
                         st.write(
                             """
@@ -1118,7 +1117,7 @@ if mode == 'Auslegung':
                             },
                         inplace=True)
                     st.dataframe(
-                        data=state_quantities, use_container_width=True
+                        data=state_quantities, width='stretch'
                         )
 
                 with st.expander('Ökonomische Bewertung'):
@@ -1146,7 +1145,7 @@ if mode == 'Auslegung':
                         for k, v in ss.hp.cost.items()
                         })
                     st.dataframe(
-                        costdata, use_container_width=True, hide_index=True
+                        costdata, width='stretch', hide_index=True
                         )
 
                     st.write(
@@ -1210,7 +1209,7 @@ if mode == 'Auslegung':
                         },
                         inplace=True)
                     st.dataframe(
-                        data=exergy_component_result, use_container_width=True
+                        data=exergy_component_result, width='stretch'
                         )
 
                     col6, _, col7 = st.columns([0.495, 0.01, 0.495])
@@ -1220,7 +1219,7 @@ if mode == 'Auslegung':
 
                         diagram_sankey = ss.hp.generate_sankey_diagram()
                         diagram_placeholder_sankey.plotly_chart(
-                            diagram_sankey, use_container_width=True
+                            diagram_sankey, width='stretch'
                             )
 
                     with col7:
@@ -1233,7 +1232,7 @@ if mode == 'Auslegung':
                                 )
                             )
                         diagram_placeholder_waterfall.pyplot(
-                            dia_wf_fig, use_container_width=True
+                            dia_wf_fig, width='stretch'
                             )
 
                     st.write(
@@ -1405,5 +1404,5 @@ linkedin64 = img_to_base64(linkedin_path)
 
 if col_bot.button(
     '© Jonas Freißmann & Malte Fritz :material/open_in_new:', type='tertiary',
-    use_container_width=True):
+    width='stretch'):
     footer()

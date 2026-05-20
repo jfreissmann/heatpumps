@@ -14,7 +14,7 @@ Steady-state simulation of design and partload operation of a wide collection of
 
 ## Installation
 
-For now, only direct download from the [GitHub Repository](https://github.com/jfreissmann/heatpumps) is supported, so just clone it locally or download a ZIP file of the code.  If you are using [Miniforge](https://github.com/conda-forge/miniforge), you can create and activate a clean environment like this:
+Installation of *heatpumps* is very easy using pip. If you are using [Miniforge](https://github.com/conda-forge/miniforge), you can create and activate a clean environment like this:
 
 ```
 conda create -n my_new_env python=3.11
@@ -24,21 +24,19 @@ conda create -n my_new_env python=3.11
 conda activate my_new_env
 ```
 
-If you want to build the package locally and install it, you should use these commands from the root directory of the repository:
+Then simply install *heatpumps* with the following command:
 
 ```
-python setup.py sdist bdist_wheel
+python -m pip install heatpumps
 ```
 
-```
-python -m pip install .
-```
-
-If you want to use an editable version of the package, e.g. if you want to contribute to the project and test your own changes, skip the commands above and use this one:
+If you want to use an editable version of the package, e.g. if you want to contribute to the project and test your own changes, skip the command above, clone the repository from GitHub and use this one:
 
 ```
-python -m pip install -e "path/to/the/heatpumps/dir/"
+python -m pip install -e .[dev]
 ```
+
+The addition of the "-e" flag allows for changes to directly have an effect and adding "[dev]" to the installation path tells pip to also install the optional dependencies for developers.
 
 ## Run the dashboard
 
@@ -84,7 +82,7 @@ hp.perform_exergy_analysis(print_results=True)
 
 ## License
 
-Copyright (c) Jonas Freißmann and Malte Fritz
+Copyright (c) 2023-2026 Jonas Freißmann and Malte Fritz
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

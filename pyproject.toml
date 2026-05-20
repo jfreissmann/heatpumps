@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "heatpumps"
 description = "Collection of TESPy heat pump models and additional Streamlit dashboard."
-version = "1.3.0"
+version = "1.4.0"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = "!=3.9.7, >=3.9"
@@ -23,11 +23,12 @@ dependencies = [
     "matplotlib>=3.6.3",
     "numpy>=1.24.0",
     "pandas>=1.5.3",
+    "platformdirs>=4.0.0",
     "plotly>=5.20.0",
     "scikit-learn>=1.2.1",
     "scipy>=1.10.0",
-    "streamlit==1.44.1",
-    "tespy>=0.7.5"
+    "streamlit>=1.47.0,<2.0.0",
+    "tespy>=0.8.0,<0.9.0"
 ]
 
 [project.optional-dependencies]
@@ -47,6 +48,9 @@ heatpumps-dashboard = "heatpumps.run_dashboard:main"
 
 [project.urls]
 Homepage = "https://github.com/jfreissmann/heatpumps"
+Repository = "https://github.com/jfreissmann/heatpumps"
+Issues = "https://github.com/jfreissmann/heatpumps/issues"
+Documentation = "https://heatpumps.readthedocs.io/"
 
 [tool.flit.sdist]
 include = [
