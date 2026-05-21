@@ -14,5 +14,13 @@
     "mode_option_partload": {
         "ENG": "Part-load",
         "GER": "Teillast"
+    },
+    "fallback_key": {
+        "ENG": "No translation key was found with this name.",
+        "GER": "Es würde für diesen Key keine Übersetzung gefunden."
+    },
+    "fallback_lang": {
+        "ENG": "For this key no translation was found for 'English' language.",
+        "GER": "Für diesen Key wurde keine Übersetzung auf 'Deutsch' gefunden."
     }
 }

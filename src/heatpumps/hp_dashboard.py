@@ -16,12 +16,12 @@ from streamlit import session_state as ss
 
 def switch2design():
     """Switch to design simulation tab."""
-    ss.select = ss.tl['mode_option_design'][ss.lg]
+    ss.select = txt('mode_option_design')
 
 
 def switch2partload():
     """Switch to partload simulation tab."""
-    ss.select = ss.tl['mode_option_partload'][ss.lg]
+    ss.select = txt('mode_option_partload')
 
 
 def reset2design():
@@ -29,7 +29,7 @@ def reset2design():
     keys = list(ss.keys())
     for key in keys:
         ss.pop(key)
-    ss.select = ss.tl['mode_option_design'][ss.lg]
+    ss.select = txt('mode_option_design')
 
 
 def info_df(label, refrigs):
@@ -147,6 +147,18 @@ def load_translations():
     with open(tlpath, 'r', encoding='utf-8') as file:
         ss.tl = json.load(file)
 
+def txt(label_key):
+    """Convenience function to get text from translations."""
+    label_translations = ss.tl.get(label_key, None)
+    if label_translations is None:
+        return ss.tl['fallback_key'][ss.lg]
+
+    translated_label = label_translations.get(ss.lg, None)
+    if label_translations is None:
+        return ss.tl['fallback_lang'][ss.lg]
+
+    return translated_label
+
 src_path = str(resources.files('heatpumps').joinpath('static'))
 icon_path = os.path.join(src_path, 'img', 'icons')
 
@@ -185,11 +197,11 @@ with st.sidebar:
     ss.lg = shortlang[lang_selected]
 
     mode = st.selectbox(
-        ss.tl['mode_selection'][ss.lg],
+        txt('mode_selection'),
         [
-            ss.tl['mode_option_start'][ss.lg],
-            ss.tl['mode_option_design'][ss.lg],
-            ss.tl['mode_option_partload'][ss.lg]
+            txt('mode_option_start'),
+            txt('mode_option_design'),
+            txt('mode_option_partload')
         ],
         key='select', label_visibility='collapsed'
     )
@@ -197,7 +209,7 @@ with st.sidebar:
     st.markdown("""---""")
 
     # %% MARK: Design
-    if mode == ss.tl['mode_option_design'][ss.lg]:
+    if mode == txt('mode_option_design'):
         ss.rerun_req = True
         st.header('Auslegung der Wärmepumpe')
 
@@ -514,11 +526,11 @@ with st.sidebar:
     # autorun = st.checkbox('AutoRun Simulation', value=True)
 
     # %% MARK: Offdesign
-    if mode == ss.tl['mode_option_partload'][ss.lg] and 'hp' in ss:
+    if mode == txt('mode_option_partload') and 'hp' in ss:
         params = ss.hp_params
         st.header('Teillastsimulation der Wärmepumpe')
 
-        with st.expander(ss.tl['mode_option_partload'][ss.lg]):
+        with st.expander(txt('mode_option_partload')):
             (params['offdesign']['partload_min'],
              params['offdesign']['partload_max']) = st.slider(
                 'Bezogen auf Nennmassenstrom',
@@ -633,7 +645,7 @@ with st.sidebar:
 # %% MARK: Main Content
 st.title('*heatpumps*')
 
-if mode == ss.tl['mode_option_start'][ss.lg]:
+if mode == txt('mode_option_start'):
     # %% MARK: Landing Page
     st.write(
         """
@@ -780,7 +792,7 @@ if mode == ss.tl['mode_option_start'][ss.lg]:
             """
         )
 
-if mode == ss.tl['mode_option_design'][ss.lg]:
+if mode == txt('mode_option_design'):
     # %% MARK: Design Simulation
     if not run_sim:
         # %% Topology & Refrigerant
@@ -1267,7 +1279,7 @@ if mode == ss.tl['mode_option_design'][ss.lg]:
 
                 st.button('Teillast simulieren', on_click=switch2partload)
 
-if mode == ss.tl['mode_option_partload'][ss.lg]:
+if mode == txt('mode_option_partload'):
     # %% MARK: Offdesign Simulation
     st.header('Betriebscharakteristik')
 
