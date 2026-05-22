@@ -211,11 +211,11 @@ with st.sidebar:
     # %% MARK: Design
     if mode == txt('mode_option_design'):
         ss.rerun_req = True
-        st.header('Auslegung der Wärmepumpe')
+        st.header(txt('sb_header_design'))
 
-        with st.expander('Setup', expanded=True):
+        with st.expander(txt('sb_expd_setup'), expanded=True):
             base_topology = st.selectbox(
-                'Grundtopologie',
+                txt('sb_setup_base_topology'),
                 var.base_topologies,
                 index=0, key='base_topology'
             )
@@ -227,11 +227,12 @@ with st.sidebar:
                         models.append(mdata['display_name'])
 
             model_name = st.selectbox(
-                'Wärmepumpenmodell', models, index=0, key='model'
+                txt('sb_setup_model'), models, index=0, key='model'
             )
 
             process_type = st.radio(
-                'Prozessart', options=('subkritisch', 'transkritisch'),
+                txt('sb_setup_process_type'),
+                options=('subkritisch', 'transkritisch'),
                 horizontal=True
             )
 

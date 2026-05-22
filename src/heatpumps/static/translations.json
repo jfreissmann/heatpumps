@@ -15,6 +15,26 @@
         "ENG": "Part-load",
         "GER": "Teillast"
     },
+    "sb_header_design": {
+        "ENG": "Design of the heat pump",
+        "GER": "Auslegung der Wärmepumpe"
+    },
+    "sb_expd_setup": {
+        "ENG": "Setup",
+        "GER": "Setup"
+    },
+    "sb_setup_base_topology": {
+        "ENG": "Base topology",
+        "GER": "Grundtopologie"
+    },
+    "sb_setup_model": {
+        "ENG": "Heat pump model",
+        "GER": "Wärmepumpenmodell"
+    },
+    "sb_setup_process_type": {
+        "ENG": "Process type",
+        "GER": "Prozessart"
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
         "GER": "Es würde für diesen Key keine Übersetzung gefunden."
