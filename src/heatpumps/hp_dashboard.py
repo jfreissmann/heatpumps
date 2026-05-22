@@ -259,7 +259,7 @@ with st.sidebar:
             with open(parampath, 'r', encoding='utf-8') as file:
                 params = json.load(file)
 
-        with st.expander('Kältemittel'):
+        with st.expander(txt('sb_expd_refrigerant')):
             if hp_model['nr_refrigs'] == 1:
                 refrig_index = None
                 for ridx, (rlabel, rdata) in enumerate(refrigerants.items()):
@@ -271,9 +271,12 @@ with st.sidebar:
                         break
 
                 refrig_label = st.selectbox(
-                    'Kältemittel', refrigerants.keys(), index=refrig_index,
-                    key='refrigerant', label_visibility='hidden'
-                    )
+                    txt('sb_ref_refrigerant'),
+                    refrigerants.keys(),
+                    index=refrig_index,
+                    key='refrigerant',
+                    label_visibility='collapsed'
+                )
                 params['setup']['refrig'] = refrigerants[refrig_label]['CP']
                 params['fluids']['wf'] = refrigerants[refrig_label]['CP']
                 df_refrig = info_df(refrig_label, refrigerants)
@@ -289,9 +292,11 @@ with st.sidebar:
                         break
 
                 refrig2_label = st.selectbox(
-                    'Kältemittel (Hochtemperaturkreis)', refrigerants.keys(),
-                    index=refrig2_index, key='refrigerant2'
-                    )
+                    txt('sb_ref_refrigerant_hot'),
+                    refrigerants.keys(),
+                    index=refrig2_index,
+                    key='refrigerant2'
+                )
                 params['setup']['refrig2'] = refrigerants[refrig2_label]['CP']
                 params['fluids']['wf2'] = refrigerants[refrig2_label]['CP']
                 df_refrig2 = info_df(refrig2_label, refrigerants)
@@ -306,9 +311,11 @@ with st.sidebar:
                         break
 
                 refrig1_label = st.selectbox(
-                    'Kältemittel (Niedertemperaturkreis)', refrigerants.keys(),
-                    index=refrig1_index, key='refrigerant1'
-                    )
+                    txt('sb_ref_refrigerant_cold'),
+                    refrigerants.keys(),
+                    index=refrig1_index,
+                    key='refrigerant1'
+                )
                 params['setup']['refrig1'] = refrigerants[refrig1_label]['CP']
                 params['fluids']['wf1'] = refrigerants[refrig1_label]['CP']
                 df_refrig1 = info_df(refrig1_label, refrigerants)
@@ -325,18 +332,23 @@ with st.sidebar:
         ss.p_crit = p_crit
 
         if 'trans' in hp_model_name:
-            with st.expander('Transkritischer Druck'):
+            with st.expander(txt('sb_expd_p_trans')):
                 params['A0']['p'] = st.slider(
-                    'Wert in bar', min_value=ss.p_crit,
-                    value=params['A0']['p'], max_value=300, format='%d bar',
+                    txt('sb_p_trans_unit'),
+                    min_value=ss.p_crit,
+                    value=params['A0']['p'],
+                    max_value=300,
+                    format='%d bar',
                     key='p_trans_out'
-                    )
-
-        with st.expander('Thermische Nennleistung'):
-            params['cons']['Q'] = st.number_input(
-                'Wert in MW', value=abs(params['cons']['Q']/1e6),
-                step=0.1, key='Q_N'
                 )
+
+        with st.expander(txt('sb_expd_Q_N')):
+            params['cons']['Q'] = st.number_input(
+                txt('sb_Q_N_unit'),
+                value=abs(params['cons']['Q']/1e6),
+                step=0.1,
+                key='Q_N'
+            )
             params['cons']['Q'] *= -1e6
 
         with st.expander('Wärmequelle'):

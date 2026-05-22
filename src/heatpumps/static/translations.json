@@ -35,6 +35,38 @@
         "ENG": "Process type",
         "GER": "Prozessart"
     },
+    "sb_expd_refrigerant": {
+        "ENG": "Refrigerant",
+        "GER": "Kältemittel"
+    },
+    "sb_ref_refrigerant": {
+        "ENG": "Refrigerant",
+        "GER": "Kältemittel"
+    },
+    "sb_ref_refrigerant_hot": {
+        "ENG": "Refrigerant (High temp. cycle)",
+        "GER": "Kältemittel (Hochtemperaturkreis)"
+    },
+    "sb_ref_refrigerant_cold": {
+        "ENG": "Refrigerant (Low temp. cycle)",
+        "GER": "Kältemittel (Niedertemperaturkreis)"
+    },
+    "sb_expd_p_trans": {
+        "ENG": "Transcritical pressure",
+        "GER": "Transkritischer Druck"
+    },
+    "sb_p_trans_unit": {
+        "ENG": "Value in bar",
+        "GER": "Wert in bar"
+    },
+    "sb_expd_Q_N": {
+        "ENG": "Nominal heat output",
+        "GER": "Thermische Nennleistung"
+    },
+    "sb_Q_N_unit": {
+        "ENG": "Value in MW",
+        "GER": "Wert in MW"
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
         "GER": "Es würde für diesen Key keine Übersetzung gefunden."
