@@ -351,22 +351,27 @@ with st.sidebar:
             )
             params['cons']['Q'] *= -1e6
 
-        with st.expander('Wärmequelle'):
+        with st.expander(txt('sb_expd_heat_source')):
             params['B1']['T'] = st.slider(
-                'Temperatur Vorlauf', min_value=0, max_value=T_crit,
-                value=params['B1']['T'], format='%d°C', key='T_heatsource_ff'
-                )
+                txt('sb_source_temp_ff'),
+                min_value=0,
+                max_value=T_crit,
+                value=params['B1']['T'],
+                format='%d°C',
+                key='T_heatsource_ff'
+            )
             params['B2']['T'] = st.slider(
-                'Temperatur Rücklauf', min_value=0, max_value=T_crit,
-                value=params['B2']['T'], format='%d°C', key='T_heatsource_bf'
-                )
+                txt('sb_source_temp_bf'),
+                min_value=0,
+                max_value=T_crit,
+                value=params['B2']['T'],
+                format='%d°C',
+                key='T_heatsource_bf'
+            )
 
             invalid_temp_diff = params['B2']['T'] >= params['B1']['T']
             if invalid_temp_diff:
-                st.error(
-                    'Die Rücklauftemperatur muss niedriger sein, als die '
-                    + 'Vorlauftemperatur.'
-                    )
+                st.error(txt('sb_source_invalid_temp_diff'))
 
         # TODO: Aktuell wird T_mid im Modell als Mittelwert zwischen von Ver-
         #       dampfungs- und Kondensationstemperatur gebildet. An sich wäre
@@ -379,32 +384,34 @@ with st.sidebar:
         #             value=40, format='%d°C', key='T_mid'
         #             )
 
-        with st.expander('Wärmesenke'):
+        with st.expander(txt('sb_expd_heat_sink')):
             T_max_sink = T_crit
             if 'trans' in hp_model_name:
                 T_max_sink = 200  # °C -- Ad hoc value, maybe find better one
 
             params['C3']['T'] = st.slider(
-                'Temperatur Vorlauf', min_value=0, max_value=T_max_sink,
-                value=params['C3']['T'], format='%d°C', key='T_consumer_ff'
+                txt('sb_sink_temp_ff'),
+                min_value=0,
+                max_value=T_max_sink,
+                value=params['C3']['T'],
+                format='%d°C',
+                key='T_consumer_ff'
             )
             params['C1']['T'] = st.slider(
-                'Temperatur Rücklauf', min_value=0, max_value=T_max_sink,
-                value=params['C1']['T'], format='%d°C', key='T_consumer_bf'
+                txt('sb_sink_temp_bf'),
+                min_value=0,
+                max_value=T_max_sink,
+                value=params['C1']['T'],
+                format='%d°C',
+                key='T_consumer_bf'
             )
 
             invalid_temp_diff = params['C1']['T'] >= params['C3']['T']
             if invalid_temp_diff:
-                st.error(
-                    'Die Rücklauftemperatur muss niedriger sein, als die '
-                    + 'Vorlauftemperatur.'
-                )
+                st.error(txt('sb_sink_invalid_temp_diff1'))
             invalid_temp_diff = params['C1']['T'] <= params['B1']['T']
             if invalid_temp_diff:
-                st.error(
-                    'Die Temperatur der Wärmesenke muss höher sein, als die '
-                    + 'der Wärmequelle.'
-                )
+                st.error(txt('sb_sink_invalid_temp_diff2'))
 
         if hp_model['nr_ihx'] != 0:
             max_dT = int(round(params['C3']['T'] - params['B2']['T'], 0))

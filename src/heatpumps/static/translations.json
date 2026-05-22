@@ -67,6 +67,42 @@
         "ENG": "Value in MW",
         "GER": "Wert in MW"
     },
+    "sb_expd_heat_source": {
+        "ENG": "Heat source",
+        "GER": "Wärmequelle"
+    },
+    "sb_source_temp_ff": {
+        "ENG": "Temperature feed flow",
+        "GER": "Temperatur Vorlauf"
+    },
+    "sb_source_temp_bf": {
+        "ENG": "Temperature return flow",
+        "GER": "Temperatur Rücklauf"
+    },
+    "sb_source_invalid_temp_diff": {
+        "ENG": "The return flow temperature has to be lower than the feed flow temperature.",
+        "GER": "Die Rücklauftemperatur muss niedriger sein, als die  Vorlauftemperatur."
+    },
+    "sb_expd_heat_sink": {
+        "ENG": "Heat source",
+        "GER": "Wärmequelle"
+    },
+    "sb_sink_temp_ff": {
+        "ENG": "Temperature feed flow",
+        "GER": "Temperatur Vorlauf"
+    },
+    "sb_sink_temp_bf": {
+        "ENG": "Temperature return flow",
+        "GER": "Temperatur Rücklauf"
+    },
+    "sb_sink_invalid_temp_diff1": {
+        "ENG": "The return flow temperature has to be lower than the feed flow temperature.",
+        "GER": "Die Rücklauftemperatur muss niedriger sein, als die  Vorlauftemperatur."
+    },
+    "sb_sink_invalid_temp_diff2": {
+        "ENG": "The temperature of the heat sink has to be higher than the heat source.",
+        "GER": "Die Temperatur der Wärmesenke muss höher sein, als die der Wärmequelle."
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
         "GER": "Es würde für diesen Key keine Übersetzung gefunden."
