@@ -232,11 +232,14 @@ with st.sidebar:
 
             process_type = st.radio(
                 txt('sb_setup_process_type'),
-                options=('subkritisch', 'transkritisch'),
+                options=(
+                    txt('sb_setup_ptype_sub'),
+                    txt('sb_setup_ptype_trans')
+                ),
                 horizontal=True
             )
 
-            if process_type == 'transkritisch':
+            if process_type == txt('sb_setup_ptype_trans'):
                 model_name = f'{model_name} | Transkritisch'
 
             for model, mdata in var.hp_models.items():

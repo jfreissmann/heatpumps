@@ -35,6 +35,14 @@
         "ENG": "Process type",
         "GER": "Prozessart"
     },
+    "sb_setup_ptype_sub": {
+        "ENG": "subcritical",
+        "GER": "subkritisch"
+    },
+    "sb_setup_ptype_trans": {
+        "ENG": "transcritical",
+        "GER": "transkritisch"
+    },
     "sb_expd_refrigerant": {
         "ENG": "Refrigerant",
         "GER": "Kältemittel"
@@ -84,8 +92,8 @@
         "GER": "Die Rücklauftemperatur muss niedriger sein, als die  Vorlauftemperatur."
     },
     "sb_expd_heat_sink": {
-        "ENG": "Heat source",
-        "GER": "Wärmequelle"
+        "ENG": "Heat sink",
+        "GER": "Wärmesenke"
     },
     "sb_sink_temp_ff": {
         "ENG": "Temperature feed flow",
