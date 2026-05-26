@@ -143,6 +143,50 @@
         "ENG": "Isentropic efficiency $\\eta_{s,LT,2}$",
         "GER": "Wirkungsgrad $\\eta_{s,NTK,2}$"
     },
+    "sb_expd_ambient": {
+        "ENG": "Ambient conditions (exergy)",
+        "GER": "Umgebungsbedingungen (Exergie)"
+    },
+    "sb_amb_T": {
+        "ENG": "Temperature",
+        "GER": "Temperatur"
+    },
+    "sb_amb_p": {
+        "ENG": "Pressure in bar",
+        "GER": "Druck in bar"
+    },
+    "sb_expd_cost_params": {
+        "ENG": "Parameters for cost estimation",
+        "GER": "Parameter zur Kostenkalkulation"
+    },
+    "sb_cost_year": {
+        "ENG": "Year of cost estimation",
+        "GER": "Jahr der Kostenkalkulation"
+    },
+    "sb_cost_U_evap": {
+        "ENG": "Heat transfer coefficient (evaporation)",
+        "GER": "Wärmedurchgangskoeffizient (Verdampfung)"
+    },
+    "sb_cost_U_cond": {
+        "ENG": "Heat transfer coefficient (condensation)",
+        "GER": "Wärmedurchgangskoeffizient (Verflüssigung)"
+    },
+    "sb_cost_U_trans": {
+        "ENG": "Heat transfer coefficient (transcritical)",
+        "GER": "Wärmedurchgangskoeffizient (transkritisch)"
+    },
+    "sb_cost_U_misc": {
+        "ENG": "Heat transfer coefficient (other)",
+        "GER": "Wärmedurchgangskoeffizient (Sonstige)"
+    },
+    "sb_cost_resd_time": {
+        "ENG": "Residence time in flash tank",
+        "GER": "Verweildauer Flashtank"
+    },
+    "sb_btn_run_design": {
+        "ENG": "🧮 Run design simulation",
+        "GER": "🧮 Auslegung ausführen"
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
         "GER": "Es würde für diesen Key keine Übersetzung gefunden."

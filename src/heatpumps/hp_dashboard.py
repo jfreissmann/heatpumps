@@ -510,17 +510,25 @@ with st.sidebar:
                     format='%d%%'
                 ) / 100
 
-        with st.expander('Umgebungsbedingungen (Exergie)'):
+        with st.expander(txt('sb_expd_ambient')):
             params['ambient']['T'] = st.slider(
-                'Temperatur', min_value=1, max_value=45, step=1,
-                value=params['ambient']['T'], format='%d°C', key='T_env'
-                )
+                txt('sb_amb_T'),
+                min_value=1,
+                max_value=45,
+                step=1,
+                value=params['ambient']['T'],
+                format='%d°C',
+                key='T_env'
+            )
             params['ambient']['p'] = st.number_input(
-                'Druck in bar', value=float(params['ambient']['p']), step=0.01,
-                format='%.4f', key='p_env'
-                )
+                txt('sb_amb_p'),
+                value=float(params['ambient']['p']),
+                step=0.01,
+                format='%.4f',
+                key='p_env'
+            )
 
-        with st.expander('Parameter zur Kostenkalkulation'):
+        with st.expander(txt('sb_expd_cost_params')):
             costcalcparams = {}
 
             cepcipath = str(resources.files('heatpumps').joinpath(
@@ -530,45 +538,65 @@ with st.sidebar:
                 cepci = json.load(file)
 
             costcalcparams['current_year'] = st.selectbox(
-                'Jahr der Kostenkalkulation',
+                txt('sb_cost_year'),
                 options=sorted(list(cepci.keys()), reverse=True),
                 key='current_year'
             )
 
             costcalcparams['k_evap'] = st.slider(
-                'Wärmedurchgangskoeffizient (Verdampfung)',
-                min_value=0, max_value=5000, step=10,
-                value=1500, format='%d W/m²K', key='k_evap'
-                )
+                txt('sb_cost_U_evap'),
+                min_value=0,
+                max_value=5000,
+                step=10,
+                value=1500,
+                format='%d W/m²K',
+                key='k_evap'
+            )
 
             costcalcparams['k_cond'] = st.slider(
-                'Wärmedurchgangskoeffizient (Verflüssigung)',
-                min_value=0, max_value=5000, step=10,
-                value=3500, format='%d W/m²K', key='k_cond'
-                )
+                txt('sb_cost_U_cond'),
+                min_value=0,
+                max_value=5000,
+                step=10,
+                value=3500,
+                format='%d W/m²K',
+                key='k_cond'
+            )
 
             if 'trans' in hp_model_name:
                 costcalcparams['k_trans'] = st.slider(
-                    'Wärmedurchgangskoeffizient (transkritisch)',
-                    min_value=0, max_value=1000, step=5,
-                    value=60, format='%d W/m²K', key='k_trans'
-                    )
+                    txt('sb_cost_U_trans'),
+                    min_value=0,
+                    max_value=1000,
+                    step=5,
+                    value=60,
+                    format='%d W/m²K',
+                    key='k_trans'
+                )
 
             costcalcparams['k_misc'] = st.slider(
-                'Wärmedurchgangskoeffizient (Sonstige)',
-                min_value=0, max_value=1000, step=5,
-                value=50, format='%d W/m²K', key='k_misc'
-                )
+                txt('sb_cost_U_misc'),
+                min_value=0,
+                max_value=1000,
+                step=5,
+                value=50,
+                format='%d W/m²K',
+                key='k_misc'
+            )
 
             costcalcparams['residence_time'] = st.slider(
-                'Verweildauer Flashtank',
-                min_value=0, max_value=60, step=1,
-                value=10, format='%d s', key='residence_time'
-                )
+                txt('sb_cost_resd_time'),
+                min_value=0,
+                max_value=60,
+                step=1,
+                value=10,
+                format='%d s',
+                key='residence_time'
+            )
 
         ss.hp_params = params
 
-        run_sim = st.button('🧮 Auslegung ausführen')
+        run_sim = st.button(txt('sb_btn_run_design'))
         # run_sim = True
     # autorun = st.checkbox('AutoRun Simulation', value=True)
 
