@@ -431,57 +431,84 @@ with st.sidebar:
                             )
                         params[f'ihx{i}']['dT_sh'] = dT_ihx[i]
 
-        with st.expander('Verdichter'):
+        with st.expander(txt('sb_expd_compressor')):
             nr_refrigs = hp_model['nr_refrigs']
             if hp_model['comp_var'] is None and nr_refrigs == 1:
                 params['comp']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_s$', min_value=0, max_value=100,
-                    step=1, value=int(params['comp']['eta_s']*100),
+                    txt('sb_comp_sc_eta_s'),
+                    min_value=0,
+                    max_value=100,
+                    step=1,
+                    value=int(params['comp']['eta_s']*100),
                     format='%d%%'
-                    ) / 100
+                ) / 100
             elif hp_model['comp_var'] is not None and nr_refrigs == 1:
                 params['comp1']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,1}$', min_value=0, max_value=100,
-                    step=1, value=int(params['comp1']['eta_s']*100),
+                    txt('sb_comp_sc_eta_s1'),
+                    min_value=0,
+                    max_value=100,
+                    step=1,
+                    value=int(params['comp1']['eta_s']*100),
                     format='%d%%'
-                    ) / 100
+                ) / 100
                 params['comp2']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,2}$', min_value=0, max_value=100,
-                    step=1, value=int(params['comp2']['eta_s']*100),
+                    txt('sb_comp_sc_eta_s2'),
+                    min_value=0,
+                    max_value=100,
+                    step=1,
+                    value=int(params['comp2']['eta_s']*100),
                     format='%d%%'
-                    ) / 100
+                ) / 100
             elif hp_model['comp_var'] is None and nr_refrigs == 2:
                 params['HT_comp']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,HTK}$', min_value=0, max_value=100,
-                    step=1, value=int(params['HT_comp']['eta_s']*100),
+                    txt('sb_comp_cc_eta_s_HT'),
+                    min_value=0,
+                    max_value=100,
+                    step=1,
+                    value=int(params['HT_comp']['eta_s']*100),
                     format='%d%%'
-                    ) / 100
+                ) / 100
                 params['LT_comp']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,NTK}$', min_value=0, max_value=100,
-                    step=1, value=int(params['LT_comp']['eta_s']*100),
+                    txt('sb_comp_cc_eta_s_LT'),
+                    min_value=0,
+                    max_value=100,
+                    step=1,
+                    value=int(params['LT_comp']['eta_s']*100),
                     format='%d%%'
-                    ) / 100
+                ) / 100
             elif hp_model['comp_var'] is not None and nr_refrigs == 2:
                 params['HT_comp1']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,HTK,1}$', min_value=0,
-                    max_value=100, step=1, 
-                    value=int(params['HT_comp1']['eta_s']*100), format='%d%%'
-                    ) / 100
+                    txt('sb_comp_cc_eta_s1_HT'),
+                    min_value=0,
+                    max_value=100,
+                    step=1, 
+                    value=int(params['HT_comp1']['eta_s']*100),
+                    format='%d%%'
+                ) / 100
                 params['HT_comp2']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,HTK,2}$', min_value=0,
-                    max_value=100, step=1,
-                    value=int(params['HT_comp2']['eta_s']*100), format='%d%%'
-                    ) / 100
+                    txt('sb_comp_cc_eta_s2_HT'),
+                    min_value=0,
+                    max_value=100,
+                    step=1,
+                    value=int(params['HT_comp2']['eta_s']*100),
+                    format='%d%%'
+                ) / 100
                 params['LT_comp1']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,NTK,1}$', min_value=0,
-                    max_value=100, step=1,
-                    value=int(params['LT_comp1']['eta_s']*100), format='%d%%'
-                    ) / 100
+                    txt('sb_comp_cc_eta_s1_LT'),
+                    min_value=0,
+                    max_value=100,
+                    step=1,
+                    value=int(params['LT_comp1']['eta_s']*100),
+                    format='%d%%'
+                ) / 100
                 params['LT_comp2']['eta_s'] = st.slider(
-                    'Wirkungsgrad $\eta_{s,NTK,2}$', min_value=0,
-                    max_value=100, step=1,
-                    value=int(params['LT_comp2']['eta_s']*100), format='%d%%'
-                    ) / 100
+                    txt('sb_comp_cc_eta_s2_LT'),
+                    min_value=0,
+                    max_value=100,
+                    step=1,
+                    value=int(params['LT_comp2']['eta_s']*100),
+                    format='%d%%'
+                ) / 100
 
         with st.expander('Umgebungsbedingungen (Exergie)'):
             params['ambient']['T'] = st.slider(
