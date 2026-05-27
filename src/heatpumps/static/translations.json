@@ -195,6 +195,78 @@
         "ENG": "🧮 Run design simulation",
         "GER": "🧮 Auslegung ausführen"
     },
+    "sb_header_offdesign": {
+        "ENG": "Part-load simulation of the heat pump",
+        "GER": "Teillastsimulation der Wärmepumpe"
+    },
+    "sb_expd_partload": {
+        "ENG": "Relative part-load",
+        "GER": "Relative Teillast"
+    },
+    "sb_partload_value": {
+        "ENG": "In relation to nominal mass flow",
+        "GER": "Bezogen auf den Nennmassenstrom"
+    },
+    "sb_expd_od_heat_source": {
+        "ENG": "Heat source",
+        "GER": "Wärmequelle"
+    },
+    "sb_od_source_label": {
+        "ENG": "Heat source",
+        "GER": "Wärmequelle"
+    },
+    "sb_od_source_option_const": {
+        "ENG": "Constant",
+        "GER": "Konstant"
+    },
+    "sb_od_source_option_var": {
+        "ENG": "Variable",
+        "GER": "Variabel"
+    },
+    "sb_od_source_temp_const_label": {
+        "ENG": "Temperature",
+        "GER": "Temperatur"
+    },
+    "sb_od_source_temp_start": {
+        "ENG": "Lower bound temperature range",
+        "GER": "Starttemperatur"
+    },
+    "sb_od_source_temp_end": {
+        "ENG": "Upper bound temperature range",
+        "GER": "Endtemperatur"
+    },
+    "sb_expd_od_heat_sink": {
+        "ENG": "Heat sink",
+        "GER": "Wärmesenke"
+    },
+    "sb_od_sink_label": {
+        "ENG": "Heat sink",
+        "GER": "Wärmesenke"
+    },
+    "sb_od_sink_option_const": {
+        "ENG": "Constant",
+        "GER": "Konstant"
+    },
+    "sb_od_sink_option_var": {
+        "ENG": "Variable",
+        "GER": "Variabel"
+    },
+    "sb_od_sink_temp_const_label": {
+        "ENG": "Temperature",
+        "GER": "Temperatur"
+    },
+    "sb_od_sink_temp_start": {
+        "ENG": "Lower bound temperature range",
+        "GER": "Starttemperatur"
+    },
+    "sb_od_sink_temp_end": {
+        "ENG": "Upper bound temperature range",
+        "GER": "Endtemperatur"
+    },
+    "sb_btn_run_offdesign": {
+        "ENG": "🧮 Run part-load simulation",
+        "GER": "🧮 Teillast simulieren"
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
         "GER": "Es würde für diesen Key keine Übersetzung gefunden."

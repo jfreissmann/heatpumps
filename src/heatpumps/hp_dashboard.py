@@ -606,31 +606,44 @@ with st.sidebar:
     # %% MARK: Offdesign
     if mode == txt('mode_option_partload') and 'hp' in ss:
         params = ss.hp_params
-        st.header('Teillastsimulation der Wärmepumpe')
+        st.header(txt('sb_header_offdesign'))
 
-        with st.expander(txt('mode_option_partload')):
+        with st.expander(txt('sb_expd_partload'), expanded=True):
             (params['offdesign']['partload_min'],
              params['offdesign']['partload_max']) = st.slider(
-                'Bezogen auf Nennmassenstrom',
-                min_value=0, max_value=120, step=5,
-                value=(30, 100), format='%d%%', key='pl_slider'
-                )
+                txt('sb_partload_value'),
+                min_value=0,
+                max_value=120,
+                step=5,
+                value=(30, 100),
+                format='%d%%',
+                key='pl_slider'
+            )
 
             params['offdesign']['partload_min'] /= 100
             params['offdesign']['partload_max'] /= 100
 
-            params['offdesign']['partload_steps'] = int(np.ceil(
+            params['offdesign']['partload_steps'] = int(
+                np.ceil(
                     (params['offdesign']['partload_max']
                      - params['offdesign']['partload_min'])
                     / 0.1
-                    ) + 1)
+                ) + 1
+            )
 
-        with st.expander('Wärmequelle'):
+        with st.expander(txt('sb_expd_od_heat_source')):
             type_hs = st.radio(
-                'Wärmequelle', ('Konstant', 'Variabel'), index=1,
-                horizontal=True, key='temp_hs', label_visibility='hidden'
-                )
-            if type_hs == 'Konstant':
+                txt('sb_od_source_label'),
+                (
+                    txt('sb_od_source_option_const'),
+                    txt('sb_od_source_option_var')
+                ),
+                index=0,
+                horizontal=True,
+                key='temp_hs',
+                label_visibility='collapsed'
+            )
+            if type_hs == txt('sb_od_source_option_const'):
                 params['offdesign']['T_hs_ff_start'] = (
                     ss.hp.params['B1']['T']
                     )
@@ -640,43 +653,51 @@ with st.sidebar:
                 params['offdesign']['T_hs_ff_steps'] = 1
 
                 text = (
-                    f'Temperatur <p style="color:{var.st_color_hex}">'
+                    f'{txt("sb_od_source_temp_const_label")}: '
+                    + f'<span style="color:{var.st_color_hex}">'
                     + f'{params["offdesign"]["T_hs_ff_start"]} °C'
-                    + r'</p>'
+                    + r'</span>'
                     )
                 st.markdown(text, unsafe_allow_html=True)
 
-            elif type_hs == 'Variabel':
+            elif type_hs == txt('sb_od_source_option_var'):
                 params['offdesign']['T_hs_ff_start'] = st.slider(
-                    'Starttemperatur',
-                    min_value=0, max_value=ss.T_crit, step=1,
-                    value=int(
-                        ss.hp.params['B1']['T']
-                        - 5
-                        ),
-                    format='%d°C', key='T_hs_ff_start_slider'
-                    )
+                    txt('sb_od_source_temp_start'),
+                    min_value=0,
+                    max_value=ss.T_crit,
+                    step=1,
+                    value=int(ss.hp.params['B1']['T']-5),
+                    format='%d°C',
+                    key='T_hs_ff_start_slider'
+                )
                 params['offdesign']['T_hs_ff_end'] = st.slider(
-                    'Endtemperatur',
-                    min_value=0, max_value=ss.T_crit, step=1,
-                    value=int(
-                        ss.hp.params['B1']['T']
-                        + 5
-                        ),
-                    format='%d°C', key='T_hs_ff_end_slider'
-                    )
+                    txt('sb_od_source_temp_end'),
+                    min_value=0,
+                    max_value=ss.T_crit,
+                    step=1,
+                    value=int(ss.hp.params['B1']['T']+5),
+                    format='%d°C',
+                    key='T_hs_ff_end_slider'
+                )
                 params['offdesign']['T_hs_ff_steps'] = int(np.ceil(
                     (params['offdesign']['T_hs_ff_end']
                      - params['offdesign']['T_hs_ff_start'])
                     / 3
                     ) + 1)
 
-        with st.expander('Wärmesenke'):
+        with st.expander(txt('sb_expd_od_heat_sink')):
             type_cons = st.radio(
-                'Wärmesenke', ('Konstant', 'Variabel'), index=1,
-                horizontal=True, key='temp_cons', label_visibility='hidden'
-                )
-            if type_cons == 'Konstant':
+                txt('sb_od_sink_label'),
+                (
+                    txt('sb_od_sink_option_const'),
+                    txt('sb_od_sink_option_var')
+                ),
+                index=0,
+                horizontal=True,
+                key='temp_cons',
+                label_visibility='collapsed'
+            )
+            if type_cons == txt('sb_od_sink_option_const'):
                 params['offdesign']['T_cons_ff_start'] = (
                     ss.hp.params['C3']['T']
                     )
@@ -686,31 +707,32 @@ with st.sidebar:
                 params['offdesign']['T_cons_ff_steps'] = 1
 
                 text = (
-                    f'Temperatur <p style="color:{var.st_color_hex}">'
+                    f'{txt(("sb_od_sink_temp_const_label"))}: '
+                    + f'<span style="color:{var.st_color_hex}">'
                     + f'{params["offdesign"]["T_cons_ff_start"]} °C'
-                    + r'</p>'
+                    + r'</span>'
                     )
                 st.markdown(text, unsafe_allow_html=True)
 
-            elif type_cons == 'Variabel':
+            elif type_cons == txt('sb_od_sink_option_var'):
                 params['offdesign']['T_cons_ff_start'] = st.slider(
-                    'Starttemperatur',
-                    min_value=0, max_value=ss.T_crit, step=1,
-                    value=int(
-                        ss.hp.params['C3']['T']
-                        - 10
-                        ),
-                    format='%d°C', key='T_cons_ff_start_slider'
-                    )
+                    txt('sb_od_sink_temp_start'),
+                    min_value=0,
+                    max_value=ss.T_crit,
+                    step=1,
+                    value=int(ss.hp.params['C3']['T']-10),
+                    format='%d°C',
+                    key='T_cons_ff_start_slider'
+                )
                 params['offdesign']['T_cons_ff_end'] = st.slider(
-                    'Endtemperatur',
-                    min_value=0, max_value=ss.T_crit, step=1,
-                    value=int(
-                        ss.hp.params['C3']['T']
-                        + 10
-                        ),
-                    format='%d°C', key='T_cons_ff_end_slider'
-                    )
+                    txt('sb_od_sink_temp_end'),
+                    min_value=0,
+                    max_value=ss.T_crit,
+                    step=1,
+                    value=int(ss.hp.params['C3']['T']+10),
+                    format='%d°C',
+                    key='T_cons_ff_end_slider'
+                )
                 params['offdesign']['T_cons_ff_steps'] = int(np.ceil(
                     (params['offdesign']['T_cons_ff_end']
                      - params['offdesign']['T_cons_ff_start'])
@@ -718,7 +740,7 @@ with st.sidebar:
                     ) + 1)
 
         ss.hp_params = params
-        run_pl_sim = st.button('🧮 Teillast simulieren')
+        run_pl_sim = st.button(txt('sb_btn_run_offdesign'))
 
 # %% MARK: Main Content
 st.title('*heatpumps*')
