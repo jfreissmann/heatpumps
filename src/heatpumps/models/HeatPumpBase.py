@@ -158,6 +158,26 @@ class HeatPumpBase:
             print(f'Carnot COP = {self.cop_carnot:.3f}')
             print(f'Carnot \\eta = {self.eta_carnot:.3f}')
 
+    @staticmethod
+    def _drop_adjacent_duplicates(arr):
+        """Remove any element that is identical to the one right before it.
+
+        The "out and back" stablerange construction below always repeats
+        the shared value at the boundary between its concatenated
+        segments (and collapses to e.g. ``[x, x]`` when the underlying
+        range has only one value, i.e. start == end). Solving the exact
+        same point twice in a row is pure waste: nothing changed, so nothing
+        new is learned and no extra warm-start benefit is gained. This
+        leaves the rest of the out-and-back structure (including
+        non-adjacent revisits, which still serve their original purpose)
+        untouched.
+        """
+        if len(arr) == 0:
+            return arr
+        keep = np.ones(len(arr), dtype=bool)
+        keep[1:] = arr[1:] != arr[:-1]
+        return arr[keep]
+
     def create_ranges(self):
         """Create stable and base ranges for T_hs_ff, T_cons_ff and pl."""
         self.T_hs_ff_range = np.linspace(
@@ -167,11 +187,13 @@ class HeatPumpBase:
             endpoint=True
             ).round(decimals=3)
         half_len_hs = int(len(self.T_hs_ff_range)/2) - 1
-        self.T_hs_ff_stablerange = np.concatenate([
-            self.T_hs_ff_range[half_len_hs::-1],
-            self.T_hs_ff_range,
-            self.T_hs_ff_range[:half_len_hs:-1]
-            ])
+        self.T_hs_ff_stablerange = self._drop_adjacent_duplicates(
+            np.concatenate([
+                self.T_hs_ff_range[half_len_hs::-1],
+                self.T_hs_ff_range,
+                self.T_hs_ff_range[:half_len_hs:-1]
+                ])
+            )
 
         self.T_cons_ff_range = np.linspace(
             self.params['offdesign']['T_cons_ff_start'],
@@ -180,11 +202,13 @@ class HeatPumpBase:
             endpoint=True
             ).round(decimals=3)
         half_len_cons = int(len(self.T_cons_ff_range)/2) - 1
-        self.T_cons_ff_stablerange = np.concatenate([
-            self.T_cons_ff_range[half_len_cons::-1],
-            self.T_cons_ff_range,
-            self.T_cons_ff_range[:half_len_cons:-1]
-            ])
+        self.T_cons_ff_stablerange = self._drop_adjacent_duplicates(
+            np.concatenate([
+                self.T_cons_ff_range[half_len_cons::-1],
+                self.T_cons_ff_range,
+                self.T_cons_ff_range[:half_len_cons:-1]
+                ])
+            )
 
         self.pl_range = np.linspace(
             self.params['offdesign']['partload_min'],
@@ -192,8 +216,8 @@ class HeatPumpBase:
             self.params['offdesign']['partload_steps'],
             endpoint=True
             ).round(decimals=3)
-        self.pl_stablerange = np.concatenate(
-            [self.pl_range[::-1], self.pl_range]
+        self.pl_stablerange = self._drop_adjacent_duplicates(
+            np.concatenate([self.pl_range[::-1], self.pl_range])
             )
 
     def df_to_array(self, results_offdesign):
