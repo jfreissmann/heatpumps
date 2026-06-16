@@ -30,9 +30,14 @@ from heatpumps import parameters as P  # noqa: E402
 import heatpumps.models as M  # noqa: E402
 
 # Small, fixed offdesign grid used for every model so the export stays fast
-# and deterministic/comparable between the two code states.
+# and deterministic/comparable between the two code states. T_hs_ff_steps
+# is deliberately not overridden: most models default to
+# T_hs_ff_start == T_hs_ff_end (a single fixed source temperature), and
+# forcing steps=2 there makes np.linspace produce a duplicate value
+# (e.g. [10, 10]), which makes the offdesign results MultiIndex match two
+# rows for the same point instead of one -- raising "The truth value of a
+# Series is ambiguous" deep in HeatPumpBase.offdesign_simulation.
 OFFDESIGN_OVERRIDES = {
-    'T_hs_ff_steps': 2,
     'T_cons_ff_steps': 2,
     'partload_min': 0.8,
     'partload_max': 1.0,
@@ -67,9 +72,32 @@ def export_one(model_key):
         result['error'] = f'no class {base} in heatpumps.models'
         return result
 
+    hp = None
     try:
         params = P.get_params(base, econ_type=econ)
         params['offdesign'] = {**params['offdesign'], **OFFDESIGN_OVERRIDES}
+
+        # Most models default to T_hs_ff_start == T_hs_ff_end (a single
+        # fixed source temperature). Give it a real spread so it's
+        # actually exercised by T_hs_ff_steps=2 instead of np.linspace
+        # producing a duplicate value (which breaks the offdesign results
+        # MultiIndex, see OFFDESIGN_OVERRIDES' comment history).
+        if (
+            params['offdesign']['T_hs_ff_start']
+            == params['offdesign']['T_hs_ff_end']
+        ):
+            params['offdesign']['T_hs_ff_end'] = (
+                params['offdesign']['T_hs_ff_start'] + 5
+            )
+        params['offdesign']['T_hs_ff_steps'] = 2
+
+        # T_cons_ff's own default range can be wide (e.g. 70 to 124),
+        # which is a much bigger jump than intended for this small,
+        # fast smoke grid. Keep the model's own start value but cap the
+        # spread at 5 degrees instead of using its full default range.
+        params['offdesign']['T_cons_ff_end'] = (
+            params['offdesign']['T_cons_ff_start'] + 5
+        )
 
         if econ is not None:
             hp = cls(params, econ_type=econ)
@@ -90,6 +118,7 @@ def export_one(model_key):
     except Exception as e:
         result['error'] = f'design failed: {type(e).__name__}: {e}'
         result['traceback'] = traceback.format_exc()
+        _cleanup_cache_files(hp)
         return result
 
     try:
@@ -105,8 +134,33 @@ def export_one(model_key):
     except Exception as e:
         result['offdesign_error'] = f'{type(e).__name__}: {e}'
         result['offdesign_traceback'] = traceback.format_exc()
+    finally:
+        _cleanup_cache_files(hp)
 
     return result
+
+
+def _cleanup_cache_files(hp):
+    """Remove this model's cached design/init state from disk.
+
+    `design_path`/the offdesign init cache are named after
+    ``params['setup']['type']`` + refrigerant (see
+    `HeatPumpBase._init_dir_paths`), which different econ-type variants of
+    the same model can share. Without removing them between models, a
+    stale file from a previous model can leak into the next one's
+    offdesign read (e.g. if that next model's own save is ever skipped).
+    """
+    if hp is None:
+        return
+    for path in [
+        getattr(hp, 'design_path', None),
+        os.path.join(
+            os.path.dirname(getattr(hp, 'design_path', '') or ''),
+            f'{getattr(hp, "subdirname", "")}_init.json'
+        ),
+    ]:
+        if path and os.path.exists(path):
+            os.remove(path)
 
 
 def main():
