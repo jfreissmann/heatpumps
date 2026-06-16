@@ -1587,12 +1587,8 @@ class HeatPumpBase:
 
             idx = (T_hs_ff, T_cons_ff, pl)
             if converged:
-                results_offdesign.loc[idx, 'Q'] = abs(
-                    self.heat_output.P.val_SI * 1e-6
-                )
-                results_offdesign.loc[idx, 'P'] = (
-                        self.power_input.P.val_SI * 1e-6
-                )
+                results_offdesign.loc[idx, 'Q'] = self.heat_output * 1e-6
+                results_offdesign.loc[idx, 'P'] = self.power_input * 1e-6
                 results_offdesign.loc[idx, 'epsilon'] = epsilon
             else:
                 results_offdesign.loc[idx, 'Q'] = np.nan

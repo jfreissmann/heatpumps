@@ -32,7 +32,7 @@ import heatpumps.models as M  # noqa: E402
 # Small, fixed offdesign grid used for every model so the export stays fast
 # and deterministic/comparable between the two code states.
 OFFDESIGN_OVERRIDES = {
-    'T_hs_ff_steps': 1,
+    'T_hs_ff_steps': 2,
     'T_cons_ff_steps': 2,
     'partload_min': 0.8,
     'partload_max': 1.0,
