@@ -773,7 +773,7 @@ if mode == txt('mode_option_design'):
         col_left, col_right = st.columns([1, 4])
 
         with col_left:
-            st.subheader('Topologie')
+            st.subheader(txt('design_header_topo'))
 
             if is_dark:
                 try:
@@ -797,14 +797,14 @@ if mode == txt('mode_option_design'):
                 st.image(top_file)
 
         with col_right:
-            st.subheader('Kältemittel')
+            st.subheader(txt('design_header_refrig'))
 
             if hp_model['nr_refrigs'] == 1:
                 st.dataframe(df_refrig, width='stretch')
             elif hp_model['nr_refrigs'] == 2:
-                st.markdown('#### Hochtemperaturkreis')
+                st.markdown(txt('design_subheader_HT'))
                 st.dataframe(df_refrig2, width='stretch')
-                st.markdown('#### Niedertemperaturkreis')
+                st.markdown(txt('design_subheader_LT'))
                 st.dataframe(df_refrig1, width='stretch')
 
             st.write(
