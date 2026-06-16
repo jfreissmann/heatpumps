@@ -747,150 +747,24 @@ st.title('*heatpumps*')
 
 if mode == txt('mode_option_start'):
     # %% MARK: Landing Page
-    st.write(
-        """
-        Der Wärmepumpensimulator *heatpumps* ist eine leistungsfähige
-        Simulationssoftware zur Analyse und Bewertung von Wärmepumpen.
-
-        Mit diesem Dashboard lassen sich eine Vielzahl komplexer
-        thermodynamischer Anlagenmodelle mithilfe numerischer Methoden über
-        eine einfache Oberfläche steuern, ohne Fachkenntnisse über diese
-        vorauszusetzen. Dies beinhaltet sowohl die Auslegung von Wärmepumpen,
-        als auch die Simulation ihres stationären Teillastbetriebs. Dabei geben
-        die Ergebnisse der Simulationen Aufschluss über das prinzipielle
-        Verhalten, den COP, Zustandsgrößen und Kosten der einzelnen Komponenten
-        sowie Gesamtinvestitionskosten der betrachteten Wärmepumpe. Damit
-        wird Zugang zu komplexen Fragestellungen ermöglicht, die regelmäßig in
-        der Konzeption und Planung von Wärmepumpen aufkommen.
-
-        ### Key Features
-
-        - Stationäre Auslegungs- und Teillastsimulation basierend auf
-        [TESPy](https://github.com/oemof/tespy)
-        - Parametrisierung and Ergebnisvisualisierung mithilfe eines
-        [Streamlit](https://github.com/streamlit/streamlit) Dashboards
-        - In der Industrie, Forschung und Entwicklung gängige
-        Schaltungstopologien
-        - Sub- und transkritische Prozesse
-        - Große Auswahl an Arbeitsmedien aufgrund der Integration von
-        [CoolProp](https://github.com/CoolProp/CoolProp)
-        """
+    st.write(txt('main_landing_txt')
         )
 
-    st.button('Auslegung starten', on_click=switch2design)
+    st.button(txt('main_btn_run_design'), on_click=switch2design)
 
     st.divider()
 
-    with st.expander('Verwendete Software'):
-        st.info(
-            """
-            #### Verwendete Software:
+    with st.expander(txt('main_expd_software')):
+        st.info(txt('main_software'))
 
-            Zur Modellerstellung und Berechnung der Simulationen wird die
-            Open Source Software TESPy verwendet. Des Weiteren werden
-            eine Reihe weiterer Pythonpakete zur Datenverarbeitung,
-            -aufbereitung und -visualisierung genutzt.
+    with st.expander(txt('main_expd_publications')):
+        st.success(txt('main_publications'))
 
-            ---
+    with st.expander(txt('main_expd_disclaimer')):
+        st.warning(txt('main_disclaimer'))
 
-            #### TESPy:
-
-            TESPy (Thermal Engineering Systems in Python) ist ein
-            leistungsfähiges Simulationswerkzeug für thermische
-            Verfahrenstechnik, zum Beispiel für Kraftwerke,
-            Fernwärmesysteme oder Wärmepumpen. Mit dem TESPy-Paket ist es
-            möglich, Anlagen auszulegen und den stationären Betrieb zu
-            simulieren. Danach kann das Teillastverhalten anhand der
-            zugrundeliegenden Charakteristiken für jede Komponente der
-            Anlage ermittelt werden. Die komponentenbasierte Struktur in
-            Kombination mit der Lösungsmethode bieten eine sehr hohe
-            Flexibilität hinsichtlich der Anlagentopologie und der
-            Parametrisierung. Weitere Informationen zu TESPy sind in dessen
-            [Onlinedokumentation](https://tespy.readthedocs.io) in
-            englischer Sprache zu finden.
-
-            #### Weitere Pakete:
-
-            - [Streamlit](https://docs.streamlit.io) (Graphische Oberfläche)
-            - [NumPy](https://numpy.org) (Datenverarbeitung)
-            - [pandas](https://pandas.pydata.org) (Datenverarbeitung)
-            - [SciPy](https://scipy.org/) (Interpolation)
-            - [scikit-learn](https://scikit-learn.org) (Regression)
-            - [Matplotlib](https://matplotlib.org) (Datenvisualisierung)
-            - [FluProDia](https://fluprodia.readthedocs.io)
-            (Datenvisualisierung)
-            - [CoolProp](http://www.coolprop.org) (Stoffdaten)
-            """
-            )
-
-    with st.expander('Publikationen'):
-        st.success(
-            """
-
-            [1] Malte Fritz, Jonas Freißmann & Ilja Tuschy. Open-Source Web 
-            Dashboard zur Simulation, Analyse und Bewertung von Wärmepumpen. 
-            Tagungsband (2. Version) - 2. Konferenz der Norddeutschen 
-            Wärmeforschung: Gemeinsam die Wärmewende voranbringen., 
-            S. 24-33. HafenCity Universität, 2025. 
-            [doi:10.34712/142.68](https://doi.org/10.34712/142.68).
-
-            [2] Jonas Freißmann, Malte Fritz & Ilja Tuschy. 
-            Hochtemperaturwärmepumpen in der Nah- und Fernwärmeversorgung - 
-            Technologieperspektive für den kurz- und mittelfristigen Einsatz 
-            in multivalenten Systemen. Abschlussbericht, Zentrum für 
-            nachhaltige Energiesysteme, 2024. 
-            [doi:10.5281/zenodo.13311533](https://doi.org/10.5281/zenodo.13311533).
-            """
-            )
-
-    with st.expander('Disclaimer'):
-        st.warning(
-            """
-            #### Simulationsergebnisse:
-
-            Numerische Simulationen sind Berechnungen mittels geeigneter
-            Iterationsverfahren in Bezug auf die vorgegebenen und gesetzten
-            Randbedingungen und Parameter. Eine Berücksichtigung aller
-            möglichen Einflüsse ist in Einzelfällen nicht möglich, so dass
-            Abweichungen zu Erfahrungswerten aus Praxisanwendungen
-            entstehen können und bei der Bewertung berücksichtigt werden
-            müssen. Die Ergebnisse geben hinreichenden bis genauen
-            Aufschluss über das prinzipielle Verhalten, den COP und
-            Zustandsgrößen in den einzelnen Komponenten der Wärmepumpe.
-            Dennoch sind alle Angaben und Ergebnisse ohne Gewähr.
-            """
-            )
-
-    with st.expander('Copyright'):
-
-        st.success(
-            """
-            #### Softwarelizenz
-            MIT License
-
-            Copyright © 2023 Jonas Freißmann and Malte Fritz
-
-            Permission is hereby granted, free of charge, to any person
-            obtaining a copy of this software and associated documentation
-            files (the "Software"), to deal in the Software without
-            restriction, including without limitation the rights to use, copy,
-            modify, merge, publish, distribute, sublicense, and/or sell copies
-            of the Software, and to permit persons to whom the Software is
-            furnished to do so, subject to the following conditions:
-
-            The above copyright notice and this permission notice shall be
-            included in all copies or substantial portions of the Software.
-
-            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-            EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-            MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-            NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-            BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-            ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-            CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-            SOFTWARE.
-            """
-        )
+    with st.expander(txt('main_expd_copyright')):
+        st.success(txt('main_copyright'))
 
 if mode == txt('mode_option_design'):
     # %% MARK: Design Simulation
