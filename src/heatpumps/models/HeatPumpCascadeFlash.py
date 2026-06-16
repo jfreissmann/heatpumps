@@ -9,15 +9,18 @@ from tespy.components import (Compressor, Condenser, CycleCloser,
                               DropletSeparator, Drum, HeatExchanger, Merge,
                               Pump, SimpleHeatExchanger, Sink, Source,
                               Splitter, Valve)
-from tespy.connections import Bus, Connection, Ref
+from tespy.components import Motor, PowerBus, PowerSource
+from tespy.connections import Connection, PowerConnection, Ref
 from tespy.networks import Network
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
 
 if __name__ == '__main__':
     from HeatPumpCascadeBase import HeatPumpCascadeBase
+    from HeatPumpBase import LegacyBusAdapter
 else:
     from .HeatPumpCascadeBase import HeatPumpCascadeBase
+    from .HeatPumpBase import LegacyBusAdapter
 
 
 class HeatPumpCascadeFlash(HeatPumpCascadeBase):
@@ -53,6 +56,18 @@ class HeatPumpCascadeFlash(HeatPumpCascadeBase):
         self.comps['evap'] = HeatExchanger('Evaporator')
         self.comps['LT_comp1'] = Compressor('Low Temperature Compressor 1')
         self.comps['LT_comp2'] = Compressor('Low Temperature Compressor 2')
+
+        # Power input
+        self.comps['grid'] = PowerSource('Grid')
+        self.comps['power_distribution'] = PowerBus(
+            'Power Distribution', num_in=1, num_out=6
+            )
+        self.comps['motor_HT_comp1'] = Motor(self.comps['HT_comp1'].label + ' Motor')
+        self.comps['motor_HT_comp2'] = Motor(self.comps['HT_comp2'].label + ' Motor')
+        self.comps['motor_LT_comp1'] = Motor(self.comps['LT_comp1'].label + ' Motor')
+        self.comps['motor_LT_comp2'] = Motor(self.comps['LT_comp2'].label + ' Motor')
+        self.comps['motor_hs_pump'] = Motor(self.comps['hs_pump'].label + ' Motor')
+        self.comps['motor_cons_pump'] = Motor(self.comps['cons_pump'].label + ' Motor')
 
     def generate_connections(self):
         """Initialize and add connections and buses to network."""
@@ -139,41 +154,78 @@ class HeatPumpCascadeFlash(HeatPumpCascadeBase):
 
         self.nw.add_conns(*[conn for conn in self.conns.values()])
 
-        # Buses
+        # Power input
         mot_x = np.array([
             0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55,
             0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1, 1.15,
             1.2, 10
-        ])
-        mot_y = (np.array([
+            ])
+        # Normalized to 1 at x=1 (rated load): the design-point
+        # efficiency (0.98, set below per motor) is applied
+        # separately, so this curve must not also bake it in, or
+        # eta_char_func would apply it twice during offdesign.
+        mot_y = np.array([
             0.01, 0.3148, 0.5346, 0.6843, 0.7835, 0.8477, 0.8885, 0.9145,
             0.9318, 0.9443, 0.9546, 0.9638, 0.9724, 0.9806, 0.9878, 0.9938,
             0.9982, 1.0009, 1.002, 1.0015, 1, 0.9977, 0.9947, 0.9909, 0.9853,
             0.9644
-        ]) * 0.98)
+            ])
         mot = CharLine(x=mot_x, y=mot_y)
-        self.buses['power input'] = Bus('power input')
-        self.buses['power input'].add_comps(
-            {'comp': self.comps['HT_comp1'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['HT_comp2'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['LT_comp1'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['LT_comp2'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['hs_pump'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['cons_pump'], 'char': mot, 'base': 'bus'}
-        )
 
-        self.buses['heat input'] = Bus('heat input')
-        self.buses['heat input'].add_comps(
-            {'comp': self.comps['hs_ff'], 'base': 'bus'},
-            {'comp': self.comps['hs_bf'], 'base': 'component'}
-        )
+        rotating_comps = ['HT_comp1', 'HT_comp2', 'LT_comp1', 'LT_comp2', 'hs_pump', 'cons_pump']
+        power_conns = [
+            PowerConnection(
+                self.comps['grid'], 'power',
+                self.comps['power_distribution'], 'power_in1',
+                'E_grid'
+                )
+            ]
+        self.conns['E_grid'] = power_conns[0]
+        for i, key in enumerate(rotating_comps, start=1):
+            motor = self.comps[f'motor_{key}']
+            motor.set_attr(eta=0.98, eta_char=mot)
+            conn_in = PowerConnection(
+                self.comps['power_distribution'], f'power_out{i}',
+                motor, 'power_in', f'E_{key}_in'
+                )
+            conn_out = PowerConnection(
+                motor, 'power_out', self.comps[key], 'power',
+                f'E_{key}_out'
+                )
+            self.conns[f'E_{key}_in'] = conn_in
+            self.conns[f'E_{key}_out'] = conn_out
+            power_conns += [conn_in, conn_out]
 
-        self.buses['heat output'] = Bus('heat output')
-        self.buses['heat output'].add_comps(
-            {'comp': self.comps['cons'], 'base': 'component'}
-        )
+        self.nw.add_conns(*power_conns)
 
-        self.nw.add_busses(*[bus for bus in self.buses.values()])
+        # Aggregated energy stream accessors, replacing the
+        # removed tespy ``Bus`` class. Kept under the ``buses``
+        # dict name and ``.P.val`` access pattern so that
+        # ``HeatPumpBase`` does not need to know about the
+        # specific topology of each model.
+        self.buses['power input'] = LegacyBusAdapter(
+            lambda: self.conns['E_grid'].E.val_SI
+            )
+        self.buses['heat input'] = LegacyBusAdapter(
+            lambda: self.conns['B1'].m.val_SI * (
+                self.conns['B1'].h.val_SI - self.conns['B3'].h.val_SI
+                )
+            )
+        self.buses['heat output'] = LegacyBusAdapter(
+            lambda: self.comps['cons'].Q.val_SI
+            )
+
+        # Connection labels bounding the system for the exergy
+        # analysis, replacing the connections previously
+        # aggregated through Buses.
+        self.exergy_boundary = {
+            'fuel': {
+                'inputs': ['E_grid', 'B1'], 'outputs': ['B3']
+                },
+            'product': {
+                'inputs': ['C3'], 'outputs': ['C1']
+                }
+            }
 
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""

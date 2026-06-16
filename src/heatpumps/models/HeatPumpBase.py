@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from importlib import resources
 from time import time
+from types import SimpleNamespace
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,13 +11,31 @@ import pandas as pd
 import platformdirs
 import plotly.graph_objects as go
 from CoolProp.CoolProp import PropsSI as PSI
+from exerpy import ExergyAnalysis
 from fluprodia import FluidPropertyDiagram
 from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
 from tespy.networks import Network
-from tespy.tools import ExergyAnalysis
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
+
+
+class LegacyBusAdapter:
+    """Mimic the ``.P.val`` access pattern of the removed tespy ``Bus``.
+
+    tespy 0.10 removed ``Bus`` in favor of explicit ``PowerConnection`` /
+    component values. Model files store a zero-argument callable returning
+    the aggregated value (in W) for a given energy stream (e.g. total power
+    input), so the rest of this class can keep reading ``self.buses[...].P.val``
+    unchanged.
+    """
+
+    def __init__(self, value_func):
+        self._value_func = value_func
+
+    @property
+    def P(self):
+        return SimpleNamespace(val=self._value_func())
 
 
 class HeatPumpBase:
@@ -26,8 +45,10 @@ class HeatPumpBase:
         """Initialize model and set necessary attributes."""
         self.params = params
 
-        self.nw = Network(
-            T_unit='C', p_unit='bar', h_unit='kJ / kg', m_unit='kg / s'
+        self.nw = Network()
+        self.nw.units.set_defaults(
+            temperature='degC', pressure='bar', enthalpy='kJ / kg',
+            mass_flow='kg / s'
             )
 
         self._init_fluids()
@@ -267,18 +288,18 @@ class HeatPumpBase:
 
             elif comptype == 'HeatExchanger':
                 if 'Evaporator' in complabel or 'Economizer' in complabel:
-                    val = comp.kA.val / k_evap
+                    val = comp.UA.val / k_evap
                 elif 'Transcritical' in complabel:
-                    val = comp.kA.val / k_trans
+                    val = comp.UA.val / k_trans
                 else:
-                    val = comp.kA.val / k_misc
+                    val = comp.UA.val / k_misc
                 self.cost[complabel] = self.eval_costfunc(
                     val, 42, 15526, 0.80
                     ) * cepci_factor
                 self.design_params[complabel] = val
 
             elif comptype == 'Condenser':
-                val = comp.kA.val / k_cond
+                val = comp.UA.val / k_cond
                 self.cost[complabel] = self.eval_costfunc(
                     val, 42, 15526, 0.80
                     ) * cepci_factor
@@ -333,18 +354,19 @@ class HeatPumpBase:
 
     def perform_exergy_analysis(self, print_results=False, **kwargs):
         """Perform exergy analysis."""
-        self.ean = ExergyAnalysis(
+        self.ean = ExergyAnalysis.from_tespy(
             self.nw,
-            E_F=[self.buses['power input'], self.buses['heat input']],
-            E_P=[self.buses['heat output']]
+            Tamb=self.params['ambient']['T'] + 273.15,
+            pamb=self.params['ambient']['p'] * 1e5
             )
         self.ean.analyse(
-            pamb=self.params['ambient']['p'], Tamb=self.params['ambient']['T']
+            E_F=self.exergy_boundary['fuel'],
+            E_P=self.exergy_boundary['product']
             )
         if print_results:
-            self.ean.print_results(**kwargs)
+            self.ean.exergy_results(print_results=True)
 
-        self.epsilon = self.ean.network_data['epsilon']
+        self.epsilon = self.ean.epsilon
 
     def get_plotting_states(self):
         """Generate data of states to plot in state diagram."""
@@ -591,29 +613,13 @@ class HeatPumpBase:
             return diagram
 
     def generate_sankey_diagram(self, width=None, height=None):
-        """Sankey Diagram of Heat Pump model"""
-        links, nodes = self.ean.generate_plotly_sankey_input(
-            colors={
-                'E_F': '#00395B',
-                'E_P': '#B54036',
-                'E_L': '#EC6707',
-                'E_D': '#EC6707',
-                'work': '#BFBFBF',
-                'heat': '#BFBFBF',
-                'two-phase-fluid': '#74ADC0'
-            }
-        )
-        fig = go.Figure(
-            go.Sankey(
-                arrangement='snap',
-                node={
-                    'label': nodes,
-                    'pad': 15,
-                    'color': '#EC6707'
-                    },
-                link=links
-            )
-        )
+        """Sankey Diagram of Heat Pump model.
+
+        TODO: exerpy (the replacement for tespy's removed ExergyAnalysis)
+        has no equivalent of the old ``generate_plotly_sankey_input`` method,
+        so this currently returns an empty placeholder figure.
+        """
+        fig = go.Figure(go.Sankey(arrangement='snap', node={}, link={}))
 
         if width is not None:
             fig.update_layout(width=width)
@@ -626,23 +632,25 @@ class HeatPumpBase:
     def generate_waterfall_diagram(self, figsize=(16, 10), legend=True,
                                    return_fig_ax=False, show_epsilon=True):
         """Generates waterfall diagram of exergy analysis"""
+        df_components, _, _ = self.ean.exergy_results(print_results=False)
+        df_components = df_components.set_index('Component')
+
         comps = ['Fuel Exergy']
-        E_F = self.ean.network_data.E_F
+        E_F = self.ean.E_F * 1e-3
         E_D = [0]
         E_P = [E_F]
-        for comp in self.ean.aggregation_data.sort_values(by='E_D', ascending=False).index:
+        for comp in df_components.sort_values(
+                by='E_D [kW]', ascending=False
+                ).index:
             # only plot components with exergy destruction > 1 W
-            if self.ean.aggregation_data.E_D[comp] > 1:
+            if df_components.loc[comp, 'E_D [kW]'] > 1e-3:
                 comps.append(comp)
-                E_D.append(self.ean.aggregation_data.E_D[comp])
-                E_F = E_F - self.ean.aggregation_data.E_D[comp]
+                E_D.append(df_components.loc[comp, 'E_D [kW]'])
+                E_F = E_F - df_components.loc[comp, 'E_D [kW]']
                 E_P.append(E_F)
         comps.append('Product Exergy')
         E_D.append(0)
         E_P.append(E_F)
-
-        E_D = [E * 1e-3 for E in E_D]
-        E_P = [E * 1e-3 for E in E_P]
 
         colors_E_P = ['#74ADC0'] * len(comps)
         colors_E_P[0] = '#00395B'
@@ -664,20 +672,19 @@ class HeatPumpBase:
 
         if show_epsilon:
             ax.annotate(
-                f'$\epsilon_{{tot}} = ${self.ean.network_data.epsilon:.3f}',
+                rf'$\epsilon_{{tot}} = ${self.ean.epsilon:.3f}',
                 (0.96, 0.06),
                 xycoords='axes fraction',
                 ha='right', va='center', color='k',
                 bbox=dict(boxstyle='round,pad=0.3', fc='white')
             )
 
+        E_F_total_kW = self.ean.E_F * 1e-3
         ax.set_xlabel('Exergy in kW')
         ax.set_yticks(np.arange(len(comps)))
         ax.set_yticklabels(comps)
-        ax.set_xlim([0, ((self.ean.network_data.E_F) / 1000) + 1000])
-        ax.set_xticks(
-            np.linspace(0, ((self.ean.network_data.E_F) / 1000) + 1000, 9)
-            )
+        ax.set_xlim([0, E_F_total_kW + 1000])
+        ax.set_xticks(np.linspace(0, E_F_total_kW + 1000, 9))
         ax.invert_yaxis()
         ax.grid(axis='x')
         ax.set_axisbelow(True)
@@ -1310,20 +1317,20 @@ class HeatPumpBase:
             )
 
         # Parametrization
-        kA_char1_default = ldc(
-            'heat exchanger', 'kA_char1', 'DEFAULT', CharLine
+        UA_char1_default = ldc(
+            'HeatExchanger', 'UA_char1', 'DEFAULT', CharLine
         )
-        kA_char1_cond = ldc(
-            'heat exchanger', 'kA_char1', 'CONDENSING FLUID', CharLine
+        UA_char1_cond = ldc(
+            'HeatExchanger', 'UA_char1', 'CONDENSING FLUID', CharLine
         )
-        kA_char2_evap = ldc(
-            'heat exchanger', 'kA_char2', 'EVAPORATING FLUID', CharLine
+        UA_char2_evap = ldc(
+            'HeatExchanger', 'UA_char2', 'EVAPORATING FLUID', CharLine
         )
-        kA_char2_default = ldc(
-            'heat exchanger', 'kA_char2', 'DEFAULT', CharLine
+        UA_char2_default = ldc(
+            'HeatExchanger', 'UA_char2', 'DEFAULT', CharLine
         )
 
-        tespy_components = ['Condenser', 'HeatExchanger', 'Compressor', 'Pump', 'SimpleHeatExchanger']
+        tespy_components = ['Condenser', 'HeatExchanger', 'Compressor', 'Pump', 'SimpleHeatExchanger', 'Motor']
 
         # Extract the label of the above necessary tespy components.
         # And then extracts the object of the components for parametrization
@@ -1341,41 +1348,45 @@ class HeatPumpBase:
                     object.set_attr(
                         design=['eta_s'], offdesign=['eta_s_char']
                     )
+                elif comp == 'Motor':
+                    object.set_attr(
+                        design=['eta'], offdesign=['eta_char']
+                    )
                 elif comp == 'HeatExchanger':
                     # for models with internal heat exchanger
                     if 'Internal Heat Exchanger' in label:
                         object.set_attr(
-                            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
-                            design=['pr1', 'pr2'], offdesign=['zeta1', 'zeta2']
+                            UA_char1=UA_char1_default, UA_char2=UA_char2_default,
+                            design=['pr1', 'pr2'], offdesign=['zeta1_d4', 'zeta2_d4']
                         )
 
                     # For models with Transcritical heat exchanger
                     elif 'Transcritical' in label:
                         object.set_attr(
-                            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
-                            design=['pr2', 'ttd_l'], offdesign=['zeta2', 'kA_char']
+                            UA_char1=UA_char1_default, UA_char2=UA_char2_default,
+                            design=['pr2', 'ttd_l'], offdesign=['zeta2_d4', 'UA_char']
                         )
 
                     # For cascade model's Intermediate heat exchanger
                     elif 'Intermediate Heat Exchanger' in label:
                         object.set_attr(
-                            kA_char1=kA_char1_cond, kA_char2=kA_char2_evap,
-                            design=['pr1', 'ttd_u'], offdesign=['zeta1', 'kA_char']
+                            UA_char1=UA_char1_cond, UA_char2=UA_char2_evap,
+                            design=['pr1', 'ttd_u'], offdesign=['zeta1_d4', 'UA_char']
                         )
                     else:
                         # For models with evaporator and economizer
                         object.set_attr(
-                            kA_char1=kA_char1_default, kA_char2=kA_char2_evap,
-                            design=['pr1', 'ttd_l'], offdesign=['zeta1', 'kA_char']
+                            UA_char1=UA_char1_default, UA_char2=UA_char2_evap,
+                            design=['pr1', 'ttd_l'], offdesign=['zeta1_d4', 'UA_char']
                         )
                 elif comp == 'Condenser':
                     object.set_attr(
-                        kA_char1=kA_char1_cond, kA_char2=kA_char2_default,
-                        design=['pr2', 'ttd_u'], offdesign=['zeta2', 'kA_char']
+                        UA_char1=UA_char1_cond, UA_char2=UA_char2_default,
+                        design=['pr2', 'ttd_u'], offdesign=['zeta2_d4', 'UA_char']
                     )
                 elif comp == 'SimpleHeatExchanger':
                     object.set_attr(
-                        design=['pr'], offdesign=['zeta']
+                        design=['pr'], offdesign=['zeta_d4']
                     )
                 else:
                     raise ValueError(
@@ -1445,7 +1456,11 @@ class HeatPumpBase:
                         )
                         self.perform_exergy_analysis()
                         failed = False
-                    except ValueError:
+                    except (ValueError, AttributeError):
+                        # AttributeError: exerpy's exergy balance can fail
+                        # on certain offdesign states (e.g. a component
+                        # exergy classification edge case), where the old
+                        # tespy Bus-based ExergyAnalysis did not raise.
                         failed = True
 
                     # Logging simulation
@@ -1511,7 +1526,7 @@ class HeatPumpBase:
                                         self.buses['power input'].P.val * 1e-6
                                 )
                                 results_offdesign.loc[idx, 'epsilon'] = round(
-                                    self.ean.network_data['epsilon'], 3
+                                    self.ean.epsilon, 3
                                 )
 
                             results_offdesign.loc[idx, 'COP'] = (
