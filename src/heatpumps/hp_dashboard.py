@@ -887,13 +887,11 @@ if mode == 'Auslegung':
 
                 col1, col2, col3, col4 = st.columns(4)
                 col1.metric('COP', round(ss.hp.cop, 2))
-                Q_dot_ab = abs(
-                    ss.hp.buses['heat output'].P.val / 1e6
-                    )
+                Q_dot_ab = ss.hp.heat_output / 1e6
                 col2.metric('Q_dot_ab', f"{Q_dot_ab:.2f} MW")
                 col3.metric(
                     'P_zu',
-                    f"{ss.hp.buses['power input'].P.val/1e6:.2f} MW"
+                    f"{ss.hp.power_input/1e6:.2f} MW"
                     )
                 Q_dot_zu = abs(
                     ss.hp.comps['evap'].Q.val/1e6

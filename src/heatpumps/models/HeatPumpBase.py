@@ -5,7 +5,6 @@ import os
 from datetime import datetime
 from importlib import resources
 from time import time
-from types import SimpleNamespace
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,24 +19,6 @@ from sklearn.linear_model import LinearRegression
 from tespy.networks import Network
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
-
-
-class LegacyBusAdapter:
-    """Mimic the ``.P.val`` access pattern of the removed tespy ``Bus``.
-
-    tespy 0.10 removed ``Bus`` in favor of explicit ``PowerConnection`` /
-    component values. Model files store a zero-argument callable returning
-    the aggregated value (in W) for a given energy stream (e.g. total power
-    input), so the rest of this class can keep reading ``self.buses[...].P.val``
-    unchanged.
-    """
-
-    def __init__(self, value_func):
-        self._value_func = value_func
-
-    @property
-    def P(self):
-        return SimpleNamespace(val=self._value_func())
 
 
 def grid_path_order(*ranges, current=None, max_step=1):
@@ -143,7 +124,6 @@ class HeatPumpBase:
 
         self.comps = dict()
         self.conns = dict()
-        self.buses = dict()
 
         self.cop = np.nan
         self.cop_lorenz = np.nan
@@ -170,7 +150,17 @@ class HeatPumpBase:
         """Initialize components of heat pump."""
 
     def generate_connections(self):
-        """Initialize and add connections and buses to network."""
+        """Initialize and add connections to network."""
+
+    @property
+    def power_input(self):
+        """Total electrical power drawn from the grid in W."""
+        return self.conns['E_grid'].E.val_SI
+
+    @property
+    def heat_output(self):
+        """Heat output delivered to the consumer in W."""
+        return abs(self.comps['cons'].Q.val_SI)
 
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
@@ -195,10 +185,7 @@ class HeatPumpBase:
     def calc_efficiencies(self):
         """Calculate ideal and simulated cycle efficiencies."""
         # Simulated net Coefficient of Performance
-        self.cop = (
-            abs(self.buses['heat output'].P.val)
-            / self.buses['power input'].P.val
-            )
+        self.cop = self.heat_output / self.power_input
 
         # Ideal Coefficient of Performance of the equivalent Lorenz cycle
         T_ln_source = (
@@ -1601,10 +1588,10 @@ class HeatPumpBase:
             idx = (T_hs_ff, T_cons_ff, pl)
             if converged:
                 results_offdesign.loc[idx, 'Q'] = abs(
-                    self.buses['heat output'].P.val * 1e-6
+                    self.heat_output.P.val_SI * 1e-6
                 )
                 results_offdesign.loc[idx, 'P'] = (
-                        self.buses['power input'].P.val * 1e-6
+                        self.power_input.P.val_SI * 1e-6
                 )
                 results_offdesign.loc[idx, 'epsilon'] = epsilon
             else:

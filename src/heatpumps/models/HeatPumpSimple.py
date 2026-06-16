@@ -13,9 +13,9 @@ from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
 
 if __name__ == '__main__':
-    from HeatPumpBase import HeatPumpBase, LegacyBusAdapter
+    from HeatPumpBase import HeatPumpBase
 else:
-    from .HeatPumpBase import HeatPumpBase, LegacyBusAdapter
+    from .HeatPumpBase import HeatPumpBase
 
 
 class HeatPumpSimple(HeatPumpBase):
@@ -137,22 +137,6 @@ class HeatPumpSimple(HeatPumpBase):
 
         self.nw.add_conns(*power_conns)
 
-        # Aggregated energy stream accessors, replacing the
-        # removed tespy ``Bus`` class. Kept under the ``buses``
-        # dict name and ``.P.val`` access pattern so that
-        # ``HeatPumpBase`` does not need to know about the
-        # specific topology of each model.
-        self.buses['power input'] = LegacyBusAdapter(
-            lambda: self.conns['E_grid'].E.val_SI
-            )
-        self.buses['heat input'] = LegacyBusAdapter(
-            lambda: self.conns['B1'].m.val_SI * (
-                self.conns['B1'].h.val_SI - self.conns['B3'].h.val_SI
-                )
-            )
-        self.buses['heat output'] = LegacyBusAdapter(
-            lambda: self.comps['cons'].Q.val_SI
-            )
 
         # Connection labels bounding the system for the exergy
         # analysis, replacing the connections previously
@@ -229,10 +213,7 @@ class HeatPumpSimple(HeatPumpBase):
 
         self.m_design = self.conns['A0'].m.val
 
-        self.cop = (
-            abs(self.buses['heat output'].P.val)
-            / self.buses['power input'].P.val
-            )
+        self.cop = self.heat_output / self.power_input
 
     def get_plotting_states(self, **kwargs):
         """Generate data of states to plot in state diagram."""
