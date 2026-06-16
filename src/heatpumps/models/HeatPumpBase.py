@@ -1,3 +1,5 @@
+import collections
+import itertools
 import json
 import os
 from datetime import datetime
@@ -36,6 +38,92 @@ class LegacyBusAdapter:
     @property
     def P(self):
         return SimpleNamespace(val=self._value_func())
+
+
+def grid_path_order(*ranges, current=None, max_step=1):
+    """Order the Cartesian product of ``ranges`` into a path that visits
+    every combination, starting near ``current`` and never moving more
+    than ``max_step`` grid steps away from the previous point.
+
+    Distance is measured in grid-index space (one step along any axis
+    counts the same, regardless of physical units). Greedily moves to the
+    nearest unvisited point within ``max_step``, ties broken to prefer
+    changing later (faster) axes over earlier (slower) ones. When no
+    unvisited point is in reach, a breadth-first search finds the nearest
+    bridge via already-visited points (revisits), guaranteeing every
+    transition stays within ``max_step``.
+
+    Returns
+    -------
+    list of (tuple, bool)
+        ``(point, is_new)`` pairs in path order; ``is_new`` is ``False``
+        for points revisited only to bridge a gap.
+    """
+    axis_sizes = [len(r) for r in ranges]
+    if not axis_sizes:
+        return [((), True)]
+
+    all_indices = list(itertools.product(*(range(n) for n in axis_sizes)))
+
+    if current is None:
+        start_idx = tuple(0 for _ in ranges)
+    else:
+        start_idx = tuple(
+            min(range(len(r)), key=lambda i, r=r, c=c: abs(r[i] - c))
+            for r, c in zip(ranges, current)
+        )
+
+    def l1(a, b):
+        return sum(abs(x - y) for x, y in zip(a, b))
+
+    unvisited = set(all_indices)
+    unvisited.discard(start_idx)
+    path = [(start_idx, True)]
+    current_idx = start_idx
+
+    while unvisited:
+        candidates = [p for p in unvisited if l1(current_idx, p) <= max_step]
+        if candidates:
+            next_idx = min(
+                candidates,
+                key=lambda p: (
+                    l1(current_idx, p),
+                    tuple(abs(a - b) for a, b in zip(current_idx, p)),
+                ),
+            )
+        else:
+            queue = collections.deque([current_idx])
+            came_from = {current_idx: None}
+            target = None
+            while queue:
+                node = queue.popleft()
+                if node in unvisited:
+                    target = node
+                    break
+                for cand in all_indices:
+                    if cand not in came_from and l1(node, cand) <= max_step:
+                        came_from[cand] = node
+                        queue.append(cand)
+            bridge = []
+            node = target
+            while node is not None:
+                bridge.append(node)
+                node = came_from[node]
+            bridge.reverse()
+            path.extend((node, False) for node in bridge[1:-1])
+            path.append((bridge[-1], True))
+            current_idx = bridge[-1]
+            unvisited.discard(current_idx)
+            continue
+
+        path.append((next_idx, True))
+        unvisited.discard(next_idx)
+        current_idx = next_idx
+
+    return [
+        (tuple(r[i] for r, i in zip(ranges, idx)), is_new)
+        for idx, is_new in path
+    ]
 
 
 class HeatPumpBase:
@@ -158,42 +246,21 @@ class HeatPumpBase:
             print(f'Carnot COP = {self.cop_carnot:.3f}')
             print(f'Carnot \\eta = {self.eta_carnot:.3f}')
 
-    @staticmethod
-    def _drop_adjacent_duplicates(arr):
-        """Remove any element that is identical to the one right before it.
-
-        The "out and back" stablerange construction below always repeats
-        the shared value at the boundary between its concatenated
-        segments (and collapses to e.g. ``[x, x]`` when the underlying
-        range has only one value, i.e. start == end). Solving the exact
-        same point twice in a row is pure waste: nothing changed, so nothing
-        new is learned and no extra warm-start benefit is gained. This
-        leaves the rest of the out-and-back structure (including
-        non-adjacent revisits, which still serve their original purpose)
-        untouched.
-        """
-        if len(arr) == 0:
-            return arr
-        keep = np.ones(len(arr), dtype=bool)
-        keep[1:] = arr[1:] != arr[:-1]
-        return arr[keep]
-
     def create_ranges(self):
-        """Create stable and base ranges for T_hs_ff, T_cons_ff and pl."""
+        """Create ranges for T_hs_ff, T_cons_ff and pl, plus a traversal
+        path through their grid for the offdesign sweep, see
+        :func:`grid_path_order`. The path starts at the grid point nearest
+        to the design state and only ever moves a single grid step away
+        from the previous point (revisiting already-solved points as
+        stepping stones where needed), so every offdesign simulation gets
+        the best available warm start from one already solved.
+        """
         self.T_hs_ff_range = np.linspace(
             self.params['offdesign']['T_hs_ff_start'],
             self.params['offdesign']['T_hs_ff_end'],
             self.params['offdesign']['T_hs_ff_steps'],
             endpoint=True
             ).round(decimals=3)
-        half_len_hs = int(len(self.T_hs_ff_range)/2) - 1
-        self.T_hs_ff_stablerange = self._drop_adjacent_duplicates(
-            np.concatenate([
-                self.T_hs_ff_range[half_len_hs::-1],
-                self.T_hs_ff_range,
-                self.T_hs_ff_range[:half_len_hs:-1]
-                ])
-            )
 
         self.T_cons_ff_range = np.linspace(
             self.params['offdesign']['T_cons_ff_start'],
@@ -201,14 +268,6 @@ class HeatPumpBase:
             self.params['offdesign']['T_cons_ff_steps'],
             endpoint=True
             ).round(decimals=3)
-        half_len_cons = int(len(self.T_cons_ff_range)/2) - 1
-        self.T_cons_ff_stablerange = self._drop_adjacent_duplicates(
-            np.concatenate([
-                self.T_cons_ff_range[half_len_cons::-1],
-                self.T_cons_ff_range,
-                self.T_cons_ff_range[:half_len_cons:-1]
-                ])
-            )
 
         self.pl_range = np.linspace(
             self.params['offdesign']['partload_min'],
@@ -216,8 +275,11 @@ class HeatPumpBase:
             self.params['offdesign']['partload_steps'],
             endpoint=True
             ).round(decimals=3)
-        self.pl_stablerange = self._drop_adjacent_duplicates(
-            np.concatenate([self.pl_range[::-1], self.pl_range])
+
+        self.offdesign_path = grid_path_order(
+            self.T_hs_ff_range, self.T_cons_ff_range, self.pl_range,
+            current=(self.params['B1']['T'], self.params['C3']['T'], 1.0),
+            max_step=1,
             )
 
     def df_to_array(self, results_offdesign):
@@ -1440,126 +1502,121 @@ class HeatPumpBase:
             index=multiindex, columns=['Q', 'P', 'COP', 'epsilon', 'residual']
         )
 
-        for T_hs_ff in self.T_hs_ff_stablerange:
+        # In-memory snapshot of the last good network state (tespy's
+        # `save(as_dict=True)`), used to recover if a later point leaves
+        # the network in a bad state. No disk I/O needed for this.
+        stable_state = None
+
+        n_points = len(self.offdesign_path)
+        for i, ((T_hs_ff, T_cons_ff, pl), is_new) in enumerate(self.offdesign_path):
+            revisit_tag = '' if is_new else ' (revisit, bridging a gap)'
+            print(
+                f'### [{i + 1}/{n_points}] Temp. HS = {T_hs_ff} °C, Temp. '
+                + f'Cons = {T_cons_ff} °C, Partload = {pl * 100} %'
+                + f'{revisit_tag} ###'
+            )
             self.conns['B1'].set_attr(T=T_hs_ff)
             if T_hs_ff <= 7:
                 self.conns['B2'].set_attr(T=2)
             else:
                 self.conns['B2'].set_attr(T=T_hs_ff - deltaT_hs)
+            self.conns['C3'].set_attr(T=T_cons_ff)
 
-            for T_cons_ff in self.T_cons_ff_stablerange:
-                self.conns['C3'].set_attr(T=T_cons_ff)
+            self.intermediate_states_offdesign(T_hs_ff, T_cons_ff, deltaT_hs)
 
-                self.intermediate_states_offdesign(T_hs_ff, T_cons_ff, deltaT_hs)
+            self.comps['cons'].set_attr(Q=None)
+            self.conns['A0'].set_attr(m=pl * self.m_design)
 
-                for pl in self.pl_stablerange[::-1]:
-                    print(
-                        f'### Temp. HS = {T_hs_ff} °C, Temp. Cons = '
-                        + f'{T_cons_ff} °C, Partload = {pl * 100} % ###'
-                    )
-                    self.init_path = None
-                    no_init_path = (
-                            (T_cons_ff != self.T_cons_ff_range[0])
-                            and (pl == self.pl_range[-1])
-                    )
-                    if no_init_path:
-                        cache_dir = platformdirs.user_cache_dir(
-                            'heatpumps', 'heatpumps'
-                        )
-                        os.makedirs(cache_dir, exist_ok=True)
-                        self.init_path = os.path.join(
-                            cache_dir, 'stable', f'{self.subdirname}_init.json'
-                        )
+            # The grid path (see `create_ranges`) means the in-memory
+            # connection state left over from the previous point is
+            # already a good warm start for this one (at most 1 grid step
+            # away). tespy's own status codes 0 (converged), 1 (not
+            # converged but stable) and 2 (stalled) all leave the network
+            # in a state that's fine to continue warm-starting from. Only
+            # fall back to the last known-good snapshot if the network was
+            # left singular (3) or crashed (99).
+            init_path = stable_state if self.nw.status >= 3 else None
 
-                    self.comps['cons'].set_attr(Q=None)
-                    self.conns['A0'].set_attr(m=pl * self.m_design)
+            try:
+                self.nw.solve(
+                    'offdesign', design_path=self.design_path,
+                    init_path=init_path, oscillation_damping=True
+                )
+            except ValueError:
+                # in case an error escapes tespy's own internal handling
+                # (which otherwise catches these and sets status 99 itself)
+                self.nw.status = 99
 
-                    try:
-                        self.nw.solve(
-                            'offdesign', design_path=self.design_path
-                        )
-                        self.perform_exergy_analysis()
-                        failed = False
-                    except (ValueError, AttributeError):
-                        # AttributeError: exerpy's exergy balance can fail
-                        # on certain offdesign states (e.g. a component
-                        # exergy classification edge case), where the old
-                        # tespy Bus-based ExergyAnalysis did not raise.
-                        failed = True
+            if self.nw.status < 3:
+                stable_state = self.nw.save(as_dict=True)
 
-                    # Logging simulation
-                    if log_simulations:
-                        cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
-                        logdirpath = os.path.join(cache_dir, 'output', 'logging')
-                        os.makedirs(logdirpath, exist_ok=True)
-                        logpath = os.path.join(
-                            logdirpath, f'{self.subdirname}_offdesign_log.csv'
-                        )
-                        timestamp = datetime.fromtimestamp(time()).strftime(
-                            '%H:%M:%S'
-                        )
-                        log_entry = (
-                                f'{timestamp};{(self.nw.residual[-1] < 1e-3)};'
-                                + f'{T_hs_ff:.2f};{T_cons_ff:.2f};{pl:.1f};'
-                                + f'{self.nw.residual[-1]:.2e}\n'
-                        )
-                        if not os.path.exists(logpath):
-                            with open(logpath, 'w', encoding='utf-8') as file:
-                                file.write(
-                                    'Time;converged;Temp HS;Temp Cons;Partload;'
-                                    + 'Residual\n'
-                                )
-                                file.write(log_entry)
-                        else:
-                            with open(logpath, 'a', encoding='utf-8') as file:
-                                file.write(log_entry)
+            # status 0 and 1 both require the Newton loop's own convergence
+            # check to have passed first (residual norm and increment both
+            # below tespy's internal threshold, see `Network._solve_loop`);
+            # 1 is only a postprocessing downgrade of 0 when a further
+            # consistency check (computed vs. specified parameter values)
+            # fails. status 2 (stalled) and 3 (singular) did not pass that
+            # convergence check at all.
+            converged = self.nw.status in (0, 1)
+            if converged:
+                try:
+                    self.perform_exergy_analysis()
+                    epsilon = round(self.ean.epsilon, 3)
+                except (ValueError, AttributeError):
+                    # exerpy's exergy balance can fail on certain offdesign
+                    # states (e.g. a component exergy classification edge
+                    # case), where the old tespy Bus-based ExergyAnalysis
+                    # did not raise. This does not affect Q/P, which come
+                    # directly from the (converged) network.
+                    epsilon = np.nan
 
-                    if pl == self.pl_range[-1] and self.nw.residual[-1] < 1e-3:
-                        cache_dir = platformdirs.user_cache_dir(
-                            'heatpumps', 'heatpumps'
+            # Logging simulation
+            if log_simulations:
+                cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
+                logdirpath = os.path.join(cache_dir, 'output', 'logging')
+                os.makedirs(logdirpath, exist_ok=True)
+                logpath = os.path.join(
+                    logdirpath, f'{self.subdirname}_offdesign_log.csv'
+                )
+                timestamp = datetime.fromtimestamp(time()).strftime(
+                    '%H:%M:%S'
+                )
+                log_entry = (
+                        f'{timestamp};{converged};'
+                        + f'{T_hs_ff:.2f};{T_cons_ff:.2f};{pl:.1f};'
+                        + f'{self.nw.residual_history[-1]:.2e};'
+                        + f'{i + 1};{is_new}\n'
+                )
+                if not os.path.exists(logpath):
+                    with open(logpath, 'w', encoding='utf-8') as file:
+                        file.write(
+                            'Time;converged;Temp HS;Temp Cons;Partload;'
+                            + 'Residual;Sweep order;New point\n'
                         )
-                        os.makedirs(cache_dir, exist_ok=True)
-                        cache_init_path = os.path.join(
-                            cache_dir, 'stable', f'{self.subdirname}_init.json'
-                        )
-                        self.nw.save(cache_init_path)
+                        file.write(log_entry)
+                else:
+                    with open(logpath, 'a', encoding='utf-8') as file:
+                        file.write(log_entry)
 
-                    inranges = (
-                            (T_hs_ff in self.T_hs_ff_range)
-                            & (T_cons_ff in self.T_cons_ff_range)
-                            & (pl in self.pl_range)
-                    )
-                    idx = (T_hs_ff, T_cons_ff, pl)
-                    if inranges:
-                        empty_or_worse = (
-                                pd.isnull(results_offdesign.loc[idx, 'Q'])
-                                or (self.nw.residual[-1]
-                                    < results_offdesign.loc[idx, 'residual']
-                                    )
-                        )
-                        if empty_or_worse:
-                            if failed:
-                                results_offdesign.loc[idx, 'Q'] = np.nan
-                                results_offdesign.loc[idx, 'P'] = np.nan
-                                results_offdesign.loc[idx, 'epsilon'] = np.nan
-                            else:
-                                results_offdesign.loc[idx, 'Q'] = abs(
-                                    self.buses['heat output'].P.val * 1e-6
-                                )
-                                results_offdesign.loc[idx, 'P'] = (
-                                        self.buses['power input'].P.val * 1e-6
-                                )
-                                results_offdesign.loc[idx, 'epsilon'] = round(
-                                    self.ean.epsilon, 3
-                                )
+            idx = (T_hs_ff, T_cons_ff, pl)
+            if converged:
+                results_offdesign.loc[idx, 'Q'] = abs(
+                    self.buses['heat output'].P.val * 1e-6
+                )
+                results_offdesign.loc[idx, 'P'] = (
+                        self.buses['power input'].P.val * 1e-6
+                )
+                results_offdesign.loc[idx, 'epsilon'] = epsilon
+            else:
+                results_offdesign.loc[idx, 'Q'] = np.nan
+                results_offdesign.loc[idx, 'P'] = np.nan
+                results_offdesign.loc[idx, 'epsilon'] = np.nan
 
-                            results_offdesign.loc[idx, 'COP'] = (
-                                    results_offdesign.loc[idx, 'Q']
-                                    / results_offdesign.loc[idx, 'P']
-                            )
-                            results_offdesign.loc[idx, 'residual'] = (
-                                self.nw.residual[-1]
-                            )
+            results_offdesign.loc[idx, 'COP'] = (
+                    results_offdesign.loc[idx, 'Q']
+                    / results_offdesign.loc[idx, 'P']
+            )
+            results_offdesign.loc[idx, 'residual'] = self.nw.residual_history[-1]
 
         if self.params['offdesign']['save_results']:
             cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
