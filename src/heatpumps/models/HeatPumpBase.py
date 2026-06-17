@@ -132,6 +132,7 @@ class HeatPumpBase:
         self.eta_carnot = np.nan
         self.epsilon = np.nan
         self.solved_design = False
+        self._design_state = None
 
         self._init_vals = {
             'm_dot_rel_econ_closed': 0.9,
@@ -179,8 +180,7 @@ class HeatPumpBase:
                 self.nw.print_results()
         if self.nw.residual[-1] < 1e-3:
             self.solved_design = True
-            os.makedirs(os.path.dirname(self.design_path), exist_ok=True)
-            self.nw.save(self.design_path)
+            self._design_state = self.nw.save(as_dict=True)
 
     def calc_efficiencies(self):
         """Calculate ideal and simulated cycle efficiencies."""
@@ -1209,34 +1209,11 @@ class HeatPumpBase:
             plt.show()
 
     def _init_dir_paths(self):
-        """Initialize paths and directories."""
+        """Initialize subdirectory name for output files."""
         self.subdirname = (
             f"{self.params['setup']['type']}_"
             + f"{self.params['setup']['refrig'].replace('::', '_')}"
             )
-        cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
-        self.design_path = os.path.join(
-            cache_dir, 'stable', f'{self.subdirname}_design.json'
-            )
-        self.validate_dir()
-
-    def validate_dir(self):
-        """Check for cache directories and create them if necessary."""
-        cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
-        stablepath = os.path.join(cache_dir, 'stable')
-        if os.path.exists(stablepath):
-            if not os.path.isdir(stablepath):
-                os.remove(stablepath)
-                os.makedirs(stablepath, exist_ok=True)
-        else:
-            os.makedirs(stablepath, exist_ok=True)
-        outputpath = os.path.join(cache_dir, 'output')
-        if os.path.exists(outputpath):
-            if not os.path.isdir(outputpath):
-                os.remove(outputpath)
-                os.makedirs(outputpath, exist_ok=True)
-        else:
-            os.makedirs(outputpath, exist_ok=True)
 
     def check_consistency(self):
         """Perform all necessary checks to protect consistency of parameters."""
@@ -1525,24 +1502,12 @@ class HeatPumpBase:
             init_path = stable_state if self.nw.status >= 3 else None
 
             self.nw.solve(
-                'offdesign', design_path=self.design_path,
+                'offdesign', design_path=self._design_state,
                 init_path=init_path, oscillation_damping=True
             )
 
-<<<<<<< HEAD
             if self.nw.status < 3:
                 stable_state = self.nw.save(as_dict=True)
-=======
-                    try:
-                        self.nw.solve(
-                            'offdesign', design_path=self.design_path
-                        )
-                        self.perform_exergy_analysis()
-                        failed = False
-                    except ValueError:
-                        self.nw.reset_topology_reduction_specifications()
-                        failed = True
->>>>>>> origin/main
 
             # status 0 and 1 both require the Newton loop's own convergence
             # check to have passed first (residual norm and increment both

@@ -1,6 +1,3 @@
-import os
-
-import platformdirs
 from CoolProp.CoolProp import PropsSI as PSI
 
 if __name__ == '__main__':
@@ -19,17 +16,12 @@ class HeatPumpCascadeBase(HeatPumpBase):
         self.so = self.params['fluids']['so']
 
     def _init_dir_paths(self):
-        """Initialize paths and directories."""
+        """Initialize subdirectory name for output files."""
         self.subdirname = (
             f"{self.params['setup']['type']}_"
             + f"{self.params['setup']['refrig1'].replace('::', '_')}_"
             + f"{self.params['setup']['refrig2'].replace('::', '_')}"
             )
-        cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
-        self.design_path = os.path.join(
-            cache_dir, 'stable', f'{self.subdirname}_design'
-            )
-        self.validate_dir()
 
     def generate_state_diagram(self, refrig='', diagram_type='logph',
                                style='light', figsize=(16, 10), fontsize=10,
