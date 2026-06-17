@@ -1529,8 +1529,20 @@ class HeatPumpBase:
                 init_path=init_path, oscillation_damping=True
             )
 
+<<<<<<< HEAD
             if self.nw.status < 3:
                 stable_state = self.nw.save(as_dict=True)
+=======
+                    try:
+                        self.nw.solve(
+                            'offdesign', design_path=self.design_path
+                        )
+                        self.perform_exergy_analysis()
+                        failed = False
+                    except ValueError:
+                        self.nw.reset_topology_reduction_specifications()
+                        failed = True
+>>>>>>> origin/main
 
             # status 0 and 1 both require the Newton loop's own convergence
             # check to have passed first (residual norm and increment both

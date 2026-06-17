@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "heatpumps"
 description = "Collection of TESPy heat pump models and additional Streamlit dashboard."
-version = "1.4.0"
+version = "1.4.1"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.11"
