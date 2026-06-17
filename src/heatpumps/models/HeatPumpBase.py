@@ -1524,15 +1524,10 @@ class HeatPumpBase:
             # left singular (3) or crashed (99).
             init_path = stable_state if self.nw.status >= 3 else None
 
-            try:
-                self.nw.solve(
-                    'offdesign', design_path=self.design_path,
-                    init_path=init_path, oscillation_damping=True
-                )
-            except ValueError:
-                # in case an error escapes tespy's own internal handling
-                # (which otherwise catches these and sets status 99 itself)
-                self.nw.status = 99
+            self.nw.solve(
+                'offdesign', design_path=self.design_path,
+                init_path=init_path, oscillation_damping=True
+            )
 
             if self.nw.status < 3:
                 stable_state = self.nw.save(as_dict=True)
