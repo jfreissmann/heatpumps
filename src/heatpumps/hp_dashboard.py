@@ -826,7 +826,7 @@ if mode == txt('mode_option_design'):
                 verschiedene zentrale Parameter des Kreisprozesse vorzugeben.
 
                 Dies sind zum Beispiel die Temperaturen der Wärmequelle und
-                -senke, aber auch die dazugehörigen Netzdrücke. Darüber hinaus
+                -senke. Darüber hinaus
                 kann optional ein interner Wärmeübertrager hinzugefügt werden.
                 Dazu ist weiterhin die resultierende Überhitzung des
                 verdampften Kältemittels vorzugeben.
