@@ -1539,7 +1539,7 @@ class HeatPumpBase:
             # consistency check (computed vs. specified parameter values)
             # fails. status 2 (stalled) and 3 (singular) did not pass that
             # convergence check at all.
-            converged = self.nw.status in (0, 1)
+            converged = self.nw.status in (0, )
             if converged:
                 try:
                     self.perform_exergy_analysis()
