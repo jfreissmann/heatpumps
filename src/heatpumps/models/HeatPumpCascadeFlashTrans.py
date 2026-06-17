@@ -211,7 +211,7 @@ class HeatPumpCascadeFlashTrans(HeatPumpCascadeBase):
             )
 
         # Connections
-        self.T_mid = (self.params['B2']['T'] + self.params['C1']['T']) / 2
+        self.T_mid = (self.params['B2']['T'] + self.params['C3']['T']) / 4
 
         # Starting values
         p_evap1, p_cond1, p_mid1, p_evap2, h_trans_out, p_mid2 = self.get_pressure_levels(
@@ -279,7 +279,7 @@ class HeatPumpCascadeFlashTrans(HeatPumpCascadeBase):
 
     def intermediate_states_offdesign(self, T_hs_ff, T_cons_ff, deltaT_hs):
         """Calculates intermediate states during part-load simulation"""
-        self.T_mid = ((T_hs_ff - deltaT_hs) + T_cons_ff) / 2
+        self.T_mid = ((T_hs_ff - deltaT_hs) + T_cons_ff) / 4
         self.conns['A5'].set_attr(
             T=self.T_mid - self.params['inter']['ttd_u'] / 2
         )

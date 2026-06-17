@@ -1446,6 +1446,7 @@ class HeatPumpBase:
                         self.perform_exergy_analysis()
                         failed = False
                     except ValueError:
+                        self.nw.reset_topology_reduction_specifications()
                         failed = True
 
                     # Logging simulation

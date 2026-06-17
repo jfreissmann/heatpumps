@@ -2,6 +2,22 @@
 What's new?
 ~~~~~~~~~~~
 
+v1.4.1 -- Planetary Publication (June 16, 2026)
+==============================================
+
+Fixes
+-----
+
+- Correcting T_mid calculation in initial and final design simulation to align
+  with offdesign simulation
+- Reseting topology reduction specification when offdesign simulation fails
+
+Contributors
+------------
+
+- `@fwitte <https://github.com/fwitte>`__
+
+
 v1.4.0 -- Planetary Publication (May 12, 2026)
 ==============================================
 
