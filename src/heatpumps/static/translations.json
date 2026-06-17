@@ -323,6 +323,18 @@
         "ENG": "#### Low temperature cycle",
         "GER": "#### Niedertemperaturkreis"
     },
+    "design_refrig_info": {
+        "ENG": "All fluid properity data and classifications are from [CoolProp](http://www.coolprop.org) or [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)",
+        "GER": "Alle Stoffdaten und Klassifikationen aus [CoolProp](http://www.coolprop.org) oder [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)"
+    },
+    "design_expd_instruction": {
+        "ENG": "Instruction",
+        "GER": "Anleitung"
+    },
+    "design_instruction": {
+        "ENG": "#### Instruction\n\nYou are on the interface for simulating the design of your heat pump. To do this, you have to specify various key parameters of the cycle in the sidebar on the left including the nominal output and selection of the refrigerant to be used.\n\nThese include the temperatures of the heat source and heat sink. In addition, an internal heat exchanger can be added as an option. To do so, you have to also specify the resulting superheat of the vaporized refrigerant.\n\nOnce the design simulation is successfully completed, the generated results are presented graphically in phase diagrams and quantified. Key parameters such as the coefficient of performance (COP) as well as the relevant heat flows and power are listed. In addition, the thermodynamic state variables are listed in tabular form for all process steps.\n\nFollowing the design simulation, a button appears to switch to the part-load interface. This can also be done via the drop-down menu in the sidebar. Information on how to perform part-load simulations can be found on the home page of this interface.",
+        "GER": "#### Anleitung\n\nSie befinden sich auf der Oberfläche zur Auslegungssimulation Ihrer Wärmepumpe. Dazu sind links in der Sidebar neben der Dimensionierung und der Wahl des zu verwendenden Kältemittels verschiedene zentrale Parameter des Kreisprozesse vorzugeben.\n\nDies sind zum Beispiel die Temperaturen der Wärmequelle und -senke. Darüber hinaus kann optional ein interner Wärmeübertrager hinzugefügt werden. Dazu ist weiterhin die resultierende Überhitzung des verdampften Kältemittels vorzugeben.\n\nIst die Auslegungssimulation erfolgreich abgeschlossen, werden die generierten Ergebnisse graphisch in Zustandsdiagrammen aufgearbeitet und quantifiziert. Die zentralen Größen wie die Leistungszahl (COP) sowie die relevanten Wärmeströme und Leistung werden aufgeführt. Darüber hinaus werden die thermodynamischen Zustandsgrößen in allen Prozessschritten tabellarisch aufgelistet.\n\nIm Anschluss an die Auslegungsimulation erscheint ein Knopf zum Wechseln in die Teillastoberfläche. Dies kann ebenfalls über das Dropdownmenü in der Sidebar erfolgen. Informationen zur Durchführung der Teillastsimulationen befindet sich auf der Startseite dieser Oberfläche."
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
         "GER": "Es würde für diesen Key keine Übersetzung gefunden."

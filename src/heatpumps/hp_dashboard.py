@@ -807,45 +807,10 @@ if mode == txt('mode_option_design'):
                 st.markdown(txt('design_subheader_LT'))
                 st.dataframe(df_refrig1, width='stretch')
 
-            st.write(
-                """
-                Alle Stoffdaten und Klassifikationen aus
-                [CoolProp](http://www.coolprop.org) oder
-                [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)
-                """
-                )
+            st.write(txt('design_refrig_info'))
 
-        with st.expander('Anleitung'):
-            st.info(
-                """
-                #### Anleitung
-
-                Sie befinden sich auf der Oberfläche zur Auslegungssimulation
-                Ihrer Wärmepumpe. Dazu sind links in der Sidebar neben der
-                Dimensionierung und der Wahl des zu verwendenden Kältemittels
-                verschiedene zentrale Parameter des Kreisprozesse vorzugeben.
-
-                Dies sind zum Beispiel die Temperaturen der Wärmequelle und
-                -senke. Darüber hinaus
-                kann optional ein interner Wärmeübertrager hinzugefügt werden.
-                Dazu ist weiterhin die resultierende Überhitzung des
-                verdampften Kältemittels vorzugeben.
-
-                Ist die Auslegungssimulation erfolgreich abgeschlossen, werden
-                die generierten Ergebnisse graphisch in Zustandsdiagrammen
-                aufgearbeitet und quantifiziert. Die zentralen Größen wie die
-                Leistungszahl (COP) sowie die relevanten Wärmeströme und
-                Leistung werden aufgeführt. Darüber hinaus werden die
-                thermodynamischen Zustandsgrößen in allen Prozessschritten
-                tabellarisch aufgelistet.
-
-                Im Anschluss an die Auslegungsimulation erscheint ein Knopf zum
-                Wechseln in die Teillastoberfläche. Dies kann ebenfalls über
-                das Dropdownmenü in der Sidebar erfolgen. Informationen zur
-                Durchführung der Teillastsimulationen befindet sich auf der
-                Startseite dieser Oberfläche.
-                """
-                )
+        with st.expander(txt('design_expd_instruction')):
+            st.info(txt('design_instruction'))
 
     if run_sim:
         # %% Run Design Simulation
