@@ -188,7 +188,7 @@ class HeatPumpCascade2IHXTrans(HeatPumpCascadeBase):
         )
 
         # Connections
-        self.T_mid = (self.params['B2']['T'] + self.params['C1']['T']) / 2
+        self.T_mid = (self.params['B2']['T'] + self.params['C3']['T']) / 4
 
         # Starting values
         p_evap1, p_cond1, p_evap2, h_trans_out = self.get_pressure_levels(T_mid=self.T_mid)
