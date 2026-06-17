@@ -45,9 +45,9 @@ class HeatPumpSimpleTrans(HeatPumpBase):
         self.comps['power_distribution'] = PowerBus(
             'Power Distribution', num_in=1, num_out=3
             )
-        self.comps['motor_comp'] = Motor('Compressor Motor')
-        self.comps['motor_hs_pump'] = Motor('Heat Source Pump Motor')
-        self.comps['motor_cons_pump'] = Motor('Consumer Pump Motor')
+        self.comps['motor_comp'] = Motor(self.comps['comp'].label + ' Motor')
+        self.comps['motor_hs_pump'] = Motor(self.comps['hs_pump'].label + ' Motor')
+        self.comps['motor_cons_pump'] = Motor(self.comps['cons_pump'].label + ' Motor')
 
     def generate_connections(self):
         """Initialize and add connections and power connections to network."""
@@ -91,18 +91,18 @@ class HeatPumpSimpleTrans(HeatPumpBase):
             self.comps['trans'], 'out2', self.comps['cons'], 'in1', 'C3'
             )
 
+        self.nw.add_conns(*[conn for conn in self.conns.values()])
+
         # Power input
-        # Motor efficiency as function of partload, used for compressor and
-        # recirculation pump drives alike.
         mot_x = np.array([
             0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55,
             0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1, 1.15,
             1.2, 10
             ])
         # Normalized to 1 at x=1 (rated load): the design-point efficiency
-        # (0.98, set below) is applied separately via Motor.eta, so this
-        # curve must not also bake it in, or eta_char_func would apply it
-        # twice during offdesign (eta_out = eta_in * eta.design * f(x)).
+        # (0.98, set below per motor) is applied separately, so this curve
+        # must not also bake it in, or eta_char_func would apply it twice
+        # during offdesign.
         mot_y = np.array([
             0.01, 0.3148, 0.5346, 0.6843, 0.7835, 0.8477, 0.8885, 0.9145,
             0.9318, 0.9443, 0.9546, 0.9638, 0.9724, 0.9806, 0.9878, 0.9938,
@@ -110,42 +110,32 @@ class HeatPumpSimpleTrans(HeatPumpBase):
             0.9644
             ])
         mot = CharLine(x=mot_x, y=mot_y)
-        for motor in (
-                self.comps['motor_comp'], self.comps['motor_hs_pump'],
-                self.comps['motor_cons_pump']
-                ):
-            motor.set_attr(eta_char=mot)
 
-        self.conns['E_grid'] = PowerConnection(
-            self.comps['grid'], 'power',
-            self.comps['power_distribution'], 'power_in1', 'E_grid'
-            )
-        self.conns['E_comp_in'] = PowerConnection(
-            self.comps['power_distribution'], 'power_out1',
-            self.comps['motor_comp'], 'power_in', 'E_comp_in'
-            )
-        self.conns['E_comp_out'] = PowerConnection(
-            self.comps['motor_comp'], 'power_out',
-            self.comps['comp'], 'power', 'E_comp_out'
-            )
-        self.conns['E_hs_pump_in'] = PowerConnection(
-            self.comps['power_distribution'], 'power_out2',
-            self.comps['motor_hs_pump'], 'power_in', 'E_hs_pump_in'
-            )
-        self.conns['E_hs_pump_out'] = PowerConnection(
-            self.comps['motor_hs_pump'], 'power_out',
-            self.comps['hs_pump'], 'power', 'E_hs_pump_out'
-            )
-        self.conns['E_cons_pump_in'] = PowerConnection(
-            self.comps['power_distribution'], 'power_out3',
-            self.comps['motor_cons_pump'], 'power_in', 'E_cons_pump_in'
-            )
-        self.conns['E_cons_pump_out'] = PowerConnection(
-            self.comps['motor_cons_pump'], 'power_out',
-            self.comps['cons_pump'], 'power', 'E_cons_pump_out'
-            )
+        rotating_comps = ['comp', 'hs_pump', 'cons_pump']
+        power_conns = [
+            PowerConnection(
+                self.comps['grid'], 'power',
+                self.comps['power_distribution'], 'power_in1',
+                'E_grid'
+                )
+            ]
+        self.conns['E_grid'] = power_conns[0]
+        for i, key in enumerate(rotating_comps, start=1):
+            motor = self.comps[f'motor_{key}']
+            motor.set_attr(eta=0.98, eta_char=mot)
+            conn_in = PowerConnection(
+                self.comps['power_distribution'], f'power_out{i}',
+                motor, 'power_in', f'E_{key}_in'
+                )
+            conn_out = PowerConnection(
+                motor, 'power_out', self.comps[key], 'power',
+                f'E_{key}_out'
+                )
+            self.conns[f'E_{key}_in'] = conn_in
+            self.conns[f'E_{key}_out'] = conn_out
+            power_conns += [conn_in, conn_out]
 
-        self.nw.add_conns(*[conn for conn in self.conns.values()])
+        self.nw.add_conns(*power_conns)
 
         # Connection labels bounding the system for the exergy analysis,
         # replacing the connections previously aggregated through Buses.
@@ -168,11 +158,6 @@ class HeatPumpSimpleTrans(HeatPumpBase):
         self.comps['cons_pump'].set_attr(
             eta_s=self.params['cons_pump']['eta_s']
             )
-        for motor in (
-                self.comps['motor_comp'], self.comps['motor_hs_pump'],
-                self.comps['motor_cons_pump']
-                ):
-            motor.set_attr(eta=0.98)
 
         self.comps['evap'].set_attr(
             pr1=self.params['evap']['pr1'], pr2=self.params['evap']['pr2']
