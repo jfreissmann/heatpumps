@@ -8,7 +8,7 @@ description = "Collection of TESPy heat pump models and additional Streamlit das
 version = "1.4.1"
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = "!=3.9.7, >=3.9"
+requires-python = ">=3.11"
 authors = [
     { name = "Jonas Freißmann", email = "jonas.freissmann@web.de" },
     { name = "Malte Fritz", email = "malte.fritz@web.de" }
@@ -19,7 +19,8 @@ classifiers = [
 dependencies = [
     "coolprop>=6.4.1",
     "darkdetect>=0.8.0",
-    "fluprodia==3.3",
+    "exerpy>=0.0.7",
+    "fluprodia",
     "matplotlib>=3.6.3",
     "numpy>=1.24.0",
     "pandas>=1.5.3",
@@ -28,7 +29,7 @@ dependencies = [
     "scikit-learn>=1.2.1",
     "scipy>=1.10.0",
     "streamlit>=1.47.0,<2.0.0",
-    "tespy>=0.8.0,<0.9.0"
+    "tespy>=0.10.0,<0.11.0",
 ]
 
 [project.optional-dependencies]
