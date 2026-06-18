@@ -844,14 +844,23 @@ if mode == 'Auslegung':
                 st.success(
                     'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
                     )
-            except ValueError as e:
+            except Exception as e:
                 sim_succeded = False
-                print(f'ValueError: {e}')
+                print(f'{type(e).__name__}: {e}')
                 st.error(
                     'Bei der Simulation der Wärmepumpe ist der nachfolgende '
                     + 'Fehler aufgetreten. Bitte korrigieren Sie die '
                     + f'Eingangsparameter und versuchen es erneut.\n\n"{e}"'
                     )
+                debug_json = json.dumps(params, indent=2)
+                st.download_button(
+                    label='Download Debug-Eingabedatei (JSON)',
+                    data=debug_json,
+                    file_name=f"{params['setup']['type']}_debug.json",
+                    mime='application/json'
+                )
+                with st.expander('Eingabeparameter (kopierbar)'):
+                    st.code(debug_json, language='json')
 
         # %% MARK: Results
         if sim_succeded:
