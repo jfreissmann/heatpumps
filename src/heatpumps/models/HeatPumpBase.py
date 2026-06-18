@@ -1221,6 +1221,12 @@ class HeatPumpBase:
 
     def check_thermodynamic_results(self):
         """Perform thermodynamic checks of the main cycle components."""
+        if self.nw.status == 0:
+            return
+        elif self.nw.status > 1:
+            msg = "An unexpected error occured in the simulation."
+            raise ValueError(msg)
+
         user_help_prompt = (
             'Please check the heat pump parameters and model for thermodynamic'
             + ' plausibility.'
