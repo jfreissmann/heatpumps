@@ -1,4 +1,17 @@
+import json
+
 import variables as var
+
+
+def from_json(filepath):
+    """Instantiate and run a heat pump from a debug JSON file.
+
+    The file must be in the format produced by the dashboard on a failed design
+    simulation: ``{"model_key": "<key>", "params": {...}}``.
+    """
+    with open(filepath, encoding='utf-8') as f:
+        data = json.load(f)
+    return run_design(data['model_key'], data['params'])
 
 
 def run_design(hp_model_name, params):

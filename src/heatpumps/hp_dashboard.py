@@ -852,7 +852,9 @@ if mode == 'Auslegung':
                     + 'Fehler aufgetreten. Bitte korrigieren Sie die '
                     + f'Eingangsparameter und versuchen es erneut.\n\n"{e}"'
                     )
-                debug_json = json.dumps(params, indent=2)
+                debug_json = json.dumps(
+                    {'model_key': hp_model_name, 'params': params}, indent=2
+                )
                 st.download_button(
                     label='Download Debug-Eingabedatei (JSON)',
                     data=debug_json,
