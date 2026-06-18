@@ -1,3 +1,5 @@
+import collections
+import itertools
 import json
 import os
 from datetime import datetime
@@ -10,13 +12,99 @@ import pandas as pd
 import platformdirs
 import plotly.graph_objects as go
 from CoolProp.CoolProp import PropsSI as PSI
+from exerpy import ExergyAnalysis
 from fluprodia import FluidPropertyDiagram
 from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
 from tespy.networks import Network
-from tespy.tools import ExergyAnalysis
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
+
+
+def grid_path_order(*ranges, current=None, max_step=1):
+    """Order the Cartesian product of ``ranges`` into a path that visits
+    every combination, starting near ``current`` and never moving more
+    than ``max_step`` grid steps away from the previous point.
+
+    Distance is measured in grid-index space (one step along any axis
+    counts the same, regardless of physical units). Greedily moves to the
+    nearest unvisited point within ``max_step``, ties broken to prefer
+    changing later (faster) axes over earlier (slower) ones. When no
+    unvisited point is in reach, a breadth-first search finds the nearest
+    bridge via already-visited points (revisits), guaranteeing every
+    transition stays within ``max_step``.
+
+    Returns
+    -------
+    list of (tuple, bool)
+        ``(point, is_new)`` pairs in path order; ``is_new`` is ``False``
+        for points revisited only to bridge a gap.
+    """
+    axis_sizes = [len(r) for r in ranges]
+    if not axis_sizes:
+        return [((), True)]
+
+    all_indices = list(itertools.product(*(range(n) for n in axis_sizes)))
+
+    if current is None:
+        start_idx = tuple(0 for _ in ranges)
+    else:
+        start_idx = tuple(
+            min(range(len(r)), key=lambda i, r=r, c=c: abs(r[i] - c))
+            for r, c in zip(ranges, current)
+        )
+
+    def l1(a, b):
+        return sum(abs(x - y) for x, y in zip(a, b))
+
+    unvisited = set(all_indices)
+    unvisited.discard(start_idx)
+    path = [(start_idx, True)]
+    current_idx = start_idx
+
+    while unvisited:
+        candidates = [p for p in unvisited if l1(current_idx, p) <= max_step]
+        if candidates:
+            next_idx = min(
+                candidates,
+                key=lambda p: (
+                    l1(current_idx, p),
+                    tuple(abs(a - b) for a, b in zip(current_idx, p)),
+                ),
+            )
+        else:
+            queue = collections.deque([current_idx])
+            came_from = {current_idx: None}
+            target = None
+            while queue:
+                node = queue.popleft()
+                if node in unvisited:
+                    target = node
+                    break
+                for cand in all_indices:
+                    if cand not in came_from and l1(node, cand) <= max_step:
+                        came_from[cand] = node
+                        queue.append(cand)
+            bridge = []
+            node = target
+            while node is not None:
+                bridge.append(node)
+                node = came_from[node]
+            bridge.reverse()
+            path.extend((node, False) for node in bridge[1:-1])
+            path.append((bridge[-1], True))
+            current_idx = bridge[-1]
+            unvisited.discard(current_idx)
+            continue
+
+        path.append((next_idx, True))
+        unvisited.discard(next_idx)
+        current_idx = next_idx
+
+    return [
+        (tuple(r[i] for r, i in zip(ranges, idx)), is_new)
+        for idx, is_new in path
+    ]
 
 
 class HeatPumpBase:
@@ -26,15 +114,16 @@ class HeatPumpBase:
         """Initialize model and set necessary attributes."""
         self.params = params
 
-        self.nw = Network(
-            T_unit='C', p_unit='bar', h_unit='kJ / kg', m_unit='kg / s'
+        self.nw = Network()
+        self.nw.units.set_defaults(
+            temperature='degC', pressure='bar', enthalpy='kJ / kg',
+            mass_flow='kg / s'
             )
 
         self._init_fluids()
 
         self.comps = dict()
         self.conns = dict()
-        self.buses = dict()
 
         self.cop = np.nan
         self.cop_lorenz = np.nan
@@ -43,6 +132,7 @@ class HeatPumpBase:
         self.eta_carnot = np.nan
         self.epsilon = np.nan
         self.solved_design = False
+        self._design_state = None
 
         self._init_vals = {
             'm_dot_rel_econ_closed': 0.9,
@@ -61,7 +151,17 @@ class HeatPumpBase:
         """Initialize components of heat pump."""
 
     def generate_connections(self):
-        """Initialize and add connections and buses to network."""
+        """Initialize and add connections to network."""
+
+    @property
+    def power_input(self):
+        """Total electrical power drawn from the grid in W."""
+        return self.conns['E_grid'].E.val_SI
+
+    @property
+    def heat_output(self):
+        """Heat output delivered to the consumer in W."""
+        return abs(self.comps['cons'].Q.val_SI)
 
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
@@ -80,16 +180,12 @@ class HeatPumpBase:
                 self.nw.print_results()
         if self.nw.residual[-1] < 1e-3:
             self.solved_design = True
-            os.makedirs(os.path.dirname(self.design_path), exist_ok=True)
-            self.nw.save(self.design_path)
+            self._design_state = self.nw.save(as_dict=True)
 
     def calc_efficiencies(self):
         """Calculate ideal and simulated cycle efficiencies."""
         # Simulated net Coefficient of Performance
-        self.cop = (
-            abs(self.buses['heat output'].P.val)
-            / self.buses['power input'].P.val
-            )
+        self.cop = self.heat_output / self.power_input
 
         # Ideal Coefficient of Performance of the equivalent Lorenz cycle
         T_ln_source = (
@@ -138,19 +234,20 @@ class HeatPumpBase:
             print(f'Carnot \\eta = {self.eta_carnot:.3f}')
 
     def create_ranges(self):
-        """Create stable and base ranges for T_hs_ff, T_cons_ff and pl."""
+        """Create ranges for T_hs_ff, T_cons_ff and pl, plus a traversal
+        path through their grid for the offdesign sweep, see
+        :func:`grid_path_order`. The path starts at the grid point nearest
+        to the design state and only ever moves a single grid step away
+        from the previous point (revisiting already-solved points as
+        stepping stones where needed), so every offdesign simulation gets
+        the best available warm start from one already solved.
+        """
         self.T_hs_ff_range = np.linspace(
             self.params['offdesign']['T_hs_ff_start'],
             self.params['offdesign']['T_hs_ff_end'],
             self.params['offdesign']['T_hs_ff_steps'],
             endpoint=True
             ).round(decimals=3)
-        half_len_hs = int(len(self.T_hs_ff_range)/2) - 1
-        self.T_hs_ff_stablerange = np.concatenate([
-            self.T_hs_ff_range[half_len_hs::-1],
-            self.T_hs_ff_range,
-            self.T_hs_ff_range[:half_len_hs:-1]
-            ])
 
         self.T_cons_ff_range = np.linspace(
             self.params['offdesign']['T_cons_ff_start'],
@@ -158,12 +255,6 @@ class HeatPumpBase:
             self.params['offdesign']['T_cons_ff_steps'],
             endpoint=True
             ).round(decimals=3)
-        half_len_cons = int(len(self.T_cons_ff_range)/2) - 1
-        self.T_cons_ff_stablerange = np.concatenate([
-            self.T_cons_ff_range[half_len_cons::-1],
-            self.T_cons_ff_range,
-            self.T_cons_ff_range[:half_len_cons:-1]
-            ])
 
         self.pl_range = np.linspace(
             self.params['offdesign']['partload_min'],
@@ -171,8 +262,11 @@ class HeatPumpBase:
             self.params['offdesign']['partload_steps'],
             endpoint=True
             ).round(decimals=3)
-        self.pl_stablerange = np.concatenate(
-            [self.pl_range[::-1], self.pl_range]
+
+        self.offdesign_path = grid_path_order(
+            self.T_hs_ff_range, self.T_cons_ff_range, self.pl_range,
+            current=(self.params['B1']['T'], self.params['C3']['T'], 1.0),
+            max_step=1,
             )
 
     def df_to_array(self, results_offdesign):
@@ -267,18 +361,18 @@ class HeatPumpBase:
 
             elif comptype == 'HeatExchanger':
                 if 'Evaporator' in complabel or 'Economizer' in complabel:
-                    val = comp.kA.val / k_evap
+                    val = comp.UA.val / k_evap
                 elif 'Transcritical' in complabel:
-                    val = comp.kA.val / k_trans
+                    val = comp.UA.val / k_trans
                 else:
-                    val = comp.kA.val / k_misc
+                    val = comp.UA.val / k_misc
                 self.cost[complabel] = self.eval_costfunc(
                     val, 42, 15526, 0.80
                     ) * cepci_factor
                 self.design_params[complabel] = val
 
             elif comptype == 'Condenser':
-                val = comp.kA.val / k_cond
+                val = comp.UA.val / k_cond
                 self.cost[complabel] = self.eval_costfunc(
                     val, 42, 15526, 0.80
                     ) * cepci_factor
@@ -333,18 +427,19 @@ class HeatPumpBase:
 
     def perform_exergy_analysis(self, print_results=False, **kwargs):
         """Perform exergy analysis."""
-        self.ean = ExergyAnalysis(
+        self.ean = ExergyAnalysis.from_tespy(
             self.nw,
-            E_F=[self.buses['power input'], self.buses['heat input']],
-            E_P=[self.buses['heat output']]
+            Tamb=self.params['ambient']['T'] + 273.15,
+            pamb=self.params['ambient']['p'] * 1e5
             )
         self.ean.analyse(
-            pamb=self.params['ambient']['p'], Tamb=self.params['ambient']['T']
+            E_F=self.exergy_boundary['fuel'],
+            E_P=self.exergy_boundary['product']
             )
         if print_results:
-            self.ean.print_results(**kwargs)
+            self.ean.exergy_results(print_results=True)
 
-        self.epsilon = self.ean.network_data['epsilon']
+        self.epsilon = self.ean.epsilon
 
     def get_plotting_states(self):
         """Generate data of states to plot in state diagram."""
@@ -591,29 +686,13 @@ class HeatPumpBase:
             return diagram
 
     def generate_sankey_diagram(self, width=None, height=None):
-        """Sankey Diagram of Heat Pump model"""
-        links, nodes = self.ean.generate_plotly_sankey_input(
-            colors={
-                'E_F': '#00395B',
-                'E_P': '#B54036',
-                'E_L': '#EC6707',
-                'E_D': '#EC6707',
-                'work': '#BFBFBF',
-                'heat': '#BFBFBF',
-                'two-phase-fluid': '#74ADC0'
-            }
-        )
-        fig = go.Figure(
-            go.Sankey(
-                arrangement='snap',
-                node={
-                    'label': nodes,
-                    'pad': 15,
-                    'color': '#EC6707'
-                    },
-                link=links
-            )
-        )
+        """Sankey Diagram of Heat Pump model.
+
+        TODO: exerpy (the replacement for tespy's removed ExergyAnalysis)
+        has no equivalent of the old ``generate_plotly_sankey_input`` method,
+        so this currently returns an empty placeholder figure.
+        """
+        fig = go.Figure(go.Sankey(arrangement='snap', node={}, link={}))
 
         if width is not None:
             fig.update_layout(width=width)
@@ -626,23 +705,25 @@ class HeatPumpBase:
     def generate_waterfall_diagram(self, figsize=(16, 10), legend=True,
                                    return_fig_ax=False, show_epsilon=True):
         """Generates waterfall diagram of exergy analysis"""
+        df_components, _, _ = self.ean.exergy_results(print_results=False)
+        df_components = df_components.set_index('Component')
+
         comps = ['Fuel Exergy']
-        E_F = self.ean.network_data.E_F
+        E_F = self.ean.E_F * 1e-3
         E_D = [0]
         E_P = [E_F]
-        for comp in self.ean.aggregation_data.sort_values(by='E_D', ascending=False).index:
+        for comp in df_components.sort_values(
+                by='E_D [kW]', ascending=False
+                ).index:
             # only plot components with exergy destruction > 1 W
-            if self.ean.aggregation_data.E_D[comp] > 1:
+            if df_components.loc[comp, 'E_D [kW]'] > 1e-3:
                 comps.append(comp)
-                E_D.append(self.ean.aggregation_data.E_D[comp])
-                E_F = E_F - self.ean.aggregation_data.E_D[comp]
+                E_D.append(df_components.loc[comp, 'E_D [kW]'])
+                E_F = E_F - df_components.loc[comp, 'E_D [kW]']
                 E_P.append(E_F)
         comps.append('Product Exergy')
         E_D.append(0)
         E_P.append(E_F)
-
-        E_D = [E * 1e-3 for E in E_D]
-        E_P = [E * 1e-3 for E in E_P]
 
         colors_E_P = ['#74ADC0'] * len(comps)
         colors_E_P[0] = '#00395B'
@@ -664,20 +745,19 @@ class HeatPumpBase:
 
         if show_epsilon:
             ax.annotate(
-                f'$\epsilon_{{tot}} = ${self.ean.network_data.epsilon:.3f}',
+                rf'$\epsilon_{{tot}} = ${self.ean.epsilon:.3f}',
                 (0.96, 0.06),
                 xycoords='axes fraction',
                 ha='right', va='center', color='k',
                 bbox=dict(boxstyle='round,pad=0.3', fc='white')
             )
 
+        E_F_total_kW = self.ean.E_F * 1e-3
         ax.set_xlabel('Exergy in kW')
         ax.set_yticks(np.arange(len(comps)))
         ax.set_yticklabels(comps)
-        ax.set_xlim([0, ((self.ean.network_data.E_F) / 1000) + 1000])
-        ax.set_xticks(
-            np.linspace(0, ((self.ean.network_data.E_F) / 1000) + 1000, 9)
-            )
+        ax.set_xlim([0, E_F_total_kW + 1000])
+        ax.set_xticks(np.linspace(0, E_F_total_kW + 1000, 9))
         ax.invert_yaxis()
         ax.grid(axis='x')
         ax.set_axisbelow(True)
@@ -1129,34 +1209,11 @@ class HeatPumpBase:
             plt.show()
 
     def _init_dir_paths(self):
-        """Initialize paths and directories."""
+        """Initialize subdirectory name for output files."""
         self.subdirname = (
             f"{self.params['setup']['type']}_"
             + f"{self.params['setup']['refrig'].replace('::', '_')}"
             )
-        cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
-        self.design_path = os.path.join(
-            cache_dir, 'stable', f'{self.subdirname}_design.json'
-            )
-        self.validate_dir()
-
-    def validate_dir(self):
-        """Check for cache directories and create them if necessary."""
-        cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
-        stablepath = os.path.join(cache_dir, 'stable')
-        if os.path.exists(stablepath):
-            if not os.path.isdir(stablepath):
-                os.remove(stablepath)
-                os.makedirs(stablepath, exist_ok=True)
-        else:
-            os.makedirs(stablepath, exist_ok=True)
-        outputpath = os.path.join(cache_dir, 'output')
-        if os.path.exists(outputpath):
-            if not os.path.isdir(outputpath):
-                os.remove(outputpath)
-                os.makedirs(outputpath, exist_ok=True)
-        else:
-            os.makedirs(outputpath, exist_ok=True)
 
     def check_consistency(self):
         """Perform all necessary checks to protect consistency of parameters."""
@@ -1164,6 +1221,12 @@ class HeatPumpBase:
 
     def check_thermodynamic_results(self):
         """Perform thermodynamic checks of the main cycle components."""
+        if self.nw.status == 0:
+            return
+        elif self.nw.status > 1:
+            msg = "An unexpected error occured in the simulation."
+            raise ValueError(msg)
+
         user_help_prompt = (
             'Please check the heat pump parameters and model for thermodynamic'
             + ' plausibility.'
@@ -1310,20 +1373,20 @@ class HeatPumpBase:
             )
 
         # Parametrization
-        kA_char1_default = ldc(
-            'heat exchanger', 'kA_char1', 'DEFAULT', CharLine
+        UA_char1_default = ldc(
+            'HeatExchanger', 'UA_char1', 'DEFAULT', CharLine
         )
-        kA_char1_cond = ldc(
-            'heat exchanger', 'kA_char1', 'CONDENSING FLUID', CharLine
+        UA_char1_cond = ldc(
+            'HeatExchanger', 'UA_char1', 'CONDENSING FLUID', CharLine
         )
-        kA_char2_evap = ldc(
-            'heat exchanger', 'kA_char2', 'EVAPORATING FLUID', CharLine
+        UA_char2_evap = ldc(
+            'HeatExchanger', 'UA_char2', 'EVAPORATING FLUID', CharLine
         )
-        kA_char2_default = ldc(
-            'heat exchanger', 'kA_char2', 'DEFAULT', CharLine
+        UA_char2_default = ldc(
+            'HeatExchanger', 'UA_char2', 'DEFAULT', CharLine
         )
 
-        tespy_components = ['Condenser', 'HeatExchanger', 'Compressor', 'Pump', 'SimpleHeatExchanger']
+        tespy_components = ['Condenser', 'HeatExchanger', 'Compressor', 'Pump', 'SimpleHeatExchanger', 'Motor']
 
         # Extract the label of the above necessary tespy components.
         # And then extracts the object of the components for parametrization
@@ -1341,41 +1404,45 @@ class HeatPumpBase:
                     object.set_attr(
                         design=['eta_s'], offdesign=['eta_s_char']
                     )
+                elif comp == 'Motor':
+                    object.set_attr(
+                        design=['eta'], offdesign=['eta_char']
+                    )
                 elif comp == 'HeatExchanger':
                     # for models with internal heat exchanger
                     if 'Internal Heat Exchanger' in label:
                         object.set_attr(
-                            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
-                            design=['pr1', 'pr2'], offdesign=['zeta1', 'zeta2']
+                            UA_char1=UA_char1_default, UA_char2=UA_char2_default,
+                            design=['pr1', 'pr2'], offdesign=['zeta1_d4', 'zeta2_d4']
                         )
 
                     # For models with Transcritical heat exchanger
                     elif 'Transcritical' in label:
                         object.set_attr(
-                            kA_char1=kA_char1_default, kA_char2=kA_char2_default,
-                            design=['pr2', 'ttd_l'], offdesign=['zeta2', 'kA_char']
+                            UA_char1=UA_char1_default, UA_char2=UA_char2_default,
+                            design=['pr2', 'ttd_l'], offdesign=['zeta2_d4', 'UA_char']
                         )
 
                     # For cascade model's Intermediate heat exchanger
                     elif 'Intermediate Heat Exchanger' in label:
                         object.set_attr(
-                            kA_char1=kA_char1_cond, kA_char2=kA_char2_evap,
-                            design=['pr1', 'ttd_u'], offdesign=['zeta1', 'kA_char']
+                            UA_char1=UA_char1_cond, UA_char2=UA_char2_evap,
+                            design=['pr1', 'ttd_u'], offdesign=['zeta1_d4', 'UA_char']
                         )
                     else:
                         # For models with evaporator and economizer
                         object.set_attr(
-                            kA_char1=kA_char1_default, kA_char2=kA_char2_evap,
-                            design=['pr1', 'ttd_l'], offdesign=['zeta1', 'kA_char']
+                            UA_char1=UA_char1_default, UA_char2=UA_char2_evap,
+                            design=['pr1', 'ttd_l'], offdesign=['zeta1_d4', 'UA_char']
                         )
                 elif comp == 'Condenser':
                     object.set_attr(
-                        kA_char1=kA_char1_cond, kA_char2=kA_char2_default,
-                        design=['pr2', 'ttd_u'], offdesign=['zeta2', 'kA_char']
+                        UA_char1=UA_char1_cond, UA_char2=UA_char2_default,
+                        design=['pr2', 'ttd_u'], offdesign=['zeta2_d4', 'UA_char']
                     )
                 elif comp == 'SimpleHeatExchanger':
                     object.set_attr(
-                        design=['pr'], offdesign=['zeta']
+                        design=['pr'], offdesign=['zeta_d4']
                     )
                 else:
                     raise ValueError(
@@ -1405,122 +1472,112 @@ class HeatPumpBase:
             index=multiindex, columns=['Q', 'P', 'COP', 'epsilon', 'residual']
         )
 
-        for T_hs_ff in self.T_hs_ff_stablerange:
+        # In-memory snapshot of the last good network state (tespy's
+        # `save(as_dict=True)`), used to recover if a later point leaves
+        # the network in a bad state. No disk I/O needed for this.
+        stable_state = None
+
+        n_points = len(self.offdesign_path)
+        for i, ((T_hs_ff, T_cons_ff, pl), is_new) in enumerate(self.offdesign_path):
+            revisit_tag = '' if is_new else ' (revisit, bridging a gap)'
+            print(
+                f'### [{i + 1}/{n_points}] Temp. HS = {T_hs_ff} °C, Temp. '
+                + f'Cons = {T_cons_ff} °C, Partload = {pl * 100} %'
+                + f'{revisit_tag} ###'
+            )
             self.conns['B1'].set_attr(T=T_hs_ff)
             if T_hs_ff <= 7:
                 self.conns['B2'].set_attr(T=2)
             else:
                 self.conns['B2'].set_attr(T=T_hs_ff - deltaT_hs)
+            self.conns['C3'].set_attr(T=T_cons_ff)
 
-            for T_cons_ff in self.T_cons_ff_stablerange:
-                self.conns['C3'].set_attr(T=T_cons_ff)
+            self.intermediate_states_offdesign(T_hs_ff, T_cons_ff, deltaT_hs)
 
-                self.intermediate_states_offdesign(T_hs_ff, T_cons_ff, deltaT_hs)
+            self.comps['cons'].set_attr(Q=None)
+            self.conns['A0'].set_attr(m=pl * self.m_design)
 
-                for pl in self.pl_stablerange[::-1]:
-                    print(
-                        f'### Temp. HS = {T_hs_ff} °C, Temp. Cons = '
-                        + f'{T_cons_ff} °C, Partload = {pl * 100} % ###'
-                    )
-                    self.init_path = None
-                    no_init_path = (
-                            (T_cons_ff != self.T_cons_ff_range[0])
-                            and (pl == self.pl_range[-1])
-                    )
-                    if no_init_path:
-                        cache_dir = platformdirs.user_cache_dir(
-                            'heatpumps', 'heatpumps'
-                        )
-                        os.makedirs(cache_dir, exist_ok=True)
-                        self.init_path = os.path.join(
-                            cache_dir, 'stable', f'{self.subdirname}_init.json'
-                        )
+            # The grid path (see `create_ranges`) means the in-memory
+            # connection state left over from the previous point is
+            # already a good warm start for this one (at most 1 grid step
+            # away). tespy's own status codes 0 (converged), 1 (not
+            # converged but stable) and 2 (stalled) all leave the network
+            # in a state that's fine to continue warm-starting from. Only
+            # fall back to the last known-good snapshot if the network was
+            # left singular (3) or crashed (99).
+            init_path = stable_state if self.nw.status >= 3 else None
 
-                    self.comps['cons'].set_attr(Q=None)
-                    self.conns['A0'].set_attr(m=pl * self.m_design)
+            self.nw.solve(
+                'offdesign', design_path=self._design_state,
+                init_path=init_path, oscillation_damping=True
+            )
 
-                    try:
-                        self.nw.solve(
-                            'offdesign', design_path=self.design_path
-                        )
-                        self.perform_exergy_analysis()
-                        failed = False
-                    except ValueError:
-                        failed = True
+            if self.nw.status < 3:
+                stable_state = self.nw.save(as_dict=True)
 
-                    # Logging simulation
-                    if log_simulations:
-                        cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
-                        logdirpath = os.path.join(cache_dir, 'output', 'logging')
-                        os.makedirs(logdirpath, exist_ok=True)
-                        logpath = os.path.join(
-                            logdirpath, f'{self.subdirname}_offdesign_log.csv'
-                        )
-                        timestamp = datetime.fromtimestamp(time()).strftime(
-                            '%H:%M:%S'
-                        )
-                        log_entry = (
-                                f'{timestamp};{(self.nw.residual[-1] < 1e-3)};'
-                                + f'{T_hs_ff:.2f};{T_cons_ff:.2f};{pl:.1f};'
-                                + f'{self.nw.residual[-1]:.2e}\n'
-                        )
-                        if not os.path.exists(logpath):
-                            with open(logpath, 'w', encoding='utf-8') as file:
-                                file.write(
-                                    'Time;converged;Temp HS;Temp Cons;Partload;'
-                                    + 'Residual\n'
-                                )
-                                file.write(log_entry)
-                        else:
-                            with open(logpath, 'a', encoding='utf-8') as file:
-                                file.write(log_entry)
+            # status 0 and 1 both require the Newton loop's own convergence
+            # check to have passed first (residual norm and increment both
+            # below tespy's internal threshold, see `Network._solve_loop`);
+            # 1 is only a postprocessing downgrade of 0 when a further
+            # consistency check (computed vs. specified parameter values)
+            # fails. status 2 (stalled) and 3 (singular) did not pass that
+            # convergence check at all.
+            converged = self.nw.status in (0, )
+            if converged:
+                try:
+                    self.perform_exergy_analysis()
+                    epsilon = round(self.ean.epsilon, 3)
+                except (ValueError, AttributeError):
+                    # exerpy's exergy balance can fail on certain offdesign
+                    # states (e.g. a component exergy classification edge
+                    # case), where the old tespy Bus-based ExergyAnalysis
+                    # did not raise. This does not affect Q/P, which come
+                    # directly from the (converged) network.
+                    epsilon = np.nan
 
-                    if pl == self.pl_range[-1] and self.nw.residual[-1] < 1e-3:
-                        cache_dir = platformdirs.user_cache_dir(
-                            'heatpumps', 'heatpumps'
+            # Logging simulation
+            if log_simulations:
+                cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
+                logdirpath = os.path.join(cache_dir, 'output', 'logging')
+                os.makedirs(logdirpath, exist_ok=True)
+                logpath = os.path.join(
+                    logdirpath, f'{self.subdirname}_offdesign_log.csv'
+                )
+                timestamp = datetime.fromtimestamp(time()).strftime(
+                    '%H:%M:%S'
+                )
+                log_entry = (
+                        f'{timestamp};{converged};'
+                        + f'{T_hs_ff:.2f};{T_cons_ff:.2f};{pl:.1f};'
+                        + f'{self.nw.residual_history[-1]:.2e};'
+                        + f'{i + 1};{is_new}\n'
+                )
+                if not os.path.exists(logpath):
+                    with open(logpath, 'w', encoding='utf-8') as file:
+                        file.write(
+                            'Time;converged;Temp HS;Temp Cons;Partload;'
+                            + 'Residual;Sweep order;New point\n'
                         )
-                        os.makedirs(cache_dir, exist_ok=True)
-                        cache_init_path = os.path.join(
-                            cache_dir, 'stable', f'{self.subdirname}_init.json'
-                        )
-                        self.nw.save(cache_init_path)
+                        file.write(log_entry)
+                else:
+                    with open(logpath, 'a', encoding='utf-8') as file:
+                        file.write(log_entry)
 
-                    inranges = (
-                            (T_hs_ff in self.T_hs_ff_range)
-                            & (T_cons_ff in self.T_cons_ff_range)
-                            & (pl in self.pl_range)
-                    )
-                    idx = (T_hs_ff, T_cons_ff, pl)
-                    if inranges:
-                        empty_or_worse = (
-                                pd.isnull(results_offdesign.loc[idx, 'Q'])
-                                or (self.nw.residual[-1]
-                                    < results_offdesign.loc[idx, 'residual']
-                                    )
-                        )
-                        if empty_or_worse:
-                            if failed:
-                                results_offdesign.loc[idx, 'Q'] = np.nan
-                                results_offdesign.loc[idx, 'P'] = np.nan
-                                results_offdesign.loc[idx, 'epsilon'] = np.nan
-                            else:
-                                results_offdesign.loc[idx, 'Q'] = abs(
-                                    self.buses['heat output'].P.val * 1e-6
-                                )
-                                results_offdesign.loc[idx, 'P'] = (
-                                        self.buses['power input'].P.val * 1e-6
-                                )
-                                results_offdesign.loc[idx, 'epsilon'] = round(
-                                    self.ean.network_data['epsilon'], 3
-                                )
+            idx = (T_hs_ff, T_cons_ff, pl)
+            if converged:
+                results_offdesign.loc[idx, 'Q'] = self.heat_output * 1e-6
+                results_offdesign.loc[idx, 'P'] = self.power_input * 1e-6
+                results_offdesign.loc[idx, 'epsilon'] = epsilon
+            else:
+                results_offdesign.loc[idx, 'Q'] = np.nan
+                results_offdesign.loc[idx, 'P'] = np.nan
+                results_offdesign.loc[idx, 'epsilon'] = np.nan
 
-                            results_offdesign.loc[idx, 'COP'] = (
-                                    results_offdesign.loc[idx, 'Q']
-                                    / results_offdesign.loc[idx, 'P']
-                            )
-                            results_offdesign.loc[idx, 'residual'] = (
-                                self.nw.residual[-1]
-                            )
+            results_offdesign.loc[idx, 'COP'] = (
+                    results_offdesign.loc[idx, 'Q']
+                    / results_offdesign.loc[idx, 'P']
+            )
+            results_offdesign.loc[idx, 'residual'] = self.nw.residual_history[-1]
 
         if self.params['offdesign']['save_results']:
             cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
