@@ -2,6 +2,104 @@ import json
 import os
 from importlib import resources
 
+from heatpumps.models import (
+    HeatPumpSimple, HeatPumpSimpleTrans,
+    HeatPumpIHX, HeatPumpIHXTrans,
+    HeatPumpIC, HeatPumpICTrans,
+    HeatPumpEcon, HeatPumpEconTrans, HeatPumpEconIHX, HeatPumpEconIHXTrans,
+    HeatPumpIHXEcon, HeatPumpIHXEconTrans,
+    HeatPumpPC, HeatPumpPCTrans, HeatPumpPCIHX, HeatPumpPCIHXTrans,
+    HeatPumpIHXPC, HeatPumpIHXPCTrans, HeatPumpIHXPCIHX, HeatPumpIHXPCIHXTrans,
+    HeatPumpFlash, HeatPumpFlashTrans,
+    HeatPumpCascade, HeatPumpCascadeTrans,
+    HeatPumpCascade2IHX, HeatPumpCascade2IHXTrans,
+    HeatPumpCascadeIC, HeatPumpCascadeICTrans,
+    HeatPumpCascadeFlash, HeatPumpCascadeFlashTrans,
+    HeatPumpCascadeEcon, HeatPumpCascadeEconTrans,
+    HeatPumpCascadeEconIHX, HeatPumpCascadeEconIHXTrans,
+    HeatPumpCascadeIHXEcon, HeatPumpCascadeIHXEconTrans,
+    HeatPumpCascadePC, HeatPumpCascadePCTrans,
+    HeatPumpCascadePCIHX, HeatPumpCascadePCIHXTrans,
+    HeatPumpCascadeIHXPC, HeatPumpCascadeIHXPCTrans,
+    HeatPumpCascadeIHXPCIHX, HeatPumpCascadeIHXPCIHXTrans,
+)
+
+# Maps model_key → (class, econ_type or None)
+_model_registry = {
+    'simple':                           (HeatPumpSimple,            None),
+    'simple_trans':                     (HeatPumpSimpleTrans,        None),
+    'ihx':                              (HeatPumpIHX,               None),
+    'ihx_trans':                        (HeatPumpIHXTrans,           None),
+    'ic':                               (HeatPumpIC,                None),
+    'ic_trans':                         (HeatPumpICTrans,            None),
+    'econ_closed':                      (HeatPumpEcon,              'closed'),
+    'econ_closed_trans':                (HeatPumpEconTrans,          'closed'),
+    'econ_closed_ihx':                  (HeatPumpEconIHX,           'closed'),
+    'econ_closed_ihx_trans':            (HeatPumpEconIHXTrans,       'closed'),
+    'econ_open':                        (HeatPumpEcon,              'open'),
+    'econ_open_trans':                  (HeatPumpEconTrans,          'open'),
+    'econ_open_ihx':                    (HeatPumpEconIHX,           'open'),
+    'econ_open_ihx_trans':              (HeatPumpEconIHXTrans,       'open'),
+    'ihx_econ_closed':                  (HeatPumpIHXEcon,           'closed'),
+    'ihx_econ_closed_trans':            (HeatPumpIHXEconTrans,       'closed'),
+    'ihx_econ_open':                    (HeatPumpIHXEcon,           'open'),
+    'ihx_econ_open_trans':              (HeatPumpIHXEconTrans,       'open'),
+    'pc_econ_closed':                   (HeatPumpPC,                'closed'),
+    'pc_econ_closed_trans':             (HeatPumpPCTrans,            'closed'),
+    'pc_econ_closed_ihx':               (HeatPumpPCIHX,             'closed'),
+    'pc_econ_closed_ihx_trans':         (HeatPumpPCIHXTrans,         'closed'),
+    'pc_econ_open':                     (HeatPumpPC,                'open'),
+    'pc_econ_open_trans':               (HeatPumpPCTrans,            'open'),
+    'pc_econ_open_ihx':                 (HeatPumpPCIHX,             'open'),
+    'pc_econ_open_ihx_trans':           (HeatPumpPCIHXTrans,         'open'),
+    'ihx_pc_econ_closed':               (HeatPumpIHXPC,             'closed'),
+    'ihx_pc_econ_closed_trans':         (HeatPumpIHXPCTrans,         'closed'),
+    'ihx_pc_econ_closed_ihx':           (HeatPumpIHXPCIHX,          'closed'),
+    'ihx_pc_econ_closed_ihx_trans':     (HeatPumpIHXPCIHXTrans,      'closed'),
+    'ihx_pc_econ_open':                 (HeatPumpIHXPC,             'open'),
+    'ihx_pc_econ_open_trans':           (HeatPumpIHXPCTrans,         'open'),
+    'ihx_pc_econ_open_ihx':             (HeatPumpIHXPCIHX,          'open'),
+    'ihx_pc_econ_open_ihx_trans':       (HeatPumpIHXPCIHXTrans,      'open'),
+    'flash':                            (HeatPumpFlash,             None),
+    'flash_trans':                      (HeatPumpFlashTrans,         None),
+    'cascade':                          (HeatPumpCascade,           None),
+    'cascade_trans':                    (HeatPumpCascadeTrans,       None),
+    'cascade_2ihx':                     (HeatPumpCascade2IHX,       None),
+    'cascade_2ihx_trans':               (HeatPumpCascade2IHXTrans,  None),
+    'cascade_ic':                       (HeatPumpCascadeIC,         None),
+    'cascade_ic_trans':                 (HeatPumpCascadeICTrans,     None),
+    'cascade_flash':                    (HeatPumpCascadeFlash,      None),
+    'cascade_flash_trans':              (HeatPumpCascadeFlashTrans,  None),
+    'cascade_econ_closed':              (HeatPumpCascadeEcon,       'closed'),
+    'cascade_econ_closed_trans':        (HeatPumpCascadeEconTrans,   'closed'),
+    'cascade_econ_closed_ihx':          (HeatPumpCascadeEconIHX,    'closed'),
+    'cascade_econ_closed_ihx_trans':    (HeatPumpCascadeEconIHXTrans,'closed'),
+    'cascade_econ_open':                (HeatPumpCascadeEcon,       'open'),
+    'cascade_econ_open_trans':          (HeatPumpCascadeEconTrans,   'open'),
+    'cascade_econ_open_ihx':            (HeatPumpCascadeEconIHX,    'open'),
+    'cascade_econ_open_ihx_trans':      (HeatPumpCascadeEconIHXTrans,'open'),
+    'cascade_ihx_econ_closed':          (HeatPumpCascadeIHXEcon,    'closed'),
+    'cascade_ihx_econ_closed_trans':    (HeatPumpCascadeIHXEconTrans,'closed'),
+    'cascade_ihx_econ_open':            (HeatPumpCascadeIHXEcon,    'open'),
+    'cascade_ihx_econ_open_trans':      (HeatPumpCascadeIHXEconTrans,'open'),
+    'cascade_pc_econ_closed':           (HeatPumpCascadePC,         'closed'),
+    'cascade_pc_econ_closed_trans':     (HeatPumpCascadePCTrans,     'closed'),
+    'cascade_pc_econ_closed_ihx':       (HeatPumpCascadePCIHX,      'closed'),
+    'cascade_pc_econ_closed_ihx_trans': (HeatPumpCascadePCIHXTrans,  'closed'),
+    'cascade_pc_econ_open':             (HeatPumpCascadePC,         'open'),
+    'cascade_pc_econ_open_trans':       (HeatPumpCascadePCTrans,     'open'),
+    'cascade_pc_econ_open_ihx':         (HeatPumpCascadePCIHX,      'open'),
+    'cascade_pc_econ_open_ihx_trans':   (HeatPumpCascadePCIHXTrans,  'open'),
+    'cascade_ihx_pc_econ_closed':       (HeatPumpCascadeIHXPC,      'closed'),
+    'cascade_ihx_pc_econ_closed_trans': (HeatPumpCascadeIHXPCTrans,  'closed'),
+    'cascade_ihx_pc_econ_closed_ihx':   (HeatPumpCascadeIHXPCIHX,   'closed'),
+    'cascade_ihx_pc_econ_closed_ihx_trans': (HeatPumpCascadeIHXPCIHXTrans, 'closed'),
+    'cascade_ihx_pc_econ_open':         (HeatPumpCascadeIHXPC,      'open'),
+    'cascade_ihx_pc_econ_open_trans':   (HeatPumpCascadeIHXPCTrans,  'open'),
+    'cascade_ihx_pc_econ_open_ihx':     (HeatPumpCascadeIHXPCIHX,   'open'),
+    'cascade_ihx_pc_econ_open_ihx_trans': (HeatPumpCascadeIHXPCIHXTrans, 'open'),
+}
+
 __model_names = {
     'HeatPumpSimple': 'simple',
     'HeatPumpSimpleTrans': 'simple_trans',
@@ -107,3 +205,41 @@ def get_params(heat_pump_model, econ_type=None):
         params = json.load(file)
 
     return params
+
+
+def from_json(filepath):
+    """Instantiate and run a heat pump model from a debug JSON file.
+
+    Parameters
+    ----------
+    filepath : str or path-like
+        Path to a JSON file in the format produced by the dashboard on a
+        failed design simulation: ``{"model_key": "<key>", "params": {...}}``.
+
+    Returns
+    -------
+    HeatPumpBase subclass instance
+        The fully constructed (but not yet simulated) heat pump object.
+
+    Example
+    -------
+    >>> from heatpumps.parameters import from_json
+    >>> hp = from_json("HeatPumpSimple_debug.json")
+    >>> hp.run_model()
+    """
+    with open(filepath, encoding='utf-8') as f:
+        data = json.load(f)
+
+    model_key = data['model_key']
+    params = data['params']
+
+    if model_key not in _model_registry:
+        raise ValueError(
+            f"Unknown model_key '{model_key}'. "
+            f"Valid keys: {sorted(_model_registry)}"
+        )
+
+    cls, econ_type = _model_registry[model_key]
+    if econ_type is not None:
+        return cls(params, econ_type=econ_type)
+    return cls(params)
