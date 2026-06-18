@@ -818,21 +818,15 @@ if mode == txt('mode_option_design'):
             try:
                 ss.hp = run_design(hp_model_name, params)
                 sim_succeded = True
-                st.success(
-                    'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
-                    )
+                st.success(txt('design_sim_success'))
             except ValueError as e:
                 sim_succeded = False
                 print(f'ValueError: {e}')
-                st.error(
-                    'Bei der Simulation der Wärmepumpe ist der nachfolgende '
-                    + 'Fehler aufgetreten. Bitte korrigieren Sie die '
-                    + f'Eingangsparameter und versuchen es erneut.\n\n"{e}"'
-                    )
+                st.error(txt('design_sim_error')+ f'"{e}"')
 
         # %% MARK: Results
         if sim_succeded:
-            with st.spinner('Ergebnisse werden visualisiert...'):
+            with st.spinner(txt('design_sim_spinner')):
 
                 stateconfigpath = str(resources.files('heatpumps').joinpath(
                     'models', 'input', 'state_diagram_config.json'
@@ -860,7 +854,7 @@ if mode == txt('mode_option_design'):
                     else:
                         state_props2 = config['MISC']
 
-                st.header('Ergebnisse der Auslegung')
+                st.header(txt('design_header_results'))
 
                 col1, col2, col3, col4 = st.columns(4)
                 col1.metric('COP', round(ss.hp.cop, 2))
@@ -877,12 +871,12 @@ if mode == txt('mode_option_design'):
                     )
                 col4.metric('Q_dot_zu', f'{Q_dot_zu:.2f} MW')
 
-                with st.expander('Topologie & Kältemittel'):
+                with st.expander(txt('design_tab_topo_refrig')):
                     # %% Topology & Refrigerant
                     col_left, col_right = st.columns([1, 4])
 
                     with col_left:
-                        st.subheader('Topologie')
+                        st.subheader(txt('design_header_topo'))
 
                         top_file = os.path.join(
                             src_path, 'img', 'topologies',
@@ -899,25 +893,19 @@ if mode == txt('mode_option_design'):
                         st.image(top_file)
 
                     with col_right:
-                        st.subheader('Kältemittel')
+                        st.subheader(txt('design_header_refrig'))
 
                         if hp_model['nr_refrigs'] == 1:
                             st.dataframe(df_refrig, width='stretch')
                         elif hp_model['nr_refrigs'] == 2:
-                            st.markdown('#### Hochtemperaturkreis')
+                            st.markdown(txt('design_subheader_HT'))
                             st.dataframe(df_refrig2, width='stretch')
-                            st.markdown('#### Niedertemperaturkreis')
+                            st.markdown(txt('design_subheader_LT'))
                             st.dataframe(df_refrig1, width='stretch')
 
-                        st.write(
-                            """
-                            Alle Stoffdaten und Klassifikationen aus
-                            [CoolProp](http://www.coolprop.org) oder
-                            [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)
-                            """
-                            )
+                        st.write(txt('design_refrig_info'))
 
-                with st.expander('Zustandsdiagramme'):
+                with st.expander(txt('design_expd_state_diagrams')):
                     # %% State Diagrams
                     col_left, _, col_right = st.columns([0.495, 0.01, 0.495])
                     _, slider_left, _, slider_right, _ = (
@@ -931,7 +919,7 @@ if mode == txt('mode_option_design'):
 
                     with col_left:
                         # %% Log(p)-h-Diagram
-                        st.subheader('Log(p)-h-Diagramm')
+                        st.subheader(txt('design_subheader_ph'))
                         if hp_model['nr_refrigs'] == 1:
                             xmin, xmax = calc_limits(
                                 wf=ss.hp.wf, prop='h', padding_rel=0.35
@@ -982,7 +970,7 @@ if mode == txt('mode_option_design'):
 
                     with col_right:
                         # %% T-s-Diagram
-                        st.subheader('T-s-Diagramm')
+                        st.subheader(txt('design_subheader_Ts'))
                         if hp_model['nr_refrigs'] == 1:
                             xmin, xmax = calc_limits(
                                 wf=ss.hp.wf, prop='s', padding_rel=0.35
@@ -1028,7 +1016,7 @@ if mode == txt('mode_option_design'):
                             st.pyplot(diagram1.fig)
                             st.pyplot(diagram2.fig)
 
-                with st.expander('Zustandsgrößen'):
+                with st.expander(txt('design_expd_state_var')):
                     # %% State Quantities
                     state_quantities = (
                         ss.hp.nw.results['Connection'].copy()
@@ -1087,7 +1075,7 @@ if mode == txt('mode_option_design'):
                         data=state_quantities, width='stretch'
                         )
 
-                with st.expander('Ökonomische Bewertung'):
+                with st.expander(txt('design_expd_eco')):
                     # %% Eco Results
                     ss.hp.calc_cost(
                         ref_year='2013', **costcalcparams
@@ -1096,7 +1084,7 @@ if mode == txt('mode_option_design'):
                     col1, col2 = st.columns(2)
                     invest_total = ss.hp.cost_total
                     col1.metric(
-                        'Gesamtinvestitionskosten',
+                        txt('design_eco_inv_total'),
                         f'{invest_total:,.0f} €'
                         )
                     inv_sepc = (
@@ -1104,7 +1092,7 @@ if mode == txt('mode_option_design'):
                         / abs(ss.hp.params["cons"]["Q"]/1e6)
                         )
                     col2.metric(
-                        'Spez. Investitionskosten',
+                        txt('design_eco_inv_spec'),
                         f'{inv_sepc:,.0f} €/MW'
                         )
                     costdata = pd.DataFrame({
@@ -1115,18 +1103,11 @@ if mode == txt('mode_option_design'):
                         costdata, width='stretch', hide_index=True
                         )
 
-                    st.write(
-                        """
-                        Methodik zur Berechnung der Kosten analog zu
-                        [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488),
-                        basierend auf [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).
-                        """
-                        )
+                    st.write(txt('design_eco_info'))
 
-
-                with st.expander('Exergiebewertung'):
+                with st.expander(txt('design_expd_exergy')):
                     # %% Exergy Analysis
-                    st.header('Ergebnisse der Exergieanalyse')
+                    st.header(txt('design_header_exergy'))
 
                     col1, col2, col3, col4, col5 = st.columns(5)
                     col1.metric(
@@ -1150,7 +1131,7 @@ if mode == txt('mode_option_design'):
                         f'{(ss.hp.ean.network_data.E_L)/1e3:.2f} KW'
                         )
 
-                    st.subheader('Ergebnisse nach Komponente')
+                    st.subheader(txt('design_subheader_exergy_comp'))
                     exergy_component_result = (
                         ss.hp.ean.component_data.copy()
                         )
@@ -1181,7 +1162,7 @@ if mode == txt('mode_option_design'):
 
                     col6, _, col7 = st.columns([0.495, 0.01, 0.495])
                     with col6:
-                        st.subheader('Grassmann Diagramm')
+                        st.subheader(txt('design_subheader_exergy_grass'))
                         diagram_placeholder_sankey = st.empty()
 
                         diagram_sankey = ss.hp.generate_sankey_diagram()
@@ -1190,7 +1171,7 @@ if mode == txt('mode_option_design'):
                             )
 
                     with col7:
-                        st.subheader('Wasserfall Diagramm')
+                        st.subheader(txt('design_subheader_exergy_waterfall'))
                         diagram_placeholder_waterfall = st.empty()
 
                         dia_wf_fig, dia_wf_ax = (
@@ -1202,21 +1183,11 @@ if mode == txt('mode_option_design'):
                             dia_wf_fig, width='stretch'
                             )
 
-                    st.write(
-                        """
-                        Definitionen und Methodik der Exergieanalyse basierend auf
-                        [Morosuk und Tsatsaronis (2019)](https://doi.org/10.1016/j.energy.2018.10.090),
-                        dessen Implementation in TESPy beschrieben in [Witte und Hofmann et al. (2022)](https://doi.org/10.3390/en15114087)
-                        und didaktisch aufbereitet in [Witte, Freißmann und Fritz (2023)](https://fwitte.github.io/TESPy_teaching_exergy/).
-                        """
-                        )
+                    st.write(txt('design_exergy_info'))
 
-                st.info(
-                    'Um die Teillast zu berechnen, drücke auf "Teillast '
-                    + 'simulieren".'
-                    )
+                st.info(txt('design_to_od_info'))
 
-                st.button('Teillast simulieren', on_click=switch2partload)
+                st.button(txt('sb_btn_run_offdesign'), on_click=switch2partload)
 
 if mode == txt('mode_option_partload'):
     # %% MARK: Offdesign Simulation
