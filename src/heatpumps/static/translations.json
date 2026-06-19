@@ -360,11 +360,11 @@
         "GER": "Zustandsdiagramme"
     },
     "design_subheader_ph": {
-        "ENG": "Log(p)-h-diagrame",
+        "ENG": "Log(p)-h diagram",
         "GER": "Log(p)-h-Diagramm"
     },
     "design_subheader_Ts": {
-        "ENG": "T-s-diagrame",
+        "ENG": "T-s diagram",
         "GER": "T-s-Diagramm"
     },
     "design_expd_state_var": {
@@ -384,7 +384,7 @@
         "GER": "Spez. Investitionskosten"
     },
     "design_eco_info": {
-        "ENG": "Methodology for calculating costs, similar to [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488), based on [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).",
+        "ENG": "Methodology for calculating costs analogous to [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488), based on [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).",
         "GER": "Methodik zur Berechnung der Kosten analog zu [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488), basierend auf [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674)."
     },
     "design_expd_exergy": {
