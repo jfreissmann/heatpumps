@@ -323,6 +323,138 @@
         "ENG": "#### Low temperature cycle",
         "GER": "#### Niedertemperaturkreis"
     },
+    "design_refrig_info": {
+        "ENG": "All fluid properity data and classifications are from [CoolProp](http://www.coolprop.org) or [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)",
+        "GER": "Alle Stoffdaten und Klassifikationen aus [CoolProp](http://www.coolprop.org) oder [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)"
+    },
+    "design_expd_instruction": {
+        "ENG": "Instruction",
+        "GER": "Anleitung"
+    },
+    "design_instruction": {
+        "ENG": "#### Instruction\n\nYou are on the interface for simulating the design of your heat pump. To do this, you have to specify various key parameters of the cycle in the sidebar on the left including the nominal output and selection of the refrigerant to be used.\n\nThese include the temperatures of the heat source and heat sink. In addition, an internal heat exchanger can be added as an option. To do so, you have to also specify the resulting superheat of the vaporized refrigerant.\n\nOnce the design simulation is successfully completed, the generated results are presented graphically in phase diagrams and quantified. Key parameters such as the coefficient of performance (COP) as well as the relevant heat flows and power are listed. In addition, the thermodynamic state variables are listed in tabular form for all process steps.\n\nFollowing the design simulation, a button appears to switch to the part-load interface. This can also be done via the drop-down menu in the sidebar. Information on how to perform part-load simulations can be found on the home page of this interface.",
+        "GER": "#### Anleitung\n\nSie befinden sich auf der Oberfläche zur Auslegungssimulation Ihrer Wärmepumpe. Dazu sind links in der Sidebar neben der Dimensionierung und der Wahl des zu verwendenden Kältemittels verschiedene zentrale Parameter des Kreisprozesse vorzugeben.\n\nDies sind zum Beispiel die Temperaturen der Wärmequelle und -senke. Darüber hinaus kann optional ein interner Wärmeübertrager hinzugefügt werden. Dazu ist weiterhin die resultierende Überhitzung des verdampften Kältemittels vorzugeben.\n\nIst die Auslegungssimulation erfolgreich abgeschlossen, werden die generierten Ergebnisse graphisch in Zustandsdiagrammen aufgearbeitet und quantifiziert. Die zentralen Größen wie die Leistungszahl (COP) sowie die relevanten Wärmeströme und Leistung werden aufgeführt. Darüber hinaus werden die thermodynamischen Zustandsgrößen in allen Prozessschritten tabellarisch aufgelistet.\n\nIm Anschluss an die Auslegungsimulation erscheint ein Knopf zum Wechseln in die Teillastoberfläche. Dies kann ebenfalls über das Dropdownmenü in der Sidebar erfolgen. Informationen zur Durchführung der Teillastsimulationen befindet sich auf der Startseite dieser Oberfläche."
+    },
+    "design_sim_success": {
+        "ENG": "The simulation of the heat pump design was successful.",
+        "GER": "Die Simulation der Wärmepumpenauslegung war erfolgreich."
+    },
+    "design_sim_error": {
+        "ENG": "The following error occurred during the heat pump simulation. Please correct the input parameters and try again.\n\n",
+        "GER": "Bei der Simulation der Wärmepumpe ist der nachfolgende Fehler aufgetreten. Bitte korrigieren Sie die Eingangsparameter und versuchen es erneut.\n\n"
+    },
+    "design_sim_spinner": {
+        "ENG": "Results are being visualized...",
+        "GER": "Ergebnisse werden visualisiert..."
+    },
+    "design_header_results": {
+        "ENG": "Design Results",
+        "GER": "Ergebnisse der Auslegung"
+    },
+    "design_tab_topo_refrig": {
+        "ENG": "Topology & refrigerant",
+        "GER": "Topologie & Kältemittel"
+    },
+    "design_expd_state_diagrams": {
+        "ENG": "State diagrams",
+        "GER": "Zustandsdiagramme"
+    },
+    "design_subheader_ph": {
+        "ENG": "Log(p)-h-diagrame",
+        "GER": "Log(p)-h-Diagramm"
+    },
+    "design_subheader_Ts": {
+        "ENG": "T-s-diagrame",
+        "GER": "T-s-Diagramm"
+    },
+    "design_expd_state_var": {
+        "ENG": "State variables",
+        "GER": "Zustandsgrößen"
+    },
+    "design_expd_eco": {
+        "ENG": "Economic assessment",
+        "GER": "Ökonomische Bewertung"
+    },
+    "design_eco_inv_total": {
+        "ENG": "Total investment costs",
+        "GER": "Gesamtinvestitionskosten"
+    },
+    "design_eco_inv_spec": {
+        "ENG": "Specific investment costs",
+        "GER": "Spez. Investitionskosten"
+    },
+    "design_eco_info": {
+        "ENG": "Methodology for calculating costs, similar to [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488), based on [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).",
+        "GER": "Methodik zur Berechnung der Kosten analog zu [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488), basierend auf [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674)."
+    },
+    "design_expd_exergy": {
+        "ENG": "Exergy assessment",
+        "GER": "Exergieabewertung"
+    },
+    "design_header_exergy": {
+        "ENG": "Results of the exergy analysis",
+        "GER": "Ergebnisse der Exergieanalyse"
+    },
+    "design_subheader_exergy_comp": {
+        "ENG": "Results by component",
+        "GER": "Ergebnisse nach Komponente"
+    },
+    "design_subheader_exergy_grass": {
+        "ENG": "Grassmann diagrame",
+        "GER": "Grassmann Diagramm"
+    },
+    "design_subheader_exergy_waterfall": {
+        "ENG": "Waterfall diagrame",
+        "GER": "Wasserfall Diagramm"
+    },
+    "design_exergy_info": {
+        "ENG": "Definitions and methodology of exergy analysis based on [Morosuk und Tsatsaronis (2019)](https://doi.org/10.1016/j.energy.2018.10.090), whose implementation in TESPy is described in [Witte und Hofmann et al. (2022)](https://doi.org/10.3390/en15114087) and presented in an educational context in [Witte, Freißmann und Fritz (2023)](https://fwitte.github.io/TESPy_teaching_exergy/)",
+        "GER": "Definitionen und Methodik der Exergieanalyse basierend auf [Morosuk und Tsatsaronis (2019)](https://doi.org/10.1016/j.energy.2018.10.090), dessen Implementation in TESPy beschrieben in [Witte und Hofmann et al. (2022)](https://doi.org/10.3390/en15114087) und didaktisch aufbereitet in [Witte, Freißmann und Fritz (2023)](https://fwitte.github.io/TESPy_teaching_exergy/)."
+    },
+    "design_to_od_info": {
+        "ENG": "To calculate the part-load, click 'Run part-load simulation'.",
+        "GER": "Um die Teillast zu berechnen, drücke auf 'Teillast simulieren'."
+    },
+    "od_header": {
+        "ENG": "Operating characteristics",
+        "GER": "Betriebscharakteristik"
+    },
+    "od_warning": {
+        "ENG": "To perform a part-load simulation, you have to first design a heat pump. Please switch to 'Design' mode first.",
+        "GER": "Um eine Teillastsimulation durchzuführen, muss zunächst eine Wärmepumpe ausgelegt werden. Wechseln Sie bitte zunächst in den Modus 'Auslegung'"
+    },
+    "od_landing_info": {
+        "ENG": "Parameterization of part load calculation:\n+ Percentage of part load\n+ Range of source temperature\n+ Range of sink temperature",
+        "GER": "Parametrisierung der Teillastberechnung:\n+ Prozentualer Anteil Teillast\n+ Bereich der Quelltemperatur\n+ Bereich der Senkentemperatur"
+    },
+    "od_spinner": {
+        "ENG": "Part-load simulation is in progress... This may take a while.",
+        "GER": "Teillastsimulation wird durchgeführt... Dies kann eine Weile dauern."
+    },
+    "od_simu_success": {
+        "ENG": "The simulation of the heat pump characteristics was successful.",
+        "GER": "Die Simulation der Wärmepumpencharakteristika war erfolgreich."
+    },
+    "od_spinner_visu": {
+        "ENG": "Results are being visualized...",
+        "GER": "Ergebnisse werden visualisiert..."
+    },
+    "od_expd_diagram": {
+        "ENG": "Diagrams",
+        "GER": "Diagramme"
+    },
+    "od_slider": {
+        "ENG": "Heat source temperature",
+        "GER": "Quellentemperatur"
+    },
+    "od_expd_exergy": {
+        "ENG": "Exergy analysis of part-load",
+        "GER": "Exergieanalyse Teillast"
+    },
+    "od_btn_new_hp": {
+        "ENG": "Design a new heat pump",
+        "GER": "Exergieanalyse Teillast"
+    },
     "topo_simple": {
         "ENG": "Simple cycle",
         "GER": "Einfacher Kreis"
@@ -421,7 +553,7 @@
     },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
-        "GER": "Es würde für diesen Key keine Übersetzung gefunden."
+        "GER": "Neue Wärmepumpe auslegen"
     },
     "fallback_lang": {
         "ENG": "For this key no translation was found for 'English' language.",

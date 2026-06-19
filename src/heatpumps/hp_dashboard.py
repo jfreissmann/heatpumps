@@ -811,45 +811,10 @@ if mode == txt('mode_option_design'):
                 st.markdown(txt('design_subheader_LT'))
                 st.dataframe(df_refrig1, width='stretch')
 
-            st.write(
-                """
-                Alle Stoffdaten und Klassifikationen aus
-                [CoolProp](http://www.coolprop.org) oder
-                [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)
-                """
-                )
+            st.write(txt('design_refrig_info'))
 
-        with st.expander('Anleitung'):
-            st.info(
-                """
-                #### Anleitung
-
-                Sie befinden sich auf der Oberfläche zur Auslegungssimulation
-                Ihrer Wärmepumpe. Dazu sind links in der Sidebar neben der
-                Dimensionierung und der Wahl des zu verwendenden Kältemittels
-                verschiedene zentrale Parameter des Kreisprozesse vorzugeben.
-
-                Dies sind zum Beispiel die Temperaturen der Wärmequelle und
-                -senke, aber auch die dazugehörigen Netzdrücke. Darüber hinaus
-                kann optional ein interner Wärmeübertrager hinzugefügt werden.
-                Dazu ist weiterhin die resultierende Überhitzung des
-                verdampften Kältemittels vorzugeben.
-
-                Ist die Auslegungssimulation erfolgreich abgeschlossen, werden
-                die generierten Ergebnisse graphisch in Zustandsdiagrammen
-                aufgearbeitet und quantifiziert. Die zentralen Größen wie die
-                Leistungszahl (COP) sowie die relevanten Wärmeströme und
-                Leistung werden aufgeführt. Darüber hinaus werden die
-                thermodynamischen Zustandsgrößen in allen Prozessschritten
-                tabellarisch aufgelistet.
-
-                Im Anschluss an die Auslegungsimulation erscheint ein Knopf zum
-                Wechseln in die Teillastoberfläche. Dies kann ebenfalls über
-                das Dropdownmenü in der Sidebar erfolgen. Informationen zur
-                Durchführung der Teillastsimulationen befindet sich auf der
-                Startseite dieser Oberfläche.
-                """
-                )
+        with st.expander(txt('design_expd_instruction')):
+            st.info(txt('design_instruction'))
 
     if run_sim:
         # %% Run Design Simulation
@@ -857,21 +822,15 @@ if mode == txt('mode_option_design'):
             try:
                 ss.hp = run_design(hp_model_name, params)
                 sim_succeded = True
-                st.success(
-                    'Die Simulation der Wärmepumpenauslegung war erfolgreich.'
-                    )
+                st.success(txt('design_sim_success'))
             except ValueError as e:
                 sim_succeded = False
                 print(f'ValueError: {e}')
-                st.error(
-                    'Bei der Simulation der Wärmepumpe ist der nachfolgende '
-                    + 'Fehler aufgetreten. Bitte korrigieren Sie die '
-                    + f'Eingangsparameter und versuchen es erneut.\n\n"{e}"'
-                    )
+                st.error(txt('design_sim_error')+ f'"{e}"')
 
         # %% MARK: Results
         if sim_succeded:
-            with st.spinner('Ergebnisse werden visualisiert...'):
+            with st.spinner(txt('design_sim_spinner')):
 
                 stateconfigpath = str(resources.files('heatpumps').joinpath(
                     'models', 'input', 'state_diagram_config.json'
@@ -899,7 +858,7 @@ if mode == txt('mode_option_design'):
                     else:
                         state_props2 = config['MISC']
 
-                st.header('Ergebnisse der Auslegung')
+                st.header(txt('design_header_results'))
 
                 col1, col2, col3, col4 = st.columns(4)
                 col1.metric('COP', round(ss.hp.cop, 2))
@@ -914,12 +873,12 @@ if mode == txt('mode_option_design'):
                     )
                 col4.metric('Q_dot_zu', f'{Q_dot_zu:.2f} MW')
 
-                with st.expander('Topologie & Kältemittel'):
+                with st.expander(txt('design_tab_topo_refrig')):
                     # %% Topology & Refrigerant
                     col_left, col_right = st.columns([1, 4])
 
                     with col_left:
-                        st.subheader('Topologie')
+                        st.subheader(txt('design_header_topo'))
 
                         top_file = os.path.join(
                             src_path, 'img', 'topologies',
@@ -936,25 +895,19 @@ if mode == txt('mode_option_design'):
                         st.image(top_file)
 
                     with col_right:
-                        st.subheader('Kältemittel')
+                        st.subheader(txt('design_header_refrig'))
 
                         if hp_model['nr_refrigs'] == 1:
                             st.dataframe(df_refrig, width='stretch')
                         elif hp_model['nr_refrigs'] == 2:
-                            st.markdown('#### Hochtemperaturkreis')
+                            st.markdown(txt('design_subheader_HT'))
                             st.dataframe(df_refrig2, width='stretch')
-                            st.markdown('#### Niedertemperaturkreis')
+                            st.markdown(txt('design_subheader_LT'))
                             st.dataframe(df_refrig1, width='stretch')
 
-                        st.write(
-                            """
-                            Alle Stoffdaten und Klassifikationen aus
-                            [CoolProp](http://www.coolprop.org) oder
-                            [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)
-                            """
-                            )
+                        st.write(txt('design_refrig_info'))
 
-                with st.expander('Zustandsdiagramme'):
+                with st.expander(txt('design_expd_state_diagrams')):
                     # %% State Diagrams
                     col_left, _, col_right = st.columns([0.495, 0.01, 0.495])
                     _, slider_left, _, slider_right, _ = (
@@ -968,7 +921,7 @@ if mode == txt('mode_option_design'):
 
                     with col_left:
                         # %% Log(p)-h-Diagram
-                        st.subheader('Log(p)-h-Diagramm')
+                        st.subheader(txt('design_subheader_ph'))
                         if hp_model['nr_refrigs'] == 1:
                             xmin, xmax = calc_limits(
                                 wf=ss.hp.wf, prop='h', padding_rel=0.35
@@ -1019,7 +972,7 @@ if mode == txt('mode_option_design'):
 
                     with col_right:
                         # %% T-s-Diagram
-                        st.subheader('T-s-Diagramm')
+                        st.subheader(txt('design_subheader_Ts'))
                         if hp_model['nr_refrigs'] == 1:
                             xmin, xmax = calc_limits(
                                 wf=ss.hp.wf, prop='s', padding_rel=0.35
@@ -1065,7 +1018,7 @@ if mode == txt('mode_option_design'):
                             st.pyplot(diagram1.fig)
                             st.pyplot(diagram2.fig)
 
-                with st.expander('Zustandsgrößen'):
+                with st.expander(txt('design_expd_state_var')):
                     # %% State Quantities
                     state_quantities = (
                         ss.hp.nw.results['Connection'].copy()
@@ -1125,7 +1078,7 @@ if mode == txt('mode_option_design'):
                         data=state_quantities, width='stretch'
                         )
 
-                with st.expander('Ökonomische Bewertung'):
+                with st.expander(txt('design_expd_eco')):
                     # %% Eco Results
                     ss.hp.calc_cost(
                         ref_year='2013', **costcalcparams
@@ -1134,7 +1087,7 @@ if mode == txt('mode_option_design'):
                     col1, col2 = st.columns(2)
                     invest_total = ss.hp.cost_total
                     col1.metric(
-                        'Gesamtinvestitionskosten',
+                        txt('design_eco_inv_total'),
                         f'{invest_total:,.0f} €'
                         )
                     inv_sepc = (
@@ -1142,7 +1095,7 @@ if mode == txt('mode_option_design'):
                         / abs(ss.hp.params["cons"]["Q"]/1e6)
                         )
                     col2.metric(
-                        'Spez. Investitionskosten',
+                        txt('design_eco_inv_spec'),
                         f'{inv_sepc:,.0f} €/MW'
                         )
                     costdata = pd.DataFrame({
@@ -1153,18 +1106,11 @@ if mode == txt('mode_option_design'):
                         costdata, width='stretch', hide_index=True
                         )
 
-                    st.write(
-                        """
-                        Methodik zur Berechnung der Kosten analog zu
-                        [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488),
-                        basierend auf [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).
-                        """
-                        )
+                    st.write(txt('design_eco_info'))
 
-
-                with st.expander('Exergiebewertung'):
+                with st.expander(txt('design_expd_exergy')):
                     # %% Exergy Analysis
-                    st.header('Ergebnisse der Exergieanalyse')
+                    st.header(txt('design_header_exergy'))
 
                     col1, col2, col3, col4, col5 = st.columns(5)
                     col1.metric(
@@ -1188,7 +1134,7 @@ if mode == txt('mode_option_design'):
                         f'{(ss.hp.ean.E_L)/1e3:.2f} KW'
                         )
 
-                    st.subheader('Ergebnisse nach Komponente')
+                    st.subheader(txt('design_subheader_exergy_comp'))
                     exergy_component_result, _, _ = ss.hp.ean.exergy_results(
                         print_results=False
                         )
@@ -1212,7 +1158,7 @@ if mode == txt('mode_option_design'):
 
                     col6, _, col7 = st.columns([0.495, 0.01, 0.495])
                     with col6:
-                        st.subheader('Grassmann Diagramm')
+                        st.subheader(txt('design_subheader_exergy_grass'))
                         diagram_placeholder_sankey = st.empty()
 
                         diagram_sankey = ss.hp.generate_sankey_diagram()
@@ -1221,7 +1167,7 @@ if mode == txt('mode_option_design'):
                             )
 
                     with col7:
-                        st.subheader('Wasserfall Diagramm')
+                        st.subheader(txt('design_subheader_exergy_waterfall'))
                         diagram_placeholder_waterfall = st.empty()
 
                         dia_wf_fig, dia_wf_ax = (
@@ -1233,68 +1179,40 @@ if mode == txt('mode_option_design'):
                             dia_wf_fig, width='stretch'
                             )
 
-                    st.write(
-                        """
-                        Definitionen und Methodik der Exergieanalyse basierend auf
-                        [Morosuk und Tsatsaronis (2019)](https://doi.org/10.1016/j.energy.2018.10.090),
-                        dessen Implementation in TESPy beschrieben in [Witte und Hofmann et al. (2022)](https://doi.org/10.3390/en15114087)
-                        und didaktisch aufbereitet in [Witte, Freißmann und Fritz (2023)](https://fwitte.github.io/TESPy_teaching_exergy/).
-                        """
-                        )
+                    st.write(txt('design_exergy_info'))
 
-                st.info(
-                    'Um die Teillast zu berechnen, drücke auf "Teillast '
-                    + 'simulieren".'
-                    )
+                st.info(txt('design_to_od_info'))
 
-                st.button('Teillast simulieren', on_click=switch2partload)
+                st.button(txt('sb_btn_run_offdesign'), on_click=switch2partload)
 
 if mode == txt('mode_option_partload'):
     # %% MARK: Offdesign Simulation
-    st.header('Betriebscharakteristik')
+    st.header(txt('od_header'))
 
     if 'hp' not in ss:
-        st.warning(
-            '''
-            Um eine Teillastsimulation durchzuführen, muss zunächst eine 
-            Wärmepumpe ausgelegt werden. Wechseln Sie bitte zunächst in den 
-            Modus "Auslegung".
-            '''
-        )
+        st.warning(txt('od_warning'))
     else:
         if not run_pl_sim and 'partload_char' not in ss:
             # %% Landing Page
-            st.write(
-                '''
-                Parametrisierung der Teillastberechnung:
-                + Prozentualer Anteil Teillast
-                + Bereich der Quelltemperatur
-                + Bereich der Senkentemperatur
-                '''
+            st.write(txt('od_landing_info')
                 )
 
         if run_pl_sim:
             # %% Run Offdesign Simulation
-            with st.spinner(
-                    'Teillastsimulation wird durchgeführt... Dies kann eine '
-                    + 'Weile dauern.'
-                    ):
+            with st.spinner(txt('od_spinner')):
                 ss.hp, ss.partload_char = (
                     run_partload(ss.hp)
                     )
                 # ss.partload_char = pd.read_csv(
                 #     'partload_char.csv', index_col=[0, 1, 2], sep=';'
                 #     )
-                st.success(
-                    'Die Simulation der Wärmepumpencharakteristika war '
-                    + 'erfolgreich.'
-                    )
+                st.success(txt('od_simu_success'))
 
         if run_pl_sim or 'partload_char' in ss:
             # %% Results
-            with st.spinner('Ergebnisse werden visualisiert...'):
+            with st.spinner(txt('od_spinner_visu')):
 
-                with st.expander('Diagramme', expanded=True):
+                with st.expander(txt('od_expd_diagram'), expanded=True):
                     col_left, col_right = st.columns(2)
 
                     with col_left:
@@ -1304,11 +1222,11 @@ if mode == txt('mode_option_partload'):
                             )
                         pl_cop_placeholder = st.empty()
 
-                        if type_hs == 'Konstant':
+                        if type_hs == txt('sb_od_source_option_const'):
                             T_select_cop = (
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                                 )
-                        elif type_hs == 'Variabel':
+                        elif type_hs == txt('sb_od_source_option_var'):
                             T_hs_min = (
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                                 )
@@ -1316,7 +1234,7 @@ if mode == txt('mode_option_partload'):
                                 ss.hp.params['offdesign']['T_hs_ff_end']
                                 )
                             T_select_cop = st.slider(
-                                'Quellentemperatur',
+                                txt('od_slider'),
                                 min_value=T_hs_min,
                                 max_value=T_hs_max,
                                 value=int((T_hs_max+T_hs_min)/2),
@@ -1333,13 +1251,13 @@ if mode == txt('mode_option_partload'):
                             )
                         pl_T_cons_ff_placeholder = st.empty()
 
-                        if type_hs == 'Konstant':
+                        if type_hs == txt('sb_od_source_option_const'):
                             T_select_T_cons_ff = (
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                                 )
-                        elif type_hs == 'Variabel':
+                        elif type_hs == txt('sb_od_source_option_var'):
                             T_select_T_cons_ff = st.slider(
-                                'Quellentemperatur',
+                                txt('od_slider'),
                                 min_value=T_hs_min,
                                 max_value=T_hs_max,
                                 value=int((T_hs_max+T_hs_min)/2),
@@ -1350,7 +1268,7 @@ if mode == txt('mode_option_partload'):
                             figs[T_select_T_cons_ff]
                             )
 
-                with st.expander('Exergieanalyse Teillast', expanded=True):
+                with st.expander(txt('od_expd_exergy'), expanded=True):
 
                     col_left_1, col_right_1 = st.columns(2)
 
@@ -1361,11 +1279,11 @@ if mode == txt('mode_option_partload'):
                         )
                         pl_epsilon_placeholder = st.empty()
 
-                        if type_hs == 'Konstant':
+                        if type_hs == txt('sb_od_source_option_const'):
                             T_select_epsilon = (
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                             )
-                        elif type_hs == 'Variabel':
+                        elif type_hs == txt('sb_od_source_option_var'):
                             T_hs_min = (
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                                 )
@@ -1373,7 +1291,7 @@ if mode == txt('mode_option_partload'):
                                 ss.hp.params['offdesign']['T_hs_ff_end']
                                 )
                             T_select_epsilon = st.slider(
-                                'Quellentemperatur',
+                                txt('od_slider'),
                                 min_value=T_hs_min,
                                 max_value=T_hs_max,
                                 value=int((T_hs_max + T_hs_min) / 2),
@@ -1383,7 +1301,7 @@ if mode == txt('mode_option_partload'):
 
                         pl_epsilon_placeholder.pyplot(figs[T_select_epsilon])
 
-                st.button('Neue Wärmepumpe auslegen', on_click=reset2design)
+                st.button(txt('od_btn_new_hp'), on_click=reset2design)
 
 # %% MARK: Footer
 st.markdown("<br><br>", unsafe_allow_html=True)
