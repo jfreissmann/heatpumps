@@ -309,6 +309,9 @@ with st.sidebar:
                     txt('sb_ref_refrigerant_hot'),
                     refrigerants.keys(),
                     index=refrig2_index,
+                    format_func=(
+                        lambda ref: txt(f"refrig_name_{ref.replace(' ', '_')}")
+                    ),
                     key='refrigerant2'
                 )
                 params['setup']['refrig2'] = refrigerants[refrig2_label]['CP']
@@ -328,6 +331,9 @@ with st.sidebar:
                     txt('sb_ref_refrigerant_cold'),
                     refrigerants.keys(),
                     index=refrig1_index,
+                    format_func=(
+                        lambda ref: txt(f"refrig_name_{ref.replace(' ', '_')}")
+                    ),
                     key='refrigerant1'
                 )
                 params['setup']['refrig1'] = refrigerants[refrig1_label]['CP']
