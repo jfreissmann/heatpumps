@@ -352,7 +352,7 @@
         "GER": "Ergebnisse der Auslegung"
     },
     "design_tab_topo_refrig": {
-        "ENG": "Topology & Refrigerant",
+        "ENG": "Topology & refrigerant",
         "GER": "Topologie & Kältemittel"
     },
     "design_expd_state_diagrams": {
@@ -415,9 +415,49 @@
         "ENG": "To calculate the part-load, click 'Run part-load simulation'.",
         "GER": "Um die Teillast zu berechnen, drücke auf 'Teillast simulieren'."
     },
+    "od_header": {
+        "ENG": "Operating characteristics",
+        "GER": "Betriebscharakteristik"
+    },
+    "od_warning": {
+        "ENG": "To perform a part-load simulation, you have to first design a heat pump. Please switch to 'Design' mode first.",
+        "GER": "Um eine Teillastsimulation durchzuführen, muss zunächst eine Wärmepumpe ausgelegt werden. Wechseln Sie bitte zunächst in den Modus 'Auslegung'"
+    },
+    "od_landing_info": {
+        "ENG": "Parameterization of part load calculation:\n+ Percentage of part load\n+ Range of source temperature\n+ Range of sink temperature",
+        "GER": "Parametrisierung der Teillastberechnung:\n+ Prozentualer Anteil Teillast\n+ Bereich der Quelltemperatur\n+ Bereich der Senkentemperatur"
+    },
+    "od_spinner": {
+        "ENG": "Part-load simulation is in progress... This may take a while.",
+        "GER": "Teillastsimulation wird durchgeführt... Dies kann eine Weile dauern."
+    },
+    "od_simu_success": {
+        "ENG": "The simulation of the heat pump characteristics was successful.",
+        "GER": "Die Simulation der Wärmepumpencharakteristika war erfolgreich."
+    },
+    "od_spinner_visu": {
+        "ENG": "Results are being visualized...",
+        "GER": "Ergebnisse werden visualisiert..."
+    },
+    "od_expd_diagram": {
+        "ENG": "Diagrams",
+        "GER": "Diagramme"
+    },
+    "od_slider": {
+        "ENG": "Heat source temperature",
+        "GER": "Quellentemperatur"
+    },
+    "od_expd_exergy": {
+        "ENG": "Exergy analysis of part-load",
+        "GER": "Exergieanalyse Teillast"
+    },
+    "od_btn_new_hp": {
+        "ENG": "Design a new heat pump",
+        "GER": "Exergieanalyse Teillast"
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
-        "GER": "Es würde für diesen Key keine Übersetzung gefunden."
+        "GER": "Neue Wärmepumpe auslegen"
     },
     "fallback_lang": {
         "ENG": "For this key no translation was found for 'English' language.",

@@ -1191,50 +1191,32 @@ if mode == txt('mode_option_design'):
 
 if mode == txt('mode_option_partload'):
     # %% MARK: Offdesign Simulation
-    st.header('Betriebscharakteristik')
+    st.header(txt('od_header'))
 
     if 'hp' not in ss:
-        st.warning(
-            '''
-            Um eine Teillastsimulation durchzuführen, muss zunächst eine 
-            Wärmepumpe ausgelegt werden. Wechseln Sie bitte zunächst in den 
-            Modus "Auslegung".
-            '''
-        )
+        st.warning(txt('od_warning'))
     else:
         if not run_pl_sim and 'partload_char' not in ss:
             # %% Landing Page
-            st.write(
-                '''
-                Parametrisierung der Teillastberechnung:
-                + Prozentualer Anteil Teillast
-                + Bereich der Quelltemperatur
-                + Bereich der Senkentemperatur
-                '''
+            st.write(txt('od_landing_info')
                 )
 
         if run_pl_sim:
             # %% Run Offdesign Simulation
-            with st.spinner(
-                    'Teillastsimulation wird durchgeführt... Dies kann eine '
-                    + 'Weile dauern.'
-                    ):
+            with st.spinner(txt('od_spinner')):
                 ss.hp, ss.partload_char = (
                     run_partload(ss.hp)
                     )
                 # ss.partload_char = pd.read_csv(
                 #     'partload_char.csv', index_col=[0, 1, 2], sep=';'
                 #     )
-                st.success(
-                    'Die Simulation der Wärmepumpencharakteristika war '
-                    + 'erfolgreich.'
-                    )
+                st.success(txt('od_simu_success'))
 
         if run_pl_sim or 'partload_char' in ss:
             # %% Results
-            with st.spinner('Ergebnisse werden visualisiert...'):
+            with st.spinner(txt('od_spinner_visu')):
 
-                with st.expander('Diagramme', expanded=True):
+                with st.expander(txt('od_expd_diagram'), expanded=True):
                     col_left, col_right = st.columns(2)
 
                     with col_left:
@@ -1244,11 +1226,11 @@ if mode == txt('mode_option_partload'):
                             )
                         pl_cop_placeholder = st.empty()
 
-                        if type_hs == 'Konstant':
+                        if type_hs == txt('sb_od_source_option_const'):
                             T_select_cop = (
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                                 )
-                        elif type_hs == 'Variabel':
+                        elif type_hs == txt('sb_od_source_option_var'):
                             T_hs_min = (
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                                 )
@@ -1256,7 +1238,7 @@ if mode == txt('mode_option_partload'):
                                 ss.hp.params['offdesign']['T_hs_ff_end']
                                 )
                             T_select_cop = st.slider(
-                                'Quellentemperatur',
+                                txt('od_slider'),
                                 min_value=T_hs_min,
                                 max_value=T_hs_max,
                                 value=int((T_hs_max+T_hs_min)/2),
@@ -1273,13 +1255,13 @@ if mode == txt('mode_option_partload'):
                             )
                         pl_T_cons_ff_placeholder = st.empty()
 
-                        if type_hs == 'Konstant':
+                        if type_hs == txt('sb_od_source_option_const'):
                             T_select_T_cons_ff = (
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                                 )
-                        elif type_hs == 'Variabel':
+                        elif type_hs == txt('sb_od_source_option_var'):
                             T_select_T_cons_ff = st.slider(
-                                'Quellentemperatur',
+                                txt('od_slider'),
                                 min_value=T_hs_min,
                                 max_value=T_hs_max,
                                 value=int((T_hs_max+T_hs_min)/2),
@@ -1290,7 +1272,7 @@ if mode == txt('mode_option_partload'):
                             figs[T_select_T_cons_ff]
                             )
 
-                with st.expander('Exergieanalyse Teillast', expanded=True):
+                with st.expander(txt('od_expd_exergy'), expanded=True):
 
                     col_left_1, col_right_1 = st.columns(2)
 
@@ -1301,11 +1283,11 @@ if mode == txt('mode_option_partload'):
                         )
                         pl_epsilon_placeholder = st.empty()
 
-                        if type_hs == 'Konstant':
+                        if type_hs == txt('sb_od_source_option_const'):
                             T_select_epsilon = (
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                             )
-                        elif type_hs == 'Variabel':
+                        elif type_hs == txt('sb_od_source_option_var'):
                             T_hs_min = (
                                 ss.hp.params['offdesign']['T_hs_ff_start']
                                 )
@@ -1313,7 +1295,7 @@ if mode == txt('mode_option_partload'):
                                 ss.hp.params['offdesign']['T_hs_ff_end']
                                 )
                             T_select_epsilon = st.slider(
-                                'Quellentemperatur',
+                                txt('od_slider'),
                                 min_value=T_hs_min,
                                 max_value=T_hs_max,
                                 value=int((T_hs_max + T_hs_min) / 2),
@@ -1323,7 +1305,7 @@ if mode == txt('mode_option_partload'):
 
                         pl_epsilon_placeholder.pyplot(figs[T_select_epsilon])
 
-                st.button('Neue Wärmepumpe auslegen', on_click=reset2design)
+                st.button(txt('od_btn_new_hp'), on_click=reset2design)
 
 # %% MARK: Footer
 st.markdown("<br><br>", unsafe_allow_html=True)
