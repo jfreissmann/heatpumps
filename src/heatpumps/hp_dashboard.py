@@ -285,6 +285,9 @@ with st.sidebar:
                     txt('sb_ref_refrigerant'),
                     refrigerants.keys(),
                     index=refrig_index,
+                    format_func=(
+                        lambda ref: txt(f"refrig_name_{ref.replace(' ', '_')}")
+                    ),
                     key='refrigerant',
                     label_visibility='collapsed'
                 )

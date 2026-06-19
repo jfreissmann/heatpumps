@@ -567,6 +567,222 @@
         "ENG": "Open | Parallel | Double Internal Heat Ex",
         "GER": "Offen | Parallelschaltung | doppelte interne WÜT"
     },
+    "refrig_name_R113": {
+        "ENG": "R113",
+        "GER": "R113"
+    },
+    "refrig_type_R113": {
+        "ENG": "CFC",
+        "GER": "CFC"
+    },
+    "refrig_name_R114": {
+        "ENG": "R114",
+        "GER": "R114"
+    },
+    "refrig_type_R114": {
+        "ENG": "CFC",
+        "GER": "CFC"
+    },
+    "refrig_name_R123": {
+        "ENG": "R123",
+        "GER": "R123"
+    },
+    "refrig_type_R123": {
+        "ENG": "HCFC",
+        "GER": "HCFC"
+    },
+    "refrig_name_R21": {
+        "ENG": "R21",
+        "GER": "R21"
+    },
+    "refrig_type_R21": {
+        "ENG": "HCFC",
+        "GER": "HCFC"
+    },
+    "refrig_name_R142b": {
+        "ENG": "R142b",
+        "GER": "R142b"
+    },
+    "refrig_type_R142b": {
+        "ENG": "HCFC",
+        "GER": "HCFC"
+    },
+    "refrig_name_R124": {
+        "ENG": "R124",
+        "GER": "R124"
+    },
+    "refrig_type_R124": {
+        "ENG": "HCFC",
+        "GER": "HCFC"
+    },
+    "refrig_name_R365mfc": {
+        "ENG": "R365mfc",
+        "GER": "R365mfc"
+    },
+    "refrig_type_R365mfc": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_SES36": {
+        "ENG": "SES36",
+        "GER": "SES36"
+    },
+    "refrig_type_SES36": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R245ca": {
+        "ENG": "R245ca",
+        "GER": "R245ca"
+    },
+    "refrig_type_R245ca": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R245fa": {
+        "ENG": "R245fa",
+        "GER": "R245fa"
+    },
+    "refrig_type_R245fa": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R152a": {
+        "ENG": "R152a",
+        "GER": "R152a"
+    },
+    "refrig_type_R152a": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R227ea": {
+        "ENG": "R227ea",
+        "GER": "R227ea"
+    },
+    "refrig_type_R227ea": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R134a": {
+        "ENG": "R134a",
+        "GER": "R134a"
+    },
+    "refrig_type_R134a": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R1234ze(Z)": {
+        "ENG": "R1234ze(Z)",
+        "GER": "R1234ze(Z)"
+    },
+    "refrig_type_R1234ze(Z)": {
+        "ENG": "HFO",
+        "GER": "HFO"
+    },
+    "refrig_name_R1234ze(E)": {
+        "ENG": "R1234ze(E)",
+        "GER": "R1234ze(E)"
+    },
+    "refrig_type_R1234ze(E)": {
+        "ENG": "HFO",
+        "GER": "HFO"
+    },
+    "refrig_name_R1234yf": {
+        "ENG": "R1234yf",
+        "GER": "R1234yf"
+    },
+    "refrig_type_R1234yf": {
+        "ENG": "HFO",
+        "GER": "HFO"
+    },
+    "refrig_name_R1233zd(E)": {
+        "ENG": "R1233zd(E)",
+        "GER": "R1233zd(E)"
+    },
+    "refrig_type_R1233zd(E)": {
+        "ENG": "HCFO",
+        "GER": "HCFO"
+    },
+    "refrig_name_Propane": {
+        "ENG": "Propane",
+        "GER": "Propan"
+    },
+    "refrig_type_Propane": {
+        "ENG": "HC",
+        "GER": "HC"
+    },
+    "refrig_name_Pentane": {
+        "ENG": "Pentane",
+        "GER": "Pentan"
+    },
+    "refrig_type_Pentane": {
+        "ENG": "HC",
+        "GER": "HC"
+    },
+    "refrig_name_Butane": {
+        "ENG": "Butane",
+        "GER": "Butan"
+    },
+    "refrig_type_Butane": {
+        "ENG": "HC",
+        "GER": "HC"
+    },
+    "refrig_name_Isobutane": {
+        "ENG": "Isobutane",
+        "GER": "Isobutan"
+    },
+    "refrig_type_Isobutane": {
+        "ENG": "HC",
+        "GER": "HC"
+    },
+    "refrig_name_Propene/Propylene": {
+        "ENG": "Propene/Propylene",
+        "GER": "Propen/Propylen"
+    },
+    "refrig_type_Propene/Propylene": {
+        "ENG": "HC",
+        "GER": "HC"
+    },
+    "refrig_name_Novec_649": {
+        "ENG": "Novec 649",
+        "GER": "Novec 649"
+    },
+    "refrig_type_Novec_649": {
+        "ENG": "CF6",
+        "GER": "CF6"
+    },
+    "refrig_name_Dimethyl_Ether/E170": {
+        "ENG": "Dimethyl Ether/E170",
+        "GER": "Dimethylether/E170"
+    },
+    "refrig_type_Dimethyl_Ether/E170": {
+        "ENG": "Ether",
+        "GER": "Ether"
+    },
+    "refrig_name_Water/H2O": {
+        "ENG": "Water/H2O",
+        "GER": "Wasser/H2O"
+    },
+    "refrig_type_Water/H2O": {
+        "ENG": "Natural",
+        "GER": "Natural"
+    },
+    "refrig_name_Ammonia/NH3": {
+        "ENG": "Ammonia/NH3",
+        "GER": "Ammoniak/NH3"
+    },
+    "refrig_type_Ammonia/NH3": {
+        "ENG": "Natural",
+        "GER": "Natural"
+    },
+    "refrig_name_CO2": {
+        "ENG": "CO2",
+        "GER": "CO2"
+    },
+    "refrig_type_CO2": {
+        "ENG": "Natural",
+        "GER": "Natural"
+    },
     "info_df_type": {
         "ENG": "Type",
         "GER": "Typ"
