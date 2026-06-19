@@ -35,15 +35,19 @@ def reset2design():
 def info_df(label, refrigs):
     """Create Dataframe with info of chosen refrigerant."""
     df_refrig = pd.DataFrame(
-        columns=['Typ', 'T_NBP', 'T_krit', 'p_krit', 'SK', 'ODP', 'GWP']
+        columns=[
+            txt('info_df_type'), txt('info_df_T_NBP'), txt('info_df_T_crit'),
+            txt('info_df_p_crit'), txt('info_df_ASHRAE34'), txt('info_df_ODP'), 
+            txt('info_df_GWP')
+        ]
         )
-    df_refrig.loc[label, 'Typ'] = refrigs[label]['type']
-    df_refrig.loc[label, 'T_NBP'] = str(refrigs[label]['T_NBP'])
-    df_refrig.loc[label, 'T_krit'] = str(refrigs[label]['T_crit'])
-    df_refrig.loc[label, 'p_krit'] = str(refrigs[label]['p_crit'])
-    df_refrig.loc[label, 'SK'] = refrigs[label]['ASHRAE34']
-    df_refrig.loc[label, 'ODP'] = str(refrigs[label]['ODP'])
-    df_refrig.loc[label, 'GWP'] = str(refrigs[label]['GWP100'])
+    df_refrig.loc[label, txt('info_df_type')] = refrigs[label]['type']
+    df_refrig.loc[label, txt('info_df_T_NBP')] = str(refrigs[label]['T_NBP'])
+    df_refrig.loc[label, txt('info_df_T_crit')] = str(refrigs[label]['T_crit'])
+    df_refrig.loc[label, txt('info_df_p_crit')] = str(refrigs[label]['p_crit'])
+    df_refrig.loc[label, txt('info_df_ASHRAE34')] = refrigs[label]['ASHRAE34']
+    df_refrig.loc[label, txt('info_df_ODP')] = str(refrigs[label]['ODP'])
+    df_refrig.loc[label, txt('info_df_GWP')] = str(refrigs[label]['GWP100'])
 
     return df_refrig
 

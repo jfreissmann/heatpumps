@@ -551,6 +551,34 @@
         "ENG": "Open | Parallel | Double Internal Heat Ex",
         "GER": "Offen | Parallelschaltung | doppelte interne WÜT"
     },
+    "info_df_type": {
+        "ENG": "Type",
+        "GER": "Typ"
+    },
+    "info_df_T_NBP": {
+        "ENG": "T_NBP",
+        "GER": "T_NSP"
+    },
+    "info_df_T_crit": {
+        "ENG": "T_crit",
+        "GER": "T_krit"
+    },
+    "info_df_p_crit": {
+        "ENG": "p_crit",
+        "GER": "p_krit"
+    },
+    "info_df_ASHRAE34": {
+        "ENG": "ASHRAE34",
+        "GER": "ASHRAE34"
+    },
+    "info_df_ODP": {
+        "ENG": "ODP",
+        "GER": "ODP"
+    },
+    "info_df_GWP": {
+        "ENG": "GWP",
+        "GER": "GWP"
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
         "GER": "Neue Wärmepumpe auslegen"
