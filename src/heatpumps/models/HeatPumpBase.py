@@ -561,9 +561,14 @@ class HeatPumpBase:
         else:
             state_props = config['MISC']
 
+        cache_hit = False
         if os.path.isfile(diagram_cache_path):
-            diagram = FluidPropertyDiagram.from_json(diagram_cache_path)
-        else:
+            try:
+                diagram = FluidPropertyDiagram.from_json(diagram_cache_path)
+                cache_hit = True
+            except Exception as e:
+                cache_hit = False
+        if not cache_hit:
             diagram = FluidPropertyDiagram(refrig)
             diagram.set_unit_system(T='°C', p='bar', h='kJ/kg')
 
@@ -584,7 +589,10 @@ class HeatPumpBase:
                 })
             diagram.calc_isolines()
             os.makedirs(os.path.dirname(diagram_cache_path), exist_ok=True)
-            diagram.to_json(diagram_cache_path)
+            try:
+                diagram.to_json(diagram_cache_path)
+            except Exception as e:
+                print(e)
 
 
         # Calculate components process data
