@@ -216,15 +216,17 @@ with st.sidebar:
         with st.expander(txt('sb_expd_setup'), expanded=True):
             base_topology = st.selectbox(
                 txt('sb_setup_base_topology'),
-                var.base_topologies,
+                [txt(bt) for bt in var.base_topologies],
                 index=0, key='base_topology'
             )
 
             models = []
             for model, mdata in var.hp_models.items():
-                if mdata['base_topology'] == base_topology:
+                if txt(mdata['base_topology']) == base_topology:
                     if mdata['process_type'] != 'transcritical':
-                        models.append(mdata['display_name'])
+                        translated = txt(mdata['display_name'])
+                        if translated not in models:
+                            models.append(translated)
 
             model_name = st.selectbox(
                 txt('sb_setup_model'), models, index=0, key='model'
@@ -239,13 +241,15 @@ with st.sidebar:
                 horizontal=True
             )
 
-            if process_type == txt('sb_setup_ptype_trans'):
-                model_name = f'{model_name} | Transkritisch'
-
+            is_trans = process_type == txt('sb_setup_ptype_trans')
             for model, mdata in var.hp_models.items():
-                correct_base = mdata['base_topology'] == base_topology
-                correct_model_name = mdata['display_name'] == model_name
-                if correct_base and correct_model_name:
+                correct_base = txt(mdata['base_topology']) == base_topology
+                correct_model_name = txt(mdata['display_name']) == model_name
+                correct_process = (
+                    mdata['process_type'] == 'transcritical' if is_trans
+                    else mdata['process_type'] != 'transcritical'
+                )
+                if correct_base and correct_model_name and correct_process:
                     hp_model = mdata
                     hp_model_name = model
                     if 'trans' in hp_model_name:

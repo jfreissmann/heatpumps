@@ -323,6 +323,102 @@
         "ENG": "#### Low temperature cycle",
         "GER": "#### Niedertemperaturkreis"
     },
+    "topo_simple": {
+        "ENG": "Simple cycle",
+        "GER": "Einfacher Kreis"
+    },
+    "topo_ic": {
+        "ENG": "Intercooler",
+        "GER": "Zwischenkühlung"
+    },
+    "topo_econ": {
+        "ENG": "Economizer",
+        "GER": "Economizer"
+    },
+    "topo_flash": {
+        "ENG": "Flash tank",
+        "GER": "Flashtank"
+    },
+    "topo_cascade": {
+        "ENG": "Cascaded cycle",
+        "GER": "Kaskadierter Kreis"
+    },
+    "model_general": {
+        "ENG": "General",
+        "GER": "Allgemein"
+    },
+    "model_ihx": {
+        "ENG": "Internal Heat Exchanger",
+        "GER": "Interne WÜT"
+    },
+    "model_ic": {
+        "ENG": "Intercooler",
+        "GER": "Zwischenkühlung"
+    },
+    "model_flash": {
+        "ENG": "Flash tank",
+        "GER": "Flashtank"
+    },
+    "model_2ihx": {
+        "ENG": "Double internal Heat Ex",
+        "GER": "Doppelte interne WÜT"
+    },
+    "model_econ_closed_s": {
+        "ENG": "Closed | Series",
+        "GER": "Geschlossen | Reihenschaltung"
+    },
+    "model_econ_closed_s_ihx_a": {
+        "ENG": "Closed | Series | internal Heat Ex (Variant A)",
+        "GER": "Geschlossen | Reihenschaltung | interne WÜT (Variante A)"
+    },
+    "model_econ_closed_s_ihx_b": {
+        "ENG": "Closed | Series | internal Heat Ex (Variant B)",
+        "GER": "Geschlossen | Reihenschaltung | interne WÜT (Variante B)"
+    },
+    "model_econ_open_s": {
+        "ENG": "Open | Series",
+        "GER": "Offen | Reihenschaltung"
+    },
+    "model_econ_open_s_ihx_a": {
+        "ENG": "Open | Series | internal Heat Ex (Variant A)",
+        "GER": "Offen | Reihenschaltung | interne WÜT (Variante A)"
+    },
+    "model_econ_open_s_ihx_b": {
+        "ENG": "Open | Series | internal Heat Ex (Variant B)",
+        "GER": "Offen | Reihenschaltung | interne WÜT (Variante B)"
+    },
+    "model_econ_closed_p": {
+        "ENG": "Closed | Parallel",
+        "GER": "Geschlossen | Parallelschaltung"
+    },
+    "model_econ_closed_p_ihx_a": {
+        "ENG": "Closed | Parallel | internal Heat Ex (Variant A)",
+        "GER": "Geschlossen | Parallelschaltung | interne WÜT (Variante A)"
+    },
+    "model_econ_closed_p_ihx_b": {
+        "ENG": "Closed | Parallel | internal Heat Ex (Variant B)",
+        "GER": "Geschlossen | Parallelschaltung | interne WÜT (Variante B)"
+    },
+    "model_econ_closed_p_2ihx": {
+        "ENG": "Closed | Parallel | double internal Heat Ex",
+        "GER": "Geschlossen | Parallelschaltung | doppelte interne WÜT"
+    },
+    "model_econ_open_p": {
+        "ENG": "Open | Parallel",
+        "GER": "Offen | Parallelschaltung"
+    },
+    "model_econ_open_p_ihx_a": {
+        "ENG": "Open | Parallel | internal Heat Ex (Variant A)",
+        "GER": "Offen | Parallelschaltung | interne WÜT (Variante A)"
+    },
+    "model_econ_open_p_ihx_b": {
+        "ENG": "Open | Parallel | internal Heat Ex (Variant B)",
+        "GER": "Offen | Parallelschaltung | interne WÜT (Variante B)"
+    },
+    "model_econ_open_p_2ihx": {
+        "ENG": "Open | Parallel | double internal Heat Ex",
+        "GER": "Offen | Parallelschaltung | doppelte interne WÜT"
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
         "GER": "Es würde für diesen Key keine Übersetzung gefunden."
