@@ -858,13 +858,11 @@ if mode == txt('mode_option_design'):
 
                 col1, col2, col3, col4 = st.columns(4)
                 col1.metric('COP', round(ss.hp.cop, 2))
-                Q_dot_ab = abs(
-                    ss.hp.buses['heat output'].P.val / 1e6
-                    )
+                Q_dot_ab = ss.hp.heat_output / 1e6
                 col2.metric('Q_dot_ab', f"{Q_dot_ab:.2f} MW")
                 col3.metric(
                     'P_zu',
-                    f"{ss.hp.buses['power input'].P.val/1e6:.2f} MW"
+                    f"{ss.hp.power_input/1e6:.2f} MW"
                     )
                 Q_dot_zu = abs(
                     ss.hp.comps['evap'].Q.val/1e6
@@ -1048,8 +1046,9 @@ if mode == txt('mode_option_design'):
                         state_quantities[refrig2] = (
                             state_quantities[refrig2] == 1.0
                             )
-                    if 'Td_bp' in state_quantities.columns:
-                        del state_quantities['Td_bp']
+                    for col in ('td_dew', 'td_bubble', 'T_dew', 'T_bubble'):
+                        if col in state_quantities.columns:
+                            del state_quantities[col]
                     for col in state_quantities.columns:
                         if state_quantities[col].dtype == np.float64:
                             state_quantities[col] = (
@@ -1112,50 +1111,43 @@ if mode == txt('mode_option_design'):
                     col1, col2, col3, col4, col5 = st.columns(5)
                     col1.metric(
                         'Epsilon',
-                        f'{ss.hp.ean.network_data.epsilon*1e2:.2f} %'
+                        f'{ss.hp.ean.epsilon*1e2:.2f} %'
                         )
                     col2.metric(
                         'E_F',
-                        f'{(ss.hp.ean.network_data.E_F)/1e6:.2f} MW'
+                        f'{(ss.hp.ean.E_F)/1e6:.2f} MW'
                         )
                     col3.metric(
                         'E_P',
-                        f'{(ss.hp.ean.network_data.E_P)/1e6:.2f} MW'
+                        f'{(ss.hp.ean.E_P)/1e6:.2f} MW'
                         )
                     col4.metric(
                         'E_D',
-                        f'{(ss.hp.ean.network_data.E_D)/1e6:.2f} MW'
+                        f'{(ss.hp.ean.E_D)/1e6:.2f} MW'
                         )
                     col5.metric(
                         'E_L',
-                        f'{(ss.hp.ean.network_data.E_L)/1e3:.2f} KW'
+                        f'{(ss.hp.ean.E_L)/1e3:.2f} KW'
                         )
 
                     st.subheader(txt('design_subheader_exergy_comp'))
-                    exergy_component_result = (
-                        ss.hp.ean.component_data.copy()
+                    exergy_component_result, _, _ = ss.hp.ean.exergy_results(
+                        print_results=False
                         )
-                    exergy_component_result = exergy_component_result.drop(
-                        'group', axis=1
+                    exergy_component_result = (
+                        exergy_component_result.set_index('Component')
                         )
                     exergy_component_result.dropna(
-                        subset=['E_F'], inplace=True
+                        subset=['E_F [kW]'], inplace=True
                         )
-                    for col in ['E_F', 'E_P', 'E_D']:
+                    for col in ['E_F [kW]', 'E_P [kW]', 'E_D [kW]']:
                         exergy_component_result[col] = (
                             exergy_component_result[col].round(2)
                             )
-                    for col in ['epsilon', 'y_Dk', 'y*_Dk']:
+                    for col in ['epsilon [%]', 'y [%]', 'y* [%]']:
                         exergy_component_result[col] = (
                             exergy_component_result[col].round(4)
                             )
-                    exergy_component_result.rename(
-                        columns={
-                            'E_F': 'E_F in W',
-                            'E_P': 'E_P in W',
-                            'E_D': 'E_D in W',
-                        },
-                        inplace=True)
                     st.dataframe(
                         data=exergy_component_result, width='stretch'
                         )
