@@ -40,14 +40,17 @@ def info_df(label, refrigs):
             txt('info_df_p_crit'), txt('info_df_ASHRAE34'), txt('info_df_ODP'), 
             txt('info_df_GWP')
         ]
-        )
-    df_refrig.loc[label, txt('info_df_type')] = refrigs[label]['type']
-    df_refrig.loc[label, txt('info_df_T_NBP')] = str(refrigs[label]['T_NBP'])
-    df_refrig.loc[label, txt('info_df_T_crit')] = str(refrigs[label]['T_crit'])
-    df_refrig.loc[label, txt('info_df_p_crit')] = str(refrigs[label]['p_crit'])
-    df_refrig.loc[label, txt('info_df_ASHRAE34')] = refrigs[label]['ASHRAE34']
-    df_refrig.loc[label, txt('info_df_ODP')] = str(refrigs[label]['ODP'])
-    df_refrig.loc[label, txt('info_df_GWP')] = str(refrigs[label]['GWP100'])
+    )
+    idx_label = txt(f"refrig_name_{label.replace(' ', '_')}")
+    df_refrig.loc[idx_label, txt('info_df_type')] = (
+        txt(f"refrig_type_{label.replace(' ', '_')}")
+    )
+    df_refrig.loc[idx_label, txt('info_df_T_NBP')] = str(refrigs[label]['T_NBP'])
+    df_refrig.loc[idx_label, txt('info_df_T_crit')] = str(refrigs[label]['T_crit'])
+    df_refrig.loc[idx_label, txt('info_df_p_crit')] = str(refrigs[label]['p_crit'])
+    df_refrig.loc[idx_label, txt('info_df_ASHRAE34')] = refrigs[label]['ASHRAE34']
+    df_refrig.loc[idx_label, txt('info_df_ODP')] = str(refrigs[label]['ODP'])
+    df_refrig.loc[idx_label, txt('info_df_GWP')] = str(refrigs[label]['GWP100'])
 
     return df_refrig
 

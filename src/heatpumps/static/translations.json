@@ -765,7 +765,7 @@
     },
     "refrig_type_Water/H2O": {
         "ENG": "Natural",
-        "GER": "Natural"
+        "GER": "Natürlich"
     },
     "refrig_name_Ammonia/NH3": {
         "ENG": "Ammonia/NH3",
@@ -773,7 +773,7 @@
     },
     "refrig_type_Ammonia/NH3": {
         "ENG": "Natural",
-        "GER": "Natural"
+        "GER": "Natürlich"
     },
     "refrig_name_CO2": {
         "ENG": "CO2",
@@ -781,7 +781,7 @@
     },
     "refrig_type_CO2": {
         "ENG": "Natural",
-        "GER": "Natural"
+        "GER": "Natürlich"
     },
     "info_df_type": {
         "ENG": "Type",
