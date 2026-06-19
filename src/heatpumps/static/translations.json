@@ -416,11 +416,11 @@
         "GER": "Ergebnisse nach Komponente"
     },
     "design_subheader_exergy_grass": {
-        "ENG": "Grassmann diagrame",
+        "ENG": "Grassmann diagram",
         "GER": "Grassmann Diagramm"
     },
     "design_subheader_exergy_waterfall": {
-        "ENG": "Waterfall diagrame",
+        "ENG": "Waterfall diagram",
         "GER": "Wasserfall Diagramm"
     },
     "design_exergy_info": {
