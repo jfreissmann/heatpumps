@@ -861,17 +861,27 @@ if mode == txt('mode_option_design'):
                 st.header(txt('design_header_results'))
 
                 col1, col2, col3, col4 = st.columns(4)
-                col1.metric('COP', round(ss.hp.cop, 2))
+                col1.metric(
+                    txt('design_res_metric_COP'),
+                    round(ss.hp.cop, 2)
+                )
+
                 Q_dot_ab = ss.hp.heat_output / 1e6
-                col2.metric('Q_dot_ab', f"{Q_dot_ab:.2f} MW")
+                col2.metric(
+                    txt('design_res_metric_Q_dot_out'),
+                    f"{Q_dot_ab:.2f} MW"
+                )
+
                 col3.metric(
-                    'P_zu',
+                    txt('design_res_metric_P_in'),
                     f"{ss.hp.power_input/1e6:.2f} MW"
-                    )
-                Q_dot_zu = abs(
-                    ss.hp.comps['evap'].Q.val/1e6
-                    )
-                col4.metric('Q_dot_zu', f'{Q_dot_zu:.2f} MW')
+                )
+
+                Q_dot_zu = abs(ss.hp.comps['evap'].Q.val/1e6)
+                col4.metric(
+                    txt('design_res_metric_Q_dot_in'),
+                    f'{Q_dot_zu:.2f} MW'
+                )
 
                 with st.expander(txt('design_tab_topo_refrig')):
                     # %% Topology & Refrigerant

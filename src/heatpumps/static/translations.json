@@ -351,6 +351,22 @@
         "ENG": "Design Results",
         "GER": "Ergebnisse der Auslegung"
     },
+    "design_res_metric_COP": {
+        "ENG": "$COP$",
+        "GER": "$COP$"
+    },
+    "design_res_metric_Q_dot_out": {
+        "ENG": "$\\dot Q_{out}$",
+        "GER": "$\\dot Q_{ab}$"
+    },
+    "design_res_metric_P_in": {
+        "ENG": "$P_{in}$",
+        "GER": "$P_{zu}$"
+    },
+    "design_res_metric_Q_dot_in": {
+        "ENG": "$\\dot Q_{in}$",
+        "GER": "$\\dot Q_{zu}$"
+    },
     "design_tab_topo_refrig": {
         "ENG": "Topology & refrigerant",
         "GER": "Topologie & Kältemittel"
