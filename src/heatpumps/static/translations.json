@@ -815,6 +815,201 @@
         "ENG": "GWP",
         "GER": "GWP"
     },
+    "comp_label_Compressor": {
+        "ENG": "Compressor",
+        "GER": "Verdichter"
+    },
+    "comp_label_Condensate_Splitter": {
+        "ENG": "Condensate Splitter",
+        "GER": "Kondensatteiler"
+    },
+    "comp_label_Condenser": {
+        "ENG": "Condenser",
+        "GER": "Verflüssiger"
+    },
+    "comp_label_Consumer": {
+        "ENG": "Consumer",
+        "GER": "Verbraucher"
+    },
+    "comp_label_Consumer_Cycle_Closer": {
+        "ENG": "Consumer Cycle Closer",
+        "GER": "Verbraucher Cycle Closer"
+    },
+    "comp_label_Consumer_Recirculation_Pump": {
+        "ENG": "Consumer Recirculation Pump",
+        "GER": "Verbraucher Umwälzpumpe"
+    },
+    "comp_label_Economizer": {
+        "ENG": "Economizer",
+        "GER": "Economizer"
+    },
+    "comp_label_Economizer_Injection": {
+        "ENG": "Economizer Injection",
+        "GER": "Economizer-Einspritzung"
+    },
+    "comp_label_Evaporation_Valve": {
+        "ENG": "Evaporation Valve",
+        "GER": "Verdampfungsventil"
+    },
+    "comp_label_Evaporator": {
+        "ENG": "Evaporator",
+        "GER": "Verdampfer"
+    },
+    "comp_label_Flash_Tank": {
+        "ENG": "Flash Tank",
+        "GER": "Flashtank"
+    },
+    "comp_label_Grid": {
+        "ENG": "Grid",
+        "GER": "Stromnetz"
+    },
+    "comp_label_Heat_Source_Back_Flow": {
+        "ENG": "Heat Source Back Flow",
+        "GER": "Wärmequelle Rücklauf"
+    },
+    "comp_label_Heat_Source_Feed_Flow": {
+        "ENG": "Heat Source Feed Flow",
+        "GER": "Wärmequelle Vorlauf"
+    },
+    "comp_label_Heat_Source_Recirculation_Pump": {
+        "ENG": "Heat Source Recirculation Pump",
+        "GER": "Wärmequelle Umwälzpumpe"
+    },
+    "comp_label_High_Pressure_Internal_Heat_Exchanger": {
+        "ENG": "High Pressure Internal Heat Exchanger",
+        "GER": "Interner Wärmeübertrager (Hochdruck)"
+    },
+    "comp_label_High_Temperature_Compressor": {
+        "ENG": "High Temperature Compressor",
+        "GER": "HT-Verdichter"
+    },
+    "comp_label_High_Temperature_Economizer": {
+        "ENG": "High Temperature Economizer",
+        "GER": "HT-Economizer"
+    },
+    "comp_label_High_Temperature_Economizer_Injection": {
+        "ENG": "High Temperature Economizer Injection",
+        "GER": "HT-Economizer-Einspritzung"
+    },
+    "comp_label_Intercooler": {
+        "ENG": "Intercooler",
+        "GER": "Zwischenkühler"
+    },
+    "comp_label_Intermediate_Condensate_Splitter": {
+        "ENG": "Intermediate Condensate Splitter",
+        "GER": "Zwischen-Kondensatteiler"
+    },
+    "comp_label_Intermediate_Heat_Exchanger": {
+        "ENG": "Intermediate Heat Exchanger",
+        "GER": "Zwischenwärmeübertrager"
+    },
+    "comp_label_Intermediate_Valve": {
+        "ENG": "Intermediate Valve",
+        "GER": "Zwischenventil"
+    },
+    "comp_label_Internal_Heat_Exchanger": {
+        "ENG": "Internal Heat Exchanger",
+        "GER": "Interner Wärmeübertrager"
+    },
+    "comp_label_Low_Pressure_Internal_Heat_Exchanger": {
+        "ENG": "Low Pressure Internal Heat Exchanger",
+        "GER": "Interner Wärmeübertrager (Niederdruck)"},
+    "comp_label_Low_Temperature_Compressor": {
+        "ENG": "Low Temperature Compressor",
+        "GER": "NT-Verdichter"
+    },
+    "comp_label_Low_Temperature_Economizer": {
+        "ENG": "Low Temperature Economizer",
+        "GER": "NT-Economizer"
+    },
+    "comp_label_Low_Temperature_Economizer_Injection": {
+        "ENG": "Low Temperature Economizer Injection",
+        "GER": "NT-Economizer-Einspritzung"
+    },
+    "comp_label_Lower_Main_Cycle_Closer": {
+        "ENG": "Lower Main Cycle Closer",
+        "GER": "Unterer Haupt-Cycle Closer"
+    },
+    "comp_label_Main_Cycle_Closer": {
+        "ENG": "Main Cycle Closer",
+        "GER": "Haupt-Cycle Closer"
+    },
+    "comp_label_Transcritical_Heat_Exchanger": {
+        "ENG": "Transcritical Heat Exchanger",
+        "GER": "Transkritischer Wärmeübertrager"
+    },
+    "comp_label_Upper_Main_Cycle_Closer": {
+        "ENG": "Upper Main Cycle Closer",
+        "GER": "Oberer Haupt-Cycle Closer"
+    },
+    "comp_label_Valve": {
+        "ENG": "Valve",
+        "GER": "Expansionsventil"
+    },
+    "comp_label_Fuel_Exergy": {
+        "ENG": "Fuel Exergy",
+        "GER": "Exergieeinsatz"
+    },
+    "comp_label_Product_Exergy": {
+        "ENG": "Product Exergy",
+        "GER": "Exergieertrag"
+    },
+    "comp_suffix_hot": {
+        "ENG": "(hot)",
+        "GER": "(warm)"
+    },
+    "comp_suffix_cold": {
+        "ENG": "(cold)",
+        "GER": "(kalt)"
+    },
+    "comp_suffix_Motor": {
+        "ENG": "Motor",
+        "GER": "Motor"
+    },
+    "plot_axis_h": {
+        "ENG": "Specific enthalpy in $kJ/kg$",
+        "GER": "Spezifische Enthalpie in $kJ/kg$"
+    },
+    "plot_axis_p": {
+        "ENG": "Pressure in $bar$",
+        "GER": "Druck in $bar$"
+    },
+    "plot_axis_s": {
+        "ENG": "Specific entropy in $kJ/(kg \\cdot K)$",
+        "GER": "Spezifische Entropie in $kJ/(kg \\cdot K)$"
+    },
+    "plot_axis_T": {
+        "ENG": "Temperature in $°C$",
+        "GER": "Temperatur in $°C$"
+    },
+    "plot_axis_exergy_kW": {
+        "ENG": "Exergy in kW",
+        "GER": "Exergie in kW"
+    },
+    "plot_axis_P_MW": {
+        "ENG": "Electrical power $P$ in $MW$",
+        "GER": "Elektrische Leistung $P$ in $MW$"
+    },
+    "plot_axis_Q_MW": {
+        "ENG": "Heat flow $\\dot{Q}$ in $MW$",
+        "GER": "Wärmestrom $\\dot{Q}$ in $MW$"
+    },
+    "plot_cbar_T_sink": {
+        "ENG": "Sink temperature in $°C$",
+        "GER": "Senkentemperatur in $°C$"
+    },
+    "plot_cbar_COP": {
+        "ENG": "Coefficient of performance $COP$",
+        "GER": "Leistungszahl $COP$"
+    },
+    "plot_cbar_epsilon": {
+        "ENG": "Exergetic efficiency $\\varepsilon$",
+        "GER": "Exergetische Effizienz $\\varepsilon$"
+    },
+    "plot_title_T_source": {
+        "ENG": "Source temperature: {T:.0f} °C",
+        "GER": "Quellentemperatur: {T:.0f} °C"
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
         "GER": "Neue Wärmepumpe auslegen"
