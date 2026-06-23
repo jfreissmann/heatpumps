@@ -449,7 +449,9 @@ class HeatPumpBase:
                                style='light', figsize=(16, 10), fontsize=10,
                                legend=True, legend_loc='upper left',
                                return_diagram=False, savefig=False,
-                               open_file=False, filepath=None, **kwargs):
+                               open_file=False, filepath=None,
+                               xlabel=None, ylabel=None, label_map=None,
+                               **kwargs):
         """
         Generate log(p)-h-diagram of heat pump process.
 
@@ -499,6 +501,18 @@ class HeatPumpBase:
         open_file : bool
             Flag to set if saved file should be opend by the os. Default is
             `False`.
+
+        xlabel : str, optional
+            Label for the x-axis. If `None`, a hardcoded default is used.
+
+        ylabel : str, optional
+            Label for the y-axis. If `None`, a hardcoded default is used.
+
+        label_map : dict, optional
+            Mapping from English component labels to translated labels used in
+            the legend. Keys are the labels returned by `get_plotting_states`;
+            values are the desired display strings. Labels not present in the
+            map are shown unchanged. If `None`, original labels are used.
 
         **kwargs
             Additional keyword arguments to pass through to the
@@ -636,7 +650,10 @@ class HeatPumpBase:
                 ax.scatter(
                     datapoints[var['x']][0], datapoints[var['y']][0],
                     color='#B54036',
-                    label=f'$\\bf{i+1:.0f}$: {key}',
+                    label=(
+                        f'$\\bf{i+1:.0f}$: '
+                        + f'{label_map.get(key, key) if label_map else key}'
+                    ),
                     s=14*int(fontsize*0.9), alpha=0.5
                     )
                 ax.annotate(
@@ -649,8 +666,11 @@ class HeatPumpBase:
                 ax.scatter(
                     0, 0,
                     color='#FFFFFF', s=0, alpha=1.0,
-                    label=f'$\\bf{i+1:.0f}$: {key}'
+                    label=(
+                        f'$\\bf{i+1:.0f}$: '
+                        + f'{label_map.get(key, key) if label_map else key}'
                     )
+                )
                 ax.annotate(
                     'Error\nMissing Plotting Data', (0.5, 0.5),
                     xycoords='axes fraction', ha='center', va='center',
@@ -660,11 +680,31 @@ class HeatPumpBase:
         # Additional plotting parameters
         ax.set_title(refrig, fontsize=int(fontsize*1.2))
         if diagram_type == 'logph':
-            ax.set_xlabel('Spezifische Enthalpie in $kJ/kg$', fontsize=fontsize)
-            ax.set_ylabel('Druck in $bar$', fontsize=fontsize)
+            ax.set_xlabel(
+                xlabel
+                if xlabel is not None
+                else 'Specific enthalpy in $kJ/kg$',
+                fontsize=fontsize
+            )
+            ax.set_ylabel(
+                ylabel
+                if ylabel is not None
+                else 'Pressure in $bar$',
+                fontsize=fontsize
+                )
         elif diagram_type == 'Ts':
-            ax.set_xlabel('Spezifische Entropie in $kJ/(kg \\cdot K)$', fontsize=fontsize)
-            ax.set_ylabel('Temperatur in $°C$', fontsize=fontsize)
+            ax.set_xlabel(
+                xlabel
+                if xlabel is not None
+                else 'Specific entropy in $kJ/(kg \\cdot K)$',
+                fontsize=fontsize
+                )
+            ax.set_ylabel(
+                ylabel
+                if ylabel is not None
+                else 'Temperature in $°C$',
+                fontsize=fontsize
+                )
 
         ax.tick_params(axis='both', labelsize=int(fontsize*0.9))
 
