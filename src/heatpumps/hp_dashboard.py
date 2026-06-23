@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+import re
 from importlib import resources
 
 import darkdetect
@@ -165,6 +166,44 @@ def txt(label_key):
         return ss.tl['fallback_lang'][ss.lg]
 
     return translated_label
+
+def translate_comp_label(label):
+    """Translate an English component label to the current dashboard language.
+
+    Strips trailing numbers, (hot)/(cold) suffixes, and Motor suffix before
+    looking up the base label in translations, then reassembles the result.
+    Falls back to the original label when no translation key is found.
+    """
+    if ss.lg == 'ENG':
+        return label
+    tl = ss.tl
+
+    suffix = ''
+    if label.endswith(' (hot)'):
+        label = label[:-6]
+        suffix = ' ' + tl.get('comp_suffix_hot', {}).get(ss.lg, '(hot)')
+    elif label.endswith(' (cold)'):
+        label = label[:-7]
+        suffix = ' ' + tl.get('comp_suffix_cold', {}).get(ss.lg, '(cold)')
+
+    is_motor = label.endswith(' Motor')
+    if is_motor:
+        label = label[:-6]
+
+    m = re.match(r'^(.*?)( \d+)?$', label)
+    base, trailing_num = m.group(1), m.group(2) or ''
+
+    key = 'comp_label_' + base.replace(' ', '_')
+    translated = tl.get(key, {}).get(ss.lg, base)
+
+    result = translated + trailing_num
+    if is_motor:
+        result += ' ' + tl.get('comp_suffix_Motor', {}).get(ss.lg, 'Motor')
+    return result + suffix
+
+def build_label_map(labels):
+    """Build a dict mapping English component labels to translated labels."""
+    return {lbl: translate_comp_label(lbl) for lbl in labels}
 
 src_path = str(resources.files('heatpumps').joinpath('static'))
 icon_path = os.path.join(src_path, 'img', 'icons')
@@ -945,6 +984,10 @@ if mode == txt('mode_option_design'):
                     else:
                         state_diagram_style = 'light'
 
+                    state_diagram_label_map = build_label_map(
+                        comp.label for comp in ss.hp.comps.values()
+                        )
+
                     with col_left:
                         # %% Log(p)-h-Diagram
                         st.subheader(txt('design_subheader_ph'))
@@ -963,8 +1006,11 @@ if mode == txt('mode_option_design'):
                                 xlims=(xmin, xmax), ylims=(ymin, ymax),
                                 style=state_diagram_style,
                                 return_diagram=True, display_info=False,
-                                open_file=False, savefig=False
-                                )
+                                open_file=False, savefig=False,
+                                xlabel=txt('plot_axis_h'),
+                                ylabel=txt('plot_axis_p'),
+                                label_map=state_diagram_label_map
+                            )
                             st.pyplot(diagram.fig)
 
                         elif hp_model['nr_refrigs'] == 2:
@@ -991,8 +1037,11 @@ if mode == txt('mode_option_design'):
                                 ylims=((ymin1, ymax1), (ymin2, ymax2)),
                                 style=state_diagram_style,
                                 return_diagram=True, display_info=False,
-                                savefig=False, open_file=False
-                                )
+                                savefig=False, open_file=False,
+                                xlabel=txt('plot_axis_h'),
+                                ylabel=txt('plot_axis_p'),
+                                label_map=state_diagram_label_map
+                            )
                             st.pyplot(diagram1.fig)
                             st.pyplot(diagram2.fig)
 
@@ -1013,8 +1062,11 @@ if mode == txt('mode_option_design'):
                                 xlims=(xmin, xmax), ylims=(ymin, ymax),
                                 style=state_diagram_style,
                                 return_diagram=True, display_info=False,
-                                open_file=False, savefig=False
-                                )
+                                open_file=False, savefig=False,
+                                xlabel=txt('plot_axis_s'),
+                                ylabel=txt('plot_axis_T'),
+                                label_map=state_diagram_label_map
+                            )
                             st.pyplot(diagram.fig)
 
                         elif hp_model['nr_refrigs'] == 2:
@@ -1039,8 +1091,11 @@ if mode == txt('mode_option_design'):
                                 ylims=((ymin1, ymax1), (ymin2, ymax2)),
                                 style=state_diagram_style,
                                 return_diagram=True, display_info=False,
-                                savefig=False, open_file=False
-                                )
+                                savefig=False, open_file=False,
+                                xlabel=txt('plot_axis_s'),
+                                ylabel=txt('plot_axis_T'),
+                                label_map=state_diagram_label_map
+                            )
                             st.pyplot(diagram1.fig)
                             st.pyplot(diagram2.fig)
 
@@ -1196,14 +1251,22 @@ if mode == txt('mode_option_design'):
                         st.subheader(txt('design_subheader_exergy_waterfall'))
                         diagram_placeholder_waterfall = st.empty()
 
+                        df_exergy, _, _ = ss.hp.ean.exergy_results(
+                            print_results=False
+                        )
+                        wf_label_map = build_label_map(df_exergy['Component'])
                         dia_wf_fig, dia_wf_ax = (
                             ss.hp.generate_waterfall_diagram(
-                                return_fig_ax=True
-                                )
+                                return_fig_ax=True,
+                                xlabel=txt('plot_axis_exergy_kW'),
+                                fuel_label=txt('comp_label_Fuel_Exergy'),
+                                product_label=txt('comp_label_Product_Exergy'),
+                                label_map=wf_label_map
                             )
+                        )
                         diagram_placeholder_waterfall.pyplot(
                             dia_wf_fig, width='stretch'
-                            )
+                        )
 
                     st.write(txt('design_exergy_info'))
 
@@ -1244,8 +1307,12 @@ if mode == txt('mode_option_partload'):
                     with col_left:
                         figs, axes = ss.hp.plot_partload_char(
                             ss.partload_char, cmap_type='COP',
-                            cmap='plasma', return_fig_ax=True
-                            )
+                            cmap='plasma', return_fig_ax=True,
+                            xlabel=txt('plot_axis_P_MW'),
+                            ylabel=txt('plot_axis_Q_MW'),
+                            cbar_label_COP=txt('plot_cbar_COP'),
+                            title_template=txt('plot_title_T_source')
+                        )
                         pl_cop_placeholder = st.empty()
 
                         if type_hs == txt('sb_od_source_option_const'):
@@ -1273,8 +1340,12 @@ if mode == txt('mode_option_partload'):
                     with col_right:
                         figs, axes = ss.hp.plot_partload_char(
                             ss.partload_char, cmap_type='T_cons_ff',
-                            cmap='plasma', return_fig_ax=True
-                            )
+                            cmap='plasma', return_fig_ax=True,
+                            xlabel=txt('plot_axis_P_MW'),
+                            ylabel=txt('plot_axis_Q_MW'),
+                            cbar_label_T=txt('plot_cbar_T_sink'),
+                            title_template=txt('plot_title_T_source')
+                        )
                         pl_T_cons_ff_placeholder = st.empty()
 
                         if type_hs == txt('sb_od_source_option_const'):
@@ -1301,7 +1372,11 @@ if mode == txt('mode_option_partload'):
                     with col_left_1:
                         figs, axes = ss.hp.plot_partload_char(
                             ss.partload_char, cmap_type='epsilon',
-                            cmap='plasma', return_fig_ax=True
+                            cmap='plasma', return_fig_ax=True,
+                            xlabel=txt('plot_axis_P_MW'),
+                            ylabel=txt('plot_axis_Q_MW'),
+                            cbar_label_epsilon=txt('plot_cbar_epsilon'),
+                            title_template=txt('plot_title_T_source')
                         )
                         pl_epsilon_placeholder = st.empty()
 
