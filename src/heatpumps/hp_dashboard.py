@@ -477,17 +477,17 @@ with st.sidebar:
 
         if hp_model['nr_ihx'] != 0:
             max_dT = int(round(params['C3']['T'] - params['B2']['T'], 0))
-            with st.expander('Interne Wärmerübertragung'):
+            with st.expander(txt('sb_expd_ihx')):
                 if hp_model['nr_ihx'] == 1:
                     params['ihx']['dT_sh'] = st.slider(
-                        'Überhitzung/Unterkühlung', value=5,
+                        txt('sb_ihx_superheat'), value=5,
                         min_value=0, max_value=max_dT, format='%d°C',
                         key='dT_sh')
                 if hp_model['nr_ihx'] > 1:
                     dT_ihx = {}
                     for i in range(1, hp_model['nr_ihx']+1):
                         dT_ihx[i] = st.slider(
-                            f'Nr. {i}: Überhitzung/Unterkühlung', value=5,
+                            txt('sb_ihx_superheat_i').format(i=i), value=5,
                             min_value=0, max_value=max_dT, format='%d°C',
                             key=f'dT_ihx{i}'
                             )

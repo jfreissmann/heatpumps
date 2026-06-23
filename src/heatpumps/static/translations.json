@@ -111,6 +111,18 @@
         "ENG": "The temperature of the heat sink has to be higher than the heat source.",
         "GER": "Die Temperatur der Wärmesenke muss höher sein, als die der Wärmequelle."
     },
+    "sb_expd_ihx": {
+        "ENG": "Internal heat exchanger",
+        "GER": "Interne Wärmerübertragung"
+    },
+    "sb_ihx_superheat": {
+        "ENG": "Superheating/Subcooling",
+        "GER": "Überhitzung/Unterkühlung"
+    },
+    "sb_ihx_superheat_i": {
+        "ENG": "Nr. {i}: Superheating/Subcooling",
+        "GER": "Nr. {i}: Überhitzung/Unterkühlung"
+    },
     "sb_expd_compressor": {
         "ENG": "Compressor",
         "GER": "Verdichter"
