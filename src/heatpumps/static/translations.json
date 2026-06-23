@@ -324,7 +324,7 @@
         "GER": "#### Niedertemperaturkreis"
     },
     "design_refrig_info": {
-        "ENG": "All fluid properity data and classifications are from [CoolProp](http://www.coolprop.org) or [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)",
+        "ENG": "All fluid properity data and classifications come from [CoolProp](http://www.coolprop.org) or [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)",
         "GER": "Alle Stoffdaten und Klassifikationen aus [CoolProp](http://www.coolprop.org) oder [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)"
     },
     "design_expd_instruction": {
@@ -953,6 +953,18 @@
     "comp_label_Product_Exergy": {
         "ENG": "Product Exergy",
         "GER": "Exergieertrag"
+    },
+    "comp_label_Piping_&_Tanks": {
+        "ENG": "Piping & Tanks",
+        "GER": "Rohrleitungen & Behälter"
+    },
+    "comp_label_Electrical_Equipment": {
+        "ENG": "Electrical Equipment",
+        "GER": "Elektrische Ausrüstung"
+    },
+    "comp_label_Refrigerant": {
+        "ENG": "Refrigerant",
+        "GER": "Kältemittel"
     },
     "comp_suffix_hot": {
         "ENG": "(hot)",

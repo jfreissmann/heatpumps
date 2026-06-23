@@ -1179,8 +1179,9 @@ if mode == txt('mode_option_design'):
                         txt('design_eco_inv_spec'),
                         f'{inv_sepc:,.0f} €/MW'
                         )
+                    cost_label_map = build_label_map(ss.hp.cost.keys())
                     costdata = pd.DataFrame({
-                        k: [round(v, 2)]
+                        cost_label_map.get(k, k): [round(v, 2)]
                         for k, v in ss.hp.cost.items()
                         })
                     st.dataframe(
@@ -1222,6 +1223,10 @@ if mode == txt('mode_option_design'):
                     exergy_component_result = (
                         exergy_component_result.set_index('Component')
                         )
+                    exergy_component_result.index = [
+                        translate_comp_label(lbl)
+                        for lbl in exergy_component_result.index
+                        ]
                     exergy_component_result.dropna(
                         subset=['E_F [kW]'], inplace=True
                         )
