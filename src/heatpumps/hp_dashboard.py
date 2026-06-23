@@ -984,9 +984,15 @@ if mode == txt('mode_option_design'):
                     else:
                         state_diagram_style = 'light'
 
-                    state_diagram_label_map = build_label_map(
-                        comp.label for comp in ss.hp.comps.values()
-                        )
+                    if hp_model['nr_refrigs'] == 1:
+                        state_diagram_label_map = build_label_map(
+                            ss.hp.get_plotting_states().keys()
+                            )
+                    else:
+                        state_diagram_label_map = build_label_map(
+                            list(ss.hp.get_plotting_states(cycle=1).keys())
+                            + list(ss.hp.get_plotting_states(cycle=2).keys())
+                            )
 
                     with col_left:
                         # %% Log(p)-h-Diagram

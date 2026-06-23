@@ -27,7 +27,9 @@ class HeatPumpCascadeBase(HeatPumpBase):
                                style='light', figsize=(16, 10), fontsize=10,
                                legend=True, legend_loc='upper left',
                                return_diagram=False, savefig=True,
-                               open_file=True, **kwargs):
+                               open_file=True, filepath=None,
+                               xlabel=None, ylabel=None, label_map=None,
+                               **kwargs):
         """
         Generate log(p)-h-diagram of heat pump process.
 
@@ -81,6 +83,18 @@ class HeatPumpCascadeBase(HeatPumpBase):
         **kwargs
             Additional keyword arguments to pass through to the
             `get_plotting_states` method of the heat pump class.
+
+        xlabel : str, optional
+            Label for the x-axis. If `None`, a hardcoded default is used.
+
+        ylabel : str, optional
+            Label for the y-axis. If `None`, a hardcoded default is used.
+
+        label_map : dict, optional
+            Mapping from English component labels to translated labels used in
+            the legend. Keys are the labels returned by `get_plotting_states`;
+            values are the desired display strings. Labels not present in the
+            map are shown unchanged. If `None`, original labels are used.
         """
         kwargs1 = {}
         kwargs2 = {}
@@ -97,7 +111,9 @@ class HeatPumpCascadeBase(HeatPumpBase):
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
-                open_file=open_file, cycle=1, **kwargs1
+                open_file=open_file,
+                xlabel=xlabel, ylabel=ylabel, label_map=label_map,
+                cycle=1, **kwargs1
             )
             diagram2 = super().generate_state_diagram(
                 refrig=self.params['setup']['refrig2'],
@@ -105,7 +121,9 @@ class HeatPumpCascadeBase(HeatPumpBase):
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
-                open_file=open_file, cycle=2, **kwargs2
+                open_file=open_file,
+                xlabel=xlabel, ylabel=ylabel, label_map=label_map,
+                cycle=2, **kwargs2
             )
             return diagram1, diagram2
         else:
@@ -115,7 +133,9 @@ class HeatPumpCascadeBase(HeatPumpBase):
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
-                open_file=open_file, cycle=1, **kwargs1
+                open_file=open_file,
+                xlabel=xlabel, ylabel=ylabel, label_map=label_map,
+                cycle=1, **kwargs1
             )
             super().generate_state_diagram(
                 refrig=self.params['setup']['refrig2'],
@@ -123,7 +143,9 @@ class HeatPumpCascadeBase(HeatPumpBase):
                 diagram_type=diagram_type, legend=legend,
                 legend_loc=legend_loc,
                 return_diagram=return_diagram, savefig=savefig,
-                open_file=open_file, cycle=2, **kwargs2
+                open_file=open_file,
+                xlabel=xlabel, ylabel=ylabel, label_map=label_map,
+                cycle=2, **kwargs2
             )
 
     def check_mid_temperature(self, wf):

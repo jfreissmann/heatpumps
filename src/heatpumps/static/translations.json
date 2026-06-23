@@ -954,6 +954,42 @@
         "ENG": "Product Exergy",
         "GER": "Exergieertrag"
     },
+    "comp_label_Injection_steam": {
+        "ENG": "Injection steam",
+        "GER": "Einspritzdampf"
+    },
+    "comp_label_Compressed_gas": {
+        "ENG": "Compressed gas",
+        "GER": "Verdichtetes Gas"
+    },
+    "comp_label_Injection_steam_cycle": {
+        "ENG": "Injection steam cycle",
+        "GER": "Einspritzdampf Kreis"
+    },
+    "comp_label_Compressed_gas_cycle": {
+        "ENG": "Compressed gas cycle",
+        "GER": "Verdichtetes Gas Kreis"
+    },
+    "comp_label_Main_gas_stream": {
+        "ENG": "Main gas stream",
+        "GER": "Hauptgasstrom"
+    },
+    "comp_label_Parallel_gas_stream": {
+        "ENG": "Parallel gas stream",
+        "GER": "Parallelgasstrom"
+    },
+    "comp_label_Flash_Liquid": {
+        "ENG": "Flash Liquid",
+        "GER": "Flash-Flüssigkeit"
+    },
+    "comp_label_Flash_Gas": {
+        "ENG": "Flash Gas",
+        "GER": "Flash-Gas"
+    },
+    "comp_label_Gas_Injection": {
+        "ENG": "Gas Injection",
+        "GER": "Gaseinspritzung"
+    },
     "comp_label_Piping_&_Tanks": {
         "ENG": "Piping & Tanks",
         "GER": "Rohrleitungen & Behälter"
