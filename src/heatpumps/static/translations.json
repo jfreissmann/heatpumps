@@ -1090,6 +1090,10 @@
         "ENG": "Phase",
         "GER": "Phase"
     },
+    "footer_contact": {
+        "ENG": "Contact",
+        "GER": "Kontaktdaten"
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
         "GER": "Neue Wärmepumpe auslegen"

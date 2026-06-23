@@ -105,47 +105,6 @@ def img_to_base64(image_path):
     return base64.b64encode(data).decode()
 
 
-@st.dialog("Kontaktdaten")
-def footer():
-    st.markdown(f"""
-        <div style='font-size: 1.0em;'>
-            <div style='margin-bottom: 0.5em;'>
-                <strong>Jonas Freißmann</strong>
-                <img src="https://avatars.githubusercontent.com/u/57762052?v=4" width="32" style="margin: 0 10px;"><br>
-            </div>
-            <p style="margin-bottom: 0.3em;">jonas.freissmann@web.de</p>
-            <a href="mailto:jonas.freissmann@web.de" style="text-decoration: none;">
-                <img src="data:image/svg+xml;base64,{mail64}" width="32" style="margin: 10px 10px 10px 0;">
-            </a>
-            <a href="https://orcid.org/0009-0007-6432-5479" target="_blank" style="text-decoration: none;">
-                <img src="data:image/svg+xml;base64,{orcid64}" width="29" style="margin: 0 10px;">
-            </a>
-            <a href="https://github.com/jfreissmann" target="_blank" style="text-decoration: none;">
-                <img src="data:image/svg+xml;base64,{github64}" width="30" style="margin: 0 10px;">
-            </a>
-            <a href="https://www.linkedin.com/in/jonas-frei%C3%9Fmann-8a6401368/" target="_blank" style="text-decoration: none;">
-                <img src="data:image/svg+xml;base64,{linkedin64}" width="35" style="margin: 0 10px;">
-            </a><br><br><br>
-            <div style='margin-bottom: 0.5em;'>
-                <strong>Malte Fritz</strong>
-                <img src="https://avatars.githubusercontent.com/u/35224977?v=4" width="32" style="margin: 0 10px;"><br>
-            </div>
-            <p style="margin-bottom: 0.3em;">malte.fritz@web.de</p>
-            <a href="mailto:malte.fritz@web.de" style="text-decoration: none;">
-                <img src="data:image/svg+xml;base64,{mail64}" width="32" style="margin: 10px 10px 10px 0;">
-            </a>
-            <a href="https://orcid.org/my-orcid?orcid=0009-0001-5843-0973" target="_blank" style="text-decoration: none;">
-                <img src="data:image/svg+xml;base64,{orcid64}" width="29" style="margin: 0 10px;">
-            </a>
-            <a href="https://github.com/maltefritz" target="_blank" style="text-decoration: none;">
-                <img src="data:image/svg+xml;base64,{github64}" width="30" style="margin: 0 10px;">
-            </a>
-            <a href="https://www.linkedin.com/in/malte-fritz-515259100" target="_blank" style="text-decoration: none;">
-                <img src="data:image/svg+xml;base64,{linkedin64}" width="35" style="margin: 0 10px;">
-            </a>
-        </div><br>
-        """, unsafe_allow_html=True)
-
 # @st.cache_data    # Uncomment this when translation process is done
 def load_translations():
     resourcepath = resources.files('heatpumps')
@@ -154,6 +113,7 @@ def load_translations():
     )
     with open(tlpath, 'r', encoding='utf-8') as file:
         ss.tl = json.load(file)
+
 
 def txt(label_key):
     """Convenience function to get text from translations."""
@@ -166,6 +126,7 @@ def txt(label_key):
         return ss.tl['fallback_lang'][ss.lg]
 
     return translated_label
+
 
 def translate_comp_label(label):
     """Translate an English component label to the current dashboard language.
@@ -200,6 +161,7 @@ def translate_comp_label(label):
     if is_motor:
         result += ' ' + tl.get('comp_suffix_Motor', {}).get(ss.lg, 'Motor')
     return result + suffix
+
 
 def build_label_map(labels):
     """Build a dict mapping English component labels to translated labels."""
@@ -1426,6 +1388,48 @@ if mode == txt('mode_option_partload'):
                 st.button(txt('od_btn_new_hp'), on_click=reset2design)
 
 # %% MARK: Footer
+@st.dialog(txt('footer_contact'))
+def footer():
+    st.markdown(f"""
+        <div style='font-size: 1.0em;'>
+            <div style='margin-bottom: 0.5em;'>
+                <strong>Jonas Freißmann</strong>
+                <img src="https://avatars.githubusercontent.com/u/57762052?v=4" width="32" style="margin: 0 10px;"><br>
+            </div>
+            <p style="margin-bottom: 0.3em;">jonas.freissmann@web.de</p>
+            <a href="mailto:jonas.freissmann@web.de" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{mail64}" width="32" style="margin: 10px 10px 10px 0;">
+            </a>
+            <a href="https://orcid.org/0009-0007-6432-5479" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{orcid64}" width="29" style="margin: 0 10px;">
+            </a>
+            <a href="https://github.com/jfreissmann" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{github64}" width="30" style="margin: 0 10px;">
+            </a>
+            <a href="https://www.linkedin.com/in/jonas-frei%C3%9Fmann-8a6401368/" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{linkedin64}" width="35" style="margin: 0 10px;">
+            </a><br><br><br>
+            <div style='margin-bottom: 0.5em;'>
+                <strong>Malte Fritz</strong>
+                <img src="https://avatars.githubusercontent.com/u/35224977?v=4" width="32" style="margin: 0 10px;"><br>
+            </div>
+            <p style="margin-bottom: 0.3em;">malte.fritz@web.de</p>
+            <a href="mailto:malte.fritz@web.de" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{mail64}" width="32" style="margin: 10px 10px 10px 0;">
+            </a>
+            <a href="https://orcid.org/my-orcid?orcid=0009-0001-5843-0973" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{orcid64}" width="29" style="margin: 0 10px;">
+            </a>
+            <a href="https://github.com/maltefritz" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{github64}" width="30" style="margin: 0 10px;">
+            </a>
+            <a href="https://www.linkedin.com/in/malte-fritz-515259100" target="_blank" style="text-decoration: none;">
+                <img src="data:image/svg+xml;base64,{linkedin64}" width="35" style="margin: 0 10px;">
+            </a>
+        </div><br>
+        """, unsafe_allow_html=True)
+
+
 st.markdown("<br><br>", unsafe_allow_html=True)
 
 pad_left, col_bot, pad_right = st.columns(3)
