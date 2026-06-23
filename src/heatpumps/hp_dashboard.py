@@ -834,7 +834,7 @@ if mode == txt('mode_option_design'):
 
     if run_sim:
         # %% Run Design Simulation
-        with st.spinner('Simulation wird durchgeführt...'):
+        with st.spinner(txt('design_sim_spinner_run')):
             try:
                 ss.hp = run_design(hp_model_name, params)
                 sim_succeded = True
@@ -846,7 +846,7 @@ if mode == txt('mode_option_design'):
 
         # %% MARK: Results
         if sim_succeded:
-            with st.spinner(txt('design_sim_spinner')):
+            with st.spinner(txt('design_sim_spinner_vis')):
 
                 stateconfigpath = str(resources.files('heatpumps').joinpath(
                     'models', 'input', 'state_diagram_config.json'

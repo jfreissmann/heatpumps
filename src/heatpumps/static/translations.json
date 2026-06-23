@@ -343,7 +343,11 @@
         "ENG": "The following error occurred during the heat pump simulation. Please correct the input parameters and try again.\n\n",
         "GER": "Bei der Simulation der Wärmepumpe ist der nachfolgende Fehler aufgetreten. Bitte korrigieren Sie die Eingangsparameter und versuchen es erneut.\n\n"
     },
-    "design_sim_spinner": {
+    "design_sim_spinner_run": {
+        "ENG": "Simulation is being performed...",
+        "GER": "Simulation wird durchgeführt..."
+    },
+    "design_sim_spinner_vis": {
         "ENG": "Results are being visualized...",
         "GER": "Ergebnisse werden visualisiert..."
     },
