@@ -1124,7 +1124,10 @@ class HeatPumpBase:
         return char_ts
 
     def plot_partload_char(self, partload_char, cmap_type='', cmap='viridis',
-                           return_fig_ax=False, savefig=False, open_file=False):
+                           return_fig_ax=False, savefig=False, open_file=False,
+                           xlabel=None, ylabel=None, cbar_label_T=None,
+                           cbar_label_COP=None, cbar_label_epsilon=None,
+                           title_template=None):
         """
         Plot the partload characteristic of the heat pump.
 
@@ -1142,12 +1145,36 @@ class HeatPumpBase:
         cmap : str
             Name of colormap. Valid names are all colormaps implemented in
             matplotlib. Defaults to 'veridis'.
+
+        xlabel : str, optional
+            Label for the x-axis. If `None`, a hardcoded default is used.
+
+        ylabel : str, optional
+            Label for the y-axis. If `None`, a hardcoded default is used.
+
+        cbar_label_T : str, optional
+            Colorbar label for the 'T_cons_ff' colormap type. If `None`, a
+            hardcoded default is used.
+
+        cbar_label_COP : str, optional
+            Colorbar label for the 'COP' colormap type. If `None`, a hardcoded
+            default is used.
+
+        cbar_label_epsilon : str, optional
+            Colorbar label for the 'epsilon' colormap type. If `None`, a
+            hardcoded default is used.
+
+        title_template : str, optional
+            Format string for the subplot title. Must contain a `{T}` placeholder
+            that is filled with the heat source feed flow temperature. If `None`,
+            a hardcoded default is used.
         """
         if not cmap_type:
             print(
                 'Please provide a cmap_type of eiher "T_cons_ff" or '
-                + '"COP" or' + '"epsilon" to plot the heat pump partload characteristic.'
-                )
+                + '"COP" or'
+                + '"epsilon" to plot the heat pump partload characteristic.'
+            )
             return
 
         colormap = plt.get_cmap(cmap)
@@ -1190,12 +1217,27 @@ class HeatPumpBase:
                         )
                     )
                 cbar = plt.colorbar(sm, ax=ax)
-                cbar.set_label('Senkentemperatur in $°C$')
+                cbar.set_label(
+                    cbar_label_T
+                    if cbar_label_T is not None
+                    else 'Heat sink temperature in $°C$'
+                )
                 ax.set_xlim(0, partload_char['P'].max() * 1.05)
                 ax.set_ylim(0, partload_char['Q'].max() * 1.05)
-                ax.set_xlabel('Elektrische Leistung $P$ in $MW$')
-                ax.set_ylabel('Wärmestrom $\\dot{{Q}}$ in $MW$')
-                ax.set_title(f'Quellentemperatur: {T_hs_ff:.0f} °C')
+                ax.set_xlabel(
+                    xlabel
+                    if xlabel is not None
+                    else 'Electrical power $P$ in $MW$'
+                )
+                ax.set_ylabel(
+                    ylabel
+                    if ylabel is not None
+                    else 'Heat flow $\\dot{{Q}}$ in $MW$'
+                )
+                ax.set_title(
+                    (title_template or 'Heat source temperature: {T:.0f} °C')
+                        .format(T=T_hs_ff)
+                )
                 figs[T_hs_ff] = fig
                 axes[T_hs_ff] = ax
 
@@ -1221,14 +1263,28 @@ class HeatPumpBase:
                     )
 
                 cbar = plt.colorbar(scatterplot, ax=ax)
-                cbar.set_label('Leistungszahl $COP$')
+                cbar.set_label(
+                    cbar_label_COP
+                    if cbar_label_COP is not None
+                    else 'Coefficient of performance $COP$')
 
                 ax.grid()
                 ax.set_xlim(0, partload_char['P'].max() * 1.05)
                 ax.set_ylim(0, partload_char['Q'].max() * 1.05)
-                ax.set_xlabel('Elektrische Leistung $P$ in $MW$')
-                ax.set_ylabel('Wärmestrom $\\dot{{Q}}$ in $MW$')
-                ax.set_title(f'Quellentemperatur: {T_hs_ff:.0f} °C')
+                ax.set_xlabel(
+                    xlabel
+                    if xlabel is not None
+                    else 'Electrical power $P$ in $MW$'
+                )
+                ax.set_ylabel(
+                    ylabel
+                    if ylabel is not None
+                    else 'Heat flow $\\dot{{Q}}$ in $MW$'
+                )
+                ax.set_title(
+                    (title_template or 'Heat source temperature: {T:.0f} °C')
+                        .format(T=T_hs_ff)
+                )
                 figs[T_hs_ff] = fig
                 axes[T_hs_ff] = ax
 
@@ -1253,14 +1309,29 @@ class HeatPumpBase:
                     )
 
                 cbar = plt.colorbar(scatterplot, ax=ax)
-                cbar.set_label('Exergetische Effizienz $ε$')
+                cbar.set_label(
+                    cbar_label_epsilon
+                    if cbar_label_epsilon is not None
+                    else 'Exergetic efficiency $\\varepsilon$'
+                )
 
                 ax.grid()
                 ax.set_xlim(0, partload_char['P'].max() * 1.05)
                 ax.set_ylim(0, partload_char['Q'].max() * 1.05)
-                ax.set_xlabel('Elektrische Leistung $P$ in $MW$')
-                ax.set_ylabel('Wärmestrom $\\dot{{Q}}$ in $MW$')
-                ax.set_title(f'Quellentemperatur: {T_hs_ff:.0f} °C')
+                ax.set_xlabel(
+                    xlabel
+                    if xlabel is not None
+                    else 'Electrical power $P$ in $MW$'
+                )
+                ax.set_ylabel(
+                    ylabel
+                    if ylabel is not None
+                    else 'Heat flow $\\dot{{Q}}$ in $MW$'
+                )
+                ax.set_title(
+                    (title_template or 'Heat source temperature: {T:.0f} °C')
+                        .format(T=T_hs_ff)
+                )
                 figs[T_hs_ff] = fig
                 axes[T_hs_ff] = ax
 
