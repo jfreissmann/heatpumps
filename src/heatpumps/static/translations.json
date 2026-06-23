@@ -1022,6 +1022,26 @@
         "ENG": "Source temperature: {T:.0f} °C",
         "GER": "Quellentemperatur: {T:.0f} °C"
     },
+    "state_col_source": {
+        "ENG": "Source",
+        "GER": "Quelle"
+    },
+    "state_col_source_id": {
+        "ENG": "Source ID",
+        "GER": "Quelle ID"
+    },
+    "state_col_target": {
+        "ENG": "Target",
+        "GER": "Ziel"
+    },
+    "state_col_target_id": {
+        "ENG": "Target ID",
+        "GER": "Ziel ID"
+    },
+    "state_col_phase": {
+        "ENG": "Phase",
+        "GER": "Phase"
+    },
     "fallback_key": {
         "ENG": "No translation key was found with this name.",
         "GER": "Neue Wärmepumpe auslegen"

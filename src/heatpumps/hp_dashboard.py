@@ -1134,6 +1134,11 @@ if mode == txt('mode_option_design'):
                     for col in ('td_dew', 'td_bubble', 'T_dew', 'T_bubble'):
                         if col in state_quantities.columns:
                             del state_quantities[col]
+                    for col in ('source', 'target'):
+                        if col in state_quantities.columns:
+                            state_quantities[col] = (
+                                state_quantities[col].apply(translate_comp_label)
+                                )
                     for col in state_quantities.columns:
                         if state_quantities[col].dtype == np.float64:
                             state_quantities[col] = (
@@ -1146,6 +1151,11 @@ if mode == txt('mode_option_design'):
                         )
                     state_quantities.rename(
                         columns={
+                            'source': txt('state_col_source'),
+                            'source_id': txt('state_col_source_id'),
+                            'target': txt('state_col_target'),
+                            'target_id': txt('state_col_target_id'),
+                            'phase': txt('state_col_phase'),
                             'm': 'm in kg/s',
                             'p': 'p in bar',
                             'h': 'h in kJ/kg',
