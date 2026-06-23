@@ -751,12 +751,46 @@ class HeatPumpBase:
         return fig
 
     def generate_waterfall_diagram(self, figsize=(16, 10), legend=True,
-                                   return_fig_ax=False, show_epsilon=True):
-        """Generates waterfall diagram of exergy analysis"""
+                                   return_fig_ax=False, show_epsilon=True,
+                                   xlabel=None, fuel_label='Fuel Exergy',
+                                   product_label='Product Exergy',
+                                   label_map=None):
+        """Generates waterfall diagram of exergy analysis.
+
+        Parameters
+        ----------
+        figsize : tuple/list of numbers
+            Size of matplotlib figure in inches. Default is (16, 10).
+
+        legend : bool
+            Flag to set if legend should be shown. Default is `True`.
+
+        return_fig_ax : bool
+            If `True`, returns the figure and axes objects. Default is `False`.
+
+        show_epsilon : bool
+            If `True`, annotates the total exergetic efficiency on the diagram.
+            Default is `True`.
+
+        xlabel : str, optional
+            Label for the x-axis. If `None`, a hardcoded default is used.
+
+        fuel_label : str, optional
+            Display label for the fuel exergy bar. Default is 'Fuel Exergy'.
+
+        product_label : str, optional
+            Display label for the product exergy bar. Default is
+            'Product Exergy'.
+
+        label_map : dict, optional
+            Mapping from English component labels to translated labels used as
+            y-axis tick labels. Labels not present in the map are shown
+            unchanged. If `None`, original labels are used.
+        """
         df_components, _, _ = self.ean.exergy_results(print_results=False)
         df_components = df_components.set_index('Component')
 
-        comps = ['Fuel Exergy']
+        comps = [fuel_label]
         E_F = self.ean.E_F * 1e-3
         E_D = [0]
         E_P = [E_F]
@@ -765,11 +799,11 @@ class HeatPumpBase:
                 ).index:
             # only plot components with exergy destruction > 1 W
             if df_components.loc[comp, 'E_D [kW]'] > 1e-3:
-                comps.append(comp)
+                comps.append(label_map.get(comp, comp) if label_map else comp)
                 E_D.append(df_components.loc[comp, 'E_D [kW]'])
                 E_F = E_F - df_components.loc[comp, 'E_D [kW]']
                 E_P.append(E_F)
-        comps.append('Product Exergy')
+        comps.append(product_label)
         E_D.append(0)
         E_P.append(E_F)
 
@@ -801,7 +835,7 @@ class HeatPumpBase:
             )
 
         E_F_total_kW = self.ean.E_F * 1e-3
-        ax.set_xlabel('Exergy in kW')
+        ax.set_xlabel(xlabel if xlabel is not None else 'Exergy in kW')
         ax.set_yticks(np.arange(len(comps)))
         ax.set_yticklabels(comps)
         ax.set_xlim([0, E_F_total_kW + 1000])
