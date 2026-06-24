@@ -1,0 +1,32 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install package and dev dependencies
+        run: pip install -e .[dev]
+
+      - name: Run tests
+        run: pytest tests/test_models.py -v

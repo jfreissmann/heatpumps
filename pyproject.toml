@@ -53,6 +53,9 @@ Repository = "https://github.com/jfreissmann/heatpumps"
 Issues = "https://github.com/jfreissmann/heatpumps/issues"
 Documentation = "https://heatpumps.readthedocs.io/"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [tool.flit.sdist]
 include = [
     'static/*',
