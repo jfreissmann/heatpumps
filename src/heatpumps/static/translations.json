@@ -1,0 +1,1105 @@
+{
+    "mode_selection": {
+        "ENG": "Select mode",
+        "GER": "Auswahl Modus"
+    },
+    "mode_option_start": {
+        "ENG": "Home",
+        "GER": "Start"
+    },
+    "mode_option_design": {
+        "ENG": "Design",
+        "GER": "Auslegung"
+    },
+    "mode_option_partload": {
+        "ENG": "Part-load",
+        "GER": "Teillast"
+    },
+    "sb_header_design": {
+        "ENG": "Design of the heat pump",
+        "GER": "Auslegung der Wärmepumpe"
+    },
+    "sb_expd_setup": {
+        "ENG": "Setup",
+        "GER": "Setup"
+    },
+    "sb_setup_base_topology": {
+        "ENG": "Base topology",
+        "GER": "Grundtopologie"
+    },
+    "sb_setup_model": {
+        "ENG": "Heat pump model",
+        "GER": "Wärmepumpenmodell"
+    },
+    "sb_setup_process_type": {
+        "ENG": "Process type",
+        "GER": "Prozessart"
+    },
+    "sb_setup_ptype_sub": {
+        "ENG": "subcritical",
+        "GER": "subkritisch"
+    },
+    "sb_setup_ptype_trans": {
+        "ENG": "transcritical",
+        "GER": "transkritisch"
+    },
+    "sb_expd_refrigerant": {
+        "ENG": "Refrigerant",
+        "GER": "Kältemittel"
+    },
+    "sb_ref_refrigerant": {
+        "ENG": "Refrigerant",
+        "GER": "Kältemittel"
+    },
+    "sb_ref_refrigerant_hot": {
+        "ENG": "Refrigerant (High temp. cycle)",
+        "GER": "Kältemittel (Hochtemperaturkreis)"
+    },
+    "sb_ref_refrigerant_cold": {
+        "ENG": "Refrigerant (Low temp. cycle)",
+        "GER": "Kältemittel (Niedertemperaturkreis)"
+    },
+    "sb_expd_p_trans": {
+        "ENG": "Transcritical pressure",
+        "GER": "Transkritischer Druck"
+    },
+    "sb_p_trans_unit": {
+        "ENG": "Value in bar",
+        "GER": "Wert in bar"
+    },
+    "sb_expd_Q_N": {
+        "ENG": "Nominal heat output",
+        "GER": "Thermische Nennleistung"
+    },
+    "sb_Q_N_unit": {
+        "ENG": "Value in MW",
+        "GER": "Wert in MW"
+    },
+    "sb_expd_heat_source": {
+        "ENG": "Heat source",
+        "GER": "Wärmequelle"
+    },
+    "sb_source_temp_ff": {
+        "ENG": "Temperature feed flow",
+        "GER": "Temperatur Vorlauf"
+    },
+    "sb_source_temp_bf": {
+        "ENG": "Temperature return flow",
+        "GER": "Temperatur Rücklauf"
+    },
+    "sb_source_invalid_temp_diff": {
+        "ENG": "The return flow temperature has to be lower than the feed flow temperature.",
+        "GER": "Die Rücklauftemperatur muss niedriger sein, als die  Vorlauftemperatur."
+    },
+    "sb_expd_heat_sink": {
+        "ENG": "Heat sink",
+        "GER": "Wärmesenke"
+    },
+    "sb_sink_temp_ff": {
+        "ENG": "Temperature feed flow",
+        "GER": "Temperatur Vorlauf"
+    },
+    "sb_sink_temp_bf": {
+        "ENG": "Temperature return flow",
+        "GER": "Temperatur Rücklauf"
+    },
+    "sb_sink_invalid_temp_diff1": {
+        "ENG": "The return flow temperature has to be lower than the feed flow temperature.",
+        "GER": "Die Rücklauftemperatur muss niedriger sein, als die  Vorlauftemperatur."
+    },
+    "sb_sink_invalid_temp_diff2": {
+        "ENG": "The temperature of the heat sink has to be higher than the heat source.",
+        "GER": "Die Temperatur der Wärmesenke muss höher sein, als die der Wärmequelle."
+    },
+    "sb_expd_ihx": {
+        "ENG": "Internal heat exchanger",
+        "GER": "Interne Wärmerübertragung"
+    },
+    "sb_ihx_superheat": {
+        "ENG": "Superheating/Subcooling",
+        "GER": "Überhitzung/Unterkühlung"
+    },
+    "sb_ihx_superheat_i": {
+        "ENG": "Nr. {i}: Superheating/Subcooling",
+        "GER": "Nr. {i}: Überhitzung/Unterkühlung"
+    },
+    "sb_expd_compressor": {
+        "ENG": "Compressor",
+        "GER": "Verdichter"
+    },
+    "sb_comp_sc_eta_s": {
+        "ENG": "Isentropic efficiency $\\eta_s$",
+        "GER": "Wirkungsgrad $\\eta_s$"
+    },
+    "sb_comp_sc_eta_s1": {
+        "ENG": "Isentropic efficiency $\\eta_{s,1}$",
+        "GER": "Wirkungsgrad $\\eta_{s,1}$"
+    },
+    "sb_comp_sc_eta_s2": {
+        "ENG": "Isentropic efficiency $\\eta_{s,2}$",
+        "GER": "Wirkungsgrad $\\eta_{s,2}$"
+    },
+    "sb_comp_cc_eta_s_HT": {
+        "ENG": "Isentropic efficiency $\\eta_{s,HT}$",
+        "GER": "Wirkungsgrad $\\eta_{s,HTK}$"
+    },
+    "sb_comp_cc_eta_s_LT": {
+        "ENG": "Isentropic efficiency $\\eta_{s,LT}$",
+        "GER": "Wirkungsgrad $\\eta_{s,NTK}$"
+    },
+    "sb_comp_cc_eta_s1_HT": {
+        "ENG": "Isentropic efficiency $\\eta_{s,HT,1}$",
+        "GER": "Wirkungsgrad $\\eta_{s,HTK,1}$"
+    },
+    "sb_comp_cc_eta_s2_HT": {
+        "ENG": "Isentropic efficiency $\\eta_{s,HT,2}$",
+        "GER": "Wirkungsgrad $\\eta_{s,HTK,2}$"
+    },
+    "sb_comp_cc_eta_s1_LT": {
+        "ENG": "Isentropic efficiency $\\eta_{s,LT,1}$",
+        "GER": "Wirkungsgrad $\\eta_{s,NTK,1}$"
+    },
+    "sb_comp_cc_eta_s2_LT": {
+        "ENG": "Isentropic efficiency $\\eta_{s,LT,2}$",
+        "GER": "Wirkungsgrad $\\eta_{s,NTK,2}$"
+    },
+    "sb_expd_ambient": {
+        "ENG": "Ambient conditions (exergy)",
+        "GER": "Umgebungsbedingungen (Exergie)"
+    },
+    "sb_amb_T": {
+        "ENG": "Temperature",
+        "GER": "Temperatur"
+    },
+    "sb_amb_p": {
+        "ENG": "Pressure in bar",
+        "GER": "Druck in bar"
+    },
+    "sb_expd_cost_params": {
+        "ENG": "Parameters for cost estimation",
+        "GER": "Parameter zur Kostenkalkulation"
+    },
+    "sb_cost_year": {
+        "ENG": "Year of cost estimation",
+        "GER": "Jahr der Kostenkalkulation"
+    },
+    "sb_cost_U_evap": {
+        "ENG": "Heat transfer coefficient (evaporation)",
+        "GER": "Wärmedurchgangskoeffizient (Verdampfung)"
+    },
+    "sb_cost_U_cond": {
+        "ENG": "Heat transfer coefficient (condensation)",
+        "GER": "Wärmedurchgangskoeffizient (Verflüssigung)"
+    },
+    "sb_cost_U_trans": {
+        "ENG": "Heat transfer coefficient (transcritical)",
+        "GER": "Wärmedurchgangskoeffizient (transkritisch)"
+    },
+    "sb_cost_U_misc": {
+        "ENG": "Heat transfer coefficient (other)",
+        "GER": "Wärmedurchgangskoeffizient (Sonstige)"
+    },
+    "sb_cost_resd_time": {
+        "ENG": "Residence time in flash tank",
+        "GER": "Verweildauer Flashtank"
+    },
+    "sb_btn_run_design": {
+        "ENG": "🧮 Run design simulation",
+        "GER": "🧮 Auslegung ausführen"
+    },
+    "sb_header_offdesign": {
+        "ENG": "Part-load simulation of the heat pump",
+        "GER": "Teillastsimulation der Wärmepumpe"
+    },
+    "sb_expd_partload": {
+        "ENG": "Relative part-load",
+        "GER": "Relative Teillast"
+    },
+    "sb_partload_value": {
+        "ENG": "In relation to nominal mass flow",
+        "GER": "Bezogen auf den Nennmassenstrom"
+    },
+    "sb_expd_od_heat_source": {
+        "ENG": "Heat source",
+        "GER": "Wärmequelle"
+    },
+    "sb_od_source_label": {
+        "ENG": "Heat source",
+        "GER": "Wärmequelle"
+    },
+    "sb_od_source_option_const": {
+        "ENG": "Constant",
+        "GER": "Konstant"
+    },
+    "sb_od_source_option_var": {
+        "ENG": "Variable",
+        "GER": "Variabel"
+    },
+    "sb_od_source_temp_const_label": {
+        "ENG": "Temperature",
+        "GER": "Temperatur"
+    },
+    "sb_od_source_temp_start": {
+        "ENG": "Lower bound temperature range",
+        "GER": "Starttemperatur"
+    },
+    "sb_od_source_temp_end": {
+        "ENG": "Upper bound temperature range",
+        "GER": "Endtemperatur"
+    },
+    "sb_expd_od_heat_sink": {
+        "ENG": "Heat sink",
+        "GER": "Wärmesenke"
+    },
+    "sb_od_sink_label": {
+        "ENG": "Heat sink",
+        "GER": "Wärmesenke"
+    },
+    "sb_od_sink_option_const": {
+        "ENG": "Constant",
+        "GER": "Konstant"
+    },
+    "sb_od_sink_option_var": {
+        "ENG": "Variable",
+        "GER": "Variabel"
+    },
+    "sb_od_sink_temp_const_label": {
+        "ENG": "Temperature",
+        "GER": "Temperatur"
+    },
+    "sb_od_sink_temp_start": {
+        "ENG": "Lower bound temperature range",
+        "GER": "Starttemperatur"
+    },
+    "sb_od_sink_temp_end": {
+        "ENG": "Upper bound temperature range",
+        "GER": "Endtemperatur"
+    },
+    "sb_btn_run_offdesign": {
+        "ENG": "🧮 Run part-load simulation",
+        "GER": "🧮 Teillast simulieren"
+    },
+    "main_landing_txt": {
+        "ENG": "The heat pump simulator *heatpumps* is a powerful simulation software for analyzing and evaluating heat pumps.\n\nThis dashboard allows users to control a wide variety of complex thermodynamic models using numerical methods via a simple interface, without requiring specialized knowledge of these systems. This includes both the design of heat pumps and the simulation of their steady-state part-load operation. The simulation results provide insights into the basic behavior, the COP, state variables, and costs of the individual components, as well as the total investment costs of the heat pump under consideration. This enables users to address complex issues that regularly arise in the design and planning of heat pumps.\n\n### Key Features\n\n- Stationary design and partial-load simulation based on [TESPy](https://github.com/oemof/tespy)\n- Parameterization and result visualization using [Streamlit](https://github.com/streamlit/streamlit) dashboard\n- Circuit topologies commonly used in industry, research, and development\n- Subcritical and transcritical processes\n- Wide selection of working fluids due to the integration of [CoolProp](https://github.com/CoolProp/CoolProp)",
+        "GER": "Der Wärmepumpensimulator *heatpumps* ist eine leistungsfähige Simulationssoftware zur Analyse und Bewertung von Wärmepumpen.\n\nMit diesem Dashboard lassen sich eine Vielzahl komplexer thermodynamischer Anlagenmodelle mithilfe numerischer Methoden über eine einfache Oberfläche steuern, ohne Fachkenntnisse über diese vorauszusetzen. Dies beinhaltet sowohl die Auslegung von Wärmepumpen, als auch die Simulation ihres stationären Teillastbetriebs. Dabei geben die Ergebnisse der Simulationen Aufschluss über das prinzipielle Verhalten, den COP, Zustandsgrößen und Kosten der einzelnen Komponenten sowie Gesamtinvestitionskosten der betrachteten Wärmepumpe. Damit wird Zugang zu komplexen Fragestellungen ermöglicht, die regelmäßig in der Konzeption und Planung von Wärmepumpen aufkommen.\n\n### Key Features\n\n- Stationäre Auslegungs- und Teillastsimulation basierend auf [TESPy](https://github.com/oemof/tespy)\n- Parametrisierung and Ergebnisvisualisierung mithilfe eines [Streamlit](https://github.com/streamlit/streamlit) Dashboards\n- In der Industrie, Forschung und Entwicklung gängige Schaltungstopologien\n- Sub- und transkritische Prozesse\n- Große Auswahl an Arbeitsmedien aufgrund der Integration von [CoolProp](https://github.com/CoolProp/CoolProp)"
+    },
+    "main_btn_run_design": {
+        "ENG": "Start design simulation",
+        "GER": "Auslegung starten"
+    },
+    "main_expd_software": {
+        "ENG": "Software used",
+        "GER": "Verwendete Software"
+    },
+    "main_software": {
+        "ENG": "#### Software used:\n\nThe open-source software TESPy is used to create models and perform simulation calculations. In addition, a number of other Python packages are used for data processing, preparation, and visualization.\n\n---\n\n#### TESPy:\n\nTESPy (Thermal Engineering Systems in Python) is a powerful simulation tool for thermal process engineering, such as for power plants, district heating systems, or heat pumps. The TESPy package enables the design of heat pumps and the simulation of steady-state operation. Subsequently, the part-load can be determined based on the underlying characteristics for each component of the system. The component-based structure, combined with the solution method, offers a high degree of flexibility regarding system topology and parameterization. Further information on TESPy can be found in its [online documentation](https://tespy.readthedocs.io) in English.#### Additional packages:\n\n- [Streamlit](https://docs.streamlit.io) (Graphical user interface)\n- [NumPy](https://numpy.org) (Data processing)\n- [pandas](https://pandas.pydata.org) (Data processing)\n- [SciPy](https://scipy.org/) (Interpolation)\n- [scikit-learn](https://scikit-learn.org) (Regression)\n- [Matplotlib](https://matplotlib.org) (Data visualization)\n- [FluProDia](https://fluprodia.readthedocs.io) (Data visualization)\n- [CoolProp](http://www.coolprop.org) (Fluid properities)",
+        "GER": "#### Verwendete Software:\n\nZur Modellerstellung und Berechnung der Simulationen wird die Open Source Software TESPy verwendet. Des Weiteren werden eine Reihe weiterer Pythonpakete zur Datenverarbeitung, -aufbereitung und -visualisierung genutzt.\n\n---\n\n#### TESPy:\n\nTESPy (Thermal Engineering Systems in Python) ist ein leistungsfähiges Simulationswerkzeug für thermische Verfahrenstechnik, zum Beispiel für Kraftwerke, Fernwärmesysteme oder Wärmepumpen. Mit dem TESPy-Paket ist es möglich, Anlagen auszulegen und den stationären Betrieb zu simulieren. Danach kann das Teillastverhalten anhand der zugrundeliegenden Charakteristiken für jede Komponente der Anlage ermittelt werden. Die komponentenbasierte Struktur in Kombination mit der Lösungsmethode bieten eine sehr hohe Flexibilität hinsichtlich der Anlagentopologie und der Parametrisierung. Weitere Informationen zu TESPy sind in dessen [Onlinedokumentation](https://tespy.readthedocs.io) in englischer Sprache zu finden.\n\n#### Weitere Pakete:\n\n- [Streamlit](https://docs.streamlit.io) (Graphische Oberfläche)\n- [NumPy](https://numpy.org) (Datenverarbeitung)\n- [pandas](https://pandas.pydata.org) (Datenverarbeitung)\n- [SciPy](https://scipy.org/) (Interpolation)\n- [scikit-learn](https://scikit-learn.org) (Regression)\n- [Matplotlib](https://matplotlib.org) (Datenvisualisierung)\n- [FluProDia](https://fluprodia.readthedocs.io)(Datenvisualisierung)\n- [CoolProp](http://www.coolprop.org) (Stoffdaten)"
+    },
+    "main_expd_publications": {
+        "ENG": "Publications",
+        "GER": "Publikationen"
+    },
+    "main_publications": {
+        "ENG": "[1] Malte Fritz, Jonas Freißmann & Ilja Tuschy. Open-Source Web Dashboard zur Simulation, Analyse und Bewertung von Wärmepumpen. Proceedings (2nd Edition) - 2. Konferenz der Norddeutschen Wärmeforschung: Gemeinsam die Wärmewende voranbringen., S. 24-33. HafenCity Universität, 2025. [doi:10.34712/142.68](https://doi.org/10.34712/142.68).\n\n[2] Jonas Freißmann, Malte Fritz & Ilja Tuschy. Hochtemperaturwärmepumpen in der Nah- und Fernwärmeversorgung - Technologieperspektive für den kurz- und mittelfristigen Einsatz in multivalenten Systemen. Final report, Zentrum für nachhaltige Energiesysteme, 2024. [doi:10.5281/zenodo.13311533](https://doi.org/10.5281/zenodo.13311533).",
+        "GER": "[1] Malte Fritz, Jonas Freißmann & Ilja Tuschy. Open-Source Web Dashboard zur Simulation, Analyse und Bewertung von Wärmepumpen. Tagungsband (2. Version) - 2. Konferenz der Norddeutschen Wärmeforschung: Gemeinsam die Wärmewende voranbringen., S. 24-33. HafenCity Universität, 2025. [doi:10.34712/142.68](https://doi.org/10.34712/142.68).\n\n[2] Jonas Freißmann, Malte Fritz & Ilja Tuschy. Hochtemperaturwärmepumpen in der Nah- und Fernwärmeversorgung - Technologieperspektive für den kurz- und mittelfristigen Einsatz in multivalenten Systemen. Abschlussbericht, Zentrum für nachhaltige Energiesysteme, 2024. [doi:10.5281/zenodo.13311533](https://doi.org/10.5281/zenodo.13311533)."
+    },
+    "main_expd_disclaimer": {
+        "ENG": "Disclaimer",
+        "GER": "Disclaimer"
+    },
+    "main_disclaimer": {
+        "ENG": "#### Simulation result:\n\nNumerical simulations are calculations performed using appropriate iterative methods based on specified boundary conditions and parameters. It is not possible to account for all possible influences in every case, which means that deviations from empirical values obtained in practical applications may occur and have to be taken into account during evaluation. The results provide sufficient to accurate information regarding the basic behavior, the COP, and state variables in the individual components of the heat pump. Nevertheless, all information and results are provided without warranty.",
+        "GER": "#### Simulationsergebnisse:\n\nNumerische Simulationen sind Berechnungen mittels geeigneter Iterationsverfahren in Bezug auf die vorgegebenen und gesetzten Randbedingungen und Parameter. Eine Berücksichtigung aller möglichen Einflüsse ist in Einzelfällen nicht möglich, so dass Abweichungen zu Erfahrungswerten aus Praxisanwendungen entstehen können und bei der Bewertung berücksichtigt werden müssen. Die Ergebnisse geben hinreichenden bis genauen Aufschluss über das prinzipielle Verhalten, den COP und Zustandsgrößen in den einzelnen Komponenten der Wärmepumpe. Dennoch sind alle Angaben und Ergebnisse ohne Gewähr."
+    },
+    "main_expd_copyright": {
+        "ENG": "Copyright",
+        "GER": "Copyright"
+    },
+    "main_copyright": {
+        "ENG": "#### Software license\nMIT License\n\nCopyright © 2023 Jonas Freißmann and Malte Fritz\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+        "GER": "#### Softwarelizenz\nMIT License\n\nCopyright © 2023 Jonas Freißmann and Malte Fritz\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+    },
+    "design_header_topo": {
+        "ENG": "Topology",
+        "GER": "Topologie"
+    },
+    "design_header_refrig": {
+        "ENG": "Refrigerant",
+        "GER": "Kältemittel"
+    },
+    "design_subheader_HT": {
+        "ENG": "#### High temperature cycle",
+        "GER": "#### Hochtemperaturkreis"
+    },
+    "design_subheader_LT": {
+        "ENG": "#### Low temperature cycle",
+        "GER": "#### Niedertemperaturkreis"
+    },
+    "design_refrig_info": {
+        "ENG": "All fluid properity data and classifications come from [CoolProp](http://www.coolprop.org) or [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)",
+        "GER": "Alle Stoffdaten und Klassifikationen aus [CoolProp](http://www.coolprop.org) oder [Arpagaus et al. (2018)](https://doi.org/10.1016/j.energy.2018.03.166)"
+    },
+    "design_expd_instruction": {
+        "ENG": "Instruction",
+        "GER": "Anleitung"
+    },
+    "design_instruction": {
+        "ENG": "#### Instruction\n\nYou are on the interface for simulating the design of your heat pump. To do this, you have to specify various key parameters of the cycle in the sidebar on the left including the nominal output and selection of the refrigerant to be used.\n\nThese include the temperatures of the heat source and heat sink. In addition, an internal heat exchanger can be added as an option. To do so, you have to also specify the resulting superheat of the vaporized refrigerant.\n\nOnce the design simulation is successfully completed, the generated results are presented graphically in phase diagrams and quantified. Key parameters such as the coefficient of performance (COP) as well as the relevant heat flows and power are listed. In addition, the thermodynamic state variables are listed in tabular form for all process steps.\n\nFollowing the design simulation, a button appears to switch to the part-load interface. This can also be done via the drop-down menu in the sidebar. Information on how to perform part-load simulations can be found on the home page of this interface.",
+        "GER": "#### Anleitung\n\nSie befinden sich auf der Oberfläche zur Auslegungssimulation Ihrer Wärmepumpe. Dazu sind links in der Sidebar neben der Dimensionierung und der Wahl des zu verwendenden Kältemittels verschiedene zentrale Parameter des Kreisprozesse vorzugeben.\n\nDies sind zum Beispiel die Temperaturen der Wärmequelle und -senke. Darüber hinaus kann optional ein interner Wärmeübertrager hinzugefügt werden. Dazu ist weiterhin die resultierende Überhitzung des verdampften Kältemittels vorzugeben.\n\nIst die Auslegungssimulation erfolgreich abgeschlossen, werden die generierten Ergebnisse graphisch in Zustandsdiagrammen aufgearbeitet und quantifiziert. Die zentralen Größen wie die Leistungszahl (COP) sowie die relevanten Wärmeströme und Leistung werden aufgeführt. Darüber hinaus werden die thermodynamischen Zustandsgrößen in allen Prozessschritten tabellarisch aufgelistet.\n\nIm Anschluss an die Auslegungsimulation erscheint ein Knopf zum Wechseln in die Teillastoberfläche. Dies kann ebenfalls über das Dropdownmenü in der Sidebar erfolgen. Informationen zur Durchführung der Teillastsimulationen befindet sich auf der Startseite dieser Oberfläche."
+    },
+    "design_sim_success": {
+        "ENG": "The simulation of the heat pump design was successful.",
+        "GER": "Die Simulation der Wärmepumpenauslegung war erfolgreich."
+    },
+    "design_sim_error": {
+        "ENG": "The following error occurred during the heat pump simulation. Please correct the input parameters and try again.\n\n",
+        "GER": "Bei der Simulation der Wärmepumpe ist der nachfolgende Fehler aufgetreten. Bitte korrigieren Sie die Eingangsparameter und versuchen es erneut.\n\n"
+    },
+    "design_sim_spinner_run": {
+        "ENG": "Simulation is being performed...",
+        "GER": "Simulation wird durchgeführt..."
+    },
+    "design_sim_spinner_vis": {
+        "ENG": "Results are being visualized...",
+        "GER": "Ergebnisse werden visualisiert..."
+    },
+    "design_header_results": {
+        "ENG": "Design Results",
+        "GER": "Ergebnisse der Auslegung"
+    },
+    "design_res_metric_COP": {
+        "ENG": "$COP$",
+        "GER": "$COP$"
+    },
+    "design_res_metric_Q_dot_out": {
+        "ENG": "$\\dot Q_{out}$",
+        "GER": "$\\dot Q_{ab}$"
+    },
+    "design_res_metric_P_in": {
+        "ENG": "$P_{in}$",
+        "GER": "$P_{zu}$"
+    },
+    "design_res_metric_Q_dot_in": {
+        "ENG": "$\\dot Q_{in}$",
+        "GER": "$\\dot Q_{zu}$"
+    },
+    "design_tab_topo_refrig": {
+        "ENG": "Topology & refrigerant",
+        "GER": "Topologie & Kältemittel"
+    },
+    "design_expd_state_diagrams": {
+        "ENG": "State diagrams",
+        "GER": "Zustandsdiagramme"
+    },
+    "design_subheader_ph": {
+        "ENG": "Log(p)-h diagram",
+        "GER": "Log(p)-h-Diagramm"
+    },
+    "design_subheader_Ts": {
+        "ENG": "T-s diagram",
+        "GER": "T-s-Diagramm"
+    },
+    "design_expd_state_var": {
+        "ENG": "State variables",
+        "GER": "Zustandsgrößen"
+    },
+    "design_expd_eco": {
+        "ENG": "Economic assessment",
+        "GER": "Ökonomische Bewertung"
+    },
+    "design_eco_inv_total": {
+        "ENG": "Total investment costs",
+        "GER": "Gesamtinvestitionskosten"
+    },
+    "design_eco_inv_spec": {
+        "ENG": "Specific investment costs",
+        "GER": "Spez. Investitionskosten"
+    },
+    "design_eco_info": {
+        "ENG": "Methodology for calculating costs analogous to [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488), based on [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674).",
+        "GER": "Methodik zur Berechnung der Kosten analog zu [Kosmadakis et al. (2020)](https://doi.org/10.1016/j.enconman.2020.113488), basierend auf [Bejan et al. (1995)](https://www.wiley.com/en-us/Thermal+Design+and+Optimization-p-9780471584674)."
+    },
+    "design_expd_exergy": {
+        "ENG": "Exergy assessment",
+        "GER": "Exergieabewertung"
+    },
+    "design_header_exergy": {
+        "ENG": "Results of the exergy analysis",
+        "GER": "Ergebnisse der Exergieanalyse"
+    },
+    "design_subheader_exergy_comp": {
+        "ENG": "Results by component",
+        "GER": "Ergebnisse nach Komponente"
+    },
+    "design_subheader_exergy_grass": {
+        "ENG": "Grassmann diagram",
+        "GER": "Grassmann Diagramm"
+    },
+    "design_subheader_exergy_waterfall": {
+        "ENG": "Waterfall diagram",
+        "GER": "Wasserfall Diagramm"
+    },
+    "design_exergy_info": {
+        "ENG": "Definitions and methodology of exergy analysis based on [Morosuk und Tsatsaronis (2019)](https://doi.org/10.1016/j.energy.2018.10.090), whose implementation in TESPy is described in [Witte und Hofmann et al. (2022)](https://doi.org/10.3390/en15114087) and presented in an educational context in [Witte, Freißmann und Fritz (2023)](https://fwitte.github.io/TESPy_teaching_exergy/)",
+        "GER": "Definitionen und Methodik der Exergieanalyse basierend auf [Morosuk und Tsatsaronis (2019)](https://doi.org/10.1016/j.energy.2018.10.090), dessen Implementation in TESPy beschrieben in [Witte und Hofmann et al. (2022)](https://doi.org/10.3390/en15114087) und didaktisch aufbereitet in [Witte, Freißmann und Fritz (2023)](https://fwitte.github.io/TESPy_teaching_exergy/)."
+    },
+    "design_to_od_info": {
+        "ENG": "To calculate the part-load, click 'Run part-load simulation'.",
+        "GER": "Um die Teillast zu berechnen, drücke auf 'Teillast simulieren'."
+    },
+    "od_header": {
+        "ENG": "Operating characteristics",
+        "GER": "Betriebscharakteristik"
+    },
+    "od_warning": {
+        "ENG": "To perform a part-load simulation, you have to first design a heat pump. Please switch to 'Design' mode first.",
+        "GER": "Um eine Teillastsimulation durchzuführen, muss zunächst eine Wärmepumpe ausgelegt werden. Wechseln Sie bitte zunächst in den Modus 'Auslegung'"
+    },
+    "od_landing_info": {
+        "ENG": "Parameterization of part load calculation:\n+ Percentage of part load\n+ Range of source temperature\n+ Range of sink temperature",
+        "GER": "Parametrisierung der Teillastberechnung:\n+ Prozentualer Anteil Teillast\n+ Bereich der Quelltemperatur\n+ Bereich der Senkentemperatur"
+    },
+    "od_spinner": {
+        "ENG": "Part-load simulation is in progress... This may take a while.",
+        "GER": "Teillastsimulation wird durchgeführt... Dies kann eine Weile dauern."
+    },
+    "od_simu_success": {
+        "ENG": "The simulation of the heat pump characteristics was successful.",
+        "GER": "Die Simulation der Wärmepumpencharakteristika war erfolgreich."
+    },
+    "od_spinner_visu": {
+        "ENG": "Results are being visualized...",
+        "GER": "Ergebnisse werden visualisiert..."
+    },
+    "od_expd_diagram": {
+        "ENG": "Diagrams",
+        "GER": "Diagramme"
+    },
+    "od_slider": {
+        "ENG": "Heat source temperature",
+        "GER": "Quellentemperatur"
+    },
+    "od_expd_exergy": {
+        "ENG": "Exergy analysis of part-load",
+        "GER": "Exergieanalyse Teillast"
+    },
+    "od_btn_new_hp": {
+        "ENG": "Design a new heat pump",
+        "GER": "Exergieanalyse Teillast"
+    },
+    "topo_simple": {
+        "ENG": "Simple cycle",
+        "GER": "Einfacher Kreis"
+    },
+    "topo_ic": {
+        "ENG": "Intercooler",
+        "GER": "Zwischenkühlung"
+    },
+    "topo_econ": {
+        "ENG": "Economizer",
+        "GER": "Economizer"
+    },
+    "topo_flash": {
+        "ENG": "Flash tank",
+        "GER": "Flashtank"
+    },
+    "topo_cascade": {
+        "ENG": "Cascaded cycle",
+        "GER": "Kaskadierter Kreis"
+    },
+    "model_general": {
+        "ENG": "General",
+        "GER": "Allgemein"
+    },
+    "model_ihx": {
+        "ENG": "Internal Heat Exchanger",
+        "GER": "Interne WÜT"
+    },
+    "model_ic": {
+        "ENG": "Intercooler",
+        "GER": "Zwischenkühlung"
+    },
+    "model_flash": {
+        "ENG": "Flash tank",
+        "GER": "Flashtank"
+    },
+    "model_2ihx": {
+        "ENG": "Double Internal Heat Ex",
+        "GER": "Doppelte interne WÜT"
+    },
+    "model_econ_closed_s": {
+        "ENG": "Closed | Series",
+        "GER": "Geschlossen | Reihenschaltung"
+    },
+    "model_econ_closed_s_ihx_a": {
+        "ENG": "Closed | Series | Internal Heat Ex (Variant A)",
+        "GER": "Geschlossen | Reihenschaltung | interne WÜT (Variante A)"
+    },
+    "model_econ_closed_s_ihx_b": {
+        "ENG": "Closed | Series | Internal Heat Ex (Variant B)",
+        "GER": "Geschlossen | Reihenschaltung | interne WÜT (Variante B)"
+    },
+    "model_econ_open_s": {
+        "ENG": "Open | Series",
+        "GER": "Offen | Reihenschaltung"
+    },
+    "model_econ_open_s_ihx_a": {
+        "ENG": "Open | Series | Internal Heat Ex (Variant A)",
+        "GER": "Offen | Reihenschaltung | interne WÜT (Variante A)"
+    },
+    "model_econ_open_s_ihx_b": {
+        "ENG": "Open | Series | Internal Heat Ex (Variant B)",
+        "GER": "Offen | Reihenschaltung | interne WÜT (Variante B)"
+    },
+    "model_econ_closed_p": {
+        "ENG": "Closed | Parallel",
+        "GER": "Geschlossen | Parallelschaltung"
+    },
+    "model_econ_closed_p_ihx_a": {
+        "ENG": "Closed | Parallel | Internal Heat Ex (Variant A)",
+        "GER": "Geschlossen | Parallelschaltung | interne WÜT (Variante A)"
+    },
+    "model_econ_closed_p_ihx_b": {
+        "ENG": "Closed | Parallel | Internal Heat Ex (Variant B)",
+        "GER": "Geschlossen | Parallelschaltung | interne WÜT (Variante B)"
+    },
+    "model_econ_closed_p_2ihx": {
+        "ENG": "Closed | Parallel | Double Internal Heat Ex",
+        "GER": "Geschlossen | Parallelschaltung | doppelte interne WÜT"
+    },
+    "model_econ_open_p": {
+        "ENG": "Open | Parallel",
+        "GER": "Offen | Parallelschaltung"
+    },
+    "model_econ_open_p_ihx_a": {
+        "ENG": "Open | Parallel | Internal Heat Ex (Variant A)",
+        "GER": "Offen | Parallelschaltung | interne WÜT (Variante A)"
+    },
+    "model_econ_open_p_ihx_b": {
+        "ENG": "Open | Parallel | Internal Heat Ex (Variant B)",
+        "GER": "Offen | Parallelschaltung | interne WÜT (Variante B)"
+    },
+    "model_econ_open_p_2ihx": {
+        "ENG": "Open | Parallel | Double Internal Heat Ex",
+        "GER": "Offen | Parallelschaltung | doppelte interne WÜT"
+    },
+    "refrig_name_R113": {
+        "ENG": "R113",
+        "GER": "R113"
+    },
+    "refrig_type_R113": {
+        "ENG": "CFC",
+        "GER": "CFC"
+    },
+    "refrig_name_R114": {
+        "ENG": "R114",
+        "GER": "R114"
+    },
+    "refrig_type_R114": {
+        "ENG": "CFC",
+        "GER": "CFC"
+    },
+    "refrig_name_R123": {
+        "ENG": "R123",
+        "GER": "R123"
+    },
+    "refrig_type_R123": {
+        "ENG": "HCFC",
+        "GER": "HCFC"
+    },
+    "refrig_name_R21": {
+        "ENG": "R21",
+        "GER": "R21"
+    },
+    "refrig_type_R21": {
+        "ENG": "HCFC",
+        "GER": "HCFC"
+    },
+    "refrig_name_R142b": {
+        "ENG": "R142b",
+        "GER": "R142b"
+    },
+    "refrig_type_R142b": {
+        "ENG": "HCFC",
+        "GER": "HCFC"
+    },
+    "refrig_name_R124": {
+        "ENG": "R124",
+        "GER": "R124"
+    },
+    "refrig_type_R124": {
+        "ENG": "HCFC",
+        "GER": "HCFC"
+    },
+    "refrig_name_R365mfc": {
+        "ENG": "R365mfc",
+        "GER": "R365mfc"
+    },
+    "refrig_type_R365mfc": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_SES36": {
+        "ENG": "SES36",
+        "GER": "SES36"
+    },
+    "refrig_type_SES36": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R245ca": {
+        "ENG": "R245ca",
+        "GER": "R245ca"
+    },
+    "refrig_type_R245ca": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R245fa": {
+        "ENG": "R245fa",
+        "GER": "R245fa"
+    },
+    "refrig_type_R245fa": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R152a": {
+        "ENG": "R152a",
+        "GER": "R152a"
+    },
+    "refrig_type_R152a": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R227ea": {
+        "ENG": "R227ea",
+        "GER": "R227ea"
+    },
+    "refrig_type_R227ea": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R134a": {
+        "ENG": "R134a",
+        "GER": "R134a"
+    },
+    "refrig_type_R134a": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
+    "refrig_name_R1234ze(Z)": {
+        "ENG": "R1234ze(Z)",
+        "GER": "R1234ze(Z)"
+    },
+    "refrig_type_R1234ze(Z)": {
+        "ENG": "HFO",
+        "GER": "HFO"
+    },
+    "refrig_name_R1234ze(E)": {
+        "ENG": "R1234ze(E)",
+        "GER": "R1234ze(E)"
+    },
+    "refrig_type_R1234ze(E)": {
+        "ENG": "HFO",
+        "GER": "HFO"
+    },
+    "refrig_name_R1234yf": {
+        "ENG": "R1234yf",
+        "GER": "R1234yf"
+    },
+    "refrig_type_R1234yf": {
+        "ENG": "HFO",
+        "GER": "HFO"
+    },
+    "refrig_name_R1233zd(E)": {
+        "ENG": "R1233zd(E)",
+        "GER": "R1233zd(E)"
+    },
+    "refrig_type_R1233zd(E)": {
+        "ENG": "HCFO",
+        "GER": "HCFO"
+    },
+    "refrig_name_Propane": {
+        "ENG": "Propane",
+        "GER": "Propan"
+    },
+    "refrig_type_Propane": {
+        "ENG": "HC",
+        "GER": "HC"
+    },
+    "refrig_name_Pentane": {
+        "ENG": "Pentane",
+        "GER": "Pentan"
+    },
+    "refrig_type_Pentane": {
+        "ENG": "HC",
+        "GER": "HC"
+    },
+    "refrig_name_Butane": {
+        "ENG": "Butane",
+        "GER": "Butan"
+    },
+    "refrig_type_Butane": {
+        "ENG": "HC",
+        "GER": "HC"
+    },
+    "refrig_name_Isobutane": {
+        "ENG": "Isobutane",
+        "GER": "Isobutan"
+    },
+    "refrig_type_Isobutane": {
+        "ENG": "HC",
+        "GER": "HC"
+    },
+    "refrig_name_Propene/Propylene": {
+        "ENG": "Propene/Propylene",
+        "GER": "Propen/Propylen"
+    },
+    "refrig_type_Propene/Propylene": {
+        "ENG": "HC",
+        "GER": "HC"
+    },
+    "refrig_name_Novec_649": {
+        "ENG": "Novec 649",
+        "GER": "Novec 649"
+    },
+    "refrig_type_Novec_649": {
+        "ENG": "CF6",
+        "GER": "CF6"
+    },
+    "refrig_name_Dimethyl_Ether/E170": {
+        "ENG": "Dimethyl Ether/E170",
+        "GER": "Dimethylether/E170"
+    },
+    "refrig_type_Dimethyl_Ether/E170": {
+        "ENG": "Ether",
+        "GER": "Ether"
+    },
+    "refrig_name_Water/H2O": {
+        "ENG": "Water/H2O",
+        "GER": "Wasser/H2O"
+    },
+    "refrig_type_Water/H2O": {
+        "ENG": "Natural",
+        "GER": "Natürlich"
+    },
+    "refrig_name_Ammonia/NH3": {
+        "ENG": "Ammonia/NH3",
+        "GER": "Ammoniak/NH3"
+    },
+    "refrig_type_Ammonia/NH3": {
+        "ENG": "Natural",
+        "GER": "Natürlich"
+    },
+    "refrig_name_CO2": {
+        "ENG": "CO2",
+        "GER": "CO2"
+    },
+    "refrig_type_CO2": {
+        "ENG": "Natural",
+        "GER": "Natürlich"
+    },
+    "info_df_type": {
+        "ENG": "Type",
+        "GER": "Typ"
+    },
+    "info_df_T_NBP": {
+        "ENG": "T_NBP",
+        "GER": "T_NSP"
+    },
+    "info_df_T_crit": {
+        "ENG": "T_crit",
+        "GER": "T_krit"
+    },
+    "info_df_p_crit": {
+        "ENG": "p_crit",
+        "GER": "p_krit"
+    },
+    "info_df_ASHRAE34": {
+        "ENG": "ASHRAE34",
+        "GER": "ASHRAE34"
+    },
+    "info_df_ODP": {
+        "ENG": "ODP",
+        "GER": "ODP"
+    },
+    "info_df_GWP": {
+        "ENG": "GWP",
+        "GER": "GWP"
+    },
+    "comp_label_Compressor": {
+        "ENG": "Compressor",
+        "GER": "Verdichter"
+    },
+    "comp_label_Condensate_Splitter": {
+        "ENG": "Condensate Splitter",
+        "GER": "Kondensatteiler"
+    },
+    "comp_label_Condenser": {
+        "ENG": "Condenser",
+        "GER": "Verflüssiger"
+    },
+    "comp_label_Consumer": {
+        "ENG": "Consumer",
+        "GER": "Verbraucher"
+    },
+    "comp_label_Consumer_Cycle_Closer": {
+        "ENG": "Consumer Cycle Closer",
+        "GER": "Verbraucher Cycle Closer"
+    },
+    "comp_label_Consumer_Recirculation_Pump": {
+        "ENG": "Consumer Recirculation Pump",
+        "GER": "Verbraucher Umwälzpumpe"
+    },
+    "comp_label_Economizer": {
+        "ENG": "Economizer",
+        "GER": "Economizer"
+    },
+    "comp_label_Economizer_Injection": {
+        "ENG": "Economizer Injection",
+        "GER": "Economizer-Einspritzung"
+    },
+    "comp_label_Evaporation_Valve": {
+        "ENG": "Evaporation Valve",
+        "GER": "Verdampfungsventil"
+    },
+    "comp_label_Evaporator": {
+        "ENG": "Evaporator",
+        "GER": "Verdampfer"
+    },
+    "comp_label_Flash_Tank": {
+        "ENG": "Flash Tank",
+        "GER": "Flashtank"
+    },
+    "comp_label_Grid": {
+        "ENG": "Grid",
+        "GER": "Stromnetz"
+    },
+    "comp_label_Heat_Source_Back_Flow": {
+        "ENG": "Heat Source Back Flow",
+        "GER": "Wärmequelle Rücklauf"
+    },
+    "comp_label_Heat_Source_Feed_Flow": {
+        "ENG": "Heat Source Feed Flow",
+        "GER": "Wärmequelle Vorlauf"
+    },
+    "comp_label_Heat_Source_Recirculation_Pump": {
+        "ENG": "Heat Source Recirculation Pump",
+        "GER": "Wärmequelle Umwälzpumpe"
+    },
+    "comp_label_High_Pressure_Internal_Heat_Exchanger": {
+        "ENG": "High Pressure Internal Heat Exchanger",
+        "GER": "Interner Wärmeübertrager (Hochdruck)"
+    },
+    "comp_label_High_Temperature_Compressor": {
+        "ENG": "High Temperature Compressor",
+        "GER": "HT-Verdichter"
+    },
+    "comp_label_High_Temperature_Economizer": {
+        "ENG": "High Temperature Economizer",
+        "GER": "HT-Economizer"
+    },
+    "comp_label_High_Temperature_Economizer_Injection": {
+        "ENG": "High Temperature Economizer Injection",
+        "GER": "HT-Economizer-Einspritzung"
+    },
+    "comp_label_Intercooler": {
+        "ENG": "Intercooler",
+        "GER": "Zwischenkühler"
+    },
+    "comp_label_Intermediate_Condensate_Splitter": {
+        "ENG": "Intermediate Condensate Splitter",
+        "GER": "Zwischen-Kondensatteiler"
+    },
+    "comp_label_Intermediate_Heat_Exchanger": {
+        "ENG": "Intermediate Heat Exchanger",
+        "GER": "Zwischenwärmeübertrager"
+    },
+    "comp_label_Intermediate_Valve": {
+        "ENG": "Intermediate Valve",
+        "GER": "Zwischenventil"
+    },
+    "comp_label_Internal_Heat_Exchanger": {
+        "ENG": "Internal Heat Exchanger",
+        "GER": "Interner Wärmeübertrager"
+    },
+    "comp_label_Low_Pressure_Internal_Heat_Exchanger": {
+        "ENG": "Low Pressure Internal Heat Exchanger",
+        "GER": "Interner Wärmeübertrager (Niederdruck)"},
+    "comp_label_Low_Temperature_Compressor": {
+        "ENG": "Low Temperature Compressor",
+        "GER": "NT-Verdichter"
+    },
+    "comp_label_Low_Temperature_Economizer": {
+        "ENG": "Low Temperature Economizer",
+        "GER": "NT-Economizer"
+    },
+    "comp_label_Low_Temperature_Economizer_Injection": {
+        "ENG": "Low Temperature Economizer Injection",
+        "GER": "NT-Economizer-Einspritzung"
+    },
+    "comp_label_Lower_Main_Cycle_Closer": {
+        "ENG": "Lower Main Cycle Closer",
+        "GER": "Unterer Haupt-Cycle Closer"
+    },
+    "comp_label_Main_Cycle_Closer": {
+        "ENG": "Main Cycle Closer",
+        "GER": "Haupt-Cycle Closer"
+    },
+    "comp_label_Transcritical_Heat_Exchanger": {
+        "ENG": "Transcritical Heat Exchanger",
+        "GER": "Transkritischer Wärmeübertrager"
+    },
+    "comp_label_Upper_Main_Cycle_Closer": {
+        "ENG": "Upper Main Cycle Closer",
+        "GER": "Oberer Haupt-Cycle Closer"
+    },
+    "comp_label_Valve": {
+        "ENG": "Valve",
+        "GER": "Expansionsventil"
+    },
+    "comp_label_Fuel_Exergy": {
+        "ENG": "Fuel Exergy",
+        "GER": "Exergieeinsatz"
+    },
+    "comp_label_Product_Exergy": {
+        "ENG": "Product Exergy",
+        "GER": "Exergieertrag"
+    },
+    "comp_label_Injection_steam": {
+        "ENG": "Injection steam",
+        "GER": "Einspritzdampf"
+    },
+    "comp_label_Compressed_gas": {
+        "ENG": "Compressed gas",
+        "GER": "Verdichtetes Gas"
+    },
+    "comp_label_Injection_steam_cycle": {
+        "ENG": "Injection steam cycle",
+        "GER": "Einspritzdampf Kreis"
+    },
+    "comp_label_Compressed_gas_cycle": {
+        "ENG": "Compressed gas cycle",
+        "GER": "Verdichtetes Gas Kreis"
+    },
+    "comp_label_Main_gas_stream": {
+        "ENG": "Main gas stream",
+        "GER": "Hauptgasstrom"
+    },
+    "comp_label_Parallel_gas_stream": {
+        "ENG": "Parallel gas stream",
+        "GER": "Parallelgasstrom"
+    },
+    "comp_label_Flash_Liquid": {
+        "ENG": "Flash Liquid",
+        "GER": "Flash-Flüssigkeit"
+    },
+    "comp_label_Flash_Gas": {
+        "ENG": "Flash Gas",
+        "GER": "Flash-Gas"
+    },
+    "comp_label_Gas_Injection": {
+        "ENG": "Gas Injection",
+        "GER": "Gaseinspritzung"
+    },
+    "comp_label_Piping_&_Tanks": {
+        "ENG": "Piping & Tanks",
+        "GER": "Rohrleitungen & Behälter"
+    },
+    "comp_label_Electrical_Equipment": {
+        "ENG": "Electrical Equipment",
+        "GER": "Elektrische Ausrüstung"
+    },
+    "comp_label_Refrigerant": {
+        "ENG": "Refrigerant",
+        "GER": "Kältemittel"
+    },
+    "comp_suffix_hot": {
+        "ENG": "(hot)",
+        "GER": "(warm)"
+    },
+    "comp_suffix_cold": {
+        "ENG": "(cold)",
+        "GER": "(kalt)"
+    },
+    "comp_suffix_Motor": {
+        "ENG": "Motor",
+        "GER": "Motor"
+    },
+    "plot_axis_h": {
+        "ENG": "Specific enthalpy in $kJ/kg$",
+        "GER": "Spezifische Enthalpie in $kJ/kg$"
+    },
+    "plot_axis_p": {
+        "ENG": "Pressure in $bar$",
+        "GER": "Druck in $bar$"
+    },
+    "plot_axis_s": {
+        "ENG": "Specific entropy in $kJ/(kg \\cdot K)$",
+        "GER": "Spezifische Entropie in $kJ/(kg \\cdot K)$"
+    },
+    "plot_axis_T": {
+        "ENG": "Temperature in $°C$",
+        "GER": "Temperatur in $°C$"
+    },
+    "plot_axis_exergy_kW": {
+        "ENG": "Exergy in kW",
+        "GER": "Exergie in kW"
+    },
+    "plot_axis_P_MW": {
+        "ENG": "Electrical power $P$ in $MW$",
+        "GER": "Elektrische Leistung $P$ in $MW$"
+    },
+    "plot_axis_Q_MW": {
+        "ENG": "Heat flow $\\dot{Q}$ in $MW$",
+        "GER": "Wärmestrom $\\dot{Q}$ in $MW$"
+    },
+    "plot_cbar_T_sink": {
+        "ENG": "Sink temperature in $°C$",
+        "GER": "Senkentemperatur in $°C$"
+    },
+    "plot_cbar_COP": {
+        "ENG": "Coefficient of performance $COP$",
+        "GER": "Leistungszahl $COP$"
+    },
+    "plot_cbar_epsilon": {
+        "ENG": "Exergetic efficiency $\\varepsilon$",
+        "GER": "Exergetische Effizienz $\\varepsilon$"
+    },
+    "plot_title_T_source": {
+        "ENG": "Source temperature: {T:.0f} °C",
+        "GER": "Quellentemperatur: {T:.0f} °C"
+    },
+    "state_col_source": {
+        "ENG": "Source",
+        "GER": "Quelle"
+    },
+    "state_col_source_id": {
+        "ENG": "Source ID",
+        "GER": "Quelle ID"
+    },
+    "state_col_target": {
+        "ENG": "Target",
+        "GER": "Ziel"
+    },
+    "state_col_target_id": {
+        "ENG": "Target ID",
+        "GER": "Ziel ID"
+    },
+    "state_col_phase": {
+        "ENG": "Phase",
+        "GER": "Phase"
+    },
+    "footer_contact": {
+        "ENG": "Contact",
+        "GER": "Kontaktdaten"
+    },
+    "fallback_key": {
+        "ENG": "No translation key was found with this name.",
+        "GER": "Neue Wärmepumpe auslegen"
+    },
+    "fallback_lang": {
+        "ENG": "For this key no translation was found for 'English' language.",
+        "GER": "Für diesen Key wurde keine Übersetzung auf 'Deutsch' gefunden."
+    }
+}

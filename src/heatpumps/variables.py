@@ -21,17 +21,17 @@ from models import (HeatPumpCascade, HeatPumpCascade2IHX,
 
 # %% Model parameters
 base_topologies = (
-    'Einfacher Kreis',
-    'Zwischenkühlung',
-    'Economizer',
-    'Flashtank',
-    'Kaskadierter Kreis'
+    'topo_simple',
+    'topo_ic',
+    'topo_econ',
+    'topo_flash',
+    'topo_cascade',
     )
 
 hp_models = {
     'simple': {
-        'base_topology': 'Einfacher Kreis',
-        'display_name': 'Allgemein',
+        'base_topology': 'topo_simple',
+        'display_name': 'model_general',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': None,
@@ -39,8 +39,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'ihx': {
-        'base_topology': 'Einfacher Kreis',
-        'display_name': 'Interne WÜT',
+        'base_topology': 'topo_simple',
+        'display_name': 'model_ihx',
         'nr_ihx': 1,
         'econ_type': None,
         'comp_var': None,
@@ -48,8 +48,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'simple_trans': {
-        'base_topology': 'Einfacher Kreis',
-        'display_name': 'Allgemein | Transkritisch',
+        'base_topology': 'topo_simple',
+        'display_name': 'model_general',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': None,
@@ -57,8 +57,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'ihx_trans': {
-        'base_topology': 'Einfacher Kreis',
-        'display_name': 'Interne WÜT | Transkritisch',
+        'base_topology': 'topo_simple',
+        'display_name': 'model_ihx',
         'nr_ihx': 1,
         'econ_type': None,
         'comp_var': None,
@@ -66,8 +66,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'ic': {
-        'base_topology': 'Zwischenkühlung',
-        'display_name': 'Allgemein',
+        'base_topology': 'topo_ic',
+        'display_name': 'model_general',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': 'series',
@@ -75,8 +75,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'ic_trans': {
-        'base_topology': 'Zwischenkühlung',
-        'display_name': 'Allgemein | Transkritisch',
+        'base_topology': 'topo_ic',
+        'display_name': 'model_general',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': 'series',
@@ -84,8 +84,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'econ_closed': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Reihenschaltung',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_s',
         'nr_ihx': 0,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -93,8 +93,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'econ_closed_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Reihenschaltung | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_s',
         'nr_ihx': 0,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -102,8 +102,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'ihx_econ_closed': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante A)',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_s_ihx_a',
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -111,8 +111,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'ihx_econ_closed_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante A) | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_s_ihx_a',
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -120,8 +120,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'econ_closed_ihx': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante B)',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_s_ihx_b',
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -129,8 +129,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'econ_closed_ihx_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante B) | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_s_ihx_b',
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -138,8 +138,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'econ_open': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Reihenschaltung',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_s',
         'nr_ihx': 0,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -147,8 +147,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'econ_open_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Reihenschaltung | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_s',
         'nr_ihx': 0,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -156,8 +156,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'ihx_econ_open': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante A)',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_s_ihx_a',
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -165,8 +165,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'ihx_econ_open_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante A) | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_s_ihx_a',
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -174,8 +174,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'econ_open_ihx': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante B)',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_s_ihx_b',
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -183,8 +183,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'econ_open_ihx_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante B) | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_s_ihx_b',
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -192,8 +192,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'pc_econ_closed': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Parallelschaltung',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_p',
         'nr_ihx': 0,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -201,8 +201,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'pc_econ_closed_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Parallelschaltung | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_p',
         'nr_ihx': 0,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -210,8 +210,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'ihx_pc_econ_closed': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante A)',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_p_ihx_a',
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -219,8 +219,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'ihx_pc_econ_closed_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante A) | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_p_ihx_a',
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -228,8 +228,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'pc_econ_closed_ihx': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante B)',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_p_ihx_b',
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -237,8 +237,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'pc_econ_closed_ihx_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante B) | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_p_ihx_b',
         'nr_ihx': 1,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -246,8 +246,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'ihx_pc_econ_closed_ihx': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Parallelschaltung | doppelte interne WÜT',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_p_2ihx',
         'nr_ihx': 2,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -255,8 +255,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'ihx_pc_econ_closed_ihx_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Geschlossen | Parallelschaltung | doppelte interne WÜT | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_closed_p_2ihx',
         'nr_ihx': 2,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -264,8 +264,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'pc_econ_open': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Parallelschaltung',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_p',
         'nr_ihx': 0,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -273,8 +273,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'pc_econ_open_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Parallelschaltung | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_p',
         'nr_ihx': 0,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -282,8 +282,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'ihx_pc_econ_open': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante A)',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_p_ihx_a',
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -291,8 +291,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'ihx_pc_econ_open_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante A) | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_p_ihx_a',
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -300,8 +300,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'pc_econ_open_ihx': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante B)',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_p_ihx_b',
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -309,8 +309,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'pc_econ_open_ihx_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante B) | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_p_ihx_b',
         'nr_ihx': 1,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -318,8 +318,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'ihx_pc_econ_open_ihx': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Parallelschaltung | doppelte interne WÜT',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_p_2ihx',
         'nr_ihx': 2,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -327,8 +327,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'ihx_pc_econ_open_ihx_trans': {
-        'base_topology': 'Economizer',
-        'display_name': 'Offen | Parallelschaltung | doppelte interne WÜT | Transkritisch',
+        'base_topology': 'topo_econ',
+        'display_name': 'model_econ_open_p_2ihx',
         'nr_ihx': 2,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -336,8 +336,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'flash': {
-        'base_topology': 'Flashtank',
-        'display_name': 'Allgemein',
+        'base_topology': 'topo_flash',
+        'display_name': 'model_general',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': 'series',
@@ -345,8 +345,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'flash_trans': {
-        'base_topology': 'Flashtank',
-        'display_name': 'Allgemein | Transkritisch',
+        'base_topology': 'topo_flash',
+        'display_name': 'model_general',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': 'series',
@@ -354,8 +354,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Allgemein',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_general',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': None,
@@ -363,8 +363,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Allgemein | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_general',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': None,
@@ -372,8 +372,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_2ihx': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Doppelte interne WÜT',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_2ihx',
         'nr_ihx': 2,
         'econ_type': None,
         'comp_var': None,
@@ -381,8 +381,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_2ihx_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Doppelte interne WÜT | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_2ihx',
         'nr_ihx': 2,
         'econ_type': None,
         'comp_var': None,
@@ -390,8 +390,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_ic': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Zwischenkühlung',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_ic',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': 'series',
@@ -399,8 +399,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_ic_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Zwischenkühlung | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_ic',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': 'series',
@@ -408,8 +408,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_econ_closed': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Reihenschaltung',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_s',
         'nr_ihx': 0,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -417,8 +417,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_econ_closed_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Reihenschaltung | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_s',
         'nr_ihx': 0,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -426,8 +426,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_ihx_econ_closed': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante A)',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_s_ihx_a',
         'nr_ihx': 2,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -435,8 +435,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_ihx_econ_closed_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante A) | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_s_ihx_a',
         'nr_ihx': 2,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -444,8 +444,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_econ_closed_ihx': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante B)',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_s_ihx_b',
         'nr_ihx': 2,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -453,8 +453,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_econ_closed_ihx_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Reihenschaltung | interne WÜT (Variante B) | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_s_ihx_b',
         'nr_ihx': 2,
         'econ_type': 'closed',
         'comp_var': 'series',
@@ -462,8 +462,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_econ_open': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Reihenschaltung',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_s',
         'nr_ihx': 0,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -471,8 +471,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_econ_open_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Reihenschaltung | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_s',
         'nr_ihx': 0,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -480,8 +480,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_ihx_econ_open': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante A)',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_s_ihx_a',
         'nr_ihx': 2,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -489,8 +489,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_ihx_econ_open_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante A) | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_s_ihx_a',
         'nr_ihx': 2,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -498,8 +498,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_econ_open_ihx': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante B)',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_s_ihx_b',
         'nr_ihx': 2,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -507,8 +507,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_econ_open_ihx_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Reihenschaltung | interne WÜT (Variante B) | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_s_ihx_b',
         'nr_ihx': 2,
         'econ_type': 'open',
         'comp_var': 'series',
@@ -516,8 +516,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_pc_econ_closed': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Parallelschaltung',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_p',
         'nr_ihx': 0,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -525,8 +525,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_pc_econ_closed_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Parallelschaltung | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_p',
         'nr_ihx': 0,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -534,8 +534,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_ihx_pc_econ_closed': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante A)',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_p_ihx_a',
         'nr_ihx': 2,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -543,8 +543,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_ihx_pc_econ_closed_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante A) | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_p_ihx_a',
         'nr_ihx': 2,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -552,8 +552,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_pc_econ_closed_ihx': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante B)',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_p_ihx_b',
         'nr_ihx': 2,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -561,8 +561,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_pc_econ_closed_ihx_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Parallelschaltung | interne WÜT (Variante B) | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_p_ihx_b',
         'nr_ihx': 2,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -570,8 +570,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_ihx_pc_econ_closed_ihx': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Parallelschaltung | doppelte interne WÜT',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_p_2ihx',
         'nr_ihx': 4,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -579,8 +579,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_ihx_pc_econ_closed_ihx_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Geschlossen | Parallelschaltung | doppelte interne WÜT | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_closed_p_2ihx',
         'nr_ihx': 4,
         'econ_type': 'closed',
         'comp_var': 'parallel',
@@ -588,8 +588,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_pc_econ_open': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Parallelschaltung',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_p',
         'nr_ihx': 0,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -597,8 +597,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_pc_econ_open_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Parallelschaltung | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_p',
         'nr_ihx': 0,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -606,8 +606,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_ihx_pc_econ_open': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante A)',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_p_ihx_a',
         'nr_ihx': 2,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -615,8 +615,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_ihx_pc_econ_open_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante A) | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_p_ihx_a',
         'nr_ihx': 2,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -624,8 +624,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_pc_econ_open_ihx': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante B)',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_p_ihx_b',
         'nr_ihx': 2,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -633,8 +633,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_pc_econ_open_ihx_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Parallelschaltung | interne WÜT (Variante B) | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_p_ihx_b',
         'nr_ihx': 2,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -642,8 +642,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_ihx_pc_econ_open_ihx': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Parallelschaltung | doppelte interne WÜT',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_p_2ihx',
         'nr_ihx': 4,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -651,8 +651,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_ihx_pc_econ_open_ihx_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Offen | Parallelschaltung | doppelte interne WÜT | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_econ_open_p_2ihx',
         'nr_ihx': 4,
         'econ_type': 'open',
         'comp_var': 'parallel',
@@ -660,8 +660,8 @@ hp_models = {
         'process_type': 'transcritical'
         },
     'cascade_flash': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Flashtank',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_flash',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': 'series',
@@ -669,8 +669,8 @@ hp_models = {
         'process_type': 'subcritical'
         },
     'cascade_flash_trans': {
-        'base_topology': 'Kaskadierter Kreis',
-        'display_name': 'Flashtank | Transkritisch',
+        'base_topology': 'topo_cascade',
+        'display_name': 'model_flash',
         'nr_ihx': 0,
         'econ_type': None,
         'comp_var': 'series',

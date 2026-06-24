@@ -449,7 +449,9 @@ class HeatPumpBase:
                                style='light', figsize=(16, 10), fontsize=10,
                                legend=True, legend_loc='upper left',
                                return_diagram=False, savefig=False,
-                               open_file=False, filepath=None, **kwargs):
+                               open_file=False, filepath=None,
+                               xlabel=None, ylabel=None, label_map=None,
+                               **kwargs):
         """
         Generate log(p)-h-diagram of heat pump process.
 
@@ -499,6 +501,18 @@ class HeatPumpBase:
         open_file : bool
             Flag to set if saved file should be opend by the os. Default is
             `False`.
+
+        xlabel : str, optional
+            Label for the x-axis. If `None`, a hardcoded default is used.
+
+        ylabel : str, optional
+            Label for the y-axis. If `None`, a hardcoded default is used.
+
+        label_map : dict, optional
+            Mapping from English component labels to translated labels used in
+            the legend. Keys are the labels returned by `get_plotting_states`;
+            values are the desired display strings. Labels not present in the
+            map are shown unchanged. If `None`, original labels are used.
 
         **kwargs
             Additional keyword arguments to pass through to the
@@ -636,7 +650,10 @@ class HeatPumpBase:
                 ax.scatter(
                     datapoints[var['x']][0], datapoints[var['y']][0],
                     color='#B54036',
-                    label=f'$\\bf{i+1:.0f}$: {key}',
+                    label=(
+                        f'$\\bf{i+1:.0f}$: '
+                        + f'{label_map.get(key, key) if label_map else key}'
+                    ),
                     s=14*int(fontsize*0.9), alpha=0.5
                     )
                 ax.annotate(
@@ -649,8 +666,11 @@ class HeatPumpBase:
                 ax.scatter(
                     0, 0,
                     color='#FFFFFF', s=0, alpha=1.0,
-                    label=f'$\\bf{i+1:.0f}$: {key}'
+                    label=(
+                        f'$\\bf{i+1:.0f}$: '
+                        + f'{label_map.get(key, key) if label_map else key}'
                     )
+                )
                 ax.annotate(
                     'Error\nMissing Plotting Data', (0.5, 0.5),
                     xycoords='axes fraction', ha='center', va='center',
@@ -660,11 +680,31 @@ class HeatPumpBase:
         # Additional plotting parameters
         ax.set_title(refrig, fontsize=int(fontsize*1.2))
         if diagram_type == 'logph':
-            ax.set_xlabel('Spezifische Enthalpie in $kJ/kg$', fontsize=fontsize)
-            ax.set_ylabel('Druck in $bar$', fontsize=fontsize)
+            ax.set_xlabel(
+                xlabel
+                if xlabel is not None
+                else 'Specific enthalpy in $kJ/kg$',
+                fontsize=fontsize
+            )
+            ax.set_ylabel(
+                ylabel
+                if ylabel is not None
+                else 'Pressure in $bar$',
+                fontsize=fontsize
+                )
         elif diagram_type == 'Ts':
-            ax.set_xlabel('Spezifische Entropie in $kJ/(kg \\cdot K)$', fontsize=fontsize)
-            ax.set_ylabel('Temperatur in $°C$', fontsize=fontsize)
+            ax.set_xlabel(
+                xlabel
+                if xlabel is not None
+                else 'Specific entropy in $kJ/(kg \\cdot K)$',
+                fontsize=fontsize
+                )
+            ax.set_ylabel(
+                ylabel
+                if ylabel is not None
+                else 'Temperature in $°C$',
+                fontsize=fontsize
+                )
 
         ax.tick_params(axis='both', labelsize=int(fontsize*0.9))
 
@@ -711,12 +751,46 @@ class HeatPumpBase:
         return fig
 
     def generate_waterfall_diagram(self, figsize=(16, 10), legend=True,
-                                   return_fig_ax=False, show_epsilon=True):
-        """Generates waterfall diagram of exergy analysis"""
+                                   return_fig_ax=False, show_epsilon=True,
+                                   xlabel=None, fuel_label='Fuel Exergy',
+                                   product_label='Product Exergy',
+                                   label_map=None):
+        """Generates waterfall diagram of exergy analysis.
+
+        Parameters
+        ----------
+        figsize : tuple/list of numbers
+            Size of matplotlib figure in inches. Default is (16, 10).
+
+        legend : bool
+            Flag to set if legend should be shown. Default is `True`.
+
+        return_fig_ax : bool
+            If `True`, returns the figure and axes objects. Default is `False`.
+
+        show_epsilon : bool
+            If `True`, annotates the total exergetic efficiency on the diagram.
+            Default is `True`.
+
+        xlabel : str, optional
+            Label for the x-axis. If `None`, a hardcoded default is used.
+
+        fuel_label : str, optional
+            Display label for the fuel exergy bar. Default is 'Fuel Exergy'.
+
+        product_label : str, optional
+            Display label for the product exergy bar. Default is
+            'Product Exergy'.
+
+        label_map : dict, optional
+            Mapping from English component labels to translated labels used as
+            y-axis tick labels. Labels not present in the map are shown
+            unchanged. If `None`, original labels are used.
+        """
         df_components, _, _ = self.ean.exergy_results(print_results=False)
         df_components = df_components.set_index('Component')
 
-        comps = ['Fuel Exergy']
+        comps = [fuel_label]
         E_F = self.ean.E_F * 1e-3
         E_D = [0]
         E_P = [E_F]
@@ -725,11 +799,11 @@ class HeatPumpBase:
                 ).index:
             # only plot components with exergy destruction > 1 W
             if df_components.loc[comp, 'E_D [kW]'] > 1e-3:
-                comps.append(comp)
+                comps.append(label_map.get(comp, comp) if label_map else comp)
                 E_D.append(df_components.loc[comp, 'E_D [kW]'])
                 E_F = E_F - df_components.loc[comp, 'E_D [kW]']
                 E_P.append(E_F)
-        comps.append('Product Exergy')
+        comps.append(product_label)
         E_D.append(0)
         E_P.append(E_F)
 
@@ -761,7 +835,7 @@ class HeatPumpBase:
             )
 
         E_F_total_kW = self.ean.E_F * 1e-3
-        ax.set_xlabel('Exergy in kW')
+        ax.set_xlabel(xlabel if xlabel is not None else 'Exergy in kW')
         ax.set_yticks(np.arange(len(comps)))
         ax.set_yticklabels(comps)
         ax.set_xlim([0, E_F_total_kW + 1000])
@@ -1050,7 +1124,10 @@ class HeatPumpBase:
         return char_ts
 
     def plot_partload_char(self, partload_char, cmap_type='', cmap='viridis',
-                           return_fig_ax=False, savefig=False, open_file=False):
+                           return_fig_ax=False, savefig=False, open_file=False,
+                           xlabel=None, ylabel=None, cbar_label_T=None,
+                           cbar_label_COP=None, cbar_label_epsilon=None,
+                           title_template=None):
         """
         Plot the partload characteristic of the heat pump.
 
@@ -1068,12 +1145,36 @@ class HeatPumpBase:
         cmap : str
             Name of colormap. Valid names are all colormaps implemented in
             matplotlib. Defaults to 'veridis'.
+
+        xlabel : str, optional
+            Label for the x-axis. If `None`, a hardcoded default is used.
+
+        ylabel : str, optional
+            Label for the y-axis. If `None`, a hardcoded default is used.
+
+        cbar_label_T : str, optional
+            Colorbar label for the 'T_cons_ff' colormap type. If `None`, a
+            hardcoded default is used.
+
+        cbar_label_COP : str, optional
+            Colorbar label for the 'COP' colormap type. If `None`, a hardcoded
+            default is used.
+
+        cbar_label_epsilon : str, optional
+            Colorbar label for the 'epsilon' colormap type. If `None`, a
+            hardcoded default is used.
+
+        title_template : str, optional
+            Format string for the subplot title. Must contain a `{T}` placeholder
+            that is filled with the heat source feed flow temperature. If `None`,
+            a hardcoded default is used.
         """
         if not cmap_type:
             print(
                 'Please provide a cmap_type of eiher "T_cons_ff" or '
-                + '"COP" or' + '"epsilon" to plot the heat pump partload characteristic.'
-                )
+                + '"COP" or'
+                + '"epsilon" to plot the heat pump partload characteristic.'
+            )
             return
 
         colormap = plt.get_cmap(cmap)
@@ -1116,12 +1217,27 @@ class HeatPumpBase:
                         )
                     )
                 cbar = plt.colorbar(sm, ax=ax)
-                cbar.set_label('Senkentemperatur in $°C$')
+                cbar.set_label(
+                    cbar_label_T
+                    if cbar_label_T is not None
+                    else 'Heat sink temperature in $°C$'
+                )
                 ax.set_xlim(0, partload_char['P'].max() * 1.05)
                 ax.set_ylim(0, partload_char['Q'].max() * 1.05)
-                ax.set_xlabel('Elektrische Leistung $P$ in $MW$')
-                ax.set_ylabel('Wärmestrom $\\dot{{Q}}$ in $MW$')
-                ax.set_title(f'Quellentemperatur: {T_hs_ff:.0f} °C')
+                ax.set_xlabel(
+                    xlabel
+                    if xlabel is not None
+                    else 'Electrical power $P$ in $MW$'
+                )
+                ax.set_ylabel(
+                    ylabel
+                    if ylabel is not None
+                    else 'Heat flow $\\dot{{Q}}$ in $MW$'
+                )
+                ax.set_title(
+                    (title_template or 'Heat source temperature: {T:.0f} °C')
+                        .format(T=T_hs_ff)
+                )
                 figs[T_hs_ff] = fig
                 axes[T_hs_ff] = ax
 
@@ -1147,14 +1263,28 @@ class HeatPumpBase:
                     )
 
                 cbar = plt.colorbar(scatterplot, ax=ax)
-                cbar.set_label('Leistungszahl $COP$')
+                cbar.set_label(
+                    cbar_label_COP
+                    if cbar_label_COP is not None
+                    else 'Coefficient of performance $COP$')
 
                 ax.grid()
                 ax.set_xlim(0, partload_char['P'].max() * 1.05)
                 ax.set_ylim(0, partload_char['Q'].max() * 1.05)
-                ax.set_xlabel('Elektrische Leistung $P$ in $MW$')
-                ax.set_ylabel('Wärmestrom $\\dot{{Q}}$ in $MW$')
-                ax.set_title(f'Quellentemperatur: {T_hs_ff:.0f} °C')
+                ax.set_xlabel(
+                    xlabel
+                    if xlabel is not None
+                    else 'Electrical power $P$ in $MW$'
+                )
+                ax.set_ylabel(
+                    ylabel
+                    if ylabel is not None
+                    else 'Heat flow $\\dot{{Q}}$ in $MW$'
+                )
+                ax.set_title(
+                    (title_template or 'Heat source temperature: {T:.0f} °C')
+                        .format(T=T_hs_ff)
+                )
                 figs[T_hs_ff] = fig
                 axes[T_hs_ff] = ax
 
@@ -1179,14 +1309,29 @@ class HeatPumpBase:
                     )
 
                 cbar = plt.colorbar(scatterplot, ax=ax)
-                cbar.set_label('Exergetische Effizienz $ε$')
+                cbar.set_label(
+                    cbar_label_epsilon
+                    if cbar_label_epsilon is not None
+                    else 'Exergetic efficiency $\\varepsilon$'
+                )
 
                 ax.grid()
                 ax.set_xlim(0, partload_char['P'].max() * 1.05)
                 ax.set_ylim(0, partload_char['Q'].max() * 1.05)
-                ax.set_xlabel('Elektrische Leistung $P$ in $MW$')
-                ax.set_ylabel('Wärmestrom $\\dot{{Q}}$ in $MW$')
-                ax.set_title(f'Quellentemperatur: {T_hs_ff:.0f} °C')
+                ax.set_xlabel(
+                    xlabel
+                    if xlabel is not None
+                    else 'Electrical power $P$ in $MW$'
+                )
+                ax.set_ylabel(
+                    ylabel
+                    if ylabel is not None
+                    else 'Heat flow $\\dot{{Q}}$ in $MW$'
+                )
+                ax.set_title(
+                    (title_template or 'Heat source temperature: {T:.0f} °C')
+                        .format(T=T_hs_ff)
+                )
                 figs[T_hs_ff] = fig
                 axes[T_hs_ff] = ax
 
