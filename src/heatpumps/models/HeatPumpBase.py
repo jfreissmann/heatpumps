@@ -118,8 +118,8 @@ class HeatPumpBase:
         self.nw = Network()
         self.nw.units.set_defaults(
             temperature='degC', pressure='bar', enthalpy='kJ / kg',
-            mass_flow='kg / s'
-            )
+            mass_flow='kg / s', pressure_difference='bar'
+        )
 
         self._init_fluids()
 
