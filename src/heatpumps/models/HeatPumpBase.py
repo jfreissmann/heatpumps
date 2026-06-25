@@ -13,6 +13,7 @@ import platformdirs
 import plotly.graph_objects as go
 from CoolProp.CoolProp import PropsSI as PSI
 from exerpy import ExergyAnalysis
+from exerpy.parser.from_tespy.tespy_config import EXERPY_TESPY_MAPPINGS
 from fluprodia import FluidPropertyDiagram
 from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
@@ -427,6 +428,16 @@ class HeatPumpBase:
 
     def perform_exergy_analysis(self, print_results=False, **kwargs):
         """Perform exergy analysis."""
+        # exerpy's ``Condenser`` class models a purely *dissipative*
+        # condenser (heat rejected to ambient, as in a Rankine cycle): it
+        # sets E_F = E_P = NaN and counts the whole hot-side exergy drop as
+        # destruction. In a heat pump every ``Condenser`` (main ``cond`` and
+        # the cascade ``inter`` HX) instead delivers useful heat, so it must
+        # be analysed as a productive heat exchanger. Map tespy ``Condenser``
+        # to exerpy's productive ``HeatExchanger`` so component exergy
+        # destructions sum to the system total. This leaves the tespy
+        # thermodynamic model untouched (idempotent module-level config).
+        EXERPY_TESPY_MAPPINGS['Condenser'] = 'HeatExchanger'
         self.ean = ExergyAnalysis.from_tespy(
             self.nw,
             Tamb=self.params['ambient']['T'] + 273.15,
