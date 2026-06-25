@@ -197,18 +197,19 @@ class HeatPumpCascadeIC(HeatPumpCascadeBase):
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
         # Components
-        self.conns['A4'].set_attr(
-            h=Ref(self.conns['A3'], self._init_vals['dh_rel_comp'], 0)
-            )
-        self.conns['A6'].set_attr(
-            h=Ref(self.conns['A5'], self._init_vals['dh_rel_comp'], 0)
-            )
-        self.conns['D4'].set_attr(
-            h=Ref(self.conns['D3'], self._init_vals['dh_rel_comp'], 0)
-            )
-        self.conns['D6'].set_attr(
-            h=Ref(self.conns['D5'], self._init_vals['dh_rel_comp'], 0)
-            )
+        # Unlike the other heat pump models, the isentropic compressor
+        # efficiencies are imposed already during initialisation (instead of
+        # the cruder dh_rel_comp enthalpy ratio). The tightly-coupled cascade
+        # cannot switch both the compressor closure (enthalpy ratio -> eta_s)
+        # and the intercooler outlet closure (enthalpy -> temperature
+        # reference) in a single design solve without the Newton solver
+        # diverging into a singular Jacobian. Applying eta_s here lets
+        # design_simulation change only the intercooler closure, keeping it to
+        # a single solver run like every other model.
+        self.comps['LT_comp1'].set_attr(eta_s=self.params['LT_comp1']['eta_s'])
+        self.comps['LT_comp2'].set_attr(eta_s=self.params['LT_comp2']['eta_s'])
+        self.comps['HT_comp1'].set_attr(eta_s=self.params['HT_comp1']['eta_s'])
+        self.comps['HT_comp2'].set_attr(eta_s=self.params['HT_comp2']['eta_s'])
         self.comps['hs_pump'].set_attr(eta_s=self.params['hs_pump']['eta_s'])
         self.comps['cons_pump'].set_attr(
             eta_s=self.params['cons_pump']['eta_s']
@@ -243,24 +244,28 @@ class HeatPumpCascadeIC(HeatPumpCascadeBase):
         self.p_mid1 = p_mid1
         self.p_mid2 = p_mid2
 
-        h_s_mid1 = PSI(
+        # Superheated starting enthalpies for the intercooler outlets at the
+        # intermediate pressure. The isentropic mid-pressure enthalpy would
+        # leave the lower-cycle intercooler outlet (D5) in the two-phase
+        # region, from which the design temperature reference cannot converge.
+        h_start_mid1 = PSI(
             'H', 'P', p_mid1 * 1e5,
-            'S', PSI('S', 'Q', 1, 'P', p_evap1 * 1e5, self.wf1),
+            'T', PSI('T', 'Q', 1, 'P', p_mid1 * 1e5, self.wf1) + 5,
             self.wf1
         ) * 1e-3
-        h_s_mid2 = PSI(
+        h_start_mid2 = PSI(
             'H', 'P', p_mid2 * 1e5,
-            'S', PSI('S', 'Q', 1, 'P', p_evap2 * 1e5, self.wf2),
+            'T', PSI('T', 'Q', 1, 'P', p_mid2 * 1e5, self.wf2) + 5,
             self.wf2
         ) * 1e-3
 
         # Main cycle
         self.conns['A3'].set_attr(x=self.params['A3']['x'], p=p_evap2)
         self.conns['A0'].set_attr(p=p_cond2, fluid={self.wf2: 1})
-        self.conns['A5'].set_attr(p=p_mid2, h=h_s_mid2)
+        self.conns['A5'].set_attr(p=p_mid2, h=h_start_mid2)
         self.conns['D3'].set_attr(x=self.params['D3']['x'], p=p_evap1)
         self.conns['D0'].set_attr(p=p_cond1, fluid={self.wf1: 1})
-        self.conns['D5'].set_attr(p=p_mid1, h=h_s_mid1)
+        self.conns['D5'].set_attr(p=p_mid1, h=h_start_mid1)
         # Heat source
         self.conns['B1'].set_attr(
             T=self.params['B1']['T'], p=self.params['B1']['p'],
@@ -285,10 +290,6 @@ class HeatPumpCascadeIC(HeatPumpCascadeBase):
         self.conns['D0'].set_attr(p=None)
         self.conns['D3'].set_attr(p=None)
         self.conns['D5'].set_attr(h=None)
-        self.conns['A4'].set_attr(h=None)
-        self.conns['A6'].set_attr(h=None)
-        self.conns['D4'].set_attr(h=None)
-        self.conns['D6'].set_attr(h=None)
 
     def design_simulation(self, **kwargs):
         """Perform final parametrization and design simulation."""
@@ -301,6 +302,10 @@ class HeatPumpCascadeIC(HeatPumpCascadeBase):
         self.comps['inter'].set_attr(ttd_u=self.params['inter']['ttd_u'])
         self.conns['A3'].set_attr(T=self.T_mid - self.params['inter']['ttd_u'] / 2)
 
+        # The intercooler outlet is specified by its temperature, clamped to
+        # the dew line where cooling by dT_ic would otherwise cross into the
+        # two-phase region. The superheated starting state set up in
+        # init_simulation lets this converge in a single solver run.
         T_bp1 = PSI('T', 'P', self.conns['D4'].p.val_SI, 'Q', 1, self.wf1) - 273.15
         T_bp2 = PSI('T', 'P', self.conns['A4'].p.val_SI, 'Q', 1, self.wf2) - 273.15
 
