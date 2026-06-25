@@ -789,6 +789,7 @@ class HeatPumpBase:
         """
         df_components, _, _ = self.ean.exergy_results(print_results=False)
         df_components = df_components.set_index('Component')
+        df_components = df_components.drop(index='TOT', errors='ignore')
 
         comps = [fuel_label]
         E_F = self.ean.E_F * 1e-3
