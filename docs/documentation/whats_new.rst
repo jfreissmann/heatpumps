@@ -2,7 +2,41 @@
 What's new?
 ~~~~~~~~~~~
 
-v1.4.1 -- Planetary Publication (June 16, 2026)
+v1.5.0 -- XXXXXXXXXX XXXXXXXXXX (Jun XX, 2026)
+==============================================
+
+New Features
+------------
+
+- heatpumps' dashboard now has english and german language modes
+- Other languages can be added easily due to modular translation structure
+
+Improvements
+------------
+
+- The model classes are adjusted to work with TESPy ``>= v0.10``
+    - Make use of ``PowerConnection`` cpmponents
+    - Use `exerpy <https://github.com/oemof/exerpy>`__ for exergy analysis
+    - Save stable values as dicts in memory instead of cached files
+    - Simulations can be faster
+- Add more flexibility for plotting labels (axes, title, legends)
+- Some instruction text was updated
+
+Fixes
+-----
+
+- Fix the few failing heat pump setups (improved parameters and
+  `init_simulation`)
+
+Contributors
+------------
+
+- `@jfreissmann <https://github.com/jfreissmann>`__
+- `@fwitte <https://github.com/fwitte>`__
+- `@maltefritz <https://github.com/maltefritz>`__
+
+
+v1.4.1 -- Planetary Publication (Jun 16, 2026)
 ==============================================
 
 Fixes
