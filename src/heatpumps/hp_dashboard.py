@@ -1187,8 +1187,8 @@ if mode == txt('mode_option_design'):
                         'p': 'p in bar',
                         'h': 'h in kJ/kg',
                         'T': 'T in °C',
-                        'v': 'v in m³/kg',
-                        'vol': 'vol in m³/s',
+                        'v': 'v_dot in m³/s',
+                        'vol': 'v in m³/kg',
                         's': 's in kJ/(kgK)'
                         },
                     inplace=True)

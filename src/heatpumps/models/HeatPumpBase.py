@@ -1836,7 +1836,7 @@ class HeatPumpBase:
                 comp = c.label
                 results[comp] = {}
 
-                results[comp]['V_dot'] = c.inl[0].vol.val_SI * 3600
+                results[comp]['V_dot'] = c.inl[0].v.val_SI * 3600
                 results[comp]['p_in'] = c.inl[0].p.val
                 results[comp]['p_out'] = c.outl[0].p.val
                 results[comp]['PI'] = c.outl[0].p.val / c.inl[0].p.val
