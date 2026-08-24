@@ -1826,10 +1826,13 @@ class HeatPumpBase:
         pass
 
     def get_compressor_results(self):
-        """Return key results for each compressor used in the heat pump."""
+        """Return key results for each compressor used in the heat pump.
+
+        The heat source recirculation device is skipped.
+        """
         results = {}
-        for c in self.comps.values():
-            if 'Compressor' in c.label:
+        for key, c in self.comps.items():
+            if isinstance(c, Compressor) and key != 'hs_pump':
                 comp = c.label
                 results[comp] = {}
 
