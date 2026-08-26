@@ -319,6 +319,7 @@ def parameter_table(model_key, section, body):
     lines = [
         f'.. list-table:: {section_heading(section)}',
         '    :header-rows: 1',
+        '    :width: 100%',
         '    :widths: 25 20 12 43',
         '',
         '    * - Parameter',
@@ -523,6 +524,7 @@ def render_index(pages, txt, base_topologies, model_classes):
         '',
         '    .. list-table::',
         '        :header-rows: 1',
+        '        :width: 100%',
         '        :widths: 30 30 20 20',
         '',
         '        * - Model key',
