@@ -1,3 +1,5 @@
+.. _model_classes_label:
+
 ~~~~~~~~~~~~~~~~~~~~~~~
 Heat Pump Model Classes
 ~~~~~~~~~~~~~~~~~~~~~~~
