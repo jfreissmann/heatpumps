@@ -56,9 +56,11 @@ Documentation
 -------------
 
 The Documentation chapter goes deeper where the Getting Started one stops. It
-contains a thorough explanation of the methodology used, as well as the full
-model API. Futhermore, a change log documents the developement process and the
-Bibliography holds all references mentioned within the whole online docs.
+contains a thorough explanation of the methodology used, a reference of all
+available model setups with their topologies and default parameters, as well as
+the full model API. Futhermore, a change log documents the developement process
+and the Bibliography holds all references mentioned within the whole online
+docs.
 
 Galary
 ------
