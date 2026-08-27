@@ -998,6 +998,14 @@
         "ENG": "Product Exergy",
         "GER": "Exergieertrag"
     },
+    "comp_label_Exergy_Destruction": {
+        "ENG": "Exergy Destruction",
+        "GER": "Exergievernichtung"
+    },
+    "comp_label_Exergy_Loss": {
+        "ENG": "Exergy Loss",
+        "GER": "Exergieverlust"
+    },
     "comp_label_Injection_steam": {
         "ENG": "Injection steam",
         "GER": "Einspritzdampf"
