@@ -13,6 +13,8 @@ New Features
 - The dashboard can export models as JSON, which can be used to initialize a
   model class in python or a plain TESPy model
 - heatpumps now supports air-source heat pumps
+- The Grassmann diagram of the exergy analysis is back, now built on
+  `exerpy <https://github.com/oemof/exerpy>`__'s visualization module
 
 Improvements
 ------------
