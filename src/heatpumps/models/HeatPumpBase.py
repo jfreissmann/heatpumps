@@ -15,6 +15,7 @@ from CoolProp.CoolProp import PhaseSI
 from CoolProp.CoolProp import PropsSI as PSI
 from exerpy import ExergyAnalysis
 from exerpy.parser.from_tespy.tespy_config import EXERPY_TESPY_MAPPINGS
+from exerpy.visualization import SankeyBuilder
 from fluprodia import FluidPropertyDiagram
 from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
@@ -23,6 +24,28 @@ from tespy.connections import Connection
 from tespy.networks import Network
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
+
+
+SANKEY_COLORS = {
+    'E_F': '#00395B',
+    'E_P': '#B54036',
+    'E_L': '#EC6707',
+    'E_D': '#EC6707',
+    'work': '#BFBFBF',
+    'heat': '#BFBFBF',
+    'two-phase-fluid': '#74ADC0',
+    'node': '#EC6707'
+}
+
+# Node ids exerpy's `SankeyBuilder` uses for the system boundary nodes.
+SANKEY_TERMINAL_IDS = {
+    '__E_F__': 'E_F',
+    '__E_P__': 'E_P',
+    '__E_D__': 'E_D',
+    '__E_L__': 'E_L',
+    '__E_P_net__': 'E_P',
+    '__E_L_net__': 'E_L'
+}
 
 
 def grid_path_order(*ranges, current=None, max_step=1):
@@ -810,22 +833,171 @@ class HeatPumpBase:
         if return_diagram:
             return diagram
 
-    def generate_sankey_diagram(self, width=None, height=None):
-        """Sankey Diagram of Heat Pump model.
+    def generate_sankey_diagram(self, width=None, height=None, mode=1,
+                                collapse_passthroughs=True, groups=None,
+                                colors=None, label_map=None,
+                                fuel_label='Fuel Exergy',
+                                product_label='Product Exergy',
+                                destruction_label='Exergy Destruction',
+                                loss_label='Exergy Loss'):
+        """Generate Sankey (Grassmann) diagram of the exergy analysis.
 
-        TODO: exerpy (the replacement for tespy's removed ExergyAnalysis)
-        has no equivalent of the old ``generate_plotly_sankey_input`` method,
-        so this currently returns an empty placeholder figure.
+        The node and link topology comes from exerpy's ``SankeyBuilder``,
+        the styling and labelling is applied here so the diagram matches
+        the rest of the project's plots.
+
+        Parameters
+        ----------
+        width : number, optional
+            Width of the figure in pixels. If `None`, plotly decides.
+
+        height : number, optional
+            Height of the figure in pixels. If `None`, plotly decides.
+
+        mode : int
+            Level of detail of the material links. `1` shows the total
+            exergy flow per connection, `2` splits it into physical and
+            chemical exergy and `3` into thermal, mechanical and chemical
+            exergy. Default is `1`.
+
+        collapse_passthroughs : bool or list of str
+            If `True`, pure pass-through components (the cycle closers) are
+            hidden. If a list, only the given component types are hidden.
+            Default is `True`.
+
+        groups : dict, optional
+            Mapping of a group name to a list of component labels that are
+            aggregated into a single node, e.g.
+            ``{'Drives': ['Compressor Motor']}``. Connections inside a group
+            are dropped.
+
+        colors : dict, optional
+            Colors of the flow categories and nodes. Missing keys fall back
+            to :data:`SANKEY_COLORS`. Supported keys are `'E_F'`, `'E_P'`,
+            `'E_D'`, `'E_L'`, `'work'`, `'heat'`, `'two-phase-fluid'` and
+            `'node'`.
+
+        label_map : dict, optional
+            Mapping from English component labels to translated labels used
+            as node labels. Labels not present in the map are shown
+            unchanged. If `None`, original labels are used.
+
+        fuel_label : str, optional
+            Display label of the fuel exergy node. Default is
+            'Fuel Exergy'.
+
+        product_label : str, optional
+            Display label of the product exergy node. Default is
+            'Product Exergy'.
+
+        destruction_label : str, optional
+            Display label of the exergy destruction node. Default is
+            'Exergy Destruction'.
+
+        loss_label : str, optional
+            Display label of the exergy loss node. Default is
+            'Exergy Loss'.
         """
-        fig = go.Figure(go.Sankey(arrangement='snap', node={}, link={}))
+        colors = {**SANKEY_COLORS, **(colors or {})}
+
+        nodes, links = SankeyBuilder(
+            self.ean, mode=mode,
+            collapse_passthroughs=collapse_passthroughs, groups=groups
+            ).build()
+
+        nodes, links = self._prune_sankey_nodes(nodes, links)
+
+        terminal_labels = {
+            'E_F': fuel_label, 'E_P': product_label,
+            'E_D': destruction_label, 'E_L': loss_label
+            }
+        node_labels = []
+        for node in nodes:
+            terminal = SANKEY_TERMINAL_IDS.get(node['id'])
+            if terminal is None:
+                node_labels.append(
+                    label_map.get(node['id'], node['label']) if label_map
+                    else node['label']
+                    )
+            elif node['id'].endswith('_net__'):
+                node_labels.append(f'{terminal_labels[terminal]} (net)')
+            else:
+                node_labels.append(terminal_labels[terminal])
+
+        fig = go.Figure(
+            go.Sankey(
+                arrangement='snap',
+                node={
+                    'label': node_labels,
+                    'pad': 15,
+                    'color': colors['node']
+                    },
+                link={
+                    'source': [link['source'] for link in links],
+                    'target': [link['target'] for link in links],
+                    'value': [link['value'] for link in links],
+                    'label': [link.get('label', '') for link in links],
+                    'color': [
+                        self._sankey_link_color(link, nodes, colors)
+                        for link in links
+                        ]
+                    }
+            )
+        )
 
         if width is not None:
             fig.update_layout(width=width)
 
         if height is not None:
-            fig.update_layout(width=height)
+            fig.update_layout(height=height)
 
         return fig
+
+    @staticmethod
+    def _prune_sankey_nodes(nodes, links):
+        """Drop nodes without any link and reindex the remaining links.
+
+        Heat pumps have no exergy loss boundary, so exerpy's unconditional
+        `E_L` node would otherwise dangle in the diagram.
+        """
+        connected = set()
+        for link in links:
+            connected.update((link['source'], link['target']))
+
+        kept = [i for i in range(len(nodes)) if i in connected]
+        reindex = {old: new for new, old in enumerate(kept)}
+
+        return (
+            [nodes[i] for i in kept],
+            [
+                {**link,
+                 'source': reindex[link['source']],
+                 'target': reindex[link['target']]}
+                for link in links
+                ]
+            )
+
+    def _sankey_link_color(self, link, nodes, colors):
+        """Determine the color of a single Sankey link."""
+        source_id = nodes[link['source']]['id']
+        target_id = nodes[link['target']]['id']
+
+        if target_id == '__E_D__':
+            return colors['E_D']
+        for node_id in (source_id, target_id):
+            terminal = SANKEY_TERMINAL_IDS.get(node_id)
+            if terminal is not None:
+                return colors[terminal]
+
+        # Link labels are emitted as ``"<conn_id> [<tag>]: <value> kW"``,
+        # which is the only handle on the underlying exergy flow.
+        conn_id = link.get('label', '').split(' [')[0]
+        kind = self.ean.connections.get(conn_id, {}).get('kind')
+        if kind == 'power':
+            return colors['work']
+        if kind == 'heat':
+            return colors['heat']
+        return colors['two-phase-fluid']
 
     def generate_waterfall_diagram(self, figsize=(16, 10), legend=True,
                                    return_fig_ax=False, show_epsilon=True,
