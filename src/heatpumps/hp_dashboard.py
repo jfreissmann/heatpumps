@@ -1257,11 +1257,14 @@ if mode == txt('mode_option_design'):
                 exergy_component_result, _, _ = ss.hp.ean.exergy_results(
                     print_results=False
                     )
+                exergy_label_map = build_label_map(
+                    exergy_component_result['Component']
+                    )
                 exergy_component_result = (
                     exergy_component_result.set_index('Component')
                     )
                 exergy_component_result.index = [
-                    translate_comp_label(lbl)
+                    exergy_label_map.get(lbl, lbl)
                     for lbl in exergy_component_result.index
                     ]
                 exergy_component_result.dropna(
@@ -1284,7 +1287,15 @@ if mode == txt('mode_option_design'):
                     st.subheader(txt('design_subheader_exergy_grass'))
                     diagram_placeholder_sankey = st.empty()
 
-                    diagram_sankey = ss.hp.generate_sankey_diagram()
+                    diagram_sankey = ss.hp.generate_sankey_diagram(
+                        label_map=exergy_label_map,
+                        fuel_label=txt('comp_label_Fuel_Exergy'),
+                        product_label=txt('comp_label_Product_Exergy'),
+                        destruction_label=txt(
+                            'comp_label_Exergy_Destruction'
+                            ),
+                        loss_label=txt('comp_label_Exergy_Loss')
+                        )
                     diagram_placeholder_sankey.plotly_chart(
                         diagram_sankey, width='stretch'
                         )
@@ -1293,17 +1304,13 @@ if mode == txt('mode_option_design'):
                     st.subheader(txt('design_subheader_exergy_waterfall'))
                     diagram_placeholder_waterfall = st.empty()
 
-                    df_exergy, _, _ = ss.hp.ean.exergy_results(
-                        print_results=False
-                    )
-                    wf_label_map = build_label_map(df_exergy['Component'])
                     dia_wf_fig, dia_wf_ax = (
                         ss.hp.generate_waterfall_diagram(
                             return_fig_ax=True,
                             xlabel=txt('plot_axis_exergy_kW'),
                             fuel_label=txt('comp_label_Fuel_Exergy'),
                             product_label=txt('comp_label_Product_Exergy'),
-                            label_map=wf_label_map
+                            label_map=exergy_label_map
                         )
                     )
                     diagram_placeholder_waterfall.pyplot(
