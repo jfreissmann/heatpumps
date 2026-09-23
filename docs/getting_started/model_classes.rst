@@ -43,6 +43,7 @@ To use the heat pump model classes in your own scripts, you can import them as f
 
     hp.run_model()
     hp.perform_exergy_analysis(print_results=True)
+    hp.generate_sankey_diagram().show()
 
 
 Get a model from the dashboard

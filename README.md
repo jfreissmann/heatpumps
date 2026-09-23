@@ -83,6 +83,7 @@ hp = HeatPumpEconIHX(params=params, econ_type=econ_type)
 
 hp.run_model()
 hp.perform_exergy_analysis(print_results=True)
+hp.generate_sankey_diagram().show()
 ```
 
 ## License
