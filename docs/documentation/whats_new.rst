@@ -13,7 +13,8 @@ New Features
 - The dashboard can export models as JSON, which can be used to initialize a
   model class in python or a plain TESPy model
 - heatpumps now supports air-source heat pumps
-- The Grassmann diagram of the exergy analysis is back, now built on
+- The Grassmann diagram of the exergy analysis is back
+  (``generate_sankey_diagram``), now built on
   `exerpy <https://github.com/oemof/exerpy>`__'s visualization module
 
 Improvements
@@ -22,6 +23,7 @@ Improvements
 - The model classes are adjusted to work with TESPy ``>= v0.10``
     - Make use of ``PowerConnection`` cpmponents
     - Use `exerpy <https://github.com/oemof/exerpy>`__ for exergy analysis
+      (requires exerpy ``v0.0.11``)
     - Save stable values as dicts in memory instead of cached files
     - Simulations can be faster
 - Add more flexibility for plotting labels (axes, title, legends)
