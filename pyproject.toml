@@ -19,7 +19,7 @@ classifiers = [
 dependencies = [
     "coolprop>=6.4.1",
     "darkdetect>=0.8.0",
-    "exerpy>=0.0.11",
+    "exerpy>=0.0.11,<0.0.12",
     "fluprodia",
     "matplotlib>=3.6.3",
     "numpy>=1.24.0",
