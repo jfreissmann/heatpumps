@@ -14,8 +14,8 @@ import plotly.graph_objects as go
 from CoolProp.CoolProp import PhaseSI
 from CoolProp.CoolProp import PropsSI as PSI
 from exerpy import ExergyAnalysis
-from exerpy.parser.from_tespy.tespy_config import EXERPY_TESPY_MAPPINGS
 from exerpy.visualization import SankeyBuilder
+from exerpy.visualization.colors import pale
 from fluprodia import FluidPropertyDiagram
 from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
@@ -517,16 +517,6 @@ class HeatPumpBase:
 
     def perform_exergy_analysis(self, print_results=False, **kwargs):
         """Perform exergy analysis."""
-        # exerpy's ``Condenser`` class models a purely *dissipative*
-        # condenser (heat rejected to ambient, as in a Rankine cycle): it
-        # sets E_F = E_P = NaN and counts the whole hot-side exergy drop as
-        # destruction. In a heat pump every ``Condenser`` (main ``cond`` and
-        # the cascade ``inter`` HX) instead delivers useful heat, so it must
-        # be analysed as a productive heat exchanger. Map tespy ``Condenser``
-        # to exerpy's productive ``HeatExchanger`` so component exergy
-        # destructions sum to the system total. This leaves the tespy
-        # thermodynamic model untouched (idempotent module-level config).
-        EXERPY_TESPY_MAPPINGS['Condenser'] = 'HeatExchanger'
         self.ean = ExergyAnalysis.from_tespy(
             self.nw,
             Tamb=self.params['ambient']['T'] + 273.15,
@@ -839,7 +829,7 @@ class HeatPumpBase:
                                 fuel_label='Fuel Exergy',
                                 product_label='Product Exergy',
                                 destruction_label='Exergy Destruction',
-                                loss_label='Exergy Loss'):
+                                loss_label='Exergy Loss', net_suffix='(net)'):
         """Generate Sankey (Grassmann) diagram of the exergy analysis.
 
         The node and link topology comes from exerpy's ``SankeyBuilder``,
@@ -897,6 +887,11 @@ class HeatPumpBase:
         loss_label : str, optional
             Display label of the exergy loss node. Default is
             'Exergy Loss'.
+
+        net_suffix : str, optional
+            Suffix appended to the product or loss label of the intermediate
+            node exerpy inserts when that boundary has both inputs and
+            outputs. Default is '(net)'.
         """
         colors = {**SANKEY_COLORS, **(colors or {})}
 
@@ -920,7 +915,7 @@ class HeatPumpBase:
                     else node['label']
                     )
             elif node['id'].endswith('_net__'):
-                node_labels.append(f'{terminal_labels[terminal]} (net)')
+                node_labels.append(f'{terminal_labels[terminal]} {net_suffix}')
             else:
                 node_labels.append(terminal_labels[terminal])
 
@@ -990,14 +985,22 @@ class HeatPumpBase:
                 return colors[terminal]
 
         # Link labels are emitted as ``"<conn_id> [<tag>]: <value> kW"``,
-        # which is the only handle on the underlying exergy flow.
-        conn_id = link.get('label', '').split(' [')[0]
+        # which is the only handle on the underlying exergy flow. exerpy
+        # appends ``" (reversed)"`` to a link carrying negative exergy, which
+        # it draws against its declared direction.
+        label = link.get('label', '')
+        conn_id = label.split(' [')[0]
         kind = self.ean.connections.get(conn_id, {}).get('kind')
         if kind == 'power':
-            return colors['work']
-        if kind == 'heat':
-            return colors['heat']
-        return colors['two-phase-fluid']
+            color = colors['work']
+        elif kind == 'heat':
+            color = colors['heat']
+        else:
+            color = colors['two-phase-fluid']
+
+        if label.endswith('(reversed)'):
+            return pale(color)
+        return color
 
     def generate_waterfall_diagram(self, figsize=(16, 10), legend=True,
                                    return_fig_ax=False, show_epsilon=True,
