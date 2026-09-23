@@ -1294,7 +1294,8 @@ if mode == txt('mode_option_design'):
                         destruction_label=txt(
                             'comp_label_Exergy_Destruction'
                             ),
-                        loss_label=txt('comp_label_Exergy_Loss')
+                        loss_label=txt('comp_label_Exergy_Loss'),
+                        net_suffix=txt('comp_label_net_suffix')
                         )
                     diagram_placeholder_sankey.plotly_chart(
                         diagram_sankey, width='stretch'

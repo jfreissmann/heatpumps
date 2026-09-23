@@ -1006,6 +1006,10 @@
         "ENG": "Exergy Loss",
         "GER": "Exergieverlust"
     },
+    "comp_label_net_suffix": {
+        "ENG": "(net)",
+        "GER": "(netto)"
+    },
     "comp_label_Injection_steam": {
         "ENG": "Injection steam",
         "GER": "Einspritzdampf"
@@ -1049,6 +1053,10 @@
     "comp_label_Electrical_Equipment": {
         "ENG": "Electrical Equipment",
         "GER": "Elektrische Ausrüstung"
+    },
+    "comp_label_Power_Distribution": {
+        "ENG": "Power Distribution",
+        "GER": "Stromverteilung"
     },
     "comp_label_Refrigerant": {
         "ENG": "Refrigerant",
