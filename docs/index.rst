@@ -17,6 +17,7 @@
     :hidden:
 
     documentation/methodology
+    documentation/models/index
     documentation/API
     documentation/whats_new
     z_literature

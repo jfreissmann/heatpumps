@@ -14,6 +14,7 @@ Key Features
 
 - Steady-state simulation of design and partload operation based on `TESPy <https://github.com/oemof/tespy>`__
 - Parametrization and result visualisation through a `Streamlit <https://github.com/streamlit/streamlit>`__ dashboard
+- Water-water and air-water heat pumps
 - Industry standard, as well as topologies still in research and developement, supported
 - Sub- and transcritical processes
 - Wide variety of refrigerants due to the integration of `CoolProp <https://github.com/CoolProp/CoolProp>`__
@@ -55,9 +56,11 @@ Documentation
 -------------
 
 The Documentation chapter goes deeper where the Getting Started one stops. It
-contains a thorough explanation of the methodology used, as well as the full
-model API. Futhermore, a change log documents the developement process and the
-Bibliography holds all references mentioned within the whole online docs.
+contains a thorough explanation of the methodology used, a reference of all
+available model setups with their topologies and default parameters, as well as
+the full model API. Futhermore, a change log documents the developement process
+and the Bibliography holds all references mentioned within the whole online
+docs.
 
 Galary
 ------

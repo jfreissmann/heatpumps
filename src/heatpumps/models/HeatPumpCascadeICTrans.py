@@ -8,7 +8,8 @@ from CoolProp.CoolProp import PropsSI as PSI
 from tespy.components import (Compressor, Condenser, CycleCloser,
                               HeatExchanger, Pump, SimpleHeatExchanger, Sink,
                               Source, Valve)
-from tespy.connections import Bus, Connection, Ref
+from tespy.components import Motor, PowerBus, PowerSource
+from tespy.connections import Connection, PowerConnection, Ref
 from tespy.networks import Network
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
@@ -25,9 +26,7 @@ class HeatPumpCascadeICTrans(HeatPumpCascadeBase):
     def generate_components(self):
         """Initialize components of heat pump."""
         # Heat source
-        self.comps['hs_ff'] = Source('Heat Source Feed Flow')
-        self.comps['hs_bf'] = Sink('Heat Source Back Flow')
-        self.comps['hs_pump'] = Pump('Heat Source Recirculation Pump')
+        self.generate_heat_source_components()
 
         # Heat sink
         self.comps['cons_cc'] = CycleCloser('Consumer Cycle Closer')
@@ -50,6 +49,17 @@ class HeatPumpCascadeICTrans(HeatPumpCascadeBase):
         self.comps['LT_comp1'] = Compressor('Low Temperature Compressor 1')
         self.comps['ic1'] = SimpleHeatExchanger('Intercooler 1')
         self.comps['LT_comp2'] = Compressor('Low Temperature Compressor 2')
+
+        # Power input
+        self.comps['grid'] = PowerSource('Grid')
+        self.comps['power_distribution'] = PowerBus(
+            'Power Distribution', num_in=1, num_out=6
+            )
+        self.comps['motor_LT_comp1'] = Motor(self.comps['LT_comp1'].label + ' Motor')
+        self.comps['motor_HT_comp1'] = Motor(self.comps['HT_comp1'].label + ' Motor')
+        self.comps['motor_LT_comp2'] = Motor(self.comps['LT_comp2'].label + ' Motor')
+        self.comps['motor_HT_comp2'] = Motor(self.comps['HT_comp2'].label + ' Motor')
+        self.comps['motor_cons_pump'] = Motor(self.comps['cons_pump'].label + ' Motor')
 
     def generate_connections(self):
         """Initialize and add connections and buses to network."""
@@ -99,15 +109,7 @@ class HeatPumpCascadeICTrans(HeatPumpCascadeBase):
             self.comps['LT_comp2'], 'out1', self.comps['inter'], 'in1', 'D6'
         )
 
-        self.conns['B1'] = Connection(
-            self.comps['hs_ff'], 'out1', self.comps['evap'], 'in1', 'B1'
-        )
-        self.conns['B2'] = Connection(
-            self.comps['evap'], 'out1', self.comps['hs_pump'], 'in1', 'B2'
-        )
-        self.conns['B3'] = Connection(
-            self.comps['hs_pump'], 'out1', self.comps['hs_bf'], 'in1', 'B3'
-        )
+        self.generate_heat_source_connections()
 
         self.conns['C0'] = Connection(
             self.comps['cons'], 'out1', self.comps['cons_cc'], 'in1', 'C0'
@@ -124,58 +126,66 @@ class HeatPumpCascadeICTrans(HeatPumpCascadeBase):
 
         self.nw.add_conns(*[conn for conn in self.conns.values()])
 
-        # Buses
+        # Power input
         mot_x = np.array([
             0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55,
             0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1, 1.15,
             1.2, 10
-        ])
-        mot_y = (np.array([
+            ])
+        # Normalized to 1 at x=1 (rated load): the design-point
+        # efficiency (0.98, set below per motor) is applied
+        # separately, so this curve must not also bake it in, or
+        # eta_char_func would apply it twice during offdesign.
+        mot_y = np.array([
             0.01, 0.3148, 0.5346, 0.6843, 0.7835, 0.8477, 0.8885, 0.9145,
             0.9318, 0.9443, 0.9546, 0.9638, 0.9724, 0.9806, 0.9878, 0.9938,
             0.9982, 1.0009, 1.002, 1.0015, 1, 0.9977, 0.9947, 0.9909, 0.9853,
             0.9644
-        ]) * 0.98)
+            ])
         mot = CharLine(x=mot_x, y=mot_y)
-        self.buses['power input'] = Bus('power input')
-        self.buses['power input'].add_comps(
-            {'comp': self.comps['LT_comp1'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['HT_comp1'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['LT_comp2'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['HT_comp2'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['hs_pump'], 'char': mot, 'base': 'bus'},
-            {'comp': self.comps['cons_pump'], 'char': mot, 'base': 'bus'}
-        )
 
-        self.buses['heat input'] = Bus('heat input')
-        self.buses['heat input'].add_comps(
-            {'comp': self.comps['hs_ff'], 'base': 'bus'},
-            {'comp': self.comps['hs_bf'], 'base': 'component'}
-        )
+        rotating_comps = ['LT_comp1', 'HT_comp1', 'LT_comp2', 'HT_comp2', 'hs_pump', 'cons_pump']
+        power_conns = [
+            PowerConnection(
+                self.comps['grid'], 'power',
+                self.comps['power_distribution'], 'power_in1',
+                'E_grid'
+                )
+            ]
+        self.conns['E_grid'] = power_conns[0]
+        for i, key in enumerate(rotating_comps, start=1):
+            motor = self.comps[f'motor_{key}']
+            motor.set_attr(eta=0.98, eta_char=mot)
+            conn_in = PowerConnection(
+                self.comps['power_distribution'], f'power_out{i}',
+                motor, 'power_in', f'E_{key}_in'
+                )
+            conn_out = PowerConnection(
+                motor, 'power_out', self.comps[key], 'power',
+                f'E_{key}_out'
+                )
+            self.conns[f'E_{key}_in'] = conn_in
+            self.conns[f'E_{key}_out'] = conn_out
+            power_conns += [conn_in, conn_out]
 
-        self.buses['heat output'] = Bus('heat output')
-        self.buses['heat output'].add_comps(
-            {'comp': self.comps['cons'], 'base': 'component'}
-        )
-
-        self.nw.add_busses(*[bus for bus in self.buses.values()])
+        self.nw.add_conns(*power_conns)
 
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
         # Components
-        self.conns['A4'].set_attr(
-            h=Ref(self.conns['A3'], self._init_vals['dh_rel_comp'], 0)
-            )
-        self.conns['A6'].set_attr(
-            h=Ref(self.conns['A5'], self._init_vals['dh_rel_comp'], 0)
-            )
-        self.conns['D4'].set_attr(
-            h=Ref(self.conns['D3'], self._init_vals['dh_rel_comp'], 0)
-            )
-        self.conns['D6'].set_attr(
-            h=Ref(self.conns['D5'], self._init_vals['dh_rel_comp'], 0)
-            )
-        self.comps['hs_pump'].set_attr(eta_s=self.params['hs_pump']['eta_s'])
+        # Unlike the other heat pump models, the isentropic compressor
+        # efficiencies are imposed already during initialisation (instead of
+        # the cruder dh_rel_comp enthalpy ratio). The tightly-coupled cascade
+        # cannot switch both the compressor closure (enthalpy ratio -> eta_s)
+        # and the intercooler outlet closure (enthalpy -> temperature
+        # reference) in a single design solve without the Newton solver
+        # diverging into a singular Jacobian. Applying eta_s here lets
+        # design_simulation change only the intercooler closure, keeping it to
+        # a single solver run like every other model.
+        self.comps['LT_comp1'].set_attr(eta_s=self.params['LT_comp1']['eta_s'])
+        self.comps['LT_comp2'].set_attr(eta_s=self.params['LT_comp2']['eta_s'])
+        self.comps['HT_comp1'].set_attr(eta_s=self.params['HT_comp1']['eta_s'])
+        self.comps['HT_comp2'].set_attr(eta_s=self.params['HT_comp2']['eta_s'])
         self.comps['cons_pump'].set_attr(
             eta_s=self.params['cons_pump']['eta_s']
         )
@@ -208,31 +218,30 @@ class HeatPumpCascadeICTrans(HeatPumpCascadeBase):
         self.p_mid1 = p_mid1
         self.p_mid2 = p_mid2
 
-        h_s_mid1 = PSI(
+        # Superheated starting enthalpies for the intercooler outlets at the
+        # intermediate pressure. The isentropic mid-pressure enthalpy would
+        # leave the lower-cycle intercooler outlet (D5) in the two-phase
+        # region, from which the design temperature reference cannot converge.
+        h_start_mid1 = PSI(
             'H', 'P', p_mid1 * 1e5,
-            'S', PSI('S', 'Q', 1, 'P', p_evap1 * 1e5, self.wf1),
+            'T', PSI('T', 'Q', 1, 'P', p_mid1 * 1e5, self.wf1) + 5,
             self.wf1
         ) * 1e-3
-        h_s_mid2 = PSI(
+        h_start_mid2 = PSI(
             'H', 'P', p_mid2 * 1e5,
-            'S', PSI('S', 'Q', 1, 'P', p_evap2 * 1e5, self.wf2),
+            'T', PSI('T', 'Q', 1, 'P', p_mid2 * 1e5, self.wf2) + 5,
             self.wf2
         ) * 1e-3
 
         # Main cycle
         self.conns['A3'].set_attr(x=self.params['A3']['x'], p=p_evap2)
         self.conns['A0'].set_attr(p=self.params['A0']['p'], h=h_trans_out, fluid={self.wf2: 1})
-        self.conns['A5'].set_attr(p=p_mid2, h=h_s_mid2)
+        self.conns['A5'].set_attr(p=p_mid2, h=h_start_mid2)
         self.conns['D3'].set_attr(x=self.params['D3']['x'], p=p_evap1)
         self.conns['D0'].set_attr(p=p_cond1, fluid={self.wf1: 1})
-        self.conns['D5'].set_attr(p=p_mid1, h=h_s_mid1)
+        self.conns['D5'].set_attr(p=p_mid1, h=h_start_mid1)
         # Heat source
-        self.conns['B1'].set_attr(
-            T=self.params['B1']['T'], p=self.params['B1']['p'],
-            fluid={self.so: 1}
-        )
-        self.conns['B2'].set_attr(T=self.params['B2']['T'])
-        self.conns['B3'].set_attr(p=self.params['B1']['p'])
+        self.parametrize_heat_source()
 
         # Heat sink
         self.conns['C3'].set_attr(
@@ -250,10 +259,6 @@ class HeatPumpCascadeICTrans(HeatPumpCascadeBase):
         self.conns['D0'].set_attr(p=None)
         self.conns['D3'].set_attr(p=None)
         self.conns['D5'].set_attr(h=None)
-        self.conns['A4'].set_attr(h=None)
-        self.conns['A6'].set_attr(h=None)
-        self.conns['D4'].set_attr(h=None)
-        self.conns['D6'].set_attr(h=None)
 
     def design_simulation(self, **kwargs):
         """Perform final parametrization and design simulation."""
@@ -266,17 +271,21 @@ class HeatPumpCascadeICTrans(HeatPumpCascadeBase):
         self.comps['inter'].set_attr(ttd_u=self.params['inter']['ttd_u'])
         self.conns['A3'].set_attr(T=self.T_mid - self.params['inter']['ttd_u'] / 2)
 
+        # The intercooler outlet is specified by its temperature, clamped to
+        # the dew line where cooling by dT_ic would otherwise cross into the
+        # two-phase region. The superheated starting state set up in
+        # init_simulation lets this converge in a single solver run.
         T_bp1 = PSI('T', 'P', self.conns['D4'].p.val_SI, 'Q', 1, self.wf1) - 273.15
         T_bp2 = PSI('T', 'P', self.conns['A4'].p.val_SI, 'Q', 1, self.wf2) - 273.15
 
         if abs(T_bp2 - self.conns['A4'].T.val) < abs(self.params['ic2']['dT_ic']):
-            self.conns['A5'].set_attr(Td_bp=1)
+            self.conns['A5'].set_attr(td_dew=1)
         else:
             self.conns['A5'].set_attr(
                 T=Ref(self.conns['A4'], 1, self.params['ic2']['dT_ic'])
             )
         if abs(T_bp1 - self.conns['D4'].T.val) < abs(self.params['ic1']['dT_ic']):
-            self.conns['D5'].set_attr(Td_bp=1)
+            self.conns['D5'].set_attr(td_dew=1)
         else:
             self.conns['D5'].set_attr(
                 T=Ref(self.conns['D4'], 1, self.params['ic1']['dT_ic'])
@@ -286,10 +295,7 @@ class HeatPumpCascadeICTrans(HeatPumpCascadeBase):
 
         self.m_design = self.conns['A0'].m.val
 
-        self.cop = (
-                abs(self.buses['heat output'].P.val)
-                / self.buses['power input'].P.val
-        )
+        self.cop = self.heat_output / self.power_input
 
     def intermediate_states_offdesign(self, T_hs_ff, T_cons_ff, deltaT_hs):
         """Calculates intermediate states during part-load simulation"""

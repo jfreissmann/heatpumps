@@ -2,7 +2,55 @@
 What's new?
 ~~~~~~~~~~~
 
-v1.4.1 -- Planetary Publication (June 16, 2026)
+v1.5.0 -- Performant Polyglot (Sep 29, 2026)
+============================================
+
+New Features
+------------
+
+- heatpumps' dashboard now has english and german language modes
+- Other languages can be added easily due to modular translation structure
+- The dashboard can export models as JSON, which can be used to initialize a
+  model class in python or a plain TESPy model
+- heatpumps now supports air-source heat pumps
+- The Grassmann diagram of the exergy analysis is back
+  (``generate_sankey_diagram``), now built on
+  `exerpy <https://github.com/oemof/exerpy>`__'s visualization module
+
+Improvements
+------------
+
+- The model classes are adjusted to work with TESPy ``>= v0.10``
+    - Make use of ``PowerConnection`` cpmponents
+    - Use `exerpy <https://github.com/oemof/exerpy>`__ for exergy analysis
+      (requires exerpy ``v0.0.11``)
+    - Save stable values as dicts in memory instead of cached files
+    - Simulations can be faster
+- Add more flexibility for plotting labels (axes, title, legends)
+- Some instruction text was updated
+- Add documentation for ``from_json`` method
+- Reduced code duplication
+
+Fixes
+-----
+
+- Fix the few failing heat pump setups (improved parameters and
+  `init_simulation`)
+- Handle error in dashboard if no or just a few part-load simulations converge
+
+Contributors
+------------
+
+- `@jfreissmann <https://github.com/jfreissmann>`__
+- `@fwitte <https://github.com/fwitte>`__
+- `@maltefritz <https://github.com/maltefritz>`__
+- `@HaSchneider <https://github.com/HaSchneider>`__ (Thanks for your first
+  contribution!)
+
+**Full changelog:** `v1.4.1...v1.5.0 <https://github.com/jfreissmann/heatpumps/compare/v1.4.1...v1.5.0>`__
+
+
+v1.4.1 -- Planetary Publication (Jun 16, 2026)
 ==============================================
 
 Fixes
@@ -16,6 +64,8 @@ Contributors
 ------------
 
 - `@fwitte <https://github.com/fwitte>`__
+
+**Full changelog:** `v1.4.0...v1.4.1 <https://github.com/jfreissmann/heatpumps/compare/v1.4.0...v1.4.1>`__
 
 
 v1.4.0 -- Planetary Publication (May 12, 2026)
@@ -51,6 +101,8 @@ Contributors
 
 - `@jfreissmann <https://github.com/jfreissmann>`__
 - `@maltefritz <https://github.com/maltefritz>`__
+
+**Full changelog:** `v1.3.0...v1.4.0 <https://github.com/jfreissmann/heatpumps/compare/v1.3.0...v1.4.0>`__
 
 
 v1.3.0 -- Pacy Portrayal (Jul 15, 2024)
@@ -90,6 +142,8 @@ Contributors
 - `@bilwint <https://github.com/bilwint>`__
 - `@fwitte <https://github.com/fwitte>`__
 
+**Full changelog:** `v1.2.0...v1.3.0 <https://github.com/jfreissmann/heatpumps/compare/v1.2.0...v1.3.0>`__
+
 
 v1.2.0 -- Cool Cascading (Jun 28, 2024)
 =======================================
@@ -111,6 +165,8 @@ Contributors
 - `@bilwint <https://github.com/bilwint>`__
 - `@jfreissmann <https://github.com/jfreissmann>`__
 
+**Full changelog:** `v1.1.2...v1.3.0 <https://github.com/jfreissmann/heatpumps/compare/v1.1.2...v1.3.0>`__
+
 
 v1.1.2 -- Stability Regained (Jun 21, 2024)
 ===========================================
@@ -124,6 +180,8 @@ Contributors
 
 - `@bilwint <https://github.com/bilwint>`__
 
+**Full changelog:** `v1.1.1...v1.1.2 <https://github.com/jfreissmann/heatpumps/compare/v1.1.1...v1.1.2>`__
+
 
 v1.1.1 -- Hotfix for v1.1.0 (Jun 19, 2024)
 ==========================================
@@ -135,6 +193,8 @@ Contributors
 ------------
 
 - `@jfreissmann <https://github.com/jfreissmann>`__
+
+**Full changelog:** `v1.1.0...v1.1.1 <https://github.com/jfreissmann/heatpumps/compare/v1.1.0...v1.1.1>`__
 
 
 v1.1.0 -- TESPy Update (Jun 19, 2024)
@@ -148,6 +208,8 @@ Contributors
 ------------
 
 - `@jfreissmann <https://github.com/jfreissmann>`__
+
+**Full changelog:** `v1.0.0...v1.1.0 <https://github.com/jfreissmann/heatpumps/compare/v1.0.0...v1.1.0>`__
 
 
 v1.0.0 -- Initial Release (Jun 18, 2024)

@@ -1,6 +1,16 @@
+.. _model_classes_label:
+
 ~~~~~~~~~~~~~~~~~~~~~~~
 Heat Pump Model Classes
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+Going beyond the dashboard and using the model API unlocks the full potential
+of heatpumps. Here, you have full control over the model, its parametrization,
+and how it is simulated. Adjust or extend the underlying TESPy network and use
+it in sensitivity analyses as well as optimizations.
+
+General usage
+=============
 
 To use the heat pump model classes in your own scripts, you can import them as follows:
 
@@ -33,3 +43,28 @@ To use the heat pump model classes in your own scripts, you can import them as f
 
     hp.run_model()
     hp.perform_exergy_analysis(print_results=True)
+    hp.generate_sankey_diagram().show()
+
+
+Get a model from the dashboard
+==============================
+
+After a succesful design simulation, heatpumps' dashboard gives you the option
+to save your model configuration as a JSON file. The ``from_json`` method
+included in the ``parameters`` submodule allows you to initialize a heat pump
+model class according to your configuration as shown in the code snippet below.
+
+.. code-block:: python
+
+    from heatpumps.parameters import from_json
+
+    hp = from_json('HeatPumpCascadeEcon_heatpumps.json')
+
+    hp.run_model()
+    print(f'{hp.cop = }')
+
+.. tip::
+
+    The dashboard also allows you to export the heat pump model in the JSON
+    format used by TESPy. This way you can create a plain TESPy model from it
+    as well.
