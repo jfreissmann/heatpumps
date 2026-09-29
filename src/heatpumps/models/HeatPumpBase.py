@@ -237,6 +237,18 @@ class HeatPumpBase:
         self.conns['B2'].set_attr(T=self.params['B2']['T'])
         self.conns['B3'].set_attr(p=self.params['B1']['p'])
 
+    @property
+    def exergy_boundary(self):
+        """Connection labels bounding the system for the exergy analysis.
+
+        ``Q_cons`` is the heat delivered by the consumer, which only exists
+        in the exergy analysis, see :meth:`perform_exergy_analysis`.
+        """
+        return {
+            'fuel': {'inputs': ['E_grid', 'B1'], 'outputs': ['B3']},
+            'product': {'inputs': ['Q_cons'], 'outputs': []}
+            }
+
     def generate_components(self):
         """Initialize components of heat pump."""
 

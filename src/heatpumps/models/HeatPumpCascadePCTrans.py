@@ -240,19 +240,6 @@ class HeatPumpCascadePCTrans(HeatPumpCascadeBase):
 
         self.nw.add_conns(*power_conns)
 
-
-        # Connection labels bounding the system for the exergy
-        # analysis, replacing the connections previously
-        # aggregated through Buses.
-        self.exergy_boundary = {
-            'fuel': {
-                'inputs': ['E_grid', 'B1'], 'outputs': ['B3']
-                },
-            'product': {
-                'inputs': ['C3'], 'outputs': ['C1']
-                }
-            }
-
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
         # Components
