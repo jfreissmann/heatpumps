@@ -495,6 +495,14 @@
         "ENG": "The simulation of the heat pump characteristics was successful.",
         "GER": "Die Simulation der Wärmepumpencharakteristika war erfolgreich."
     },
+    "od_simu_partial_convergence": {
+        "ENG": "Only {n_converged} of {n_total} part-load operating points converged. Operating points that did not converge are missing from the diagrams.",
+        "GER": "Nur {n_converged} von {n_total} Teillastbetriebspunkten sind konvergiert. Nicht konvergierte Betriebspunkte fehlen in den Diagrammen."
+    },
+    "od_simu_no_convergence": {
+        "ENG": "The part-load simulation did not yield a usable characteristic: {n_converged} of {n_total} operating points converged. Please adjust the part-load range or the design parameters and try again.",
+        "GER": "Die Teillastsimulation hat keine verwertbare Kennlinie ergeben: {n_converged} von {n_total} Betriebspunkten sind konvergiert. Bitte passen Sie den Teillastbereich oder die Auslegungsparameter an und versuchen Sie es erneut."
+    },
     "od_spinner_visu": {
         "ENG": "Results are being visualized...",
         "GER": "Ergebnisse werden visualisiert..."

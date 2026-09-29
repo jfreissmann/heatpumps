@@ -1356,9 +1356,27 @@ if mode == txt('mode_option_partload'):
                 # ss.partload_char = pd.read_csv(
                 #     'partload_char.csv', index_col=[0, 1, 2], sep=';'
                 #     )
+
+            P_grid = np.asarray(ss.hp.P_array, dtype=float)
+            n_total = P_grid.size
+            n_converged = int(np.isfinite(P_grid).sum())
+            has_char = (
+                ss.partload_char[['P', 'Q']].astype(float)
+                .notna().all(axis=1).any()
+                )
+            if not has_char:
+                st.error(txt('od_simu_no_convergence').format(
+                    n_converged=n_converged, n_total=n_total
+                    ))
+                del ss.partload_char
+            elif n_converged < n_total:
+                st.warning(txt('od_simu_partial_convergence').format(
+                    n_converged=n_converged, n_total=n_total
+                    ))
+            else:
                 st.success(txt('od_simu_success'))
 
-        if run_pl_sim or 'partload_char' in ss:
+        if 'partload_char' in ss:
             # %% Results
             with st.spinner(txt('od_spinner_visu')):
 
