@@ -3,7 +3,9 @@
 
 The node and link topology comes from exerpy, while heatpumps applies its
 own colors and labels, and prunes nodes without links. These tests pin that
-contract down, as well as the exergy balance that the diagram is drawn from.
+contract down, as well as the exergy analysis that the diagram is drawn
+from: the heat delivered by the consumer is the product, and the TESPy
+``dissipative`` flags are honored.
 
 Usage
 -----
@@ -15,7 +17,7 @@ import math
 import plotly.graph_objects as go
 import pytest
 
-from heatpumps.models import HeatPumpCascade, HeatPumpSimple
+from heatpumps.models import HeatPumpCascade, HeatPumpIC, HeatPumpSimple
 from heatpumps.models.HeatPumpBase import SANKEY_COLORS
 from heatpumps.parameters import get_params
 
@@ -35,6 +37,8 @@ CASES = [
     (HeatPumpSimple, 'Air'),
     # The intermediate heat exchanger is a TESPy ``Condenser`` as well.
     (HeatPumpCascade, None),
+    # The intercooler rejects its heat and is set dissipative.
+    (HeatPumpIC, None),
 ]
 CASE_IDS = [
     cls.__name__ if source is None else f'{cls.__name__}-{source}'
@@ -95,11 +99,46 @@ def test_condensers_are_productive_heat_exchangers(hp):
 
 
 def test_exergy_balance_closes(hp):
-    # The consumer lies outside of the product boundary, so its small
-    # destruction (about 0.05 %) is part of the components' sum only.
+    """Every component lies inside of the system boundary, so their exergy
+    destructions add up to the one of the system."""
     assert sum(component_destructions(hp.ean).values()) == pytest.approx(
-        hp.ean.E_D, rel=1e-2
+        hp.ean.E_D, rel=1e-6
         )
+
+
+def test_product_is_consumer_heat(hp, sankey):
+    """The heat delivered by the consumer is the product, as its 'heat
+    output' Bus was before TESPy v0.10."""
+    consumer = hp.comps['cons'].label
+    assert hp.ean.E_P == pytest.approx(
+        hp.ean.components[consumer].E_P, rel=1e-9
+        )
+
+    labels = list(sankey.node.label)
+    links = list(zip(sankey.link.source, sankey.link.target))
+    product = labels.index(LABELS['product_label'])
+    assert [labels[src] for src, tgt in links if tgt == product] == [consumer]
+    assert any(tgt == labels.index(consumer) for _, tgt in links)
+
+
+def test_dissipative_flags_reach_exerpy(hp):
+    flags = {
+        c.label: c.dissipative.val for c in hp.nw.comps['object']
+        if getattr(c, 'dissipative', None) is not None
+        and c.dissipative.val is not None
+    }
+    assert flags[hp.comps['cons'].label] is False
+    if 'ic' in hp.comps:
+        assert flags[hp.comps['ic'].label] is True
+
+    for label, dissipative in flags.items():
+        comp = hp.ean.components[label]
+        assert comp.dissipative == dissipative
+        if dissipative:
+            assert math.isnan(comp.E_P)
+            assert comp.E_D == pytest.approx(comp.E_F, rel=1e-9)
+        else:
+            assert math.isfinite(comp.E_P)
 
 
 def test_single_sankey_trace(hp):
@@ -128,9 +167,8 @@ def test_node_labels(sankey):
     assert LABELS['destruction_label'] in labels
     # Heat pumps have no exergy loss, so its node is pruned.
     assert LABELS['loss_label'] not in labels
-    # The product boundary has inputs and outputs, so exerpy inserts a net
-    # node in front of the product node.
-    assert f"{LABELS['product_label']} {LABELS['net_suffix']}" in labels
+    # The product boundary has no outputs, so exerpy inserts no net node.
+    assert not any(label.endswith(LABELS['net_suffix']) for label in labels)
     assert 'Kondensator' in labels
     assert 'Condenser' not in labels
     assert not any(label.startswith('__') for label in labels)
