@@ -36,6 +36,7 @@ Fixes
 
 - Fix the few failing heat pump setups (improved parameters and
   `init_simulation`)
+- Handle error in dashboard if no or just a few part-load simulations converge
 
 Contributors
 ------------
