@@ -14,6 +14,8 @@ import plotly.graph_objects as go
 from CoolProp.CoolProp import PhaseSI
 from CoolProp.CoolProp import PropsSI as PSI
 from exerpy import ExergyAnalysis
+from exerpy.analyses import _process_json
+from exerpy.parser.from_tespy.tespy_parser import to_exerpy
 from exerpy.visualization import SankeyBuilder
 from exerpy.visualization.colors import pale
 from fluprodia import FluidPropertyDiagram
@@ -529,11 +531,30 @@ class HeatPumpBase:
 
     def perform_exergy_analysis(self, print_results=False, **kwargs):
         """Perform exergy analysis."""
-        self.ean = ExergyAnalysis.from_tespy(
-            self.nw,
-            Tamb=self.params['ambient']['T'] + 273.15,
-            pamb=self.params['ambient']['p'] * 1e5
+        Tamb = self.params['ambient']['T'] + 273.15
+        pamb = self.params['ambient']['p'] * 1e5
+        data = to_exerpy(self.nw, Tamb, pamb)
+        data['connections']['Q_cons'] = {
+            'source_component': self.comps['cons'].label,
+            'source_connector': 1,
+            'target_component': 'Heat Output',
+            'target_connector': 999,
+            'kind': 'heat',
+            'energy_flow': self.heat_output
+            }
+        data, Tamb, pamb, chemExLib, split_physical_exergy = _process_json(
+            data, Tamb, pamb, None, True
             )
+        self.ean = ExergyAnalysis(
+            data['components'], data['connections'], Tamb, pamb, chemExLib,
+            split_physical_exergy
+            )
+        # exerpy's TESPy parser drops the ``dissipative`` flag, so pass it on.
+        for comp in self.nw.comps['object']:
+            dissipative = getattr(comp, 'dissipative', None)
+            if (dissipative is not None and dissipative.val is not None
+                    and comp.label in self.ean.components):
+                self.ean.components[comp.label].dissipative = dissipative.val
         self.ean.analyse(
             E_F=self.exergy_boundary['fuel'],
             E_P=self.exergy_boundary['product']
