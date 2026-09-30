@@ -22,9 +22,9 @@ def load_translations():
         resourcepath, 'static', 'translations.json'
     )
     with open(tlpath, 'r', encoding='utf-8') as file:
-        ss.tl = json.load(file)
+        return json.load(file)
 
-load_translations()
+ss.tl = load_translations()
 
 if 'lg' not in ss:
     ss.lg = 'ENG'
@@ -61,9 +61,9 @@ def partload_unavailable():
 
 def reset2design():
     """Reset session state and switch to design simulation tab."""
-    keys = list(ss.keys())
-    for key in keys:
-        ss.pop(key)
+    for key in list(ss.keys()):
+        if key not in ('tl', 'lg'):
+            ss.pop(key)
     ss.select = txt('mode_option_design')
 
 
