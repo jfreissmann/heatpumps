@@ -20,7 +20,7 @@ from streamlit import session_state as ss
 BLOCK_PARTLOAD = False
 
 
-# @st.cache_data
+@st.cache_data
 def load_translations():
     resourcepath = resources.files('heatpumps')
     tlpath = os.path.join(
