@@ -52,6 +52,13 @@ def switch2partload():
     ss.select = txt('mode_option_partload')
 
 
+@st.dialog(txt('stcc_od_unavailable_header'))
+def partload_unavailable():
+    """Inform that part-load simulation is disabled on Community Cloud."""
+    st.markdown(txt('stcc_od_unavailable_info'))
+    st.markdown(txt('stcc_od_unavailable_install'))
+
+
 def reset2design():
     """Reset session state and switch to design simulation tab."""
     keys = list(ss.keys())
@@ -202,6 +209,14 @@ def export_fragment(hp_model_name, params):
         export_modal(hp_model_name, params)
 
 
+@st.fragment
+def partload_fragment():
+    """Isolate the part-load button in a fragment so opening the unavailability
+    modal reruns only this fragment instead of the whole app."""
+    if st.button(txt('sb_btn_run_offdesign'), width='stretch'):
+        partload_unavailable()
+
+
 src_path = str(resources.files('heatpumps').joinpath('static'))
 icon_path = os.path.join(src_path, 'img', 'icons')
 
@@ -241,8 +256,7 @@ with st.sidebar:
         txt('mode_selection'),
         [
             txt('mode_option_start'),
-            txt('mode_option_design'),
-            txt('mode_option_partload')
+            txt('mode_option_design')
         ],
         key='select', label_visibility='collapsed'
     )
@@ -1326,11 +1340,8 @@ if mode == txt('mode_option_design'):
 
             col_btn_pl, col_btn_save = st.columns(2)
 
-            col_btn_pl.button(
-                txt('sb_btn_run_offdesign'),
-                on_click=switch2partload,
-                width='stretch'
-            )
+            with col_btn_pl:
+                partload_fragment()
 
             with col_btn_save:
                 export_fragment(hp_model_name, params)

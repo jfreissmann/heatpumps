@@ -459,6 +459,18 @@
         "ENG": "To calculate the part-load, click 'Run part-load simulation'.",
         "GER": "Um die Teillast zu berechnen, drücke auf 'Teillast simulieren'."
     },
+    "stcc_od_unavailable_header": {
+        "ENG": "Part-load simulation not available",
+        "GER": "Teillastsimulation nicht verfügbar"
+    },
+    "stcc_od_unavailable_info": {
+        "ENG": "Part-load simulation is not available in the Streamlit Community Cloud version of *heatpumps*, to avoid long simulation runs on shared resources.",
+        "GER": "In der Streamlit Community Cloud Version von *heatpumps* ist die Teillastsimulation nicht möglich, um lange Simulationsläufe auf geteilten Ressourcen zu vermeiden."
+    },
+    "stcc_od_unavailable_install": {
+        "ENG": "To simulate the part-load behaviour of your heat pump, install *heatpumps* locally (`pip install heatpumps`) and start the dashboard with `heatpumps-dashboard`. You can find more information in the [GitHub repository](https://github.com/jfreissmann/heatpumps) and the [documentation](https://heatpumps.readthedocs.io).",
+        "GER": "Um das Teillastverhalten Ihrer Wärmepumpe zu simulieren, installieren Sie *heatpumps* lokal (`pip install heatpumps`) und starten Sie das Dashboard mit `heatpumps-dashboard`. Weitere Informationen finden Sie im [GitHub Repository](https://github.com/jfreissmann/heatpumps) und in der [Dokumentation](https://heatpumps.readthedocs.io)."
+    },
     "design_btn_export":{
         "ENG":"💾 Save model",
         "GER":"💾 Modell speichern"
