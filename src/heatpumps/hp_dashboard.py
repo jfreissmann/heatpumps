@@ -15,7 +15,7 @@ from simulation import run_design, run_partload
 from streamlit import session_state as ss
 
 
-@st.cache_data
+# @st.cache_data
 def load_translations():
     resourcepath = resources.files('heatpumps')
     tlpath = os.path.join(
