@@ -2,6 +2,31 @@
 What's new?
 ~~~~~~~~~~~
 
+v1.5.1 -- Performant Polyglot (Sep 30, 2026)
+============================================
+
+Improvements
+------------
+
+- The model classes are adjusted to work with TESPy ``>= v0.11``
+    - Simulations can be faster
+    - Part-load simulation is more stable
+
+
+Fixes
+-----
+
+- Improve session state handling for language data
+
+Contributors
+------------
+
+- `@jfreissmann <https://github.com/jfreissmann>`__
+- `@fwitte <https://github.com/fwitte>`__
+
+**Full changelog:** `v1.5.0...v1.5.1 <https://github.com/jfreissmann/heatpumps/compare/v1.5.0...v1.5.1>`__
+
+
 v1.5.0 -- Performant Polyglot (Sep 29, 2026)
 ============================================
 
