@@ -14,6 +14,11 @@ from CoolProp.CoolProp import PropsSI as PSI
 from simulation import run_design, run_partload
 from streamlit import session_state as ss
 
+# Block part-load simulation in the online version (Streamlit Community
+# Cloud). Set to True to restore the block, e.g. if part-load stability
+# regresses.
+BLOCK_PARTLOAD = False
+
 
 # @st.cache_data
 def load_translations():
@@ -252,12 +257,16 @@ with st.sidebar:
     }
     ss.lg = shortlang[lang_selected]
 
+    mode_options = [
+        txt('mode_option_start'),
+        txt('mode_option_design')
+    ]
+    if not BLOCK_PARTLOAD:
+        mode_options.append(txt('mode_option_partload'))
+
     mode = st.selectbox(
         txt('mode_selection'),
-        [
-            txt('mode_option_start'),
-            txt('mode_option_design')
-        ],
+        mode_options,
         key='select', label_visibility='collapsed'
     )
 
@@ -1340,8 +1349,15 @@ if mode == txt('mode_option_design'):
 
             col_btn_pl, col_btn_save = st.columns(2)
 
-            with col_btn_pl:
-                partload_fragment()
+            if BLOCK_PARTLOAD:
+                with col_btn_pl:
+                    partload_fragment()
+            else:
+                col_btn_pl.button(
+                    txt('sb_btn_run_offdesign'),
+                    on_click=switch2partload,
+                    width='stretch'
+                )
 
             with col_btn_save:
                 export_fragment(hp_model_name, params)
