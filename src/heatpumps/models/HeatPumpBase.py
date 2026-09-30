@@ -1988,7 +1988,7 @@ class HeatPumpBase:
                 log_entry = (
                         f'{timestamp};{converged};'
                         + f'{T_hs_ff:.2f};{T_cons_ff:.2f};{pl:.1f};'
-                        + f'{self.nw.residual_history[-1]:.2e};'
+                        + f'{self.nw.problem.residual_history[-1]:.2e};'
                         + f'{i + 1};{is_new}\n'
                 )
                 if not os.path.exists(logpath):
@@ -2016,7 +2016,9 @@ class HeatPumpBase:
                     results_offdesign.loc[idx, 'Q']
                     / results_offdesign.loc[idx, 'P']
             )
-            results_offdesign.loc[idx, 'residual'] = self.nw.residual_history[-1]
+            results_offdesign.loc[idx, 'residual'] = (
+                self.nw.problem.residual_history[-1]
+            )
 
         if self.params['offdesign']['save_results']:
             cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
