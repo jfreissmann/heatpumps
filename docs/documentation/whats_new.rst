@@ -2,6 +2,24 @@
 What's new?
 ~~~~~~~~~~~
 
+
+v1.5.2 -- Performant Polyglot (Xxx XX, 2026)
+============================================
+
+Fixes
+-----
+
+- Fix wrong usage of low-temperature cycle connection (``'D8'`` is right,
+  ``'D9'`` was used) for setting saturated vapor state in parallel compression
+  cascade cycles (``HeatPumpCascadePC`` and ``HeatPumpCascadePCTrans``)
+
+Contributors
+------------
+
+- `@jfreissmann <https://github.com/jfreissmann>`__
+
+**Full changelog:** `v1.5.1...v1.5.2 <https://github.com/jfreissmann/heatpumps/compare/v1.5.1...v1.5.2>`__
+
 v1.5.1 -- Performant Polyglot (Sep 30, 2026)
 ============================================
 
