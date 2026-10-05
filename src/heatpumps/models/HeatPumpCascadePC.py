@@ -305,7 +305,7 @@ class HeatPumpCascadePC(HeatPumpCascadeBase):
             self.conns['A2'].set_attr(
                 m=Ref(self.conns['A0'], 0.9, 0)
                 )
-            self.conns['D9'].set_attr(x=1)
+            self.conns['D8'].set_attr(x=1)
             self.conns['D2'].set_attr(
                 m=Ref(self.conns['D0'], 0.9, 0)
                 )
