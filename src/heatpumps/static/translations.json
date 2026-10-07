@@ -363,6 +363,10 @@
         "ENG": "The simulation of the heat pump design was successful.",
         "GER": "Die Simulation der Wärmepumpenauslegung war erfolgreich."
     },
+    "design_sim_model_warning": {
+        "ENG": "The simulation converged, but the heat pump does not operate as designed:",
+        "GER": "Die Simulation ist konvergiert, die Wärmepumpe arbeitet jedoch nicht wie vorgesehen:"
+    },
     "design_sim_error": {
         "ENG": "The following error occurred during the heat pump simulation. Please correct the input parameters and try again.\n\n",
         "GER": "Bei der Simulation der Wärmepumpe ist der nachfolgende Fehler aufgetreten. Bitte korrigieren Sie die Eingangsparameter und versuchen es erneut.\n\n"
