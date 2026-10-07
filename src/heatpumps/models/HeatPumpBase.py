@@ -1716,7 +1716,7 @@ class HeatPumpBase:
             mask_heatex_neg_ttd_l = (
                 self.nw.results['HeatExchanger']['ttd_l'] <= 0
             )
-            if any(mask_heatex_neg_ttd_u):
+            if any(mask_heatex_neg_ttd_l):
                 heatex_neg_ttd_l = [
                     idx for idx
                     in self.nw.results['HeatExchanger'].loc[
@@ -1762,7 +1762,7 @@ class HeatPumpBase:
             mask_cond_neg_ttd_l = (
                 self.nw.results['Condenser']['ttd_l'] <= 0
             )
-            if any(mask_cond_neg_ttd_u):
+            if any(mask_cond_neg_ttd_l):
                 cond_neg_ttd_l = [
                     idx for idx
                     in self.nw.results['Condenser'].loc[
