@@ -6,6 +6,12 @@ What's new?
 v1.5.2 -- Performant Polyglot (Xxx XX, 2026)
 ============================================
 
+Improvements
+------------
+
+- Improve how intercoolers check against the dew line and how much cooling can
+  be reasonably applied
+
 Fixes
 -----
 
