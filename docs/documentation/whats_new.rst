@@ -12,6 +12,8 @@ Fixes
 - Fix wrong usage of low-temperature cycle connection (``'D8'`` is right,
   ``'D9'`` was used) for setting saturated vapor state in parallel compression
   cascade cycles (``HeatPumpCascadePC`` and ``HeatPumpCascadePCTrans``)
+- Fix a bug in the thermodynamic check after solving regarding a mix-up between
+  upper and lower terminal temperature difference
 
 Contributors
 ------------
