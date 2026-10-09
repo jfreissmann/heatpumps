@@ -20,6 +20,7 @@ Fixes
   cascade cycles (``HeatPumpCascadePC`` and ``HeatPumpCascadePCTrans``)
 - Fix a bug in the thermodynamic check after solving regarding a mix-up between
   upper and lower terminal temperature difference
+- Fix critical temperature value of R124
 
 Contributors
 ------------
