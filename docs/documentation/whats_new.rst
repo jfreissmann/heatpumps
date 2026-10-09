@@ -2,6 +2,39 @@
 What's new?
 ~~~~~~~~~~~
 
+
+v1.5.2 -- Performant Polyglot (Xxx XX, 2026)
+============================================
+
+New Features
+------------
+
+- Add R32 as a usable refrigerant for the heat pump models and dashboard
+
+Improvements
+------------
+
+- Improve how intercoolers check against the dew line and how much cooling can
+  be reasonably applied
+
+Fixes
+-----
+
+- Fix wrong usage of low-temperature cycle connection (``'D8'`` is right,
+  ``'D9'`` was used) for setting saturated vapor state in parallel compression
+  cascade cycles (``HeatPumpCascadePC`` and ``HeatPumpCascadePCTrans``)
+- Fix a bug in the thermodynamic check after solving regarding a mix-up between
+  upper and lower terminal temperature difference
+- Fix critical temperature value of R124
+- Fix CoolProp name of R1233zd(E)
+
+Contributors
+------------
+
+- `@jfreissmann <https://github.com/jfreissmann>`__
+
+**Full changelog:** `v1.5.1...v1.5.2 <https://github.com/jfreissmann/heatpumps/compare/v1.5.1...v1.5.2>`__
+
 v1.5.1 -- Performant Polyglot (Sep 30, 2026)
 ============================================
 

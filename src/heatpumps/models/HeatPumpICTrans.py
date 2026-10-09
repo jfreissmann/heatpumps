@@ -207,16 +207,10 @@ class HeatPumpICTrans(HeatPumpBase):
         self.comps['evap'].set_attr(ttd_l=self.params['evap']['ttd_l'])
         self.comps['trans'].set_attr(ttd_l=self.params['trans']['ttd_l'])
 
-        T_bp = PSI('T', 'P', self.conns['A4'].p.val_SI, 'Q', 1, self.wf)-273.15
-
-        if abs(T_bp - self.conns['A4'].T.val) < abs(self.params['ic']['dT_ic']):
-            self.conns['A5'].set_attr(td_dew=1)
-        else:
-            self.conns['A5'].set_attr(
-                T=Ref(self.conns['A4'], 1, self.params['ic']['dT_ic'])
-                )
-
-        self._solve_model(**kwargs)
+        self._solve_with_intercoolers(
+            [('A4', 'A5', 'ic', self.params['ic']['dT_ic'], self.wf)],
+            **kwargs
+            )
 
         self.m_design = self.conns['A0'].m.val
 

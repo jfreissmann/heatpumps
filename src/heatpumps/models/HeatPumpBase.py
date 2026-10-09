@@ -2,6 +2,7 @@ import collections
 import itertools
 import json
 import os
+import warnings
 from datetime import datetime
 from importlib import resources
 from time import time
@@ -22,10 +23,12 @@ from fluprodia import FluidPropertyDiagram
 from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
 from tespy.components import Compressor, Motor, Pump, Sink, Source
-from tespy.connections import Connection
+from tespy.components import SimpleHeatExchanger
+from tespy.connections import Connection, Ref
 from tespy.networks import Network
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
+from tespy.tools.fluid_properties import h_mix_pQ
 
 
 SANKEY_COLORS = {
@@ -48,6 +51,21 @@ SANKEY_TERMINAL_IDS = {
     '__E_P_net__': 'E_P',
     '__E_L_net__': 'E_L'
 }
+
+# Minimum superheat in K an intercooler leaves at its outlet. Cooling any
+# closer to the dew line would let the next compressor take in liquid.
+IC_MIN_SUPERHEAT = 1
+
+# Closing sentence of every thermodynamic plausibility error. Callers driving
+# the models in bulk match on it to tell implausible results from crashes.
+PLAUSIBILITY_HINT = (
+    'Please check the heat pump parameters and model for thermodynamic'
+    + ' plausibility.'
+)
+
+
+class IntercoolerBypassWarning(UserWarning):
+    """An intercooler was bypassed because its inlet had nothing to cool."""
 
 
 def grid_path_order(*ranges, current=None, max_step=1):
@@ -162,6 +180,7 @@ class HeatPumpBase:
         self.epsilon = np.nan
         self.solved_design = False
         self._design_state = None
+        self.model_warnings = []
 
         self._init_vals = {
             'm_dot_rel_econ_closed': 0.9,
@@ -286,6 +305,109 @@ class HeatPumpBase:
             self.solved_design = True
             self._design_state = self.nw.save(as_dict=True)
 
+    def _solve_with_intercoolers(self, intercoolers, **kwargs):
+        """Solve the design case with the intercooler outlets specified.
+
+        Each intercooler changes its inlet temperature by ``dT_ic``, but never
+        closer than :data:`IC_MIN_SUPERHEAT` to the dew line at its outlet
+        pressure: ``T_out = max(T_in + dT_ic, T_dew + IC_MIN_SUPERHEAT)``.
+        Cooling across the dew line would make the next compressor take in
+        liquid, which the solver can only reconcile with the heat delivered
+        to the consumer by reversing the mass flow of the whole cycle.
+
+        Which bound applies depends on the actual compressor discharge
+        temperature, which is only known once the compressor efficiencies are
+        set. The starting values of the initial simulation are no guide to
+        it. So the model is solved with every outlet at the minimum superheat
+        first, which is feasible whenever the compressor discharges
+        superheated vapour, and re-solved with the temperature reference where
+        that leaves enough superheat. This is exact rather than iterative, as
+        nothing upstream of an intercooler depends on its outlet.
+
+        If even holding the outlet at the minimum superheat would take heat
+        from the ambient, there is nothing to cool. The intercooler is then
+        bypassed (``Q = 0`` and no pressure drop, which would otherwise
+        throttle the vapour towards the two-phase region) instead of heating
+        it, and the deviation from the intended operation is reported in
+        :attr:`model_warnings` and as an :class:`IntercoolerBypassWarning`.
+
+        A compressor discharging wet vapour is not bypassed but rejected:
+        dry refrigerants compressed from saturated vapour can end inside the
+        two-phase region, and no intercooler setting makes that a plausible
+        cycle.
+
+        Parameters
+        ----------
+        intercoolers : list of tuple
+            ``(conn_in, conn_out, ic_key, dT_ic, wf)`` per intercooler: the
+            labels of its inlet and outlet connection, its key in
+            ``self.comps``, the (negative) temperature change in K and the
+            working fluid passing through it.
+        """
+        subcritical = []
+        for conn_in, conn_out, ic_key, dT_ic, wf in intercoolers:
+            if self.conns[conn_out].p.val_SI < PSI('Pcrit', wf):
+                self.conns[conn_out].set_attr(td_dew=IC_MIN_SUPERHEAT)
+                subcritical.append((conn_in, conn_out, ic_key, dT_ic, wf))
+            else:
+                # Above the critical pressure there is no dew line to cross.
+                self.conns[conn_out].set_attr(
+                    T=Ref(self.conns[conn_in], 1, dT_ic)
+                    )
+
+        self._solve_model(**kwargs)
+        if not subcritical or self.nw.status > 1:
+            return
+
+        respecified = False
+        for conn_in, conn_out, ic_key, dT_ic, wf in subcritical:
+            inlet = self.conns[conn_in]
+            label = self.comps[ic_key].label
+            # Compare enthalpies, as a wet state sits at the saturation
+            # temperature of the higher discharge pressure and so still reads
+            # as superheated against the dew line at the outlet.
+            try:
+                h_dew = h_mix_pQ(inlet.p.val_SI, 1, inlet.fluid_data)
+                h_bubble = h_mix_pQ(inlet.p.val_SI, 0, inlet.fluid_data)
+            except ValueError:
+                pass
+            else:
+                if inlet.h.val_SI < h_dew - 1e-3 * (h_dew - h_bubble):
+                    raise ValueError(
+                        f'{inlet.source.label} discharges wet vapour into '
+                        + f'{label}. {PLAUSIBILITY_HINT}'
+                        )
+
+            T_dew = PSI('T', 'P', self.conns[conn_out].p.val_SI, 'Q', 1, wf)
+            if inlet.T.val_SI + dT_ic >= T_dew + IC_MIN_SUPERHEAT:
+                self.conns[conn_out].set_attr(
+                    td_dew=None, T=Ref(inlet, 1, dT_ic)
+                    )
+                respecified = True
+            elif self.comps[ic_key].Q.val_SI > 0:
+                # Holding the outlet at the minimum superheat would take heat
+                # from the ambient, also when the pressure drop alone cools
+                # the vapour below it.
+                superheat = inlet.T.val_SI - PSI(
+                    'T', 'P', inlet.p.val_SI, 'Q', 1, wf
+                    )
+                self.conns[conn_out].set_attr(td_dew=None)
+                self.comps[ic_key].set_attr(Q=0, pr=1)
+                msg = (
+                    f'{label}: the compressor discharge is only '
+                    + f'{superheat:.2f} K superheated, which leaves nothing to '
+                    + f'cool while staying {IC_MIN_SUPERHEAT} K above the dew '
+                    + 'line, so the intercooler is bypassed (no heat transfer, '
+                    + 'no pressure drop) and the model does not run as '
+                    + 'designed.'
+                    )
+                self.model_warnings.append(msg)
+                warnings.warn(msg, IntercoolerBypassWarning, stacklevel=2)
+                respecified = True
+
+        if respecified:
+            self._solve_model(**kwargs)
+
     def calc_efficiencies(self):
         """Calculate ideal and simulated cycle efficiencies."""
         # Simulated net Coefficient of Performance
@@ -322,6 +444,7 @@ class HeatPumpBase:
 
     def run_model(self, print_cop=False, exergy_analysis=True, **kwargs):
         """Run the initialization and design simulation routine."""
+        self.model_warnings = []
         self.generate_components()
         self.generate_connections()
         self.init_simulation(**kwargs)
@@ -1659,17 +1782,17 @@ class HeatPumpBase:
         self.check_thermodynamic_results()
 
     def check_thermodynamic_results(self):
-        """Perform thermodynamic checks of the main cycle components."""
-        if self.nw.status == 0:
-            return
-        elif self.nw.status > 1:
+        """Perform thermodynamic checks of the main cycle components.
+
+        The checks also run on a cleanly converged network (status 0). A
+        converged solution need not be a physical one: a cycle can satisfy
+        every equation while running backwards with negative mass flows.
+        """
+        if self.nw.status > 1:
             msg = "An unexpected error occured in the simulation."
             raise ValueError(msg)
 
-        user_help_prompt = (
-            'Please check the heat pump parameters and model for thermodynamic'
-            + ' plausibility.'
-        )
+        user_help_prompt = PLAUSIBILITY_HINT
 
         mask_neg_m_dot = self.nw.results['Connection']['m'] < 0
         if any(mask_neg_m_dot):
@@ -1716,7 +1839,7 @@ class HeatPumpBase:
             mask_heatex_neg_ttd_l = (
                 self.nw.results['HeatExchanger']['ttd_l'] <= 0
             )
-            if any(mask_heatex_neg_ttd_u):
+            if any(mask_heatex_neg_ttd_l):
                 heatex_neg_ttd_l = [
                     idx for idx
                     in self.nw.results['HeatExchanger'].loc[
@@ -1762,7 +1885,7 @@ class HeatPumpBase:
             mask_cond_neg_ttd_l = (
                 self.nw.results['Condenser']['ttd_l'] <= 0
             )
-            if any(mask_cond_neg_ttd_u):
+            if any(mask_cond_neg_ttd_l):
                 cond_neg_ttd_l = [
                     idx for idx
                     in self.nw.results['Condenser'].loc[
@@ -1802,6 +1925,37 @@ class HeatPumpBase:
                     f'Pressure ratio in Compressor(s) {comp_neg_pr} is '
                     + f'not positive. {user_help_prompt}'
                 )
+
+        comp_wet_inlet = []
+        for comp in self.nw.comps['object']:
+            if not isinstance(comp, Compressor):
+                continue
+            inlet = comp.inl[0]
+            try:
+                h_dew = h_mix_pQ(inlet.p.val_SI, 1, inlet.fluid_data)
+                h_bubble = h_mix_pQ(inlet.p.val_SI, 0, inlet.fluid_data)
+            except ValueError:
+                continue
+            if inlet.h.val_SI < h_dew - 1e-3 * (h_dew - h_bubble):
+                comp_wet_inlet.append(comp.label)
+        if comp_wet_inlet:
+            raise ValueError(
+                f'Inlet of Compressor(s) {comp_wet_inlet} is not vapour. '
+                + user_help_prompt
+            )
+
+        dissipative_pos_Q_dot = [
+            comp.label for comp in self.nw.comps['object']
+            if isinstance(comp, SimpleHeatExchanger)
+            and comp.dissipative.val
+            and comp.Q.val_SI > 1e-3
+        ]
+        if dissipative_pos_Q_dot:
+            raise ValueError(
+                f'Heat flow in dissipative heat exchanger(s) '
+                + f'{dissipative_pos_Q_dot} is positive, i.e. heat is taken '
+                + f'from the ambient. {user_help_prompt}'
+            )
 
     def offdesign_simulation(self, log_simulations=False):
         """Perform offdesign parametrization and simulation."""
@@ -1988,7 +2142,7 @@ class HeatPumpBase:
                 log_entry = (
                         f'{timestamp};{converged};'
                         + f'{T_hs_ff:.2f};{T_cons_ff:.2f};{pl:.1f};'
-                        + f'{self.nw.residual_history[-1]:.2e};'
+                        + f'{self.nw.problem.residual_history[-1]:.2e};'
                         + f'{i + 1};{is_new}\n'
                 )
                 if not os.path.exists(logpath):
@@ -2016,7 +2170,9 @@ class HeatPumpBase:
                     results_offdesign.loc[idx, 'Q']
                     / results_offdesign.loc[idx, 'P']
             )
-            results_offdesign.loc[idx, 'residual'] = self.nw.residual_history[-1]
+            results_offdesign.loc[idx, 'residual'] = (
+                self.nw.problem.residual_history[-1]
+            )
 
         if self.params['offdesign']['save_results']:
             cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')

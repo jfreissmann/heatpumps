@@ -272,27 +272,13 @@ class HeatPumpCascadeIC(HeatPumpCascadeBase):
         self.comps['inter'].set_attr(ttd_u=self.params['inter']['ttd_u'])
         self.conns['A3'].set_attr(T=self.T_mid - self.params['inter']['ttd_u'] / 2)
 
-        # The intercooler outlet is specified by its temperature, clamped to
-        # the dew line where cooling by dT_ic would otherwise cross into the
-        # two-phase region. The superheated starting state set up in
-        # init_simulation lets this converge in a single solver run.
-        T_bp1 = PSI('T', 'P', self.conns['D4'].p.val_SI, 'Q', 1, self.wf1) - 273.15
-        T_bp2 = PSI('T', 'P', self.conns['A4'].p.val_SI, 'Q', 1, self.wf2) - 273.15
-
-        if abs(T_bp2 - self.conns['A4'].T.val) < abs(self.params['ic2']['dT_ic']):
-            self.conns['A5'].set_attr(td_dew=1)
-        else:
-            self.conns['A5'].set_attr(
-                T=Ref(self.conns['A4'], 1, self.params['ic2']['dT_ic'])
-            )
-        if abs(T_bp1 - self.conns['D4'].T.val) < abs(self.params['ic1']['dT_ic']):
-            self.conns['D5'].set_attr(td_dew=1)
-        else:
-            self.conns['D5'].set_attr(
-                T=Ref(self.conns['D4'], 1, self.params['ic1']['dT_ic'])
-            )
-
-        self._solve_model(**kwargs)
+        self._solve_with_intercoolers(
+            [
+                ('D4', 'D5', 'ic1', self.params['ic1']['dT_ic'], self.wf1),
+                ('A4', 'A5', 'ic2', self.params['ic2']['dT_ic'], self.wf2)
+            ],
+            **kwargs
+        )
 
         self.m_design = self.conns['A0'].m.val
 

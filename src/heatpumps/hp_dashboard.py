@@ -921,6 +921,10 @@ if mode == txt('mode_option_design'):
                 sim_succeded = True
                 ss.design_sim_success = True
                 st.success(txt('design_sim_success'))
+                for warning in ss.hp.model_warnings:
+                    st.warning(
+                        txt('design_sim_model_warning') + f'\n\n"{warning}"'
+                    )
             except Exception as e:
                 sim_succeded = False
                 ss.design_sim_success = False
