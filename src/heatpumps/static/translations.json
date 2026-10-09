@@ -671,6 +671,14 @@
         "ENG": "HCFC",
         "GER": "HCFC"
     },
+    "refrig_name_R32": {
+        "ENG": "R32",
+        "GER": "R32"
+    },
+    "refrig_type_R32": {
+        "ENG": "HFC",
+        "GER": "HFC"
+    },
     "refrig_name_R365mfc": {
         "ENG": "R365mfc",
         "GER": "R365mfc"
