@@ -6,6 +6,11 @@ What's new?
 v1.5.2 -- Performant Polyglot (Xxx XX, 2026)
 ============================================
 
+New Features
+------------
+
+- Add R32 as a usable refrigerant for the heat pump models and dashboard
+
 Improvements
 ------------
 
