@@ -3,7 +3,7 @@ What's new?
 ~~~~~~~~~~~
 
 
-v1.5.2 -- Performant Polyglot (Xxx XX, 2026)
+v1.5.2 -- Performant Polyglot (Oct 10, 2026)
 ============================================
 
 New Features
