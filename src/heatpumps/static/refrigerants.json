@@ -52,7 +52,7 @@
     "R124": {
         "CP": "R124",
         "type": "HCFC",
-        "T_crit": 126.7,
+        "T_crit": 122.3,
         "p_crit": 36.2,
         "ASHRAE34": "A1",
         "ODP": 0.022,
