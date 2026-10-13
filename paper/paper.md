@@ -147,6 +147,13 @@ model classes. As the dashboard adds no modeling capability of its own, both
 routes yield identical results, and the same models drive interactive 
 exploration as well as large scripted batch studies without duplication.
 
+![Software architecture of `heatpumps`. Dashboard and Python API pass a
+parameter set to the same model classes. The parent class `HeatPumpBase`
+implements the shared simulation workflow, whose topology-specific steps
+(dashed box) are implemented by the child classes. The analysis methods
+evaluate the solved model. Grey boxes indicate the open-source packages each
+layer builds on.\label{fig:architecture}](heatpumps_scheme.pdf){ width=100% }
+
 At the core, the parent class `HeatPumpBase` implements everything common to 
 all heat pumps, i.e., the design and part-load simulation workflow, the 
 consistency checks and the analysis methods. Each topology is realized as a 
@@ -172,13 +179,6 @@ Rather than reimplementing established functionality, `heatpumps` builds on
 the surrounding open-source ecosystem (\autoref{fig:architecture}). It is 
 distributed via PyPI under the MIT license, tested through an automated test 
 suite and documented on Read the Docs.
-
-![Software architecture of `heatpumps`. Dashboard and Python API pass a
-parameter set to the same model classes. The parent class `HeatPumpBase`
-implements the shared simulation workflow, whose topology-specific steps
-(dashed box) are implemented by the child classes. The analysis methods
-evaluate the solved model. Grey boxes indicate the open-source packages each
-layer builds on.\label{fig:architecture}](heatpumps_scheme.pdf){ width=100% }
 
 
 # Research impact statement
