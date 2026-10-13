@@ -178,7 +178,7 @@ parameter set to the same model classes. The parent class `HeatPumpBase`
 implements the shared simulation workflow, whose topology-specific steps
 (dashed box) are implemented by the child classes. The analysis methods
 evaluate the solved model. Grey boxes indicate the open-source packages each
-layer builds on.\label{fig:architecture}](./docs/_static/images/paper/heatpumps_scheme.pdf){ width=100% }
+layer builds on.\label{fig:architecture}](heatpumps_scheme.pdf){ width=100% }
 
 
 # Research impact statement
