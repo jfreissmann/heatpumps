@@ -1,0 +1,54 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata from this file."
+type: software
+title: "heatpumps: A heat pump simulation model library and dashboard"
+abstract: >-
+  heatpumps is an open-source Python package providing a broad collection of
+  ready-to-run heat pump cycle topologies built on TESPy and CoolProp. The
+  models can be simulated in design and part-load operation and evaluated with
+  respect to their efficiency, exergy destruction and investment cost, through
+  both a documented model class API and an interactive web dashboard.
+authors:
+  - given-names: Jonas
+    family-names: Freißmann
+    orcid: "https://orcid.org/0009-0007-6432-5479"
+    affiliation: "Center for Sustainable Energy Systems (ZNES)"
+    alias: "jfreissmann"
+  - given-names: Malte
+    family-names: Fritz
+    orcid: "https://orcid.org/0009-0001-5843-0973"
+    affiliation: "Center for Sustainable Energy Systems (ZNES)"
+    alias: "maltefritz"
+  - given-names: Ilja
+    family-names: Tuschy
+    orcid: "https://orcid.org/0000-0003-3442-4170"
+    affiliation: "Center for Sustainable Energy Systems (ZNES)"
+  - given-names: Bilwin
+    family-names: Thomas
+    alias: "bilwint"
+  - given-names: Francesco
+    family-names: Witte
+    orcid: "https://orcid.org/0000-0003-4019-0390"
+    alias: "fwitte"
+  - given-names: Hannes
+    family-names: Schneider
+    orcid: "https://orcid.org/0009-0004-7901-2676"
+    alias: "HaSchneider"
+version: 1.5.2
+date-released: 2026-10-09
+doi: 10.5281/zenodo.23341865
+identifiers:
+  - type: url
+    value: "https://heatpumps.streamlit.app/"
+    description: "Hosted version of the heatpumps dashboard"
+license: MIT
+repository-code: "https://github.com/jfreissmann/heatpumps"
+repository-artifact: "https://pypi.org/project/heatpumps/"
+url: "https://heatpumps.readthedocs.io/"
+keywords:
+  - Python
+  - TESPy
+  - heat pump
+  - thermodynamics
+  - techno-economic analysis
+  - process analysis

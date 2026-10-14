@@ -1,4 +1,5 @@
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://heatpumps.streamlit.app/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23341865.svg)](https://doi.org/10.5281/zenodo.23341865)
 
 # heatpumps
 
@@ -84,6 +85,21 @@ hp = HeatPumpEconIHX(params=params, econ_type=econ_type)
 hp.run_model()
 hp.perform_exergy_analysis(print_results=True)
 hp.generate_sankey_diagram().show()
+```
+
+## Citing heatpumps
+
+If you use heatpumps in your work, we kindly ask you to cite it. The DOI below always resolves to the latest version and individual releases can be found on [Zenodo](https://doi.org/10.5281/zenodo.23341865). The citation metadata is also available in the [CITATION.cff](CITATION.cff) file.
+
+```bibtex
+@misc{heatpumps,
+  author    = {Freißmann, Jonas and Fritz, Malte and Tuschy, Ilja and Thomas, Bilwin and Witte, Francesco and Schneider, Hannes},
+  title     = {heatpumps: A heat pump simulation model library and dashboard},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.23341865},
+  url       = {https://doi.org/10.5281/zenodo.23341865}
+}
 ```
 
 ## License
