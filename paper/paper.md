@@ -1,10 +1,10 @@
 ---
-title: 'heatpumps: A heat pump simulation model library and dashboard.'
+title: 'heatpumps: A heat pump simulation model library and dashboard'
 tags:
   - Python
   - TESPy
   - thermodynamics
-  - techno-econonmic analysis
+  - techno-economic analysis
   - process analysis
 authors:
   - name: Jonas Freißmann
