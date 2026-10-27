@@ -50,10 +50,10 @@ class HeatPumpCascadeEcon(HeatPumpCascadeBase):
         self.comps['inter'] = Condenser('Intermediate Heat Exchanger')
         self.comps['evap'] = HeatExchanger('Evaporator')
         self.comps['LT_comp1'] = Compressor('Low Temperature Compressor 1')
-        self.comps['merge1'] = Merge('High Temperature Economizer Injection')
+        self.comps['merge1'] = Merge('Low Temperature Economizer Injection')
         self.comps['LT_comp2'] = Compressor('Low Temperature Compressor 2')
         self.comps['HT_comp1'] = Compressor('High Temperature Compressor 1')
-        self.comps['merge2'] = Merge('Low Temperature Economizer Injection')
+        self.comps['merge2'] = Merge('High Temperature Economizer Injection')
         self.comps['HT_comp2'] = Compressor('High Temperature Compressor 2')
 
         if self.econ_type.lower() == 'closed':

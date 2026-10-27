@@ -22,6 +22,8 @@ Fixes
 -----
 
 - Fix typos
+- Fix wrongly declared economizer injection ``Merge`` components in
+  ``HeatPumpCascadeEcon``
 
 Contributors
 ------------
