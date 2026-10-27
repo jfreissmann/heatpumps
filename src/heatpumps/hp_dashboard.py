@@ -468,6 +468,11 @@ with st.sidebar:
             if invalid_temp_diff:
                 st.error(txt('sb_source_invalid_temp_diff'))
 
+            params['evap']['ttd_l'] = ttd_slider(
+                'sb_source_ttd_evap', 'sb_source_ttd_evap_help',
+                params['evap']['ttd_l'], key='ttd_evap'
+            )
+
         # TODO: Aktuell wird T_mid im Modell als Mittelwert zwischen von Ver-
         #       dampfungs- und Kondensationstemperatur gebildet. An sich wäre
         #       es analytisch sicher interessant den Wert selbst festlegen zu
