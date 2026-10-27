@@ -513,6 +513,17 @@ with st.sidebar:
             if invalid_temp_diff:
                 st.error(txt('sb_sink_invalid_temp_diff2'))
 
+            if 'trans' in hp_model_name:
+                params['trans']['ttd_l'] = ttd_slider(
+                    'sb_sink_ttd_trans', 'sb_sink_ttd_trans_help',
+                    params['trans']['ttd_l'], key='ttd_trans'
+                )
+            else:
+                params['cond']['ttd_u'] = ttd_slider(
+                    'sb_sink_ttd_cond', 'sb_sink_ttd_cond_help',
+                    params['cond']['ttd_u'], key='ttd_cond'
+                )
+
         if hp_model['nr_ihx'] != 0:
             max_dT = int(round(params['C3']['T'] - params['B2']['T'], 0))
             with st.expander(txt('sb_expd_ihx')):
