@@ -21,7 +21,7 @@ Improvements
 Fixes
 -----
 
-- ...
+- Fix typos
 
 Contributors
 ------------

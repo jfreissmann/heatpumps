@@ -177,7 +177,7 @@
     },
     "sb_expd_ihx": {
         "ENG": "Internal heat exchanger",
-        "GER": "Interne Wärmerübertragung"
+        "GER": "Interne Wärmeübertragung"
     },
     "sb_ihx_superheat": {
         "ENG": "Superheating/Subcooling",
