@@ -172,6 +172,20 @@ def build_label_map(labels):
     return {lbl: translate_comp_label(lbl) for lbl in labels}
 
 
+def ttd_slider(label_key, help_key, value, key):
+    """Create a slider for a terminal temperature difference in K."""
+    return st.slider(
+        txt(label_key),
+        min_value=0.5,
+        max_value=20.0,
+        step=0.5,
+        value=float(value),
+        format='%.1f K',
+        help=txt(help_key),
+        key=key
+    )
+
+
 @st.dialog(txt('export_modal_header'))
 def export_modal(hp_model_name, params):
     debug_json = json.dumps(
