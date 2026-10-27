@@ -9,7 +9,9 @@ v1.5.3 -- Performant Polyglot (Xxx XX, XXXX)
 New Features
 ------------
 
-- ...
+- The terminal temperature differences of evaporators, condensers,
+  transcritical heat exchangers, cascade intermediate heat exchangers, and
+  closed economizers can now be set in the dashboard
 
 Improvements
 ------------
