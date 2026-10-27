@@ -524,6 +524,30 @@ with st.sidebar:
                     params['cond']['ttd_u'], key='ttd_cond'
                 )
 
+        nr_refrigs = hp_model['nr_refrigs']
+        has_closed_econ = hp_model['econ_type'] == 'closed'
+        if nr_refrigs == 2 or has_closed_econ:
+            with st.expander(txt('sb_expd_inter')):
+                if nr_refrigs == 2:
+                    params['inter']['ttd_u'] = ttd_slider(
+                        'sb_inter_ttd_inter', 'sb_inter_ttd_inter_help',
+                        params['inter']['ttd_u'], key='ttd_inter'
+                    )
+                if has_closed_econ and nr_refrigs == 1:
+                    params['econ']['ttd_l'] = ttd_slider(
+                        'sb_inter_ttd_econ', 'sb_inter_ttd_econ_help',
+                        params['econ']['ttd_l'], key='ttd_econ'
+                    )
+                elif has_closed_econ and nr_refrigs == 2:
+                    params['econ2']['ttd_l'] = ttd_slider(
+                        'sb_inter_ttd_econ_HT', 'sb_inter_ttd_econ_help',
+                        params['econ2']['ttd_l'], key='ttd_econ_HT'
+                    )
+                    params['econ1']['ttd_l'] = ttd_slider(
+                        'sb_inter_ttd_econ_LT', 'sb_inter_ttd_econ_help',
+                        params['econ1']['ttd_l'], key='ttd_econ_LT'
+                    )
+
         if hp_model['nr_ihx'] != 0:
             max_dT = int(round(params['C3']['T'] - params['B2']['T'], 0))
             with st.expander(txt('sb_expd_ihx')):
