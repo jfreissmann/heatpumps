@@ -278,5 +278,35 @@
         "ODP": 0.0,
         "T_NBP": -78.5,
         "GWP100": 1.0
+    },
+    "R1224yd(Z)": {
+        "CP": "R1224YDZ",
+        "type": "HCFO",
+        "T_crit": 155.5,
+        "p_crit": 33.3,
+        "ASHRAE34": "A1",
+        "ODP": 0.00012,
+        "T_NBP": 14,
+        "GWP100": 1
+    },
+    "R1336mzz(Z)": {
+        "CP": "R1336mzz(Z)",
+        "type": "HFO",
+        "T_crit": 171.3,
+        "p_crit": 29,
+        "ASHRAE34": "A1",
+        "ODP": 0.0,
+        "T_NBP": 33.4,
+        "GWP100": 2.0
+    },
+    "R1336mzz(E)": {
+        "CP": "R1336mzz(Z)",
+        "type": "HFO",
+        "T_crit": 137.7,
+        "p_crit": 31.5,
+        "ASHRAE34": "A1",
+        "ODP": 0.0,
+        "T_NBP": 7.5,
+        "GWP100": 18.0
     }
 }

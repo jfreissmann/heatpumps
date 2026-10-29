@@ -137,9 +137,7 @@ class HeatPumpIHX(HeatPumpBase):
     def init_simulation(self, **kwargs):
         """Perform initial parametrization with starting values."""
         # Components
-        self.conns['A6'].set_attr(
-            h=Ref(self.conns['A5'], self._init_vals['dh_rel_comp'], 0)
-            )
+
         self.comps['cons_pump'].set_attr(
             eta_s=self.params['cons_pump']['eta_s']
             )
@@ -163,18 +161,31 @@ class HeatPumpIHX(HeatPumpBase):
         p_evap, p_cond, _ = self.get_pressure_levels(
             T_evap=self.params['B2']['T'], T_cond=self.params['C3']['T']
             )
-        h_superheat = PSI(
-            'H', 'P', p_evap*1e5,
-            'T', (
-                self.params['B2']['T'] - self.params['evap']['ttd_l'] + 273.15
-                + self.params['ihx']['dT_sh']),
-            self.wf
-            ) * 1e-3
+
+        h_superheat_cond = PSI(
+                    'H', 'P', p_cond*1e5,
+                    'T', PSI('T','P',p_cond*1e5,'Q',1,self.wf)+self.params['ihx']['dT_sh'],
+                    self.wf
+                    ) * 1e-3
+        h_superheat_evap = PSI(
+                            'H', 'P', p_evap*1e5,
+                            'T', PSI('T','P',p_evap*1e5,'Q',1,self.wf)+self.params['ihx']['dT_sh'],
+                            self.wf
+                            ) * 1e-3
 
         # Main cycle
-        self.conns['A4'].set_attr(x=self.params['A4']['x'], p=p_evap)
-        self.conns['A0'].set_attr(p=p_cond, fluid={self.wf: 1})
-        self.conns['A5'].set_attr(h=h_superheat)
+
+        self.conns['A0'].set_attr(fluid={self.wf: 1})
+        self.conns['A2'].set_attr(T=Ref(self.conns['A4'], 1, self.params['ihx']['dT_sh']))
+        
+        # Check entropy
+        
+        if (PSI('S','P',p_evap*1e5,'Q',1,self.wf)< 
+            PSI('S','P',p_cond*1e5,'Q',1,self.wf)):
+            self.conns['A6'].set_attr(h= h_superheat_cond)
+        else:
+            self.conns['A5'].set_attr(h=h_superheat_evap)
+
         # Heat source
         self.parametrize_heat_source()
 
@@ -185,22 +196,17 @@ class HeatPumpIHX(HeatPumpBase):
             )
         self.conns['C1'].set_attr(T=self.params['C1']['T'])
 
-        # Perform initial simulation and unset starting values
-        self._solve_model(**kwargs)
-
-        self.conns['A4'].set_attr(p=None)
-        self.conns['A0'].set_attr(p=None)
-        self.conns['A5'].set_attr(h=None)
-        self.conns['A6'].set_attr(h=None)
-
-    def design_simulation(self, **kwargs):
-        """Perform final parametrization and design simulation."""
+        
         self.comps['comp'].set_attr(eta_s=self.params['comp']['eta_s'])
         self.comps['evap'].set_attr(ttd_l=self.params['evap']['ttd_l'])
         self.comps['cond'].set_attr(ttd_u=self.params['cond']['ttd_u'])
-        self.conns['A5'].set_attr(
-            T=Ref(self.conns['A4'], 1, self.params['ihx']['dT_sh'])
-            )
+
+        # Perform initial simulation
+        self._solve_model(**kwargs)
+        
+
+    def design_simulation(self, **kwargs):
+        """Perform final parametrization and design simulation."""
 
         self._solve_model(**kwargs)
 
