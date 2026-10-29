@@ -176,7 +176,7 @@ class HeatPumpIHX(HeatPumpBase):
         # Main cycle
 
         self.conns['A0'].set_attr(fluid={self.wf: 1})
-        self.conns['A2'].set_attr(T=Ref(self.conns['A4'], 1, 10))
+        self.conns['A2'].set_attr(T=Ref(self.conns['A4'], 1, self.params['ihx']['dT_sh']))
         
         # Check entropy
         
