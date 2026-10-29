@@ -164,12 +164,12 @@ class HeatPumpIHX(HeatPumpBase):
 
         h_superheat_cond = PSI(
                     'H', 'P', p_cond*1e5,
-                    'T', PSI('T','P',p_cond*1e5,'Q',1,self.wf)+5,
+                    'T', PSI('T','P',p_cond*1e5,'Q',1,self.wf)+self.params['ihx']['dT_sh'],
                     self.wf
                     ) * 1e-3
         h_superheat_evap = PSI(
                             'H', 'P', p_evap*1e5,
-                            'T', PSI('T','P',p_evap*1e5,'Q',1,self.wf)+5,
+                            'T', PSI('T','P',p_evap*1e5,'Q',1,self.wf)+self.params['ihx']['dT_sh'],
                             self.wf
                             ) * 1e-3
 
