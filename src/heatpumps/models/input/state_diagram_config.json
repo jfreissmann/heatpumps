@@ -299,6 +299,66 @@
             "isorange_step": 25
         }
     },
+    "R1336mzz(E)": {
+        "h": {
+            "min": 200,
+            "max": 500,
+            "isorange_low": 150,
+            "isorange_high": 750,
+            "isorange_step": 50
+        },
+        "p": {
+            "min": 2e-1,
+            "max": 3e1,
+            "isorange_low": 10,
+            "isorange_high": 150,
+            "isorange_step": 10
+        },
+        "s": {
+            "min": 1200,
+            "max": 2000,
+            "isorange_low": 0,
+            "isorange_high": 2500,
+            "isorange_step": 100
+        },
+        "T": {
+            "min": -10,
+            "max": 120,
+            "isorange_low": -150,
+            "isorange_high": 350,
+            "isorange_step": 25
+        }
+    },
+    "R1336mzz(Z)": {
+        "h": {
+            "min": 200,
+            "max": 550,
+            "isorange_low": 150,
+            "isorange_high": 750,
+            "isorange_step": 50
+        },
+        "p": {
+            "min": 2e-1,
+            "max": 3e1,
+            "isorange_low": 10,
+            "isorange_high": 150,
+            "isorange_step": 10
+        },
+        "s": {
+            "min": 1200,
+            "max": 2000,
+            "isorange_low": 0,
+            "isorange_high": 2500,
+            "isorange_step": 100
+        },
+        "T": {
+            "min": -10,
+            "max": 120,
+            "isorange_low": -150,
+            "isorange_high": 350,
+            "isorange_step": 25
+        }
+    },
     "MISC": {
         "h": {
             "min": 150,
