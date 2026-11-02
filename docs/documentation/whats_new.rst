@@ -12,6 +12,7 @@ New Features
 - The terminal temperature differences of evaporators, condensers,
   transcritical heat exchangers, cascade intermediate heat exchangers, and
   closed economizers can now be set in the dashboard
+- Add new refrigerants ``R1224yd(Z)``, ``R1336mzz(E)``, and ``R1336mzz(Z)``
 
 Improvements
 ------------
@@ -31,6 +32,7 @@ Contributors
 ------------
 
 - `@jfreissmann <https://github.com/jfreissmann>`__
+- `@HaSchneider <https://github.com/HaSchneider>`__
 - `@sertomas <https://github.com/sertomas>`__
 
 **Full changelog:** `v1.5.2...v1.6.0 <https://github.com/jfreissmann/heatpumps/compare/v1.5.2...v1.6.0>`__
