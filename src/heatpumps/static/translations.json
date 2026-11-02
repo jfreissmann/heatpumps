@@ -899,6 +899,30 @@
         "ENG": "Natural",
         "GER": "Natürlich"
     },
+    "refrig_name_R1336mzz(Z)": {
+        "ENG": "R1336mzz(Z)",
+        "GER": "R1336mzz(Z)"
+    },
+    "refrig_type_R1336mzz(Z)": {
+        "ENG": "HFO",
+        "GER": "HFO"
+    },
+    "refrig_name_R1336mzz(E)": {
+        "ENG": "R1336mzz(E)",
+        "GER": "R1336mzz(E)"
+    },
+    "refrig_type_R1336mzz(E)": {
+        "ENG": "HFO",
+        "GER": "HFO"
+    },
+    "refrig_name_R1224yd(Z)": {
+        "ENG": "R1224yd(Z)",
+        "GER": "R1224yd(Z)"
+    },
+    "refrig_type_R1224yd(Z)": {
+        "ENG": "HCFO",
+        "GER": "HCFO"
+    },
     "info_df_type": {
         "ENG": "Type",
         "GER": "Typ"
