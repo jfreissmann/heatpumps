@@ -20,6 +20,8 @@ Improvements
 - Add preliminary value for 2024 average CEPCI
 - Bump TESPy version to ``v0.11.3``
 - Bump exerpy version to ``v0.2.0``
+- Update and align refrigerant information, such as critical temperature and
+  pressure, safety class, or Global Warming Potential
 
 Fixes
 -----
