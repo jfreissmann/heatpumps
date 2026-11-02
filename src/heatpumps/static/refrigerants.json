@@ -146,8 +146,8 @@
         "p_crit": 33.3,
         "ASHRAE34": "A1",
         "ODP": 0.00012,
-        "T_NBP": 14,
-        "GWP100": 1
+        "T_NBP": 14.9,
+        "GWP100": 1.0
     },
     "R1234ze(Z)": {
         "CP": "R1234ZE(Z)",
@@ -190,23 +190,23 @@
         "GWP100": 77.0
     },
     "R1336mzz(E)": {
-        "CP": "R1336mzz(Z)",
+        "CP": "R1336mzz(E)",
         "type": "HFO",
-        "T_crit": 137.7,
-        "p_crit": 31.5,
+        "T_crit": 130.4,
+        "p_crit": 27.8,
         "ASHRAE34": "A1",
         "ODP": 0.0,
-        "T_NBP": 7.5,
+        "T_NBP": 7.9,
         "GWP100": 18.0
     },
     "R1336mzz(Z)": {
         "CP": "R1336mzz(Z)",
         "type": "HFO",
         "T_crit": 171.3,
-        "p_crit": 29,
+        "p_crit": 29.0,
         "ASHRAE34": "A1",
         "ODP": 0.0,
-        "T_NBP": 33.4,
+        "T_NBP": 33.5,
         "GWP100": 2.0
     },
     "Propane": {
