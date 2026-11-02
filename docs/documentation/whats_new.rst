@@ -17,6 +17,7 @@ Improvements
 ------------
 
 - Add preliminary value for 2024 average CEPCI
+- Bump TESPy version to ``v0.11.3``
 - Bump exerpy version to ``v0.2.0``
 
 Fixes
