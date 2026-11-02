@@ -3,6 +3,36 @@ What's new?
 ~~~~~~~~~~~
 
 
+v1.5.3 -- Performant Polyglot (Xxx XX, XXXX)
+============================================
+
+New Features
+------------
+
+- The terminal temperature differences of evaporators, condensers,
+  transcritical heat exchangers, cascade intermediate heat exchangers, and
+  closed economizers can now be set in the dashboard
+
+Improvements
+------------
+
+- Add preliminary value for 2024 average CEPCI
+
+Fixes
+-----
+
+- Fix typos
+- Fix wrongly declared economizer injection ``Merge`` components in
+  ``HeatPumpCascadeEcon``
+
+Contributors
+------------
+
+- `@jfreissmann <https://github.com/jfreissmann>`__
+
+**Full changelog:** `v1.5.2...v1.5.3 <https://github.com/jfreissmann/heatpumps/compare/v1.5.2...v1.5.3>`__
+
+
 v1.5.2 -- Performant Polyglot (Oct 9, 2026)
 ===========================================
 
@@ -34,6 +64,7 @@ Contributors
 - `@jfreissmann <https://github.com/jfreissmann>`__
 
 **Full changelog:** `v1.5.1...v1.5.2 <https://github.com/jfreissmann/heatpumps/compare/v1.5.1...v1.5.2>`__
+
 
 v1.5.1 -- Performant Polyglot (Sep 30, 2026)
 ============================================

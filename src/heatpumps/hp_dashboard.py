@@ -172,6 +172,20 @@ def build_label_map(labels):
     return {lbl: translate_comp_label(lbl) for lbl in labels}
 
 
+def ttd_slider(label_key, help_key, value, key):
+    """Create a slider for a terminal temperature difference in K."""
+    return st.slider(
+        txt(label_key),
+        min_value=0.5,
+        max_value=20.0,
+        step=0.5,
+        value=float(value),
+        format='%.1f K',
+        help=txt(help_key),
+        key=key
+    )
+
+
 @st.dialog(txt('export_modal_header'))
 def export_modal(hp_model_name, params):
     debug_json = json.dumps(
@@ -454,6 +468,11 @@ with st.sidebar:
             if invalid_temp_diff:
                 st.error(txt('sb_source_invalid_temp_diff'))
 
+            params['evap']['ttd_l'] = ttd_slider(
+                'sb_source_ttd_evap', 'sb_source_ttd_evap_help',
+                params['evap']['ttd_l'], key='ttd_evap'
+            )
+
         # TODO: Aktuell wird T_mid im Modell als Mittelwert zwischen von Ver-
         #       dampfungs- und Kondensationstemperatur gebildet. An sich wäre
         #       es analytisch sicher interessant den Wert selbst festlegen zu
@@ -493,6 +512,41 @@ with st.sidebar:
             invalid_temp_diff = params['C1']['T'] <= params['B1']['T']
             if invalid_temp_diff:
                 st.error(txt('sb_sink_invalid_temp_diff2'))
+
+            if 'trans' in hp_model_name:
+                params['trans']['ttd_l'] = ttd_slider(
+                    'sb_sink_ttd_trans', 'sb_sink_ttd_trans_help',
+                    params['trans']['ttd_l'], key='ttd_trans'
+                )
+            else:
+                params['cond']['ttd_u'] = ttd_slider(
+                    'sb_sink_ttd_cond', 'sb_sink_ttd_cond_help',
+                    params['cond']['ttd_u'], key='ttd_cond'
+                )
+
+        nr_refrigs = hp_model['nr_refrigs']
+        has_closed_econ = hp_model['econ_type'] == 'closed'
+        if nr_refrigs == 2 or has_closed_econ:
+            with st.expander(txt('sb_expd_inter')):
+                if nr_refrigs == 2:
+                    params['inter']['ttd_u'] = ttd_slider(
+                        'sb_inter_ttd_inter', 'sb_inter_ttd_inter_help',
+                        params['inter']['ttd_u'], key='ttd_inter'
+                    )
+                if has_closed_econ and nr_refrigs == 1:
+                    params['econ']['ttd_l'] = ttd_slider(
+                        'sb_inter_ttd_econ', 'sb_inter_ttd_econ_help',
+                        params['econ']['ttd_l'], key='ttd_econ'
+                    )
+                elif has_closed_econ and nr_refrigs == 2:
+                    params['econ2']['ttd_l'] = ttd_slider(
+                        'sb_inter_ttd_econ_HT', 'sb_inter_ttd_econ_help',
+                        params['econ2']['ttd_l'], key='ttd_econ_HT'
+                    )
+                    params['econ1']['ttd_l'] = ttd_slider(
+                        'sb_inter_ttd_econ_LT', 'sb_inter_ttd_econ_help',
+                        params['econ1']['ttd_l'], key='ttd_econ_LT'
+                    )
 
         if hp_model['nr_ihx'] != 0:
             max_dT = int(round(params['C3']['T'] - params['B2']['T'], 0))
