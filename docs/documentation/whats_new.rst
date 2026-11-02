@@ -3,7 +3,7 @@ What's new?
 ~~~~~~~~~~~
 
 
-v1.5.3 -- Performant Polyglot (Xxx XX, XXXX)
+v1.6.0 -- Performant Polyglot (Xxx XX, XXXX)
 ============================================
 
 New Features
@@ -17,6 +17,7 @@ Improvements
 ------------
 
 - Add preliminary value for 2024 average CEPCI
+- Bump exerpy version to ``v0.2.0``
 
 Fixes
 -----
@@ -29,8 +30,9 @@ Contributors
 ------------
 
 - `@jfreissmann <https://github.com/jfreissmann>`__
+- `@sertomas <https://github.com/sertomas>`__
 
-**Full changelog:** `v1.5.2...v1.5.3 <https://github.com/jfreissmann/heatpumps/compare/v1.5.2...v1.5.3>`__
+**Full changelog:** `v1.5.2...v1.6.0 <https://github.com/jfreissmann/heatpumps/compare/v1.5.2...v1.6.0>`__
 
 
 v1.5.2 -- Performant Polyglot (Oct 9, 2026)
