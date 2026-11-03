@@ -34,6 +34,10 @@ authors:
     family-names: Schneider
     orcid: "https://orcid.org/0009-0004-7901-2676"
     alias: "HaSchneider"
+  - given-names: Sergio
+    family-names: Tomasinelli
+    orcid: "https://orcid.org/0009-0002-5084-436X"
+    alias: "sertomas"
 version: 1.5.2
 date-released: 2026-10-09
 doi: 10.5281/zenodo.23341865
