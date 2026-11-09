@@ -106,7 +106,7 @@ single-stage cycles of residential scale, and provide no economic evaluation.
 Between these levels, general-purpose process simulators supply the components 
 from which arbitrary thermal cycles can be assembled. TESPy [@Witte2020], on 
 which `heatpumps` is built, and the flowsheeting environment DWSIM [@DWSIM] 
-belong to this category. So do the Modelica libraries AixLib [@Mueller2016], 
+belong to this category. So do the Modelica libraries AixLib [@Maier2024], 
 Buildings [@Wetter2014] and ThermoCycle [@Quoilin2014], whose emphasis lies on 
 dynamic simulation and control design within building and district energy 
 systems. These tools are general and powerful, but every heat pump topology has 
