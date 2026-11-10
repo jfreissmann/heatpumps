@@ -1433,6 +1433,8 @@ if mode == txt('mode_option_partload'):
                     ))
             else:
                 st.success(txt('od_simu_success'))
+            for warning in ss.hp.offdesign_warnings:
+                st.warning(txt('od_simu_model_warning') + f'\n\n"{warning}"')
 
         if 'partload_char' in ss:
             # %% Results
