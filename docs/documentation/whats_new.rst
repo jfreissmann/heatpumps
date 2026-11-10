@@ -33,6 +33,9 @@ Fixes
   ``ValueError``) stating the vapour quality. In offdesign simulations, such 
   points are kept, but flagged in the new ``wet_compression`` result column 
   and reported as a ``WetCompressionWarning`` and in the dashboard
+- Change the default high temperature refrigerant of ``HeatPumpCascade`` from
+  ``R245fa`` to ``R717``, as compressing ``R245fa`` from saturated vapour
+  ended inside the two-phase region
 
 Contributors
 ------------
