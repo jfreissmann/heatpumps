@@ -551,6 +551,10 @@
         "ENG": "The simulation of the heat pump characteristics was successful.",
         "GER": "Die Simulation der Wärmepumpencharakteristika war erfolgreich."
     },
+    "od_simu_model_warning": {
+        "ENG": "Some converged part-load points are not thermodynamically plausible:",
+        "GER": "Einige konvergierte Teillastpunkte sind thermodynamisch nicht plausibel:"
+    },
     "od_simu_partial_convergence": {
         "ENG": "Only {n_converged} of {n_total} part-load operating points converged. Operating points that did not converge are missing from the diagrams.",
         "GER": "Nur {n_converged} von {n_total} Teillastbetriebspunkten sind konvergiert. Nicht konvergierte Betriebspunkte fehlen in den Diagrammen."
