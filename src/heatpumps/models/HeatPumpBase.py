@@ -68,6 +68,46 @@ class IntercoolerBypassWarning(UserWarning):
     """An intercooler was bypassed because its inlet had nothing to cool."""
 
 
+class WetCompressionError(ValueError):
+    """A compressor takes in or discharges wet vapour in the design case.
+
+    A subclass of :class:`ValueError` whose message ends with
+    :data:`PLAUSIBILITY_HINT`, so callers that handle the other plausibility
+    errors also handle this one, and can still tell it apart by its type.
+    """
+
+
+class WetCompressionWarning(UserWarning):
+    """A compressor takes in or discharges wet vapour in offdesign points."""
+
+
+def wet_vapour_quality(conn):
+    """Return the vapour quality of a connection's state if it is wet.
+
+    Enthalpies are compared rather than temperatures, as a wet state sits at
+    the saturation temperature and so does not read as wet by temperature. A
+    state within 0.1 % of the evaporation enthalpy of the dew line still
+    counts as saturated vapour, which is how the models specify evaporator
+    outlets.
+
+    Returns
+    -------
+    float or None
+        The vapour quality ``x < 1`` (below zero for subcooled liquid), or
+        ``None`` if the state is vapour or has no two-phase region at its
+        pressure (supercritical, or a fluid CoolProp gives no saturation
+        state for).
+    """
+    try:
+        h_dew = h_mix_pQ(conn.p.val_SI, 1, conn.fluid_data)
+        h_bubble = h_mix_pQ(conn.p.val_SI, 0, conn.fluid_data)
+    except ValueError:
+        return None
+    if conn.h.val_SI < h_dew - 1e-3 * (h_dew - h_bubble):
+        return (conn.h.val_SI - h_bubble) / (h_dew - h_bubble)
+    return None
+
+
 def grid_path_order(*ranges, current=None, max_step=1):
     """Order the Cartesian product of ``ranges`` into a path that visits
     every combination, starting near ``current`` and never moving more
@@ -363,20 +403,15 @@ class HeatPumpBase:
         for conn_in, conn_out, ic_key, dT_ic, wf in subcritical:
             inlet = self.conns[conn_in]
             label = self.comps[ic_key].label
-            # Compare enthalpies, as a wet state sits at the saturation
-            # temperature of the higher discharge pressure and so still reads
-            # as superheated against the dew line at the outlet.
-            try:
-                h_dew = h_mix_pQ(inlet.p.val_SI, 1, inlet.fluid_data)
-                h_bubble = h_mix_pQ(inlet.p.val_SI, 0, inlet.fluid_data)
-            except ValueError:
-                pass
-            else:
-                if inlet.h.val_SI < h_dew - 1e-3 * (h_dew - h_bubble):
-                    raise ValueError(
-                        f'{inlet.source.label} discharges wet vapour into '
-                        + f'{label}. {PLAUSIBILITY_HINT}'
-                        )
+            # A wet state sits at the saturation temperature of the higher
+            # discharge pressure and so still reads as superheated against
+            # the dew line at the outlet, see `wet_vapour_quality`.
+            x = wet_vapour_quality(inlet)
+            if x is not None:
+                raise WetCompressionError(
+                    f'{inlet.source.label} discharges wet vapour '
+                    + f'(x = {x:.3f}) into {label}. {PLAUSIBILITY_HINT}'
+                    )
 
             T_dew = PSI('T', 'P', self.conns[conn_out].p.val_SI, 'Q', 1, wf)
             if inlet.T.val_SI + dT_ic >= T_dew + IC_MIN_SUPERHEAT:
@@ -1781,6 +1816,35 @@ class HeatPumpBase:
         """Perform all necessary checks to protect consistency of parameters."""
         self.check_thermodynamic_results()
 
+    def find_wet_compression(self):
+        """Find compressors that take in or discharge wet vapour.
+
+        All compressors in the network are checked, including those of
+        cascades and the heat source fan, see :func:`wet_vapour_quality`.
+
+        Returns
+        -------
+        dict
+            ``{'inlet': {label: x}, 'outlet': {label: x}}`` with the vapour
+            quality of each wet compressor inlet and outlet.
+        """
+        wet = {'inlet': {}, 'outlet': {}}
+        for comp in self.nw.comps['object']:
+            if not isinstance(comp, Compressor):
+                continue
+            for side, conn in (('inlet', comp.inl[0]), ('outlet', comp.outl[0])):
+                x = wet_vapour_quality(conn)
+                if x is not None:
+                    wet[side][comp.label] = x
+        return wet
+
+    @staticmethod
+    def _format_wet_states(wet_states):
+        """Format ``{label: x}`` as e.g. ``['Compressor' (x = 0.987)]``."""
+        return '[' + ', '.join(
+            f"'{label}' (x = {x:.3f})" for label, x in wet_states.items()
+        ) + ']'
+
     def check_thermodynamic_results(self):
         """Perform thermodynamic checks of the main cycle components.
 
@@ -1926,22 +1990,20 @@ class HeatPumpBase:
                     + f'not positive. {user_help_prompt}'
                 )
 
-        comp_wet_inlet = []
-        for comp in self.nw.comps['object']:
-            if not isinstance(comp, Compressor):
-                continue
-            inlet = comp.inl[0]
-            try:
-                h_dew = h_mix_pQ(inlet.p.val_SI, 1, inlet.fluid_data)
-                h_bubble = h_mix_pQ(inlet.p.val_SI, 0, inlet.fluid_data)
-            except ValueError:
-                continue
-            if inlet.h.val_SI < h_dew - 1e-3 * (h_dew - h_bubble):
-                comp_wet_inlet.append(comp.label)
-        if comp_wet_inlet:
-            raise ValueError(
-                f'Inlet of Compressor(s) {comp_wet_inlet} is not vapour. '
-                + user_help_prompt
+        wet_compression = self.find_wet_compression()
+        if wet_compression['inlet']:
+            raise WetCompressionError(
+                'Inlet of Compressor(s) '
+                + f'{self._format_wet_states(wet_compression["inlet"])} is '
+                + f'not vapour. {user_help_prompt}'
+            )
+        if wet_compression['outlet']:
+            raise WetCompressionError(
+                'Compressor(s) '
+                + f'{self._format_wet_states(wet_compression["outlet"])} '
+                + 'discharge wet vapour. Dry refrigerants compressed from '
+                + '(nearly) saturated vapour can end inside the two-phase '
+                + f'region. {user_help_prompt}'
             )
 
         dissipative_pos_Q_dot = [
