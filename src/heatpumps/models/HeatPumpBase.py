@@ -221,6 +221,7 @@ class HeatPumpBase:
         self.solved_design = False
         self._design_state = None
         self.model_warnings = []
+        self.offdesign_warnings = []
 
         self._init_vals = {
             'm_dot_rel_econ_closed': 0.9,
@@ -2124,8 +2125,13 @@ class HeatPumpBase:
         )
 
         results_offdesign = pd.DataFrame(
-            index=multiindex, columns=['Q', 'P', 'COP', 'epsilon', 'residual']
+            index=multiindex,
+            columns=['Q', 'P', 'COP', 'epsilon', 'residual', 'wet_compression']
         )
+        # Converged points where a compressor takes in or discharges wet
+        # vapour. They are kept, but flagged and reported, see below.
+        self.offdesign_warnings = []
+        wet_comps = set()
 
         # In-memory snapshot of the last good network state (tespy's
         # `save(as_dict=True)`), used to recover if a later point leaves
@@ -2223,10 +2229,19 @@ class HeatPumpBase:
                 results_offdesign.loc[idx, 'Q'] = self.heat_output * 1e-6
                 results_offdesign.loc[idx, 'P'] = self.power_input * 1e-6
                 results_offdesign.loc[idx, 'epsilon'] = epsilon
+                wet = self.find_wet_compression()
+                is_wet = bool(wet['inlet'] or wet['outlet'])
+                results_offdesign.loc[idx, 'wet_compression'] = is_wet
+                if is_wet:
+                    wet_comps.update(
+                        f'{label} {side}' for side in ('inlet', 'outlet')
+                        for label in wet[side]
+                    )
             else:
                 results_offdesign.loc[idx, 'Q'] = np.nan
                 results_offdesign.loc[idx, 'P'] = np.nan
                 results_offdesign.loc[idx, 'epsilon'] = np.nan
+                results_offdesign.loc[idx, 'wet_compression'] = np.nan
 
             results_offdesign.loc[idx, 'COP'] = (
                     results_offdesign.loc[idx, 'Q']
@@ -2235,6 +2250,19 @@ class HeatPumpBase:
             results_offdesign.loc[idx, 'residual'] = (
                 self.nw.problem.residual_history[-1]
             )
+
+        is_wet = results_offdesign['wet_compression'].eq(True)
+        if is_wet.any():
+            n_converged = results_offdesign['wet_compression'].notna().sum()
+            msg = (
+                f'Wet compression in {is_wet.sum()} of {n_converged} '
+                + 'converged offdesign points (column "wet_compression" of '
+                + 'the offdesign results), at '
+                + f'{", ".join(sorted(wet_comps))}. These points are '
+                + 'thermodynamically implausible.'
+            )
+            self.offdesign_warnings.append(msg)
+            warnings.warn(msg, WetCompressionWarning, stacklevel=2)
 
         if self.params['offdesign']['save_results']:
             cache_dir = platformdirs.user_cache_dir('heatpumps', 'heatpumps')
