@@ -10,7 +10,8 @@ import pytest
 
 from heatpumps.models import HeatPumpCascadeIC, HeatPumpIC
 from heatpumps.models.HeatPumpBase import (IC_MIN_SUPERHEAT,
-                                           IntercoolerBypassWarning)
+                                           IntercoolerBypassWarning,
+                                           WetCompressionError)
 from heatpumps.parameters import get_params
 
 
@@ -25,7 +26,8 @@ def test_ic_dry_refrigerant_stays_superheated(refrig):
     params = get_params('HeatPumpIC')
     params['setup']['refrig'] = refrig
     params['fluids']['wf'] = refrig
-    _set_temperatures(params, source=(20, 10), sink=(80, 50))
+
+    _set_temperatures(params, source=(20, 10), sink=(70, 40))
 
     hp = HeatPumpIC(params=params)
     hp.run_model(exergy_analysis=False)
@@ -49,11 +51,11 @@ def test_ic_wet_refrigerant_is_cooled_by_dT_ic():
 
 
 def test_ic_bypasses_intercooler_without_superheat():
-    # An efficient first compressor leaves pentane only ~0.2 K superheated:
+    # An efficient first compressor leaves R1234yf only ~0.2 K superheated:
     # too little to cool, but not yet wet.
     params = get_params('HeatPumpIC')
-    params['setup']['refrig'] = params['fluids']['wf'] = 'R601'
-    params['comp1']['eta_s'] = 0.79
+    params['setup']['refrig'] = params['fluids']['wf'] = 'R1234yf'
+    params['comp1']['eta_s'] = 0.85
     _set_temperatures(params, source=(20, 10), sink=(80, 50))
 
     hp = HeatPumpIC(params=params)
@@ -76,5 +78,5 @@ def test_cascade_ic_rejects_wet_compressor_discharge():
     _set_temperatures(params, source=(20, 10), sink=(90, 50))
 
     hp = HeatPumpCascadeIC(params=params)
-    with pytest.raises(ValueError, match='discharges wet vapour'):
+    with pytest.raises(WetCompressionError, match='discharges wet vapour'):
         hp.run_model()
