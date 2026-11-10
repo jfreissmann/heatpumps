@@ -29,6 +29,10 @@ Fixes
 - Fix typos
 - Fix wrongly declared economizer injection ``Merge`` components in
   ``HeatPumpCascadeEcon``
+- Wet compressor inlets and outlets now raise a ``WetCompressionError`` (a 
+  ``ValueError``) stating the vapour quality. In offdesign simulations, such 
+  points are kept, but flagged in the new ``wet_compression`` result column 
+  and reported as a ``WetCompressionWarning`` and in the dashboard
 
 Contributors
 ------------
