@@ -6,6 +6,8 @@ only a few K above the dew line, so cooling them by 10 K would hand the second
 compressor liquid, and the solver could only balance that with a cycle running
 backwards. See ``HeatPumpBase._solve_with_intercoolers``.
 """
+import importlib
+
 import pytest
 
 from heatpumps.models import HeatPumpCascadeIC, HeatPumpIC
@@ -50,9 +52,14 @@ def test_ic_wet_refrigerant_is_cooled_by_dT_ic():
     assert hp.model_warnings == []
 
 
-def test_ic_bypasses_intercooler_without_superheat():
-    # An efficient first compressor leaves R1234yf only ~0.2 K superheated:
-    # too little to cool, but not yet wet.
+def test_ic_bypasses_intercooler_without_superheat(monkeypatch):
+    # The minimum discharge superheat leaves the first compressor at least
+    # 1 K to cool. Without it, an efficient first compressor leaves R1234yf
+    # only ~0.2 K superheated: too little to cool, but not yet wet.
+    monkeypatch.setattr(
+        importlib.import_module('heatpumps.models.HeatPumpBase'),
+        'DIS_MIN_SUPERHEAT', 0
+        )
     params = get_params('HeatPumpIC')
     params['setup']['refrig'] = params['fluids']['wf'] = 'R1234yf'
     params['comp1']['eta_s'] = 0.85
@@ -71,12 +78,18 @@ def test_ic_bypasses_intercooler_without_superheat():
 
 def test_cascade_ic_rejects_wet_compressor_discharge():
     # Butane compressed from saturated vapour ends inside the two-phase
-    # region here. No intercooler setting makes that a plausible cycle.
+    # region here. The first high temperature compressor gets the suction
+    # superheat it needs, but even uncooled, the second one discharges wet.
     params = get_params('HeatPumpCascadeIC')
     params['setup']['refrig1'] = params['fluids']['wf1'] = 'R290'
     params['setup']['refrig2'] = params['fluids']['wf2'] = 'R600'
     _set_temperatures(params, source=(20, 10), sink=(90, 50))
 
     hp = HeatPumpCascadeIC(params=params)
-    with pytest.raises(WetCompressionError, match='discharges wet vapour'):
+    with pytest.raises(
+            WetCompressionError, match="'High Temperature Compressor 2'"
+            ) as e:
         hp.run_model()
+
+    assert e.value.reason == 'no_superheat_dof'
+    assert hp.superheat_adjustments['Intermediate Heat Exchanger'] > 0
