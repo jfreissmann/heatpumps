@@ -601,10 +601,19 @@ class HeatPumpBase:
         it, and the deviation from the intended operation is reported in
         :attr:`model_warnings` and as an :class:`IntercoolerBypassWarning`.
 
-        A compressor discharging wet vapour is not bypassed but rejected:
-        dry refrigerants compressed from saturated vapour can end inside the
-        two-phase region, and no intercooler setting makes that a plausible
-        cycle.
+        The compressors in front of the intercoolers get the suction superheat
+        they need to discharge :data:`DIS_MIN_SUPERHEAT` above the dew line
+        before these decisions, see :meth:`_ensure_min_discharge_superheat`.
+        A compressor still discharging wet vapour into an intercooler is
+        rejected.
+
+        Finally, an intercooler cools less where the compressor behind it
+        would otherwise discharge less than :data:`DIS_MIN_SUPERHEAT` above
+        the dew line. Tts outlet is then held at the superheat that discharges
+        that compressor exactly at the minimum, which is stored in
+        :attr:`superheat_adjustments`. If not even the uncooled vapour is
+        enough, the intercooler is bypassed and
+        :meth:`check_thermodynamic_results` rejects the model.
 
         Parameters
         ----------
@@ -643,7 +652,8 @@ class HeatPumpBase:
             if x is not None:
                 raise WetCompressionError(
                     f'{inlet.source.label} discharges wet vapour '
-                    + f'(x = {x:.3f}) into {label}. {PLAUSIBILITY_HINT}'
+                    + f'(x = {x:.3f}) into {label}. {PLAUSIBILITY_HINT}',
+                    reason='no_superheat_dof'
                     )
 
             T_dew = PSI('T', 'P', self.conns[conn_out].p.val_SI, 'Q', 1, wf)
@@ -656,14 +666,12 @@ class HeatPumpBase:
                 # Holding the outlet at the minimum superheat would take heat
                 # from the ambient, also when the pressure drop alone cools
                 # the vapour below it.
-                superheat = inlet.T.val_SI - PSI(
-                    'T', 'P', inlet.p.val_SI, 'Q', 1, wf
-                    )
+                sh_in = superheat(inlet)
                 self.conns[conn_out].set_attr(td_dew=None)
                 self.comps[ic_key].set_attr(Q=0, pr=1)
                 msg = (
                     f'{label}: the compressor discharge is only '
-                    + f'{superheat:.2f} K superheated, which leaves nothing to '
+                    + f'{sh_in:.2f} K superheated, which leaves nothing to '
                     + f'cool while staying {IC_MIN_SUPERHEAT} K above the dew '
                     + 'line, so the intercooler is bypassed (no heat transfer, '
                     + 'no pressure drop) and the model does not run as '
@@ -675,6 +683,45 @@ class HeatPumpBase:
 
         if respecified:
             self._solve_model(**kwargs)
+        if self.nw.status > 1:
+            return
+
+        # Cool less where the next compressor would discharge less than the
+        # minimum superheat. Its discharge then sets the outlet temperature.
+        cool_less = []
+        for conn_in, conn_out, ic_key, dT_ic, wf in subcritical:
+            outlet = self.conns[conn_out]
+            comp = outlet.target
+            ic = self.comps[ic_key]
+            if not isinstance(comp, Compressor) or ic.Q.is_set:
+                continue
+            # NaN for a supercritical discharge, which has no dew line.
+            sh = superheat(comp.outl[0])
+            if np.isnan(sh) or sh >= DIS_MIN_SUPERHEAT - SUPERHEAT_TOL:
+                continue
+            outlet.set_attr(T=None, td_dew=None)
+            comp.outl[0].set_attr(td_dew=DIS_MIN_SUPERHEAT)
+            cool_less.append((outlet, comp, ic))
+        if not cool_less:
+            return
+
+        self._solve_model(**kwargs)
+        if self.nw.status > 1:
+            return
+        for outlet, comp, ic in cool_less:
+            comp.outl[0].set_attr(td_dew=None)
+            if ic.Q.val_SI > 0:
+                # Not even the uncooled discharge is enough. Bypassing gets
+                # as close as possible, and the check of the results rejects
+                # the model.
+                ic.set_attr(Q=0, pr=1)
+            else:
+                # Hold the outlet superheat found, as with the minimum
+                # superheat, also in offdesign operation.
+                sh = superheat(outlet)
+                outlet.set_attr(td_dew=sh)
+                self.superheat_adjustments[ic.label] = sh
+        self._solve_model(**kwargs)
 
     def calc_efficiencies(self):
         """Calculate ideal and simulated cycle efficiencies."""
