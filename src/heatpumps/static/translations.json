@@ -415,6 +415,10 @@
         "ENG": "The simulation of the heat pump design was successful.",
         "GER": "Die Simulation der Wärmepumpenauslegung war erfolgreich."
     },
+    "design_sim_superheat": {
+        "ENG": "To keep every compressor discharge at least 1 K above the dew line, the vapour leaving the following heat exchangers is superheated by:\n",
+        "GER": "Damit jeder Verdichter mindestens 1 K über der Taulinie austritt, wird der Dampf am Austritt folgender Wärmeübertrager überhitzt um:\n"
+    },
     "design_sim_model_warning": {
         "ENG": "The simulation converged, but the heat pump does not operate as designed:",
         "GER": "Die Simulation ist konvergiert, die Wärmepumpe arbeitet jedoch nicht wie vorgesehen:"
