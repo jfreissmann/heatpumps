@@ -22,13 +22,15 @@ from exerpy.visualization.colors import pale
 from fluprodia import FluidPropertyDiagram
 from scipy.interpolate import interpn
 from sklearn.linear_model import LinearRegression
-from tespy.components import Compressor, Motor, Pump, Sink, Source
+from tespy.components import (Compressor, HeatExchanger, Merge, Motor, Pump,
+                               Sink, Source)
 from tespy.components import SimpleHeatExchanger
 from tespy.connections import Connection, Ref
 from tespy.networks import Network
 from tespy.tools.characteristics import CharLine
 from tespy.tools.characteristics import load_default_char as ldc
-from tespy.tools.fluid_properties import h_mix_pQ
+from tespy.tools.fluid_properties import T_mix_ph, h_mix_pQ
+from tespy.tools.fluid_properties.functions import T_dew_p
 
 
 SANKEY_COLORS = {
@@ -55,6 +57,16 @@ SANKEY_TERMINAL_IDS = {
 # Minimum superheat in K an intercooler leaves at its outlet. Cooling any
 # closer to the dew line would let the next compressor take in liquid.
 IC_MIN_SUPERHEAT = 1
+
+# Minimum superheat in K of every compressor discharge: its outlet temperature
+# above the dew temperature at its outlet pressure. Dry refrigerants
+# compressed from saturated vapour can end below it or even inside the
+# two-phase region, see `HeatPumpBase._ensure_min_discharge_superheat`.
+DIS_MIN_SUPERHEAT = IC_MIN_SUPERHEAT
+
+# Tolerance in K for comparisons against the minimum superheats, far above
+# the solver's residuals and far below anything of physical relevance.
+SUPERHEAT_TOL = 1e-3
 
 # Closing sentence of every thermodynamic plausibility error. Callers driving
 # the models in bulk match on it to tell implausible results from crashes.
@@ -124,6 +136,24 @@ def wet_vapour_quality(conn):
     if conn.h.val_SI < h_dew - 1e-3 * (h_dew - h_bubble):
         return (conn.h.val_SI - h_bubble) / (h_dew - h_bubble)
     return None
+
+
+def superheat(conn):
+    """Return a connection's temperature above its dew temperature in K.
+
+    A wet state reads as 0 K, as it sits at the saturation temperature.
+
+    Returns
+    -------
+    float
+        The superheat, or ``NaN`` if there is no dew line at the
+        connection's pressure (supercritical, or a fluid CoolProp gives no
+        saturation state for).
+    """
+    try:
+        return conn.calc_T() - T_dew_p(conn.p.val_SI, conn.fluid_data)
+    except (ValueError, NotImplementedError):
+        return np.nan
 
 
 def grid_path_order(*ranges, current=None, max_step=1):
@@ -364,6 +394,187 @@ class HeatPumpBase:
             self.solved_design = True
             self._design_state = self.nw.save(as_dict=True)
 
+    def _refrigerant_compressors(self):
+        """Return all compressors except a heat source fan."""
+        fan = self.comps.get('hs_pump')
+        return [
+            comp for comp in self.nw.comps['object']
+            if isinstance(comp, Compressor) and comp is not fan
+            ]
+
+    def _superheat_source(self, conn, _depth=0):
+        """Find the saturated vapour outlet that feeds a connection.
+
+        Walks upstream from ``conn`` through the cold side of internal heat
+        exchangers and through mixing points to the cold side outlet of a
+        heat exchanger that is specified as saturated vapour (``x``). That is
+        an evaporator, the intermediate heat exchanger of a cascade (the
+        evaporator of its high temperature cycle) or a closed economizer.
+        Releasing its vapour quality is the degree of freedom to superheat the
+        vapour a compressor takes in.
+
+        Returns
+        -------
+        tespy.connections.Connection or None
+            The outlet, or ``None`` if the vapour comes from anything else,
+            e.g., a flash tank, an open economizer, or an intercooler.
+        """
+        if _depth > 10:
+            return None
+        src = conn.source
+        if isinstance(src, HeatExchanger) and conn.source_id == 'out2':
+            key = next((k for k, c in self.comps.items() if c is src), '')
+            if key.startswith('ihx'):
+                # Internal heat exchangers raise the temperature by a fixed
+                # difference against their cold side inlet.
+                return self._superheat_source(src.inl[1], _depth + 1)
+            return conn if conn.x.is_set else None
+        if isinstance(src, Merge):
+            # Economizer injection: only the injected vapour can be
+            # superheated, the other inlet is a compressor discharge.
+            found = [
+                s for s in (
+                    self._superheat_source(c, _depth + 1) for c in src.inl
+                    )
+                if s is not None
+                ]
+            return found[0] if len(found) == 1 else None
+        return None
+
+    @staticmethod
+    def _min_temperature_difference(hx):
+        """Return the minimum temperature difference specified for ``hx``."""
+        if hx.ttd_l.is_set:
+            return hx.ttd_l.val_SI
+        if hx.ttd_u.is_set:
+            return hx.ttd_u.val_SI
+        return 0
+
+    def _check_superheat_bound(self, outlet, comp, dT_min, n_points=20):
+        """Reject superheat that the heat exchanger cannot provide.
+
+        The superheated cold side outlet must stay ``dT_min`` below the hot
+        side, the same minimum temperature difference the heat exchanger is
+        designed with. The temperature difference is checked along the whole
+        superheating zone, not only at the outlet, so that it also holds for
+        hot sides that change phase.
+        """
+        hx = outlet.source
+        hot_in = hx.inl[0]
+        p_cold = outlet.p.val_SI
+        h_out = outlet.h.val_SI
+        h_dew = h_mix_pQ(p_cold, 1, outlet.fluid_data)
+        dT = []
+        for h in np.linspace(h_dew, h_out, n_points):
+            Q = outlet.m.val_SI * (h_out - h)
+            h_hot = hot_in.h.val_SI - Q / hot_in.m.val_SI
+            T_hot = T_mix_ph(hot_in.p.val_SI, h_hot, hot_in.fluid_data)
+            T_cold = T_mix_ph(p_cold, h, outlet.fluid_data)
+            dT.append(T_hot - T_cold)
+
+        if min(dT) < dT_min - SUPERHEAT_TOL:
+            raise WetCompressionError(
+                f'{comp.label} needs {superheat(outlet):.2f} K superheated '
+                + f'suction vapour from {hx.label} to discharge '
+                + f'{DIS_MIN_SUPERHEAT} K above the dew line, which would '
+                + f'bring {hx.label} to {min(dT):.2f} K between its hot and '
+                + f'cold side, less than its minimum of {dT_min:.2f} K. '
+                + PLAUSIBILITY_HINT,
+                reason='superheat_bound'
+                )
+
+    def _ensure_min_discharge_superheat(self, **kwargs):
+        """Superheat the suction vapour where a discharge would be too wet.
+
+        The evaporator and economizer outlets are specified as saturated
+        vapour. Dry refrigerants compressed from there can be discharged less
+        than :data:`DIS_MIN_SUPERHEAT` above the dew line, or even inside the
+        two-phase region. Every compressor that does so and is fed (directly,
+        through an internal heat exchanger or an economizer injection) by such
+        an outlet gets the *minimum* suction superheat that discharges it
+        exactly :data:`DIS_MIN_SUPERHEAT` above the dew line. Refrigerants
+        that are discharged superheated anyway are not changed at all.
+
+        The superheat is not optimized for COP: the COP increases
+        monotonically with it, so an optimizer would push it to the limit of
+        the heat source and favour the refrigerants that need it.
+
+        Only the vapour quality is released. Every specification of the heat
+        exchanger stays. Its terminal temperature difference decides which
+        temperature is held:
+
+        - Evaporators and closed economizers are specified at the cold side
+          inlet (``ttd_l``), so the evaporation temperature stays and the
+          outlet gets warmer.
+        - A cascade's intermediate heat exchanger is specified at the cold
+          side outlet (``ttd_u``, against the condensation temperature of the
+          low temperature cycle), so the outlet temperature stays and the
+          evaporation temperature of the high temperature cycle drops by the
+          superheat. TESPy's condenser refers its ``ttd_u`` to the dew
+          temperature of the hot side, so an outlet above the condensation
+          temperature has no defined heat transfer coefficient.
+
+        The required superheat follows from the solved model with the
+        compressor outlet specified by its superheat instead of the outlet by
+        its vapour quality. This is exact rather than iterative. The outlet
+        is then specified by the superheat found (as a thermostatic expansion
+        valve would hold it in offdesign operation), and the model solved
+        once more.
+
+        A superheat that would bring the heat exchanger below its minimum
+        temperature difference raises a :class:`WetCompressionError`.
+        Compressors without such an outlet upstream are left for
+        :meth:`check_thermodynamic_results` to reject.
+
+        The superheats applied are stored in :attr:`superheat_adjustments` by
+        the label of the heat exchanger providing them.
+
+        Returns
+        -------
+        bool
+            Whether the model was re-solved.
+        """
+        resolved = False
+        # Every pass releases at least one vapour quality specification, so
+        # this ends after at most as many passes as the model has outlets.
+        # A cycle running backwards is no basis for the superheat, and
+        # `check_thermodynamic_results` reports it as such.
+        while (self.nw.status <= 1
+               and not (self.nw.results['Connection']['m'] < 0).any()):
+            todo = []
+            for comp in self._refrigerant_compressors():
+                sh = superheat(comp.outl[0])
+                if np.isnan(sh) or sh >= DIS_MIN_SUPERHEAT - SUPERHEAT_TOL:
+                    continue
+                outlet = self._superheat_source(comp.inl[0])
+                if outlet is None or any(outlet is o for o, _, _ in todo):
+                    continue
+                todo.append(
+                    (outlet, comp,
+                     self._min_temperature_difference(outlet.source))
+                    )
+            if not todo:
+                break
+
+            for outlet, comp, _ in todo:
+                comp.outl[0].set_attr(td_dew=DIS_MIN_SUPERHEAT)
+                outlet.set_attr(x=None)
+            self._solve_model(**kwargs)
+            resolved = True
+            if self.nw.status > 1:
+                break
+
+            for outlet, comp, dT_min in todo:
+                self._check_superheat_bound(outlet, comp, dT_min)
+                sh = superheat(outlet)
+                self.superheat_adjustments[outlet.source.label] = sh
+                comp.outl[0].set_attr(td_dew=None)
+                outlet.set_attr(td_dew=sh)
+
+        if resolved and self.nw.status <= 1:
+            self._solve_model(**kwargs)
+        return resolved
+
     def _solve_with_intercoolers(self, intercoolers, **kwargs):
         """Solve the design case with the intercooler outlets specified.
 
@@ -415,6 +626,9 @@ class HeatPumpBase:
                     )
 
         self._solve_model(**kwargs)
+        # The compressors in front of the intercoolers get their suction
+        # superheat first, as the decisions below depend on their discharge.
+        self._ensure_min_discharge_superheat(**kwargs)
         if not subcritical or self.nw.status > 1:
             return
 
@@ -499,10 +713,13 @@ class HeatPumpBase:
     def run_model(self, print_cop=False, exergy_analysis=True, **kwargs):
         """Run the initialization and design simulation routine."""
         self.model_warnings = []
+        self.superheat_adjustments = {}
         self.generate_components()
         self.generate_connections()
         self.init_simulation(**kwargs)
         self.design_simulation(**kwargs)
+        if self._ensure_min_discharge_superheat(**kwargs):
+            self.m_design = self.conns['A0'].m.val
         self.check_consistency()
         self.calc_efficiencies()
         if exergy_analysis:
@@ -2014,15 +2231,25 @@ class HeatPumpBase:
             raise WetCompressionError(
                 'Inlet of Compressor(s) '
                 + f'{self._format_wet_states(wet_compression["inlet"])} is '
-                + f'not vapour. {user_help_prompt}'
+                + f'not vapour. {user_help_prompt}',
+                reason='wet_inlet'
             )
-        if wet_compression['outlet']:
+
+        low_superheat = []
+        for comp in self._refrigerant_compressors():
+            sh = superheat(comp.outl[0])
+            if sh < DIS_MIN_SUPERHEAT - SUPERHEAT_TOL:
+                x = wet_compression['outlet'].get(comp.label)
+                state = f'wet, x = {x:.3f}' if x is not None else f'{sh:.2f} K'
+                low_superheat.append(f"'{comp.label}' ({state})")
+        if low_superheat:
             raise WetCompressionError(
-                'Compressor(s) '
-                + f'{self._format_wet_states(wet_compression["outlet"])} '
-                + 'discharge wet vapour. Dry refrigerants compressed from '
-                + '(nearly) saturated vapour can end inside the two-phase '
-                + f'region. {user_help_prompt}'
+                f'Compressor(s) [{", ".join(low_superheat)}] discharge less '
+                + f'than {DIS_MIN_SUPERHEAT} K above the dew line, and their '
+                + 'suction vapour cannot be superheated (e.g. vapour from a '
+                + 'flash tank, an open economizer or a mixing point, or '
+                + f'behind a bypassed intercooler). {user_help_prompt}',
+                reason='no_superheat_dof'
             )
 
         dissipative_pos_Q_dot = [
