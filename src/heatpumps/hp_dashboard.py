@@ -952,6 +952,15 @@ if mode == txt('mode_option_design'):
                 sim_succeded = True
                 ss.design_sim_success = True
                 st.success(txt('design_sim_success'))
+                if ss.hp.superheat_adjustments:
+                    st.info(
+                        txt('design_sim_superheat')
+                        + ''.join(
+                            f'\n- {label}: {sh:.2f} K'
+                            for label, sh
+                            in ss.hp.superheat_adjustments.items()
+                        )
+                    )
                 for warning in ss.hp.model_warnings:
                     st.warning(
                         txt('design_sim_model_warning') + f'\n\n"{warning}"'

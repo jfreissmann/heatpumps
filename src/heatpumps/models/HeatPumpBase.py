@@ -270,6 +270,7 @@ class HeatPumpBase:
         self._design_state = None
         self.model_warnings = []
         self.offdesign_warnings = []
+        self.superheat_adjustments = {}
 
         self._init_vals = {
             'm_dot_rel_econ_closed': 0.9,
