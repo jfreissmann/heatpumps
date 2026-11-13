@@ -69,12 +69,30 @@ class IntercoolerBypassWarning(UserWarning):
 
 
 class WetCompressionError(ValueError):
-    """A compressor takes in or discharges wet vapour in the design case.
+    """A compressor takes in wet vapour or discharges too little superheat.
 
     A subclass of :class:`ValueError` whose message ends with
     :data:`PLAUSIBILITY_HINT`, so callers that handle the other plausibility
     errors also handle this one, and can still tell it apart by its type.
+
+    Attributes
+    ----------
+    reason : str or None
+        Why the design case is rejected:
+
+        - ``'wet_inlet'``: a compressor takes in wet vapour.
+        - ``'superheat_bound'``: superheating the suction vapour enough would
+          take the heat exchanger providing it below its minimum temperature
+          difference.
+        - ``'no_superheat_dof'``: a compressor discharges less than
+          :data:`DIS_MIN_SUPERHEAT` above the dew line, and nothing upstream
+          has the degree of freedom to superheat its suction vapour (e.g. flash
+          tank vapour).
     """
+
+    def __init__(self, msg, reason=None):
+        super().__init__(msg)
+        self.reason = reason
 
 
 class WetCompressionWarning(UserWarning):
