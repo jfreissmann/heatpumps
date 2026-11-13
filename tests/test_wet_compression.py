@@ -2,12 +2,14 @@
 
 Dry refrigerants (e.g. pentane, butane) have an overhanging dew line:
 compressing them from saturated vapour, as the models specify the evaporator
-outlet, can end inside the two-phase region. See
-``HeatPumpBase.check_thermodynamic_results`` and ``find_wet_compression``.
+outlet, can end inside the two-phase region. Where the suction vapour can be
+superheated, it is (see ``test_min_superheat.py``); these tests cover the
+compressors where it cannot. See ``HeatPumpBase.check_thermodynamic_results``
+and ``find_wet_compression``.
 """
 import pytest
 
-from heatpumps.models import HeatPumpIC, HeatPumpSimple
+from heatpumps.models import HeatPumpFlash, HeatPumpIC, HeatPumpSimple
 from heatpumps.models.HeatPumpBase import (PLAUSIBILITY_HINT,
                                            WetCompressionError,
                                            WetCompressionWarning)
@@ -26,20 +28,25 @@ def _simple_params(refrig, source, sink):
 
 
 def test_dry_refrigerant_wet_discharge_is_rejected():
-    hp = HeatPumpSimple(params=_simple_params('R601', (10, 5), (90, 50)))
-    with pytest.raises(WetCompressionError, match='discharge wet vapour') as e:
+    # Pentane from the flash tank is saturated vapour, and nothing can
+    # superheat it before the second compressor.
+    params = get_params('HeatPumpFlash')
+    params['setup']['refrig'] = params['fluids']['wf'] = 'R601'
+    hp = HeatPumpFlash(params=params)
+    with pytest.raises(WetCompressionError, match='discharge less than') as e:
         hp.run_model(exergy_analysis=False)
 
     # Callers handling the other plausibility errors handle this one, too.
     assert isinstance(e.value, ValueError)
     assert PLAUSIBILITY_HINT in str(e.value)
-    assert "'Compressor' (x = 0.9" in str(e.value)
+    assert "'Compressor 2' (wet, x = 0.9" in str(e.value)
+    assert e.value.reason == 'no_superheat_dof'
 
 
 def test_wet_discharge_after_intercooler_is_rejected():
-    # The intercooler holds the second compressor's inlet 1 K above the dew
-    # line (here bypassed), which is not enough for pentane: compressing it
-    # from there ends inside the two-phase region, too.
+    # The first compressor gets the suction superheat it needs, and the
+    # intercooler is bypassed, but compressing pentane from there still ends
+    # inside the two-phase region.
     params = get_params('HeatPumpIC')
     params['setup']['refrig'] = params['fluids']['wf'] = 'R601'
     params['comp1']['eta_s'] = 0.79
@@ -47,8 +54,10 @@ def test_wet_discharge_after_intercooler_is_rejected():
     params['C3']['T'], params['C1']['T'] = 80, 50
 
     hp = HeatPumpIC(params=params)
-    with pytest.raises(WetCompressionError, match="'Compressor 2'"):
+    with pytest.raises(WetCompressionError, match="'Compressor 2'") as e:
         hp.run_model(exergy_analysis=False)
+
+    assert e.value.reason == 'no_superheat_dof'
 
 
 @pytest.mark.parametrize('refrig', ['R717', 'R290', 'R1233zd(E)'])
