@@ -13,6 +13,20 @@ New Features
   transcritical heat exchangers, cascade intermediate heat exchangers, and
   closed economizers can now be set in the dashboard
 - Add new refrigerants ``R1224yd(Z)``, ``R1336mzz(E)``, and ``R1336mzz(Z)``
+- Every compressor now discharges at least 1 K above the dew line. Where a
+  dry refrigerant compressed from saturated vapour would not, the vapour
+  leaving the evaporator, the cascade intermediate heat exchanger, or the
+  closed economizer that feeds the compressor is superheated by the minimum
+  needed, and intercoolers cool less. All heat exchanger specifications are
+  kept, so the evaporation temperature stays the same in evaporators and
+  economizers, while it drops by the superheat in the high temperature cycle
+  of cascades. The superheats applied are stored in
+  the new ``superheat_adjustments`` attribute and shown in the dashboard.
+  In offdesign simulations, these superheats are held constant. Where the
+  heat exchanger cannot provide the superheat, or the vapour cannot be
+  superheated (e.g. from a flash tank or an open economizer), the design
+  simulation raises a ``WetCompressionError`` whose ``reason`` attribute
+  names the cause
 
 Improvements
 ------------
